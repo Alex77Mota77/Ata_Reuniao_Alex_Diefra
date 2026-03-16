@@ -7,13 +7,14 @@ logger = logging.getLogger(__name__)
 client: AsyncIOMotorClient = None
 
 async def connect_db():
-    """Conecta ao MongoDB Atlas usando a URI configurada no .env"""
     global client
     try:
         client = AsyncIOMotorClient(
             settings.MONGODB_URL,
-            serverSelectionTimeoutMS=10000,  # 10s timeout
+            serverSelectionTimeoutMS=10000,
             connectTimeoutMS=10000,
+            tls=True,
+            tlsAllowInvalidCertificates=True,
         )
         # Testa a conexão
         await client.admin.command('ping')
