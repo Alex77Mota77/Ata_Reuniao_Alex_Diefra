@@ -1406,14 +1406,20 @@ let deleteCallback = null;
 //  GOOGLE SHEETS CONFIG — cole a URL do seu Web App do Google Apps Script
 //  Deixe em branco ('') para desativar a sincronização
 // ══════════════════════════════════════════════════════════════════════════════
-const SHEETS_CFG = {
-  url: 'https://script.google.com/macros/s/AKfycbxK8WSDX70LrkxWCSDnA3O3uPgK2xy2eRXTY1epBoKscDWQnfkxvkYsgUvCTu6JnWdMYg/exec',
-  autoSync: true,    // sincroniza automaticamente a cada alteração
-  syncInterval: 120, // intervalo em segundos para verificar atualizações de outros usuários (2 min)
+const API_CFG = {
+  url:          'http://localhost:5000',
+  autoSync:     true,
+  syncInterval: 60,   // segundos entre pulls automáticos
 };
-let _syncTimer = null;
+let _apiToken   = localStorage.getItem('diefra_token') || '';
+let _syncTimer  = null;
 let _lastSyncAt = null;
-let _syncEnabled = () => !!SHEETS_CFG.url;
+let _syncEnabled = () => !!_apiToken;
+
+// Cabeçalhos autenticados para todas as chamadas à API
+function _apiHeaders(){
+  return { 'Content-Type':'application/json', 'Authorization':'Bearer '+_apiToken };
+}
 
 let currentUser = null;
 
@@ -4196,44 +4202,71 @@ function updateReunionDate(v){
 // ════════════════════════════════════════════════════════════
 //  LOGIN
 // ════════════════════════════════════════════════════════════
-function doLogin(){
-  const user=document.getElementById('lg-user').value.trim().toLowerCase();
-  const pass=document.getElementById('lg-pass').value;
-  const err=document.getElementById('lg-err');
-  if(!user||!pass){err.textContent='Preencha usuário e senha.';return}
-  const found=ST.participants.find(p=>
-    p.username&&p.password&&
-    p.username.toLowerCase()===user&&
-    p.password===pass
-  );
-  if(found){
-    err.textContent='';
-    currentUser=found;
-    renderParticipants();
-    // Show user pill in nav
-    const pill=document.getElementById('nav-user-pill');
-    const av=document.getElementById('nav-av');
-    const un=document.getElementById('nav-uname');
-    av.style.background=found.color;
-    av.textContent=initials(found.name);
-    un.textContent=found.name.split(' ')[0]+' '+found.name.split(' ').slice(-1)[0];
-    pill.style.display='flex';
-    const screen=document.getElementById('login-screen');
-    screen.style.transition='opacity .5s';
-    screen.style.opacity='0';
-    setTimeout(()=>screen.classList.add('hidden'),500);
-  } else {
-    err.textContent='Usuário ou senha incorretos.';
-    document.getElementById('lg-pass').value='';
+async function doLogin(){
+  const email = document.getElementById('lg-user').value.trim();
+  const pass  = document.getElementById('lg-pass').value;
+  const err   = document.getElementById('lg-err');
+  if(!email||!pass){ err.textContent='Preencha email e senha.'; return; }
+
+  // Botão de loading
+  const btn = document.querySelector('.lg-btn');
+  if(btn){ btn.textContent='Entrando…'; btn.disabled=true; }
+  err.textContent='';
+
+  try {
+    // OAuth2PasswordRequestForm exige application/x-www-form-urlencoded
+    const body = new URLSearchParams({ username: email, password: pass });
+    const res  = await fetch(API_CFG.url + '/api/auth/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body:    body.toString(),
+    });
+    const data = await res.json();
+    if(!res.ok){ throw new Error(data.detail || 'Credenciais inválidas'); }
+
+    // Salva token e dados do usuário
+    _apiToken = data.access_token;
+    localStorage.setItem('diefra_token', _apiToken);
+    localStorage.setItem('diefra_user',  JSON.stringify(data.user));
+    currentUser = data.user;
+
+    // Mostra pill do usuário na nav
+    const pill = document.getElementById('nav-user-pill');
+    const av   = document.getElementById('nav-av');
+    const un   = document.getElementById('nav-uname');
+    if(pill && av && un){
+      av.style.background = '#1d4ed8';
+      av.textContent = (data.user.name||'U').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+      un.textContent = data.user.name;
+      pill.style.display = 'flex';
+    }
+
+    // Esconde tela de login
+    const screen = document.getElementById('login-screen');
+    screen.style.transition = 'opacity .5s';
+    screen.style.opacity = '0';
+    setTimeout(()=>screen.classList.add('hidden'), 500);
+
+    // Carrega dados do servidor
+    await pullFromSheets(true);
+    startSyncPolling();
+
+  } catch(e){
+    err.textContent = e.message || 'Erro ao conectar com o servidor.';
+    document.getElementById('lg-pass').value = '';
     document.getElementById('lg-pass').focus();
-    const box=document.querySelector('.lg-box');
-    box.style.animation='shake .35s ease';
-    setTimeout(()=>box.style.animation='',400);
+    const box = document.querySelector('.lg-box');
+    if(box){ box.style.animation='shake .35s ease'; setTimeout(()=>box.style.animation='',400); }
+  } finally {
+    if(btn){ btn.textContent='Entrar no Sistema'; btn.disabled=false; }
   }
 }
 
 function doLogout(){
-  currentUser=null;
+  _apiToken = '';
+  currentUser = null;
+  localStorage.removeItem('diefra_token');
+  localStorage.removeItem('diefra_user');
   document.getElementById('nav-user-pill').style.display='none';
   document.getElementById('lg-user').value='';
   document.getElementById('lg-pass').value='';
@@ -4604,16 +4637,25 @@ function setSyncStatus(state, msg){
   if(!pill) return;
   pill.className = 'sync-pill ' + state;
   const map = {
-    idle:    {icon:'☁',  text: msg||'Sheets'},
-    syncing: {icon:'↻',  text: msg||'Sincronizando…'},
-    ok:      {icon:'✓',  text: msg||'Sincronizado'},
+    idle:    {icon:'☁',  text: msg||'MongoDB'},
+    syncing: {icon:'↻',  text: msg||'Salvando…'},
+    ok:      {icon:'✓',  text: msg||'Salvo'},
     err:     {icon:'⚠',  text: msg||'Erro'},
   };
   icon.textContent  = map[state].icon;
   label.textContent = map[state].text;
 }
 
-// ── Push: salva ST no Sheets ──────────────────────────────────────────────────
+// ── Manual sync button ─────────────────────────────────────────────────────────
+function manualSync(){
+  if(!_syncEnabled()){
+    showToast('⚠ Faça login para sincronizar','rd');
+    return;
+  }
+  pullFromSheets(false).then(()=>pushToSheets(true));
+}
+
+// ── Push: salva ST na API MongoDB ─────────────────────────────────────────────
 async function pushToSheets(silent){
   if(!_syncEnabled()) return;
   if(!silent) setSyncStatus('syncing');
@@ -4633,32 +4675,31 @@ async function pushToSheets(silent){
       nextId:       ST.nextId,
       finRows:      ST.finRows,
     });
-    const res = await fetch(SHEETS_CFG.url, {
-      method:'POST',
-      body: payload,
-      headers:{'Content-Type':'application/json'},
-      mode:'no-cors',
+    const res = await fetch(API_CFG.url + '/api/sync', {
+      method:  'POST',
+      headers: _apiHeaders(),
+      body:    payload,
     });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     _lastSyncAt = new Date();
     setSyncStatus('ok', _lastSyncAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
     setTimeout(()=>setSyncStatus('idle'), 4000);
   } catch(err){
-    console.error('Sheets push error:', err);
+    console.error('API push error:', err);
     setSyncStatus('err','Falha');
     setTimeout(()=>setSyncStatus('idle'), 5000);
   }
 }
 
-// ── Pull: carrega ST do Sheets ────────────────────────────────────────────────
+// ── Pull: carrega ST da API MongoDB ───────────────────────────────────────────
 async function pullFromSheets(silent){
   if(!_syncEnabled()) return;
   if(!silent) setSyncStatus('syncing','Carregando…');
   try {
-    const res  = await fetch(SHEETS_CFG.url + '?t=' + Date.now());
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    const res = await fetch(API_CFG.url + '/api/sync', { headers: _apiHeaders() });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if(data.error) throw new Error(data.error);
-    if(data && data.contracts){
+    if(data && Array.isArray(data.contracts)){
       ST.contracts    = data.contracts    || ST.contracts;
       ST.tasks        = data.tasks        || ST.tasks;
       ST.vacations    = data.vacations    || ST.vacations;
@@ -4671,11 +4712,8 @@ async function pullFromSheets(silent){
       ST.medicoes      = data.medicoes      || ST.medicoes;
       ST.nextId       = data.nextId       || ST.nextId;
       if(data.finRows) ST.finRows = data.finRows;
-      // Merge logos from dedicated Sheets tab back into contracts
-      if(data.logos) _mergeLogosFromSheets(data.logos);
-      // Recalcular campos derivados com dados frescos do servidor
+      if(data.logos)   _mergeLogosFromSheets(data.logos);
       recalcAllContracts();
-      // Re-render all sections
       renderDashboard(); renderContracts(); renderFinanceiro();
       renderTasks(); renderManagers(); renderVacations(); renderParticipants();
       if(document.getElementById('agenda')?.classList.contains('active')) renderAgenda();
@@ -4685,12 +4723,11 @@ async function pullFromSheets(silent){
       if(document.getElementById('medicoes')?.classList.contains('active')) renderMedicoes();
       _lastSyncAt = new Date();
       if(!silent) setSyncStatus('ok', _lastSyncAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
-      if(silent) showToast('🔄 Dados atualizados do servidor','bl',2500);
+      if(silent) showToast('🔄 Dados atualizados','bl',2500);
       setTimeout(()=>setSyncStatus('idle'), 4000);
     }
   } catch(err){
-    console.error('Sheets pull error:', err);
-    // Só mostra erro se o usuário já estiver logado (login-screen oculto)
+    console.error('API pull error:', err);
     const loginVisible = !document.getElementById('login-screen')?.classList.contains('hidden');
     if(!loginVisible){
       if(!silent) setSyncStatus('err','Falha ao carregar');
@@ -4710,48 +4747,19 @@ function manualSync(){
 
 // ── Auto-sync after every mutation ───────────────────────────────────────────
 function scheduleAutoSync(){
-  if(!_syncEnabled()||!SHEETS_CFG.autoSync) return;
+  if(!_syncEnabled()||!API_CFG.autoSync) return;
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
 }
 
-// ── Periodic pull (background, detects changes from other users) ──────────────
-let _pollCountdown = 0;
-let _countdownTimer = null;
-
-function _updateCountdownPill(){
-  const label = document.getElementById('sync-label');
-  const pill  = document.getElementById('sync-pill');
-  if(!label || !pill) return;
-  // Only show countdown when idle
-  if(pill.classList.contains('syncing') || pill.classList.contains('ok') || pill.classList.contains('err')) return;
-  if(_pollCountdown > 0){
-    const mins = Math.floor(_pollCountdown / 60);
-    const secs = _pollCountdown % 60;
-    label.textContent = mins > 0
-      ? `Auto em ${mins}:${String(secs).padStart(2,'0')}`
-      : `Auto em ${secs}s`;
-    _pollCountdown--;
-  }
-}
-
 function startSyncPolling(){
   if(!_syncEnabled()) return;
-  const interval = SHEETS_CFG.syncInterval;
-
-  // Countdown tick every second
+  const interval = API_CFG.syncInterval;
   _pollCountdown = interval;
   if(_countdownTimer) clearInterval(_countdownTimer);
-  _countdownTimer = setInterval(()=>{
-    _updateCountdownPill();
-  }, 1000);
-
-  // Actual pull every syncInterval seconds
+  _countdownTimer = setInterval(()=>{ _updateCountdownPill(); }, 1000);
   setInterval(()=>{
-    pullFromSheets(true).then(hadChanges=>{
-      // After pull, reset countdown
-      _pollCountdown = interval;
-    });
+    pullFromSheets(true).then(()=>{ _pollCountdown = interval; });
   }, interval * 1000);
 }
 
@@ -5728,9 +5736,29 @@ window.addEventListener('DOMContentLoaded',()=>{
   drawGear(gg,112,42,22,15,10,'#2563eb','rgba(13,26,46,0.9)');
   drawGear(gg,98,58,12,8,8,'#38bdf8','rgba(13,26,46,0.85)');
   // Render all sections
+  // ── Restaura sessão salva ─────────────────────────────────────────
+  const _savedToken = localStorage.getItem('diefra_token');
+  const _savedUser  = localStorage.getItem('diefra_user');
+  if(_savedToken && _savedUser){
+    _apiToken   = _savedToken;
+    currentUser = JSON.parse(_savedUser);
+    // Mostra pill do usuário
+    const pill = document.getElementById('nav-user-pill');
+    const av   = document.getElementById('nav-av');
+    const un   = document.getElementById('nav-uname');
+    if(pill && av && un){
+      av.style.background = '#1d4ed8';
+      av.textContent = currentUser.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+      un.textContent = currentUser.name;
+      pill.style.display = 'flex';
+    }
+    // Esconde login e carrega dados
+    const screen = document.getElementById('login-screen');
+    if(screen) screen.classList.add('hidden');
+    pullFromSheets(true).finally(()=>{ startSyncPolling(); });
+  }
   // Load data from Google Sheets (if configured)
   // Pull silencioso no boot — erros não aparecem na tela de login
-  pullFromSheets(true).finally(()=>{ startSyncPolling(); });
   recalcAllContracts(); // garante campos derivados mesmo sem Sheets
   renderDashboard();
   renderContracts();
