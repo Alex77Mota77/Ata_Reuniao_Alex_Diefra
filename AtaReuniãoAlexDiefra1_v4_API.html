@@ -674,6 +674,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:14px;m
     <button class="nb" data-sec="gestao" onclick="showSec('gestao',this);renderGestao()">📋 Aud. Gestão</button>
     <button class="nb" data-sec="entregaveis" onclick="showSec('entregaveis',this);renderEntregaveis()">📦 Entregáveis</button>
     <button class="nb" data-sec="medicoes" onclick="showSec('medicoes',this);renderMedicoes()">📐 Mapa Medições</button>
+    <button class="nb" data-sec="usuarios" id="nav-btn-usuarios" style="display:none" onclick="showSec('usuarios',this);renderUsuarios()">👤 Usuários</button>
     <div class="nav-spacer"></div>
     <div class="sync-pill idle" id="sync-pill" onclick="manualSync()" title="Sincronizar com Google Sheets">
       <span id="sync-icon">☁</span><span id="sync-label">Sheets</span>
@@ -1069,6 +1070,17 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:14px;m
     </div>
     <div class="tbl-arrows" id="med-arrows"></div>
   </div>
+</div>
+<!-- ══════════════════════════════ USUÁRIOS ══════════════════════════════ -->
+<div class="sec" id="usuarios">
+  <div class="sh">
+    <div>
+      <div class="sh-t">👤 Gerenciar Usuários</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:3px;font-family:var(--fb)">Criar e gerenciar acessos ao sistema</div>
+    </div>
+    <button class="btn btn-p" onclick="openNovoUsuarioModal()">＋ Novo Usuário</button>
+  </div>
+  <div id="usuarios-list"></div>
 </div>
 
 </div><!-- /cont -->
@@ -4247,6 +4259,12 @@ async function doLogin(){
     screen.style.opacity = '0';
     setTimeout(()=>screen.classList.add('hidden'), 500);
 
+    // Mostra botão Usuários apenas para admin
+    if(data.user.role === 'admin'){
+      const btnU = document.getElementById('nav-btn-usuarios');
+      if(btnU) btnU.style.display = '';
+    }
+
     // Carrega dados do servidor
     await pullFromSheets(true);
     startSyncPolling();
@@ -5752,6 +5770,11 @@ window.addEventListener('DOMContentLoaded',()=>{
       un.textContent = currentUser.name;
       pill.style.display = 'flex';
     }
+    // Mostra botão Usuários se admin
+    if(currentUser.role === 'admin'){
+      const btnU = document.getElementById('nav-btn-usuarios');
+      if(btnU) btnU.style.display = '';
+    }
     // Esconde login e carrega dados
     const screen = document.getElementById('login-screen');
     if(screen) screen.classList.add('hidden');
@@ -6739,6 +6762,225 @@ if(typeof _origRenderVacations === 'function'){
   window.renderVacations = function(...a){ _origRenderVacations(...a); setTimeout(()=>{ const s=document.getElementById('vac-scroll'); if(s&&s._updateArrows)s._updateArrows(); },200); };
 }
 
+// ════════════════════════════════════════════════════════════
+//  GERENCIAMENTO DE USUÁRIOS (Admin only)
+// ════════════════════════════════════════════════════════════
+
+const ROLES = [
+  { value:'admin',        label:'Administrador',      color:'#a78bfa' },
+  { value:'gestor',       label:'Gestor de Contrato',  color:'#38bdf8' },
+  { value:'financeiro',   label:'Financeiro',          color:'#fbbf24' },
+  { value:'visualizador', label:'Visualizador',        color:'#6ee7b7' },
+];
+
+function roleLabel(r){ return (ROLES.find(x=>x.value===r)||{label:r}).label; }
+function roleColor(r){ return (ROLES.find(x=>x.value===r)||{color:'#888'}).color; }
+
+async function renderUsuarios(){
+  const el = document.getElementById('usuarios-list');
+  if(!el) return;
+  el.innerHTML = '<div style="color:var(--t3);padding:20px;text-align:center">Carregando usuários…</div>';
+  try {
+    const res  = await fetch(API_CFG.url + '/api/users', { headers: _apiHeaders() });
+    const list = await res.json();
+    if(!res.ok) throw new Error(list.detail||'Erro');
+
+    el.innerHTML = `
+    <div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--b1)">
+            <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Usuário</th>
+            <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Email</th>
+            <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Perfil</th>
+            <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Status</th>
+            <th style="text-align:right;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map(u => `
+          <tr style="border-bottom:1px solid var(--b1);transition:background .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+            <td style="padding:14px 20px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:34px;height:34px;border-radius:50%;background:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0">
+                  ${u.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+                </div>
+                <span style="font-weight:700;color:var(--tx)">${u.name}</span>
+              </div>
+            </td>
+            <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.email}</td>
+            <td style="padding:14px 20px">
+              <span style="padding:3px 10px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:${roleColor(u.role)}20;color:${roleColor(u.role)};border:1px solid ${roleColor(u.role)}40">
+                ${roleLabel(u.role)}
+              </span>
+            </td>
+            <td style="padding:14px 20px">
+              <span style="padding:3px 10px;border-radius:100px;font-size:10px;font-weight:800;background:${u.is_active?'rgba(16,185,129,.15)':'rgba(239,68,68,.15)'};color:${u.is_active?'#10b981':'#ef4444'}">
+                ${u.is_active ? 'Ativo' : 'Inativo'}
+              </span>
+            </td>
+            <td style="padding:14px 20px;text-align:right">
+              <button onclick="openEditUsuarioModal('${u.id}','${u.name}','${u.email}','${u.role}',${u.is_active})"
+                style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:#60a5fa;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;transition:all .2s"
+                onmouseover="this.style.background='rgba(59,130,246,.25)'" onmouseout="this.style.background='rgba(59,130,246,.1)'">
+                ✎ Editar
+              </button>
+              ${u.id !== (currentUser||{}).id ? `
+              <button onclick="deleteUsuario('${u.id}','${u.name}')"
+                style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s"
+                onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">
+                🗑 Remover
+              </button>` : '<span style="font-size:11px;color:var(--t3);padding:5px 12px">Você</span>'}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  } catch(e) {
+    el.innerHTML = `<div style="color:#f87171;padding:20px">Erro ao carregar usuários: ${e.message}</div>`;
+  }
+}
+
+function openNovoUsuarioModal(){
+  const contracts = ST.contracts || [];
+  document.getElementById('modal-title').textContent = '＋ Novo Usuário';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="grid-column:1/-1">
+        <label class="fl">Nome Completo</label>
+        <input class="fi" id="nu-name" placeholder="Nome do usuário" type="text">
+      </div>
+      <div>
+        <label class="fl">Email</label>
+        <input class="fi" id="nu-email" placeholder="email@exemplo.com" type="email">
+      </div>
+      <div>
+        <label class="fl">Senha</label>
+        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password">
+      </div>
+      <div>
+        <label class="fl">Perfil de Acesso</label>
+        <select class="fi" id="nu-role" onchange="toggleContractSelect()">
+          ${ROLES.map(r=>`<option value="${r.value}">${r.label}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label class="fl">Status</label>
+        <select class="fi" id="nu-active">
+          <option value="true">Ativo</option>
+          <option value="false">Inativo</option>
+        </select>
+      </div>
+      <div id="nu-contracts-wrap" style="grid-column:1/-1;display:none">
+        <label class="fl">Contratos Permitidos (apenas gestor)</label>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;max-height:150px;overflow-y:auto;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:12px">
+          ${contracts.map(c=>`
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--t2)">
+            <input type="checkbox" value="${c.id}" name="nu-contract" style="accent-color:#3b82f6">
+            ${c.name.slice(0,28)}
+          </label>`).join('') || '<span style="color:var(--t3);font-size:12px">Nenhum contrato cadastrado</span>'}
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="salvarNovoUsuario()">💾 Criar Usuário</button>`;
+  openModal();
+}
+
+function toggleContractSelect(){
+  const role = document.getElementById('nu-role')?.value;
+  const wrap = document.getElementById('nu-contracts-wrap');
+  if(wrap) wrap.style.display = role === 'gestor' ? '' : 'none';
+}
+
+async function salvarNovoUsuario(){
+  const name   = document.getElementById('nu-name')?.value.trim();
+  const email  = document.getElementById('nu-email')?.value.trim();
+  const pass   = document.getElementById('nu-pass')?.value;
+  const role   = document.getElementById('nu-role')?.value;
+  const active = document.getElementById('nu-active')?.value === 'true';
+  const cids   = [...document.querySelectorAll('input[name="nu-contract"]:checked')].map(x=>x.value);
+  if(!name||!email||!pass){ showToast('⚠ Preencha nome, email e senha','rd'); return; }
+  if(pass.length < 6){ showToast('⚠ Senha deve ter pelo menos 6 caracteres','rd'); return; }
+  try {
+    const res = await fetch(API_CFG.url + '/api/users', {
+      method: 'POST',
+      headers: _apiHeaders(),
+      body: JSON.stringify({ name, email, password: pass, role, contract_ids: cids, is_active: active }),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.detail || 'Erro');
+    closeModal();
+    showToast('✅ Usuário criado com sucesso','bl');
+    renderUsuarios();
+  } catch(e){ showToast('❌ ' + e.message, 'rd'); }
+}
+
+function openEditUsuarioModal(id, name, email, role, isActive){
+  document.getElementById('modal-title').textContent = '✎ Editar Usuário';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="grid-column:1/-1">
+        <label class="fl">Nome</label>
+        <input class="fi" id="eu-name" value="${name}" type="text">
+      </div>
+      <div>
+        <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(deixe vazio para manter)</span></label>
+        <input class="fi" id="eu-pass" placeholder="••••••" type="password">
+      </div>
+      <div>
+        <label class="fl">Perfil</label>
+        <select class="fi" id="eu-role">
+          ${ROLES.map(r=>`<option value="${r.value}" ${r.value===role?'selected':''}>${r.label}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label class="fl">Status</label>
+        <select class="fi" id="eu-active">
+          <option value="true" ${isActive?'selected':''}>Ativo</option>
+          <option value="false" ${!isActive?'selected':''}>Inativo</option>
+        </select>
+      </div>
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="salvarEdicaoUsuario('${id}')">💾 Salvar</button>`;
+  openModal();
+}
+
+async function salvarEdicaoUsuario(id){
+  const name   = document.getElementById('eu-name')?.value.trim();
+  const pass   = document.getElementById('eu-pass')?.value;
+  const role   = document.getElementById('eu-role')?.value;
+  const active = document.getElementById('eu-active')?.value === 'true';
+  const body = { name, role, is_active: active };
+  if(pass && pass.length >= 6) body.password = pass;
+  try {
+    const res = await fetch(API_CFG.url + '/api/users/' + id, {
+      method: 'PUT',
+      headers: _apiHeaders(),
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.detail || 'Erro');
+    closeModal();
+    showToast('✅ Usuário atualizado','bl');
+    renderUsuarios();
+  } catch(e){ showToast('❌ ' + e.message, 'rd'); }
+}
+
+async function deleteUsuario(id, name){
+  if(!confirm(`Remover o usuário "${name}"? Esta ação não pode ser desfeita.`)) return;
+  try {
+    const res = await fetch(API_CFG.url + '/api/users/' + id, {
+      method: 'DELETE', headers: _apiHeaders(),
+    });
+    if(!res.ok){ const d=await res.json(); throw new Error(d.detail||'Erro'); }
+    showToast('✅ Usuário removido','bl');
+    renderUsuarios();
+  } catch(e){ showToast('❌ ' + e.message, 'rd'); }
+}
 
 </script>
 </body>
