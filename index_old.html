@@ -251,62 +251,6 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:14px;m
 .ft .totrow td{font-weight:800;font-family:var(--fn);background:rgba(5,150,105,.14)!important;border-top:2px solid rgba(16,185,129,.3);letter-spacing:-0.2px;font-size:13px}
 .pos{color:var(--gnl)}.neg{color:var(--rdl)}.warn{color:var(--gl)}
 
-/* VACATION VIEW TOGGLE */
-.vac-view-toggle{display:flex;gap:6px;margin-bottom:20px;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:5px}
-.vvt-btn{flex:1;padding:9px 16px;border:none;border-radius:9px;cursor:pointer;font-family:var(--fb);font-size:12px;font-weight:700;color:var(--t2);background:transparent;transition:all .2s;white-space:nowrap}
-.vvt-btn:hover{color:var(--tx);background:var(--s2)}
-.vvt-btn.active{background:var(--ac1);color:#fff;box-shadow:0 2px 12px rgba(29,78,216,.35)}
-
-/* VACATION TIMELINE (GANTT) */
-.vac-timeline{overflow-x:auto;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:20px}
-.vac-tl-header{display:flex;margin-bottom:8px;margin-left:200px}
-.vac-tl-month{flex:1;text-align:center;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--t3);padding:4px 0;border-right:1px solid var(--b1)}
-.vac-tl-month:last-child{border-right:none}
-.vac-tl-row{display:flex;align-items:center;margin-bottom:10px;position:relative}
-.vac-tl-label{width:200px;flex-shrink:0;padding-right:16px;display:flex;align-items:center;gap:8px}
-.vac-tl-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
-.vac-tl-dept{font-size:10px;color:var(--t3)}
-.vac-tl-grid{flex:1;position:relative;height:36px;background:var(--s2);border-radius:8px;overflow:visible}
-.vac-tl-bg{position:absolute;inset:0;display:flex}
-.vac-tl-cell{flex:1;border-right:1px solid rgba(255,255,255,.04)}
-.vac-tl-cell:last-child{border-right:none}
-.vac-tl-bar{position:absolute;top:4px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;cursor:pointer;transition:filter .2s;overflow:hidden;white-space:nowrap;padding:0 8px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.vac-tl-bar:hover{filter:brightness(1.2);z-index:10}
-.vac-tl-today{position:absolute;top:-6px;bottom:-6px;width:2px;background:rgba(239,68,68,.7);z-index:5;pointer-events:none}
-.vac-tl-today::before{content:'Hoje';position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;color:#ef4444;white-space:nowrap;background:var(--s1);padding:1px 4px;border-radius:4px}
-.vac-tl-sep{height:1px;background:var(--b1);margin:6px 0 16px 200px}
-
-/* VACATION CARDS */
-.vac-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
-.vac-card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:20px;transition:all .2s;position:relative;overflow:hidden}
-.vac-card:hover{border-color:rgba(29,78,216,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.vac-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
-.vac-card.vc-upcoming::before{background:linear-gradient(90deg,#3b82f6,#06b6d4)}
-.vac-card.vc-active::before{background:linear-gradient(90deg,#10b981,#84cc16)}
-.vac-card.vc-past::before{background:rgba(255,255,255,.1)}
-.vac-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.vac-card-person{display:flex;align-items:center;gap:12px}
-.vac-card-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;font-family:var(--fh);flex-shrink:0}
-.vac-card-info{}
-.vac-card-name{font-size:14px;font-weight:700}
-.vac-card-dept{font-size:11px;color:var(--t2);margin-top:2px}
-.vac-card-status{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:100px}
-.vcs-upcoming{background:rgba(59,130,246,.15);color:#60a5fa}
-.vcs-active{background:rgba(16,185,129,.15);color:#34d399}
-.vcs-past{background:rgba(255,255,255,.06);color:var(--t3)}
-.vac-card-ct{font-size:11px;background:rgba(29,78,216,.12);color:var(--ac2);padding:3px 10px;border-radius:8px;display:inline-block;margin-bottom:14px;font-weight:600}
-.vac-card-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.vac-card-date-item{background:var(--s2);border-radius:10px;padding:10px 12px}
-.vac-card-date-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:4px}
-.vac-card-date-val{font-size:13px;font-weight:700}
-.vac-card-days-badge{background:rgba(5,150,105,.15);color:var(--gnl);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:800;display:inline-block;margin-bottom:14px}
-.vac-card-bar-wrap{margin-bottom:14px}
-.vac-card-bar-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:6px;display:flex;justify-content:space-between}
-.vac-card-bar-bg{height:8px;background:var(--s2);border-radius:100px;overflow:hidden}
-.vac-card-bar-fill{height:100%;border-radius:100px;transition:width .6s}
-.vac-card-sub{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);margin-bottom:14px}
-.vac-card-actions{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--b1);padding-top:12px;margin-top:4px}
-
 /* VACATION TABLE */
 /* .vtw removido — substituído por .tbl-wrap */
 .vt{width:100%;border-collapse:collapse;min-width:1080px}
@@ -976,25 +920,15 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:14px;m
     <div class="mgst">Gestores disponíveis para programação de férias. Clique em ✕ para remover.</div>
     <div class="mg-grid" id="managers-grid"></div>
   </div>
-  <!-- View Toggle -->
-  <div class="vac-view-toggle">
-    <button class="vvt-btn active" id="vvt-tabela"   onclick="setVacView('tabela')">📋 Tabela</button>
-    <button class="vvt-btn"        id="vvt-timeline" onclick="setVacView('timeline')">📅 Linha do Tempo</button>
-    <button class="vvt-btn"        id="vvt-cards"    onclick="setVacView('cards')">🎴 Cards</button>
-  </div>
   <!-- Vacation legend (populated by renderVacations) -->
   <div class="vt-legend" id="vac-legend"></div>
-  <!-- Vacation table (view: tabela) -->
+  <!-- Vacation table -->
   <div class="tbl-wrap" id="vac-wrap">
     <div class="tbl-scroll" id="vac-scroll">
       <table class="vt" id="vac-table"></table>
     </div>
     <div class="tbl-arrows" id="vac-arrows"></div>
   </div>
-  <!-- Timeline view (view: timeline) -->
-  <div id="vac-timeline-wrap" style="display:none"></div>
-  <!-- Cards view (view: cards) -->
-  <div id="vac-cards-wrap" style="display:none"></div>
 </div>
 
 <!-- ═══════════════════════════════ PARTICIPANTES ═══════════════════════════════ -->
@@ -3498,27 +3432,15 @@ function saveManager(id){
 // ════════════════════════════════════════════════════════════
 //  VACATIONS
 // ════════════════════════════════════════════════════════════
-let vacView = 'tabela';
-
-function setVacView(v){
-  vacView = v;
-  ['tabela','timeline','cards'].forEach(k=>{
-    const btn=document.getElementById('vvt-'+k);
-    if(btn) btn.classList.toggle('active', k===v);
-  });
-  document.getElementById('vac-wrap').style.display         = v==='tabela'   ? '' : 'none';
-  document.getElementById('vac-timeline-wrap').style.display= v==='timeline' ? '' : 'none';
-  document.getElementById('vac-cards-wrap').style.display   = v==='cards'    ? '' : 'none';
-  renderVacations();
-}
-
 function renderVacations(){
-  if(vacView==='timeline'){ _renderVacTimeline(); return; }
-  if(vacView==='cards')   { _renderVacCards();    return; }
-  _renderVacTable();
-}
+  const tbl = document.getElementById('vac-table');
+  if(!ST.vacations.length){
+    tbl.innerHTML=`<tr><td colspan="11" style="padding:50px;text-align:center;color:var(--t3)">Nenhuma férias programada. Clique em "+ Programar Férias" para adicionar.</td></tr>`;
+    // clear legend
+    const leg=document.getElementById('vac-legend');if(leg)leg.innerHTML='';
+    return;
+  }
 
-function _buildVacPalette(){
   // ── 1. PALETA DE GRUPOS (contratos com 2+ pessoas) ──────────────────────────
   const PALETTE = [
     {bg:'rgba(239,68,68,.14)',   border:'#ef4444', text:'#fca5a5', label:'red'},
@@ -3530,43 +3452,23 @@ function _buildVacPalette(){
     {bg:'rgba(236,72,153,.14)',  border:'#ec4899', text:'#f9a8d4', label:'pink'},
     {bg:'rgba(16,185,129,.14)',  border:'#10b981', text:'#6ee7b7', label:'green'},
   ];
-  const ctCount={};
-  ST.vacations.forEach(v=>{const mgr=getManager(v.managerId);const ctId=mgr&&mgr.contractId?mgr.contractId:0;ctCount[ctId]=(ctCount[ctId]||0)+1;});
-  const ctPalMap={};let palIdx=0;
-  Object.entries(ctCount).forEach(([ctId,cnt])=>{if(cnt>=2)ctPalMap[ctId]=PALETTE[palIdx++%PALETTE.length];});
-  return{PALETTE,ctCount,ctPalMap};
-}
 
-function _renderVacLegend(ctCount,ctPalMap){
-  const leg=document.getElementById('vac-legend');
-  if(!leg)return;
-  const grouped=Object.entries(ctPalMap);
-  if(grouped.length){
-    const items=grouped.map(([ctId,pal])=>{
-      const ct=ST.contracts.find(c=>c.id===parseInt(ctId));
-      const name=ct?ct.name.split(' ').slice(0,4).join(' '):`Contrato #${ctId}`;
-      const cnt=ctCount[ctId];
-      return`<span class="vt-legend-item" style="background:${pal.bg};border-color:${pal.border}55;color:${pal.text}">
-        <span class="vt-legend-dot" style="background:${pal.border}"></span>
-        ${name} <span style="opacity:.7;font-weight:500">(${cnt} simultâneos)</span>
-      </span>`;
-    }).join('');
-    leg.innerHTML=`<span class="vt-legend-lbl">⚠ Simultâneos:</span>${items}`;
-  } else { leg.innerHTML=''; }
-}
+  // ── 2. CONTAR quantas férias por contrato ────────────────────────────────────
+  const ctCount = {};
+  ST.vacations.forEach(v=>{
+    const mgr=getManager(v.managerId);
+    const ctId=mgr&&mgr.contractId?mgr.contractId:0;
+    ctCount[ctId]=(ctCount[ctId]||0)+1;
+  });
 
-function _renderVacTable(){
-  const tbl = document.getElementById('vac-table');
-  if(!ST.vacations.length){
-    tbl.innerHTML=`<tr><td colspan="11" style="padding:50px;text-align:center;color:var(--t3)">Nenhuma férias programada. Clique em "+ Programar Férias" para adicionar.</td></tr>`;
-    const leg=document.getElementById('vac-legend');if(leg)leg.innerHTML='';
-    return;
-  }
+  // ── 3. MAPEAR contratos com 2+ pessoas → cor da paleta ───────────────────────
+  const ctPalMap = {}; // contractId → PALETTE[i]
+  let palIdx=0;
+  Object.entries(ctCount).forEach(([ctId,cnt])=>{
+    if(cnt>=2) ctPalMap[ctId]=PALETTE[palIdx++%PALETTE.length];
+  });
 
-  const {PALETTE,ctCount,ctPalMap}=_buildVacPalette();
-  _renderVacLegend(ctCount,ctPalMap);
-
-  // ── ORDENAR: grupos primeiro (agrupados por contrato), depois neutros ─────
+  // ── 4. ORDENAR: grupos primeiro (agrupados por contrato), depois neutros ─────
   const sorted=[...ST.vacations].sort((a,b)=>{
     const aCtId=getManager(a.managerId)?.contractId||0;
     const bCtId=getManager(b.managerId)?.contractId||0;
@@ -3574,9 +3476,31 @@ function _renderVacTable(){
     const bGrp=ctPalMap[bCtId]!==undefined;
     if(aGrp&&!bGrp) return -1;
     if(!aGrp&&bGrp) return 1;
-    if(aGrp&&bGrp) return aCtId-bCtId;
+    if(aGrp&&bGrp) return aCtId-bCtId; // mesmo grupo fica junto
     return 0;
   });
+
+  // ── 5. RENDERIZAR LEGENDA ────────────────────────────────────────────────────
+  const leg=document.getElementById('vac-legend');
+  if(leg){
+    const grouped=Object.entries(ctPalMap);
+    if(grouped.length){
+      const items=grouped.map(([ctId,pal])=>{
+        const ct=ST.contracts.find(c=>c.id===parseInt(ctId));
+        const name=ct?ct.name.split(' ').slice(0,4).join(' '):`Contrato #${ctId}`;
+        const cnt=ctCount[ctId];
+        return`<span class="vt-legend-item" style="background:${pal.bg};border-color:${pal.border}55;color:${pal.text}">
+          <span class="vt-legend-dot" style="background:${pal.border}"></span>
+          ${name} <span style="opacity:.7;font-weight:500">(${cnt} simultâneos)</span>
+        </span>`;
+      }).join('');
+      leg.innerHTML=`<span class="vt-legend-lbl">⚠ Simultâneos:</span>${items}`;
+    } else {
+      leg.innerHTML='';
+    }
+  }
+
+  // ── 6. RENDERIZAR LINHAS ─────────────────────────────────────────────────────
   const rows=sorted.map(v=>{
     const mgr=getManager(v.managerId);
     const ct=mgr&&mgr.contractId?ST.contracts.find(c=>c.id===mgr.contractId):null;
@@ -3658,215 +3582,6 @@ function _renderVacTable(){
       <th>Substituto</th><th>Observação</th><th>Ações</th>
     </tr></thead>
     <tbody>${rows}</tbody>`;
-}
-
-// ═══════════════════════ TIMELINE (GANTT) ════════════════════════════════════
-function _renderVacTimeline(){
-  const wrap = document.getElementById('vac-timeline-wrap');
-  if(!wrap) return;
-  if(!ST.vacations.length){
-    wrap.innerHTML=`<div style="padding:60px;text-align:center;color:var(--t3);background:var(--s1);border:1px solid var(--b1);border-radius:var(--r)">Nenhuma férias programada.</div>`;
-    document.getElementById('vac-legend').innerHTML='';
-    return;
-  }
-
-  const {ctCount,ctPalMap}=_buildVacPalette();
-  _renderVacLegend(ctCount,ctPalMap);
-
-  // Detectar o ano das férias (usa o ano mais frequente ou o atual)
-  const years = ST.vacations.map(v=>v.inicioFérias?parseInt(v.inicioFérias.substring(0,4)):new Date().getFullYear());
-  const yr = years.sort((a,b)=>years.filter(y=>y===b).length - years.filter(y=>y===a).length)[0] || new Date().getFullYear();
-
-  const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const yearStart = new Date(yr,0,1).getTime();
-  const yearEnd   = new Date(yr,11,31,23,59,59).getTime();
-  const yearLen   = yearEnd - yearStart;
-
-  // Calcular posição % dentro do ano
-  function pct(dateStr){
-    const d = new Date(dateStr).getTime();
-    return Math.max(0, Math.min(100, (d - yearStart) / yearLen * 100));
-  }
-  function pctWidth(startStr, endStr){
-    const s=Math.max(0,(new Date(startStr).getTime()-yearStart)/yearLen*100);
-    const e=Math.min(100,(new Date(endStr).getTime()-yearStart)/yearLen*100);
-    return Math.max(0.5, e-s);
-  }
-
-  // Posição de hoje
-  const now = new Date().getTime();
-  const todayPct = ((now - yearStart) / yearLen * 100).toFixed(2);
-  const showToday = now >= yearStart && now <= yearEnd;
-
-  // Header de meses
-  const monthHeaders = MONTHS.map(m=>`<div class="vac-tl-month">${m}</div>`).join('');
-  const monthCells   = MONTHS.map(()=>`<div class="vac-tl-cell"></div>`).join('');
-
-  // Ordenar por data de início
-  const sorted = [...ST.vacations].sort((a,b)=>new Date(a.inicioFérias)-new Date(b.inicioFérias));
-
-  // Cores distintas por pessoa (usa a cor do manager se disponível)
-  const BAR_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#84cc16'];
-
-  const rows = sorted.map((v,i)=>{
-    const mgr = getManager(v.managerId);
-    if(!mgr) return '';
-    const name = mgr.name.split(' ').slice(0,2).join(' ');
-    const dept = mgr.dept||'';
-    const color = mgr.color || BAR_COLORS[i%BAR_COLORS.length];
-    const left  = pct(v.inicioFérias).toFixed(2);
-    const width = pctWidth(v.inicioFérias, v.retorno).toFixed(2);
-    const label = v.dias + ' dias';
-    const tip   = `${name}: ${fmtDate(v.inicioFérias)} → ${fmtDate(v.retorno)}`;
-    return `
-      <div class="vac-tl-row">
-        <div class="vac-tl-label">
-          <div style="width:30px;height:30px;border-radius:50%;background:${color};display:flex;align-items:center;
-               justify-content:center;font-size:9px;font-weight:900;font-family:var(--fh);flex-shrink:0">
-            ${initials(mgr.name)}
-          </div>
-          <div>
-            <div class="vac-tl-name">${name}</div>
-            <div class="vac-tl-dept">${dept}</div>
-          </div>
-        </div>
-        <div class="vac-tl-grid">
-          <div class="vac-tl-bg">${monthCells}</div>
-          ${showToday?`<div class="vac-tl-today" style="left:${todayPct}%"></div>`:''}
-          <div class="vac-tl-bar" title="${tip}"
-            style="left:${left}%;width:${width}%;background:${color};opacity:.9">
-            ${parseFloat(width)>5?label:''}
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-
-  wrap.innerHTML=`
-    <div class="vac-timeline">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <div style="font-family:var(--fh);font-size:16px;font-weight:700">📅 Programação ${yr}</div>
-        <div style="font-size:11px;color:var(--t3)">${ST.vacations.length} férias programadas</div>
-      </div>
-      <div class="vac-tl-header">${monthHeaders}</div>
-      <div class="vac-tl-sep"></div>
-      ${rows}
-    </div>`;
-}
-
-// ═══════════════════════ CARDS ════════════════════════════════════════════════
-function _renderVacCards(){
-  const wrap = document.getElementById('vac-cards-wrap');
-  if(!wrap) return;
-  if(!ST.vacations.length){
-    wrap.innerHTML=`<div style="padding:60px;text-align:center;color:var(--t3);background:var(--s1);border:1px solid var(--b1);border-radius:var(--r)">Nenhuma férias programada.</div>`;
-    document.getElementById('vac-legend').innerHTML='';
-    return;
-  }
-
-  const {ctCount,ctPalMap}=_buildVacPalette();
-  _renderVacLegend(ctCount,ctPalMap);
-
-  const now = new Date();
-  // Ano de referência para a barra de progresso
-  const yr = (() => {
-    const ys = ST.vacations.map(v=>v.inicioFérias?parseInt(v.inicioFérias.substring(0,4)):now.getFullYear());
-    return ys.sort((a,b)=>ys.filter(y=>y===b).length-ys.filter(y=>y===a).length)[0]||now.getFullYear();
-  })();
-  const yearStart = new Date(yr,0,1).getTime();
-  const yearLen   = new Date(yr,11,31,23,59,59).getTime() - yearStart;
-
-  function vacStatus(v){
-    const ini = new Date(v.inicioFérias);
-    const ret = new Date(v.retorno);
-    if(now > ret) return {label:'Concluídas', cls:'vcs-past',    cardCls:'vc-past'};
-    if(now >= ini)return {label:'Em Férias',  cls:'vcs-active',  cardCls:'vc-active'};
-    return               {label:'Agendadas',  cls:'vcs-upcoming',cardCls:'vc-upcoming'};
-  }
-
-  function barPct(dateStr){
-    const d = new Date(dateStr).getTime();
-    return Math.max(0,Math.min(100,(d-yearStart)/yearLen*100)).toFixed(1);
-  }
-
-  // Ordenar: em férias primeiro, depois agendadas por data, depois concluídas
-  const sorted = [...ST.vacations].sort((a,b)=>{
-    const order = {active:0, upcoming:1, past:2};
-    const sa = vacStatus(a).cls.includes('active')?'active':vacStatus(a).cls.includes('upcoming')?'upcoming':'past';
-    const sb = vacStatus(b).cls.includes('active')?'active':vacStatus(b).cls.includes('upcoming')?'upcoming':'past';
-    if(sa!==sb) return order[sa]-order[sb];
-    return new Date(a.inicioFérias)-new Date(b.inicioFérias);
-  });
-
-  const cards = sorted.map(v=>{
-    const mgr = getManager(v.managerId);
-    if(!mgr) return '';
-    const ct  = mgr.contractId?ST.contracts.find(c=>c.id===mgr.contractId):null;
-    const sub = v.substitutoId?ST.participants.find(p=>p.id===v.substitutoId):null;
-    const st  = vacStatus(v);
-    const barLeft  = barPct(v.inicioFérias);
-    const barRight = barPct(v.retorno);
-    const barWidth = (parseFloat(barRight)-parseFloat(barLeft)).toFixed(1);
-    const ctId = mgr.contractId||0;
-    const pal  = ctPalMap[ctId];
-
-    return `
-      <div class="vac-card ${st.cardCls}">
-        <div class="vac-card-head">
-          <div class="vac-card-person">
-            <div class="vac-card-avatar" style="background:${mgr.color}">
-              ${initials(mgr.name)}
-            </div>
-            <div class="vac-card-info">
-              <div class="vac-card-name">${mgr.name}</div>
-              <div class="vac-card-dept">${mgr.dept||'—'}</div>
-            </div>
-          </div>
-          <span class="vac-card-status ${st.cls}">${st.label}</span>
-        </div>
-
-        ${ct?`<div class="vac-card-ct">📋 ${ct.name.split(' ').slice(0,4).join(' ')}${pal?` <span style="color:${pal.border};font-size:10px">⚡ ${ctCount[ctId]} simultâneos</span>`:''}</div>`:''}
-
-        <div class="vac-card-dates">
-          <div class="vac-card-date-item">
-            <div class="vac-card-date-lbl">Início</div>
-            <div class="vac-card-date-val">${fmtDate(v.inicioFérias)}</div>
-          </div>
-          <div class="vac-card-date-item">
-            <div class="vac-card-date-lbl">Retorno</div>
-            <div class="vac-card-date-val" style="color:var(--ac2)">${fmtDate(v.retorno)}</div>
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-          <span class="vac-card-days-badge">🏖️ ${v.dias} dias</span>
-          ${v.periodoAquisitivo?`<span style="font-size:11px;color:var(--t3)">Período: <strong>${v.periodoAquisitivo}</strong></span>`:''}
-        </div>
-
-        <div class="vac-card-bar-wrap">
-          <div class="vac-card-bar-lbl">
-            <span>Posição no ano ${yr}</span>
-            <span>${barLeft}% → ${barRight}%</span>
-          </div>
-          <div class="vac-card-bar-bg">
-            <div style="margin-left:${barLeft}%;width:${barWidth}%;height:100%;border-radius:100px;background:${mgr.color};min-width:4px;box-shadow:0 0 8px ${mgr.color}55"></div>
-          </div>
-        </div>
-
-        ${sub?`<div class="vac-card-sub">
-          <div style="width:24px;height:24px;border-radius:50%;background:${sub.color};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;font-family:var(--fh);flex-shrink:0">${initials(sub.name)}</div>
-          <span>Substituto: <strong>${sub.name.split(' ').slice(0,2).join(' ')}</strong></span>
-        </div>`:''}
-
-        ${v.obs?`<div style="font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:12px;padding:10px;background:var(--s2);border-radius:8px">💬 ${v.obs}</div>`:''}
-
-        <div class="vac-card-actions">
-          <button class="bic" onclick="openVacModal(${v.id})" title="Editar">✎</button>
-          <button class="bic del" onclick="confirmDelete('vacation',${v.id})" title="Excluir">✕</button>
-        </div>
-      </div>`;
-  }).join('');
-
-  wrap.innerHTML=`<div class="vac-cards-grid">${cards}</div>`;
 }
 
 function openVacModal(vid){
