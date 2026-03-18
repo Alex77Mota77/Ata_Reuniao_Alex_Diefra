@@ -257,21 +257,24 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:14px;m
 .vvt-btn:hover{color:var(--tx);background:var(--s2)}
 .vvt-btn.active{background:var(--ac1);color:#fff;box-shadow:0 2px 12px rgba(29,78,216,.35)}
 
-/* VACATION TIMELINE — estilo calendário (herda ag-*) */
-.vac-tl-wrap{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
-.vac-tl-toolbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--b1)}
-.vac-tl-nav{display:flex;align-items:center;gap:6px}
-.vac-tl-scroll{overflow-x:auto;overflow-y:auto;max-height:520px}
-.vac-tl-table{width:100%;border-collapse:collapse}
-.vac-tl-name-cell{background:var(--s1);padding:10px 14px;font-size:12px;font-weight:700;border-bottom:1px solid var(--b1);border-right:1px solid var(--b1);white-space:nowrap;min-width:160px;position:sticky;left:0;z-index:3}
-.vac-tl-name-cell .sub{font-size:10px;font-weight:400;color:var(--t3);margin-top:2px}
-.vac-tl-day-cell{border-bottom:1px solid var(--b1);border-right:1px solid rgba(255,255,255,.03);padding:2px;height:40px;min-width:28px;position:relative}
-.vac-tl-day-cell.is-today{background:rgba(16,185,129,.07)}
-.vac-tl-day-cell.is-weekend{background:rgba(0,0,0,.18);min-width:10px;max-width:14px}
-.vac-tl-bar-cell{padding:3px 2px;height:40px;border-bottom:1px solid var(--b1)}
-.vac-tl-bar-inner{height:100%;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-size:11px;font-weight:800;white-space:nowrap;overflow:visible;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;transition:filter .2s}
-.vac-tl-bar-inner:hover{filter:brightness(1.2)}
-.vac-tl-bar-label{white-space:nowrap;position:relative;z-index:1;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+/* VACATION TIMELINE (GANTT) */
+.vac-timeline{overflow-x:auto;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:20px}
+.vac-tl-header{display:flex;margin-bottom:8px;margin-left:200px}
+.vac-tl-month{flex:1;text-align:center;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--t3);padding:4px 0;border-right:1px solid var(--b1)}
+.vac-tl-month:last-child{border-right:none}
+.vac-tl-row{display:flex;align-items:center;margin-bottom:10px;position:relative}
+.vac-tl-label{width:200px;flex-shrink:0;padding-right:16px;display:flex;align-items:center;gap:8px}
+.vac-tl-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.vac-tl-dept{font-size:10px;color:var(--t3)}
+.vac-tl-grid{flex:1;position:relative;height:36px;background:var(--s2);border-radius:8px;overflow:visible}
+.vac-tl-bg{position:absolute;inset:0;display:flex}
+.vac-tl-cell{flex:1;border-right:1px solid rgba(255,255,255,.04)}
+.vac-tl-cell:last-child{border-right:none}
+.vac-tl-bar{position:absolute;top:4px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;cursor:pointer;transition:filter .2s;overflow:hidden;white-space:nowrap;padding:0 8px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.vac-tl-bar:hover{filter:brightness(1.2);z-index:10}
+.vac-tl-today{position:absolute;top:-6px;bottom:-6px;width:2px;background:rgba(239,68,68,.7);z-index:5;pointer-events:none}
+.vac-tl-today::before{content:'Hoje';position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;color:#ef4444;white-space:nowrap;background:var(--s1);padding:1px 4px;border-radius:4px}
+.vac-tl-sep{height:1px;background:var(--b1);margin:6px 0 16px 200px}
 
 /* VACATION CARDS */
 .vac-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
@@ -3657,7 +3660,7 @@ function _renderVacTable(){
     <tbody>${rows}</tbody>`;
 }
 
-// ═══════════════════════ TIMELINE (calendário, estilo Agenda) ════════════════
+// ═══════════════════════ TIMELINE (GANTT) ════════════════════════════════════
 function _renderVacTimeline(){
   const wrap = document.getElementById('vac-timeline-wrap');
   if(!wrap) return;
@@ -3670,174 +3673,85 @@ function _renderVacTimeline(){
   const {ctCount,ctPalMap}=_buildVacPalette();
   _renderVacLegend(ctCount,ctPalMap);
 
-  const today = new Date(); today.setHours(0,0,0,0);
-  const base  = new Date(today.getFullYear(), today.getMonth() + vacTlOffset, 1);
+  // Detectar o ano das férias (usa o ano mais frequente ou o atual)
+  const years = ST.vacations.map(v=>v.inicioFérias?parseInt(v.inicioFérias.substring(0,4)):new Date().getFullYear());
+  const yr = years.sort((a,b)=>years.filter(y=>y===b).length - years.filter(y=>y===a).length)[0] || new Date().getFullYear();
 
-  const mFull  = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mShort = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const months3 = [0,1,2].map(i=>new Date(base.getFullYear(), base.getMonth()+i, 1));
-  const periodLabel = `${mFull[months3[0].getMonth()]} – ${mFull[months3[2].getMonth()]} ${months3[2].getFullYear()}`;
+  const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const yearStart = new Date(yr,0,1).getTime();
+  const yearEnd   = new Date(yr,11,31,23,59,59).getTime();
+  const yearLen   = yearEnd - yearStart;
 
-  const cols = buildDayList(base.getFullYear(), base.getMonth());
-
-  // ── ROW 1: cabeçalho de meses ─────────────────────────────────────────────
-  const monthColCount={}, monthOrder=[];
-  cols.forEach(d=>{
-    const key=d.year+'-'+d.month;
-    if(!monthColCount[key]){monthColCount[key]=0;monthOrder.push({key,label:mShort[d.month]+' '+d.year});}
-    monthColCount[key]++;
-  });
-  let monthRow=`<tr><td class="vac-tl-name-cell" rowspan="3" style="vertical-align:middle;z-index:4">Colaborador</td>`;
-  monthOrder.forEach(({key,label})=>{
-    monthRow+=`<td colspan="${monthColCount[key]}" class="ag-month-hdr" style="text-align:center;position:sticky;top:0;z-index:2">${label}</td>`;
-  });
-  monthRow+='</tr>';
-
-  // ── ROW 2: semanas ─────────────────────────────────────────────────────────
-  let weekRow='<tr>';
-  let wi=0;
-  while(wi<cols.length){
-    const d=cols[wi];
-    if(!d.isWeekend){
-      const weekMon=d.monIso;
-      let span=0,first=d,last=d;
-      while(wi+span<cols.length&&!cols[wi+span].isWeekend&&cols[wi+span].monIso===weekMon){last=cols[wi+span];span++;}
-      const inCur=today>=first.date&&today<=last.date;
-      const sameM=first.month===last.month;
-      const endLbl=sameM?last.date.getDate():last.date.getDate()+' '+mShort[last.month];
-      weekRow+=`<th colspan="${span}" class="ag-th${inCur?' today':''}" style="text-align:center;min-width:${span*28}px;padding:5px 2px;position:sticky;top:26px;z-index:2">
-        <span style="font-size:10px;font-weight:800">${first.date.getDate()} à ${endLbl}</span></th>`;
-      wi+=span;
-    } else {
-      let span=0;
-      while(wi+span<cols.length&&cols[wi+span].isWeekend)span++;
-      weekRow+=`<th colspan="${span}" class="ag-th" style="min-width:${span*10}px;padding:0;background:rgba(0,0,0,.25);border-left:2px solid var(--b1);border-right:2px solid var(--b1);position:sticky;top:26px;z-index:2">
-        <span style="font-size:8px;color:var(--t3);writing-mode:vertical-lr;letter-spacing:1px">FDS</span></th>`;
-      wi+=span;
-    }
+  // Calcular posição % dentro do ano
+  function pct(dateStr){
+    const d = new Date(dateStr).getTime();
+    return Math.max(0, Math.min(100, (d - yearStart) / yearLen * 100));
   }
-  weekRow+='</tr>';
+  function pctWidth(startStr, endStr){
+    const s=Math.max(0,(new Date(startStr).getTime()-yearStart)/yearLen*100);
+    const e=Math.min(100,(new Date(endStr).getTime()-yearStart)/yearLen*100);
+    return Math.max(0.5, e-s);
+  }
 
-  // ── ROW 3: números dos dias ────────────────────────────────────────────────
-  let dayRow='<tr>';
-  cols.forEach(d=>{
-    if(d.isWeekend){
-      const lbl=d.date.getDay()===6?'S':'D';
-      dayRow+=`<td class="ag-th" style="padding:2px 0;text-align:center;font-size:8px;color:var(--t3);background:rgba(0,0,0,.2);min-width:10px;max-width:14px;border-left:${d.date.getDay()===6?'2px solid var(--b1)':'none'};border-right:${d.date.getDay()===0?'2px solid var(--b1)':'none'};position:sticky;top:52px;z-index:2">${lbl}<br><span style="font-size:7px;opacity:.6">${d.date.getDate()}</span></td>`;
-    } else {
-      const wN=['D','S','T','Q','Q','S','S'];
-      dayRow+=`<td class="ag-th${d.isToday?' today':''}" style="text-align:center;padding:3px 2px;min-width:28px;font-size:10px;position:sticky;top:52px;z-index:2">
-        <div style="font-weight:800">${d.date.getDate()}</div>
-        <div style="font-size:8px;opacity:.6;font-weight:400">${wN[d.date.getDay()]}</div></td>`;
-    }
-  });
-  dayRow+='</tr>';
+  // Posição de hoje
+  const now = new Date().getTime();
+  const todayPct = ((now - yearStart) / yearLen * 100).toFixed(2);
+  const showToday = now >= yearStart && now <= yearEnd;
 
-  // ── Linhas dos colaboradores ───────────────────────────────────────────────
-  const BAR_COLORS=['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#84cc16'];
-  const sorted=[...ST.vacations].sort((a,b)=>new Date(a.inicioFérias)-new Date(b.inicioFérias));
+  // Header de meses
+  const monthHeaders = MONTHS.map(m=>`<div class="vac-tl-month">${m}</div>`).join('');
+  const monthCells   = MONTHS.map(()=>`<div class="vac-tl-cell"></div>`).join('');
 
-  let bodyRows='';
-  sorted.forEach((v,idx)=>{
-    const mgr=getManager(v.managerId);
-    if(!mgr) return;
-    const color = mgr.color||BAR_COLORS[idx%BAR_COLORS.length];
-    const name  = mgr.name;
-    const dept  = mgr.dept||'';
-    const ini   = isoToDate(v.inicioFérias);
-    const ret   = isoToDate(v.retorno);
-    const tip   = `${name} — ${fmtDate(v.inicioFérias)} → ${fmtDate(v.retorno)} (${v.dias} dias)`;
+  // Ordenar por data de início
+  const sorted = [...ST.vacations].sort((a,b)=>new Date(a.inicioFérias)-new Date(b.inicioFérias));
 
-    // Mapear dias de férias no período visível
-    const dayMap={};
-    let cur=new Date(ini);
-    while(cur<=ret){
-      dayMap[dateToIso(cur)]=true;
-      cur.setDate(cur.getDate()+1);
-    }
+  // Cores distintas por pessoa (usa a cor do manager se disponível)
+  const BAR_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#84cc16'];
 
-    let row=`<tr>
-      <td class="vac-tl-name-cell">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:28px;height:28px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;flex-shrink:0;font-family:var(--fh)">${initials(mgr.name)}</div>
+  const rows = sorted.map((v,i)=>{
+    const mgr = getManager(v.managerId);
+    if(!mgr) return '';
+    const name = mgr.name.split(' ').slice(0,2).join(' ');
+    const dept = mgr.dept||'';
+    const color = mgr.color || BAR_COLORS[i%BAR_COLORS.length];
+    const left  = pct(v.inicioFérias).toFixed(2);
+    const width = pctWidth(v.inicioFérias, v.retorno).toFixed(2);
+    const tip   = `${name}: ${fmtDate(v.inicioFérias)} → ${fmtDate(v.retorno)} (${v.dias} dias)`;
+    const barLabel = parseFloat(width)>4 ? name : '';
+    return `
+      <div class="vac-tl-row">
+        <div class="vac-tl-label">
+          <div style="width:30px;height:30px;border-radius:50%;background:${color};display:flex;align-items:center;
+               justify-content:center;font-size:9px;font-weight:900;font-family:var(--fh);flex-shrink:0">
+            ${initials(mgr.name)}
+          </div>
           <div>
-            <div style="font-size:12px;font-weight:700">${name}</div>
-            <div class="sub">${dept}</div>
+            <div class="vac-tl-name">${name}</div>
+            <div class="vac-tl-dept">${dept}</div>
           </div>
         </div>
-      </td>`;
-
-    let ci=0;
-    while(ci<cols.length){
-      const d=cols[ci];
-
-      if(d.isWeekend){
-        const dow=d.date.getDay();
-        row+=`<td style="background:rgba(0,0,0,.18);min-width:10px;max-width:14px;padding:0;border-left:${dow===6?'2px solid var(--b1)':'none'};border-right:${dow===0?'2px solid var(--b1)':'none'};border-bottom:1px solid var(--b1)"></td>`;
-        ci++;continue;
-      }
-
-      if(dayMap[d.iso]){
-        // Contar span de dias consecutivos de férias (incluindo fins de semana no meio)
-        let span=0,hasToday=false;
-        while(ci+span<cols.length){
-          const dd=cols[ci+span];
-          if(dd.isWeekend){
-            // incluir FDS apenas se o próximo dia útil ainda é férias
-            let peek=ci+span+1;
-            while(peek<cols.length&&cols[peek].isWeekend)peek++;
-            if(peek<cols.length&&dayMap[cols[peek].iso]){span++;continue;}
-            else break;
-          }
-          if(!dayMap[dd.iso])break;
-          if(dd.isToday)hasToday=true;
-          span++;
-        }
-        if(span===0)span=1;
-
-        // Detectar bordas arredondadas
-        const isStart = !dayMap[dateToIso(new Date(d.date.getTime()-86400000))];
-        const endDate = cols[ci+span-1]?.date;
-        const afterEnd= endDate?new Date(endDate.getTime()+86400000):null;
-        const isEnd   = afterEnd?!dayMap[dateToIso(afterEnd)]:true;
-        const radius  = isStart&&isEnd?'8px':isStart?'8px 0 0 8px':isEnd?'0 8px 8px 0':'0';
-
-        row+=`<td colspan="${span}" class="vac-tl-bar-cell${hasToday?' is-today':''}" title="${tip}">
-          <div class="vac-tl-bar-inner" style="background:${color};border-radius:${radius};color:#fff"
-               onclick="openVacModal(${v.id})">
-            <span class="vac-tl-bar-label">${name}</span>
+        <div class="vac-tl-grid">
+          <div class="vac-tl-bg">${monthCells}</div>
+          ${showToday?`<div class="vac-tl-today" style="left:${todayPct}%"></div>`:''}
+          <div class="vac-tl-bar" title="${tip}"
+            style="left:${left}%;width:${width}%;background:${color};opacity:.9">
+            ${barLabel}
           </div>
-        </td>`;
-        ci+=span;
-      } else {
-        row+=`<td class="vac-tl-day-cell${d.isToday?' is-today':''}${d.isWeekend?' is-weekend':''}"></td>`;
-        ci++;
-      }
-    }
-    row+='</tr>';
-    bodyRows+=row;
-  });
-
-  if(!bodyRows) bodyRows=`<tr><td colspan="999" style="padding:40px;text-align:center;color:var(--t3)">Nenhuma férias neste período. Navegue com os botões ◀ ▶</td></tr>`;
+        </div>
+      </div>`;
+  }).join('');
 
   wrap.innerHTML=`
-    <div class="vac-tl-wrap">
-      <div class="vac-tl-toolbar">
-        <div style="font-family:var(--fh);font-size:15px;font-weight:700">📅 ${periodLabel}</div>
-        <div class="vac-tl-nav">
-          <button class="bic" onclick="vacTlShift(-1)" style="padding:6px 12px;font-size:14px" title="Mês anterior">◀</button>
-          <button class="bic" onclick="vacTlShift(0)"  style="padding:6px 12px;font-size:11px;font-weight:700" title="Hoje">Hoje</button>
-          <button class="bic" onclick="vacTlShift(1)"  style="padding:6px 12px;font-size:14px" title="Próximo mês">▶</button>
-        </div>
+    <div class="vac-timeline">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-family:var(--fh);font-size:16px;font-weight:700">📅 Programação ${yr}</div>
+        <div style="font-size:11px;color:var(--t3)">${ST.vacations.length} férias programadas</div>
       </div>
-      <div class="vac-tl-scroll">
-        <table class="vac-tl-table">
-          <thead>${monthRow}${weekRow}${dayRow}</thead>
-          <tbody>${bodyRows}</tbody>
-        </table>
-      </div>
+      <div class="vac-tl-header" style="position:sticky;top:0;background:var(--s1);z-index:2;padding-top:4px">${monthHeaders}</div>
+      <div class="vac-tl-sep"></div>
+      <div style="max-height:420px;overflow-y:auto;padding-right:4px">${rows}</div>
     </div>`;
-
+}
 
 // ═══════════════════════ CARDS ════════════════════════════════════════════════
 function _renderVacCards(){
@@ -4670,13 +4584,6 @@ function doLogout(){
 //  AGENDA DE VIAGENS
 // ════════════════════════════════════════════════════════════
 let agendaOffset = 0;
-let vacTlOffset  = 0;
-
-function vacTlShift(dir){
-  if(dir===0) vacTlOffset=0;
-  else vacTlOffset+=dir;
-  _renderVacTimeline();
-}
 
 const TRIP_COLORS = [
   {label:'Azul',  bg:'rgba(37,99,235,.8)',  text:'#bfdbfe'},
