@@ -3716,8 +3716,8 @@ function _renderVacTimeline(){
     const color = mgr.color || BAR_COLORS[i%BAR_COLORS.length];
     const left  = pct(v.inicioFérias).toFixed(2);
     const width = pctWidth(v.inicioFérias, v.retorno).toFixed(2);
-    const tip   = `${name}: ${fmtDate(v.inicioFérias)} → ${fmtDate(v.retorno)} (${v.dias} dias)`;
-    const barLabel = parseFloat(width)>4 ? name : '';
+    const label = v.dias + ' dias';
+    const tip   = `${name}: ${fmtDate(v.inicioFérias)} → ${fmtDate(v.retorno)}`;
     return `
       <div class="vac-tl-row">
         <div class="vac-tl-label">
@@ -3735,7 +3735,7 @@ function _renderVacTimeline(){
           ${showToday?`<div class="vac-tl-today" style="left:${todayPct}%"></div>`:''}
           <div class="vac-tl-bar" title="${tip}"
             style="left:${left}%;width:${width}%;background:${color};opacity:.9">
-            ${barLabel}
+            ${parseFloat(width)>5?label:''}
           </div>
         </div>
       </div>`;
@@ -3747,9 +3747,9 @@ function _renderVacTimeline(){
         <div style="font-family:var(--fh);font-size:16px;font-weight:700">📅 Programação ${yr}</div>
         <div style="font-size:11px;color:var(--t3)">${ST.vacations.length} férias programadas</div>
       </div>
-      <div class="vac-tl-header" style="position:sticky;top:0;background:var(--s1);z-index:2;padding-top:4px">${monthHeaders}</div>
+      <div class="vac-tl-header">${monthHeaders}</div>
       <div class="vac-tl-sep"></div>
-      <div style="max-height:420px;overflow-y:auto;padding-right:4px">${rows}</div>
+      ${rows}
     </div>`;
 }
 
