@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>DIEFRA — Limpar Google Sheets</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,sans-serif;background:#0b2215;color:#e2e8f0;
+    display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .card{background:rgba(14,40,24,.9);border:1px solid rgba(16,185,129,.25);
+    border-radius:16px;padding:36px 40px;max-width:480px;width:100%;text-align:center}
+  h1{font-size:22px;font-weight:700;color:#10b981;margin-bottom:8px}
+  p{font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:24px}
+  .btn{width:100%;padding:14px;border-radius:10px;border:none;font-size:15px;
+    font-weight:700;cursor:pointer;transition:all .2s}
+  .btn-go{background:#10b981;color:#fff;margin-bottom:10px}
+  .btn-go:hover{background:#059669}
+  .btn-go:disabled{background:#1d5c35;color:#5d9470;cursor:not-allowed}
+  .status{padding:14px;border-radius:10px;font-size:13px;font-weight:600;
+    margin-top:16px;display:none}
+  .ok{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399}
+  .err{background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.3);color:#f87171}
+  .warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#fbbf24}
+  .log{text-align:left;font-family:monospace;font-size:12px;color:#64748b;
+    margin-top:16px;max-height:120px;overflow-y:auto;padding:10px;
+    background:rgba(0,0,0,.2);border-radius:8px;display:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🗑 Limpar Google Sheets</h1>
+  <p>Este utilitário envia o banco de dados <strong style="color:#e2e8f0">completamente zerado</strong> para o Google Sheets, mantendo apenas os 10 usuários cadastrados.<br><br>Use antes de iniciar o cadastro real no DIEFRA.</p>
+
+  <button class="btn btn-go" id="btn" onclick="limpar()">Limpar Sheets agora</button>
+
+  <div class="status" id="status"></div>
+  <div class="log" id="log"></div>
+</div>
+
+<script>
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwAp1aKuWOIMB1Rq_OhwStOQRxo3FQHSzwQrai7Bsdn-KstvqhsTslRFQANdMHOQmJGNA/exec';
+const TOKEN     = 'diefra_sync_2026';
+
+const PAYLOAD = {
+  contracts:    [],
+  tasks:        [],
+  vacations:    [],
+  managers:     [],
+  participants: [
+    {id:101,name:'Leonardo Alves Martins',   cargo:'Coordenador UEN-300',      dept:'UEN-300',     color:'linear-gradient(135deg,#2563eb,#38bdf8)',username:'leonardo.martins',  password:'diefra@2026',email:'',role:'admin'},
+    {id:102,name:'Alex Mota',                cargo:'Supervisor de Campo',      dept:'UEN-300',     color:'linear-gradient(135deg,#7c3aed,#a78bfa)',username:'alex.mota',          password:'diefra@2026',email:'',role:'admin'},
+    {id:103,name:'Otarcione Felipe Cesário', cargo:'Técnico de Laboratório',   dept:'Laboratório', color:'linear-gradient(135deg,#0891b2,#22d3ee)',username:'otarcione.cesario',  password:'diefra@2026',email:'',role:'user'},
+    {id:104,name:'Vera Lucia F. Wenceslau',  cargo:'Analista de Laboratório',  dept:'Lab. Técnica',color:'linear-gradient(135deg,#be185d,#f472b6)',username:'vera.wenceslau',     password:'diefra@2026',email:'',role:'user'},
+    {id:105,name:'Jonathas G. Amaral Melo',  cargo:'Engenheiro Civil',         dept:'UEN-300',     color:'linear-gradient(135deg,#065f46,#34d399)',username:'jonathas.melo',      password:'diefra@2026',email:'',role:'user'},
+    {id:106,name:'Adriny Cássia P. da Silva',cargo:'Supervisora de Contrato',  dept:'UEN-300',     color:'linear-gradient(135deg,#92400e,#fbbf24)',username:'adriny.silva',        password:'diefra@2026',email:'',role:'user'},
+    {id:107,name:'Lucas Tayrone Quintiliano',cargo:'Técnico de Campo',         dept:'UEN-300',     color:'linear-gradient(135deg,#1e3a5f,#60a5fa)',username:'lucas.quintiliano',  password:'diefra@2026',email:'',role:'user'},
+    {id:108,name:'Fabio Vinicius Fideliz',   cargo:'Assistente Técnico',       dept:'UEN-300',     color:'linear-gradient(135deg,#3f0764,#c084fc)',username:'fabio.fideliz',      password:'diefra@2026',email:'',role:'user'},
+    {id:109,name:'Patricia Duarte Lara',     cargo:'Auxiliar Administrativa',  dept:'UEN-300',     color:'linear-gradient(135deg,#134e4a,#2dd4bf)',username:'patricia.lara',      password:'diefra@2026',email:'',role:'user'},
+    {id:110,name:'Rogerio Costa Lima',       cargo:'Diretor Técnico',          dept:'Dir. Técnica',color:'linear-gradient(135deg,#7f1d1d,#f87171)',username:'rogerio.lima',       password:'diefra@2026',email:'',role:'admin'},
+  ],
+  trips:        [],
+  audits:       [],
+  auditsGestao: [],
+  entregaveis:  [],
+  medicoes:     [],
+  logos:        [],
+  nextId:       1,
+  finRows:      []
+};
+
+function log(msg){ const el=document.getElementById('log'); el.style.display='block'; el.innerHTML+=msg+'<br>'; el.scrollTop=el.scrollHeight; }
+function status(msg, type){ const el=document.getElementById('status'); el.style.display='block'; el.className='status '+type; el.innerHTML=msg; }
+
+async function limpar(){
+  const btn = document.getElementById('btn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+  status('⏳ Conectando ao Google Sheets…','warn');
+  log('→ Iniciando push para o Sheets');
+  log('→ URL: '+URL_SCRIPT.slice(0,60)+'…');
+
+  try {
+    const url = `${URL_SCRIPT}?token=${encodeURIComponent(TOKEN)}&action=push`;
+    log('→ Enviando payload (banco zerado)…');
+
+    const res = await fetch(url, {
+      method:  'POST',
+      headers: {'Content-Type': 'text/plain'},
+      body:    JSON.stringify(PAYLOAD),
+    });
+
+    log('→ Resposta HTTP: ' + res.status);
+
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+
+    const data = await res.json();
+    log('→ Resposta: ' + JSON.stringify(data));
+
+    if(data.error) throw new Error(data.error);
+
+    status('✅ Google Sheets limpo com sucesso!<br><small style="opacity:.7">Contratos, tarefas, medições e férias foram apagados.<br>10 usuários mantidos. Pode fechar esta página.</small>','ok');
+    btn.textContent = '✓ Concluído';
+  } catch(err) {
+    log('→ ERRO: ' + err.message);
+    status('❌ Falha ao conectar: ' + err.message + '<br><small style="opacity:.7">Verifique se a URL do Apps Script está correta e se o script está implantado como "Qualquer pessoa".</small>','err');
+    btn.disabled = false;
+    btn.textContent = 'Tentar novamente';
+  }
+}
+</script>
+</body>
+</html>

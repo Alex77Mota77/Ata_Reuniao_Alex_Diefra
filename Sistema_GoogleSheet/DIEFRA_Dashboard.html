@@ -150,9 +150,50 @@ body{
 .cg{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;transition:all .3s}
 .cc{background:rgba(14,40,24,0.72);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);border:1px solid rgba(255,255,255,0.09);border-radius:var(--r);overflow:hidden;transition:all .25s;box-shadow:0 8px 28px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.05)}
 .cc:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,0.28);border-color:rgba(16,185,129,0.28)}
-.cch{display:flex;justify-content:space-between;align-items:flex-start;padding:20px 22px 16px;border-bottom:1px solid var(--b1);gap:12px}
+/* ── CONTRACT CARD — novo layout ── */
+.cch{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px 14px;border-bottom:1px solid var(--b1);gap:12px}
 .cct{font-family:var(--fh);font-size:16px;font-weight:700;line-height:1.3}
 .ccc{font-size:11px;color:var(--t2);margin-top:3px}
+/* Meta row: CC, datas, índice, gestor */
+.cc-meta{display:flex;flex-wrap:wrap;gap:6px 16px;padding:10px 22px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--b1)}
+.cc-meta-item{display:flex;align-items:center;gap:4px}
+.cc-meta-lbl{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase}
+.cc-meta-val{font-size:11px;font-weight:700;color:var(--tx)}
+.cc-meta-val a{color:var(--gnl);text-decoration:none}
+.cc-meta-sep{color:var(--b1);font-size:12px;margin:0 4px}
+/* Seções internas do card */
+.cc-section{padding:14px 22px;border-bottom:1px solid var(--b1)}
+.cc-section:last-child{border-bottom:none}
+.cc-section-lbl{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+/* Grid 3 cols — valores globais */
+.cc-g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cc-gitem{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:11px 13px;position:relative;overflow:hidden}
+.cc-gitem::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gic,rgba(255,255,255,.1));border-radius:2px 2px 0 0}
+.cc-gitem.auto-field{background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.18)}
+.cc-gitem.auto-field::before{background:var(--gnl)}
+.cc-gitem.fat-field{background:rgba(29,78,216,.06);border-color:rgba(29,78,216,.2)}
+.cc-gitem.fat-field::before{background:var(--ac)}
+.cc-gitem.saldo-field{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);padding:14px 16px}
+.cc-gitem.saldo-field::before{background:linear-gradient(90deg,var(--gnl),#34d399)}
+.cc-gitem .gi-lbl{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.cc-gitem .gi-val{font-family:var(--fn);font-size:15px;font-weight:800;letter-spacing:-0.3px;white-space:nowrap}
+.cc-gitem .gi-val.pos{color:var(--gnl)}.cc-gitem .gi-val.neg{color:var(--rdl)}.cc-gitem .gi-val.warn{color:var(--gl)}
+.cc-gitem .gi-sub{font-size:9px;color:var(--t3);margin-top:3px}
+/* Faturado acumulado — linha única + barra */
+.cc-fat-wrap{background:rgba(29,78,216,.05);border:1px solid rgba(29,78,216,.18);border-radius:10px;padding:12px 14px}
+.cc-fat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cc-fat-lbl{font-size:9px;font-weight:800;letter-spacing:1.8px;color:#93c5fd;text-transform:uppercase}
+.cc-fat-val{font-family:var(--fn);font-size:16px;font-weight:800;color:#93c5fd;letter-spacing:-0.3px}
+.cc-fat-pct{font-size:10px;font-weight:800;color:#93c5fd;background:rgba(29,78,216,.15);padding:2px 8px;border-radius:100px}
+.cc-fat-bar{height:5px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden}
+.cc-fat-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#2563eb,#38bdf8);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+/* Grid 5 cols — dados do mês */
+.cc-g5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+/* Período ref badge */
+.cc-period-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:100px;padding:2px 10px;font-size:9px;font-weight:800;color:var(--ac2);letter-spacing:1px;text-transform:uppercase}
+/* Justificativa */
+.cc-jus{background:rgba(255,255,255,.02);border:1px solid var(--b1);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--t2);font-style:italic;min-height:36px}
+.cc-jus.empty{color:var(--t3);font-style:normal}
 /* CONTRACT LOGO */
 .c-logo-wrap{width:44px;height:44px;border-radius:10px;flex-shrink:0;overflow:hidden;border:1px solid var(--b1);background:var(--s2);display:flex;align-items:center;justify-content:center;margin-right:12px}
 .c-logo-wrap img{width:100%;height:100%;object-fit:contain;padding:3px;transition:all .2s}
@@ -189,9 +230,12 @@ body{
 .cg.view-compact{grid-template-columns:repeat(4,1fr);gap:12px}
 .cg.view-compact .ccb{padding:12px 16px}
 .cg.view-compact .fm,.cg.view-compact .jf,.cg.view-compact .contract-tasks-wrap{display:none}
+.cg.view-compact .cc-section:not(.cc-section-saldo){display:none}
+.cg.view-compact .cc-meta{display:none}
 .cg.view-compact .cm{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:0}
 .cg.view-compact .cch{padding:14px 16px 12px}
 .cg.view-compact .cct{font-size:13px}
+.cg.view-compact .cc-section-saldo{display:block!important}
 /* Kanban */
 #kanban-board{display:none;gap:20px}
 #kanban-board.active{display:grid;grid-template-columns:repeat(3,1fr)}
@@ -406,6 +450,33 @@ body{
 /* FOOTER */
 .ftr{border-top:1px solid var(--b1);padding:clamp(16px,2vw,28px) clamp(24px,4vw,60px);display:flex;justify-content:space-between;align-items:center;color:var(--t3);font-size:12px}
 .ftrbr{font-family:var(--fh);font-size:16px;font-weight:900;color:var(--t2);letter-spacing:1px}
+
+/* ── PALETTE SWITCHER ── */
+#palette-btn{position:fixed;bottom:24px;right:24px;z-index:500;width:44px;height:44px;
+  border-radius:50%;border:2px solid rgba(255,255,255,.15);background:var(--s2);
+  backdrop-filter:blur(12px);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;box-shadow:0 4px 20px rgba(0,0,0,.35);transition:all .2s}
+#palette-btn:hover{transform:scale(1.08);border-color:rgba(255,255,255,.3);box-shadow:0 6px 28px rgba(0,0,0,.45)}
+#palette-panel{position:fixed;bottom:78px;right:24px;z-index:500;
+  background:rgba(10,25,18,.95);backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;
+  width:290px;box-shadow:0 12px 48px rgba(0,0,0,.5);
+  transform:translateY(8px) scale(.97);opacity:0;pointer-events:none;
+  transition:all .22s cubic-bezier(.4,0,.2,1)}
+#palette-panel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+.pp-title{font-size:10px;font-weight:800;letter-spacing:2px;color:var(--t3);
+  text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.pp-title::after{content:'';flex:1;height:1px;background:var(--b1)}
+.pp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pp-swatch{border-radius:10px;height:54px;cursor:pointer;border:2px solid transparent;
+  transition:all .18s;position:relative;overflow:hidden}
+.pp-swatch:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.4);
+  box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.pp-swatch.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+.pp-swatch-lbl{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;
+  font-size:8px;font-weight:800;text-align:center;letter-spacing:.4px;
+  background:rgba(0,0,0,.45);color:rgba(255,255,255,.9);text-transform:uppercase}
+.pp-swatch.active .pp-swatch-lbl::before{content:'✓ ';}
 
 /* URGENT CARD */
 .urg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -751,9 +822,23 @@ body{
       </svg>
     </div>
     <div>
-      <div class="hdr-tag">ATA DE REUNIÃO · DIEFRA-ATA-<span id="hdr-tag-year">2026</span></div>
-      <h1>Reunião <em>UEN-300</em><br>+ Diretoria Técnica</h1>
-      <div class="hdr-sub">Principais pontos e atualização de contratos · Sede — <input class="sub-edit" id="hdr-sala" value="Sala 02" title="Clique para editar a sala"> · <span id="hdr-sub-date">5 de Março de 2026</span></div>
+      <div class="hdr-tag" id="hdr-tag-label">DASHBOARD DE GESTÃO · DIEFRA-<span id="hdr-tag-year">2026</span></div>
+      <h1 id="hdr-h1" style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+        <span id="hdr-unit-display" style="cursor:pointer;position:relative" title="Clique para editar a unidade">
+          <em id="hdr-uen-text">UEN-300</em>
+          <span style="font-size:12px;color:var(--gnl);margin-left:4px;opacity:.7">▾</span>
+        </span>
+        <span style="font-size:clamp(16px,2vw,28px);font-weight:400;color:var(--t2)">·</span>
+        <span id="hdr-dept-display" style="font-size:clamp(14px,1.8vw,24px);font-weight:600;color:var(--t2);cursor:pointer" title="Clique para editar o departamento"><span id="hdr-dept-text">Diretoria Técnica</span><span style="font-size:11px;color:var(--gnl);margin-left:4px;opacity:.7">✎</span></span>
+      </h1>
+      <div class="hdr-sub">
+        <span style="color:var(--t3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px">Gestão de Contratos</span>
+        <span style="margin:0 8px;color:var(--b1)">·</span>
+        Sede — <input class="sub-edit" id="hdr-sala" value="Sala 02" title="Clique para editar a sala">
+        <span style="margin:0 8px;color:var(--b1)">·</span>
+        <span id="hdr-sub-date">5 de Março de 2026</span>
+      </div>
+      <!-- UEN picker moved to body to escape overflow:hidden of header -->
     </div>
     <div class="hdr-stats">
       <div class="sp"><div class="sl">Data da Reunião</div><input class="sv hdr-date-inp" type="date" id="hdr-date" value="2026-03-05" title="Clique para editar a data da reunião" onchange="updateReunionDate(this.value)"></div>
@@ -773,7 +858,7 @@ body{
     <button class="nb" data-sec="tarefas" onclick="showSec('tarefas',this)">✅ Tarefas</button>
     <button class="nb" data-sec="ferias" onclick="showSec('ferias',this)">🏖️ Férias</button>
     <button class="nb" data-sec="participantes" onclick="showSec('participantes',this)">👥 Participantes</button>
-    <button class="nb" data-sec="agenda" onclick="showSec('agenda',this);renderAgenda()">🗓️ Agenda</button>
+    <button class="nb" data-sec="agenda" onclick="showSec('agenda',this);renderAgenda()">✈️ Agenda Viagem</button>
     <button class="nb" data-sec="auditoria" onclick="showSec('auditoria',this);renderAuditoria()">🔍 Aud. Técnica</button>
     <button class="nb" data-sec="gestao" onclick="showSec('gestao',this);renderGestao()">📋 Aud. Gestão</button>
     <button class="nb" data-sec="entregaveis" onclick="showSec('entregaveis',this);renderEntregaveis()">📦 Entregáveis</button>
@@ -803,16 +888,50 @@ body{
 
   <!-- ── Gráficos Financeiros por Contrato ── -->
   <div style="margin:32px 0 0;padding-top:28px;border-top:1px solid var(--b1)">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
       <div>
         <h2 style="font-family:var(--fh);font-size:20px;font-weight:700;margin:0">Análise Financeira por Contrato</h2>
-        <div style="font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--fb)">Selecione um contrato para visualizar os gráficos detalhados</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--fb)">Dados do período selecionado · via Mapa de Medições</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <button class="bic" id="fin-prev" onclick="finChartShift(-1)" title="Contrato anterior" style="padding:6px 11px;font-size:14px">◀</button>
         <select id="fin-ct-sel" class="fsel" onchange="renderFinCharts()" style="width:280px;padding:9px 14px;font-size:12px;font-weight:700"></select>
         <button class="bic" id="fin-next" onclick="finChartShift(1)" title="Próximo contrato" style="padding:6px 11px;font-size:14px">▶</button>
       </div>
+    </div>
+
+    <!-- ── Barra de Período — Estilo D ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;
+        flex-wrap:wrap;gap:10px;margin-bottom:18px">
+      <div style="display:inline-flex;align-items:center;gap:0;
+          background:rgba(5,150,105,.10);border:1px solid rgba(16,185,129,.28);
+          border-radius:10px;overflow:hidden">
+        <button onclick="finDashPeriodShift(-1)"
+          style="background:none;border:none;padding:6px 12px;cursor:pointer;
+                 color:var(--gnl);font-size:13px;line-height:1;transition:background .15s"
+          onmouseover="this.style.background='rgba(16,185,129,.12)'"
+          onmouseout="this.style.background='none'">◀</button>
+        <div id="fin-dash-period-label"
+          style="padding:5px 16px;border-left:1px solid rgba(16,185,129,.2);
+                 border-right:1px solid rgba(16,185,129,.2);
+                 font-size:11px;font-weight:800;color:var(--gnl);
+                 letter-spacing:.6px;text-transform:uppercase;
+                 display:flex;align-items:center;gap:8px;white-space:nowrap;
+                 cursor:default;min-width:110px;justify-content:center">
+          MAR DE 26
+        </div>
+        <button onclick="finDashPeriodShift(1)"
+          style="background:none;border:none;padding:6px 12px;cursor:pointer;
+                 color:var(--gnl);font-size:13px;line-height:1;transition:background .15s"
+          onmouseover="this.style.background='rgba(16,185,129,.12)'"
+          onmouseout="this.style.background='none'">▶</button>
+      </div>
+      <button onclick="finDashPeriodToday()"
+        style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);
+               border-radius:8px;color:var(--gnl);font-size:11px;font-weight:700;
+               padding:5px 14px;cursor:pointer;font-family:var(--fb);transition:all .2s"
+        onmouseover="this.style.background='rgba(16,185,129,.18)'"
+        onmouseout="this.style.background='rgba(16,185,129,.08)'">Mês Atual</button>
     </div>
 
     <!-- KPI strip -->
@@ -1203,8 +1322,8 @@ body{
 <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
 <footer class="ftr">
   <div class="ftrbr">DIEFRA</div>
-  <div>ATA DE REUNIÃO · 5 de Março de 2026 · UEN-300 + Diretoria Técnica</div>
-  <div>Sede — Sala 02</div>
+  <div id="ftr-center">GESTÃO DE CONTRATOS · <span id="ftr-date">5 de Março de 2026</span> · <span id="ftr-uen">UEN-300</span> · <span id="ftr-dept">Diretoria Técnica</span></div>
+  <div>Sede — <span id="ftr-sala">Sala 02</span></div>
 </footer>
 
 <!-- ═══════════════════════════════ MODAL ═══════════════════════════════ -->
@@ -1237,297 +1356,35 @@ body{
 //  STATE
 // ════════════════════════════════════════════════════════════
 let ST = {
-  contracts: [
-    {id:1,name:'Vale ACG — Laboratório Central',code:'230209301',nObra:'2093',status:'ativo',start:'2022-12-21',end:'2026-12-31',responsible:'Leonardo Martins',index:'IPCA',receita:2476409.70,custo:1837763.36,margem:20.85,saldo:638646.34,medicaoPrevista:250000,ultimaMedicao:230000,custoTotal:1837763.36,resultado:516309.79,justificativa:''},
-    {id:2,name:'Pan American',code:'230210201',nObra:'2102',status:'desmob',start:'2023-07-10',end:'2026-03-31',responsible:'Alex Mota',index:'IPCA-IBGE',receita:217793.95,custo:164652.52,margem:19.48,saldo:53141.43,medicaoPrevista:20000,ultimaMedicao:18000,custoTotal:164652.52,resultado:42425.69,justificativa:'Contrato em fase de desmobilização. Entregáveis finais pendentes com o Felipe.'},
-    {id:3,name:'Itabira',code:'230216801',nObra:'2168',status:'ativo',start:'2025-10-16',end:'2028-10-16',responsible:'Leonardo Martins',index:'Fórmula Paramétrica',receita:767164.49,custo:634619.99,margem:13.20,saldo:132544.50,medicaoPrevista:75000,ultimaMedicao:68000,custoTotal:634619.99,resultado:101288.38,justificativa:''},
-    {id:4,name:'CMOC Fiscalização DRD2 e DRD3',code:'230215001',nObra:'2150',status:'ativo',start:'2025-03-31',end:'2027-03-31',responsible:'—',index:'Negociado',receita:104357.18,custo:84468.77,margem:13.51,saldo:19888.41,medicaoPrevista:10000,ultimaMedicao:9500,custoTotal:84468.77,resultado:14094.52,justificativa:''},
-    {id:5,name:'CMOC DRD3',code:'230213201',nObra:'2132A',status:'desmob',start:'2024-07-15',end:'2026-01-31',responsible:'Leonardo',index:'N/A',receita:192457.80,custo:136346.35,margem:24.39,saldo:56111.45,medicaoPrevista:18000,ultimaMedicao:16000,custoTotal:136346.35,resultado:46938.30,justificativa:'Resposta de notificação sobre bafômetro pendente.'},
-    {id:6,name:'Contrato 230210001',code:'230210001',nObra:'2100',status:'ativo',start:'2023-04-24',end:'2027-05-02',responsible:'Leonardo Martins',index:'IPCA',receita:140998.89,custo:104989.04,margem:19.66,saldo:36009.85,medicaoPrevista:14000,ultimaMedicao:13000,custoTotal:104989.04,resultado:27713.97,justificativa:''},
-    {id:7,name:'Minaçu — Laboratório',code:'230212201',nObra:'2122',status:'ativo',start:'2024-03-26',end:'2026-03-25',responsible:'Alex Mota',index:'IPCA',receita:92320.94,custo:66849.59,margem:22.76,saldo:25471.35,medicaoPrevista:9000,ultimaMedicao:8500,custoTotal:66849.59,resultado:21010.95,justificativa:'Contrato próximo ao vencimento. Avaliar pleito de aditivo.'},
-    {id:8,name:'Itabirito — Maravilhas',code:'230213001',nObra:'2130',status:'ativo',start:'2024-06-14',end:'2027-06-13',responsible:'Otarcione',index:'Fórmula Paramétrica',receita:389061.77,custo:299769.92,margem:16.91,saldo:89291.85,medicaoPrevista:38000,ultimaMedicao:35000,custoTotal:299769.92,resultado:65787.54,justificativa:''},
-    {id:9,name:'Riacho dos Machados',code:'230213101',nObra:'2131',status:'ativo',start:'2024-06-01',end:'2027-01-31',responsible:'Adriny',index:'A negociar',receita:64034.43,custo:39084.98,margem:35.07,saldo:24949.45,medicaoPrevista:6500,ultimaMedicao:6200,custoTotal:39084.98,resultado:22455.15,justificativa:''},
-    {id:10,name:'Itatiaiuçu — Controle Tecnológico',code:'230214301',nObra:'2143',status:'ativo',start:'2025-02-01',end:'2028-02-01',responsible:'Leonardo Martins',index:'IPCA',receita:159908.04,custo:138305.39,margem:7.43,saldo:21602.65,medicaoPrevista:16000,ultimaMedicao:14000,custoTotal:138305.39,resultado:11875.05,justificativa:'Margem abaixo do esperado. Revisar composição de custos.'},
-    {id:11,name:'Brumadinho — Morro do Ipê',code:'230214801',nObra:'2148',status:'desmob',start:'2025-02-18',end:'2026-03-17',responsible:'Adriny',index:'IPCA',receita:91654.34,custo:69418.57,margem:19.19,saldo:22235.77,medicaoPrevista:9000,ultimaMedicao:8000,custoTotal:69418.57,resultado:17584.22,justificativa:'Em desmobilização. Somente Pedro aceitou transferência para Usiminas.'},
-    {id:12,name:'Anglo American — Conceição do Mato Dentro',code:'230217001',nObra:'2170',status:'mob',start:'2025-12-01',end:'2027-12-01',responsible:'Leonardo Martins',index:'IGP-M',receita:392319.46,custo:343542.98,margem:7.39,saldo:48776.48,medicaoPrevista:38000,ultimaMedicao:0,custoTotal:343542.98,resultado:28985.14,justificativa:'Contrato recém iniciado em mobilização. Margem será ajustada após estabilização.'},
-  ],
-  tasks: [
-    {id:1,contractId:1,text:'Treinamento em Civil 3D — Equipe Sala Técnica',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:2,contractId:1,text:'ISSN — Solicitação de reembolso',done:true,dataTarefa:'2026-03-05',dataResolucao:'2026-03-06'},
-    {id:3,contractId:1,text:'Questão adicional noturno e ISS',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:4,contractId:1,text:'Implementação de equipamentos e trocas dos veículos',done:true,dataTarefa:'2026-02-20',dataResolucao:'2026-03-01'},
-    {id:5,contractId:1,text:'Contratação de 02 profissionais (Alinhar com Padula)',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:6,contractId:1,text:'Acompanhamento plano de ação — horas máquinas Fagundes',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:7,contractId:1,text:'Levantamento usuários linhas telefônicas (uso indevido)',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:8,contractId:1,text:'Controle de estoque EPI/Uniforme',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:9,contractId:2,text:'Acompanhamento da desmob',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:10,contractId:2,text:'Acompanhar entregáveis finais com o Felipe',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:11,contractId:2,text:'Entrega de atestado técnico',done:false,dataTarefa:'2026-03-05',dataResolucao:''},
-    {id:12,contractId:3,text:'Novo plano de ação',done:false},
-    {id:13,contractId:3,text:'Equiparação ajuda de custo das ADM',done:false},
-    {id:14,contractId:3,text:'Verificar questão do ADM indireto',done:false},
-    {id:15,contractId:3,text:'Acompanhar transição do novo engenheiro',done:false},
-    {id:16,contractId:4,text:'Troca colaborador Jeu (Marcos aceitou)',done:false},
-    {id:17,contractId:4,text:'Proposta ajuda de custo Eduardo / cancelamento folga de campo',done:false},
-    {id:18,contractId:4,text:'Avaliar ida Eduardo p/ Kinross e substituição pela Barkley',done:false},
-    {id:19,contractId:4,text:'Alteração jornada trabalho Marcos',done:false},
-    {id:20,contractId:4,text:'Retorno notificação reforma alojamento 06/03/2026',done:false},
-    {id:21,contractId:4,text:'Novo alojamento — documentação solicitada ao dono do imóvel',done:false},
-    {id:22,contractId:4,text:'Envio de novos rádios para o contrato',done:false},
-    {id:23,contractId:5,text:'Resposta notificação referente ao bafômetro',done:false},
-    {id:24,contractId:5,text:'Elaboração plano de ação do bafômetro',done:false},
-    {id:25,contractId:5,text:'Veículo devolvido à sede',done:false},
-    {id:26,contractId:5,text:'Equipamentos rádios/topografia/drone devolvidos',done:false},
-    {id:27,contractId:5,text:'Entregáveis Alex Sander — aguardando assinatura da construtora',done:false},
-    {id:28,contractId:7,text:'Programar desmobilização do contrato',done:false},
-    {id:29,contractId:7,text:'Verificar pleito aditivo de prazo (saldo positivo 3-4 meses)',done:false},
-    {id:30,contractId:8,text:'Plano de desmobilização período de final de ano',done:true},
-    {id:31,contractId:8,text:'Atualizar pré-custo com a nova TAC (duas funções acrescentadas)',done:false},
-    {id:32,contractId:8,text:'Instalação bebedouro na obra (aguardando aprovação Vale)',done:false},
-    {id:33,contractId:8,text:'Mobilização novo veículo',done:false},
-    {id:34,contractId:9,text:'Contrato com bom andamento das entregas',done:false},
-    {id:35,contractId:9,text:'Troca de equipamentos de laboratório (nova estufa)',done:true},
-    {id:36,contractId:10,text:'Contratação dos Laboratoristas e Auxiliares',done:false},
-    {id:37,contractId:10,text:'Compra monitor, micro-ondas e geladeira (verificar com Danilo)',done:false},
-    {id:38,contractId:10,text:'Atualização PAR, PGR, PCMSO',done:false},
-    {id:39,contractId:10,text:'Avaliar apoio laboratório central',done:false},
-    {id:40,contractId:11,text:'Desmobilização canteiro (container, internet, veículo)',done:false},
-    {id:41,contractId:11,text:'Verificar DP — transferência colaborador (impacto financeiro)',done:false},
-    {id:42,contractId:11,text:'Transferência equipe para Usiminas (somente Pedro aceitou)',done:false},
-    {id:43,contractId:12,text:'Levantar lista de equipamentos de laboratório',done:false},
-    {id:44,contractId:12,text:'Elaboração e validação de Plano de Trabalho Técnico',done:false},
-    {id:45,contractId:12,text:'Acesso Fieldglass — postagem dos documentos trabalhistas',done:false},
-    {id:46,contractId:12,text:'Levantar quantidade de uniformes e EPIs para estoque',done:false},
-    {id:47,contractId:12,text:'Correção PGR e PCMSO junto ao Alanderson',done:false},
-    {id:48,contractId:12,text:'Visita ao local — Conceição do Mato Dentro',done:false},
-    {id:49,contractId:12,text:'Acompanhamento profissional Gabriel (assiduidade)',done:false},
-    {id:50,contractId:1,text:'Adequação sala de reuniões (cadeiras, bandeja, café, água)',done:false},
-    {id:51,contractId:1,text:'Envolvimento Pedro Pelônias no desenvolvimento SGE',done:false},
-    {id:52,contractId:1,text:'Orçar aquisição do BENDER',done:false},
-    {id:53,contractId:1,text:'Validação de Cálculos 17025',done:false},
-  ],
-  managers: [
-    {id:1,name:'Leonardo Alves Martins',dept:'UEN-300',color:'linear-gradient(135deg,#1e40af,#38bdf8)',contractId:1,admissao:'2020-03-15'},
-    {id:2,name:'Alex Mota',dept:'UEN-300',color:'linear-gradient(135deg,#6d28d9,#c084fc)',contractId:2,admissao:'2021-07-01'},
-    {id:3,name:'Otarcione Felipe Cesário',dept:'Laboratório',color:'linear-gradient(135deg,#065f46,#34d399)',contractId:8,admissao:'2019-11-20'},
-    {id:4,name:'Vera Lucia F. Wenceslau',dept:'Lab. Técnica',color:'linear-gradient(135deg,#881337,#f43f5e)',contractId:1,admissao:'2018-05-10'},
-    {id:5,name:'Jonathas G. Amaral Melo',dept:'UEN-300',color:'linear-gradient(135deg,#1e3a5f,#60a5fa)',contractId:3,admissao:'2022-02-14'},
-    {id:6,name:'Adriny Cássia P. da Silva',dept:'UEN-300',color:'linear-gradient(135deg,#92400e,#fbbf24)',contractId:9,admissao:'2023-06-01'},
-    {id:7,name:'Lucas Tayrone Quintiliano',dept:'UEN-300',color:'linear-gradient(135deg,#3f0764,#e879f9)',contractId:4,admissao:'2023-09-18'},
-    {id:8,name:'Fabio Vinicius Fideliz',dept:'UEN-300',color:'linear-gradient(135deg,#134e4a,#2dd4bf)',contractId:6,admissao:'2021-01-25'},
-    {id:9,name:'Patricia Duarte Lara',dept:'UEN-300',color:'linear-gradient(135deg,#7f1d1d,#f87171)',contractId:7,admissao:'2020-08-03'},
-    {id:10,name:'Rogerio Costa Lima',dept:'Dir. Técnica',color:'linear-gradient(135deg,#1e3a5f,#0ea5e9)',contractId:12,admissao:'2017-04-12'},
-  ],
-  vacations: [
-    {id:1,managerId:1,periodoAquisitivo:'2024-2025',ufInicio:'2025-01-06',ufFim:'2025-02-05',inicioFérias:'2026-07-01',dias:30,retorno:'2026-07-31',substitutoId:105,obs:'Cobertura acordada com equipe.'},
-    {id:2,managerId:2,periodoAquisitivo:'2024-2025',ufInicio:'2025-02-10',ufFim:'2025-03-02',inicioFérias:'2026-08-01',dias:20,retorno:'2026-08-21',substitutoId:null,obs:''},
-    {id:3,managerId:6,periodoAquisitivo:'2024-2025',ufInicio:'2024-12-20',ufFim:'2025-01-04',inicioFérias:'2026-06-15',dias:15,retorno:'2026-06-30',substitutoId:109,obs:'Período aprovado em reunião de março.'},
-    {id:4,managerId:4,periodoAquisitivo:'2024-2025',ufInicio:'2025-03-10',ufFim:'2025-04-09',inicioFérias:'2026-07-10',dias:15,retorno:'2026-07-25',substitutoId:103,obs:'Coincide com férias de Leonardo — mesmo contrato.'},
-  ],
+  contracts: [],
+  tasks: [],
+  managers: [],
+  vacations: [],
   participants: [
-    {id:101,name:'Leonardo Alves Martins',cargo:'Coordenador UEN-300',dept:'UEN-300',color:'linear-gradient(135deg,#2563eb,#38bdf8)',username:'leonardo.martins',password:'diefra@2026',email:''},
-    {id:102,name:'Alex Mota',cargo:'Supervisor de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#7c3aed,#a78bfa)',username:'alex.mota',password:'diefra@2026',email:''},
-    {id:103,name:'Otarcione Felipe Cesário',cargo:'Técnico de Laboratório',dept:'Laboratório',color:'linear-gradient(135deg,#0891b2,#22d3ee)',username:'otarcione.cesario',password:'diefra@2026',email:''},
-    {id:104,name:'Vera Lucia F. Wenceslau',cargo:'Analista de Laboratório',dept:'Lab. Técnica',color:'linear-gradient(135deg,#be185d,#f472b6)',username:'vera.wenceslau',password:'diefra@2026',email:''},
-    {id:105,name:'Jonathas G. Amaral Melo',cargo:'Engenheiro Civil',dept:'UEN-300',color:'linear-gradient(135deg,#065f46,#34d399)',username:'jonathas.melo',password:'diefra@2026',email:''},
-    {id:106,name:'Adriny Cássia P. da Silva',cargo:'Supervisora de Contrato',dept:'UEN-300',color:'linear-gradient(135deg,#92400e,#fbbf24)',username:'adriny.silva',password:'diefra@2026',email:''},
-    {id:107,name:'Lucas Tayrone Quintiliano',cargo:'Técnico de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#1e3a5f,#60a5fa)',username:'lucas.quintiliano',password:'diefra@2026',email:''},
-    {id:108,name:'Fabio Vinicius Fideliz',cargo:'Assistente Técnico',dept:'UEN-300',color:'linear-gradient(135deg,#3f0764,#c084fc)',username:'fabio.fideliz',password:'diefra@2026',email:''},
-    {id:109,name:'Patricia Duarte Lara',cargo:'Auxiliar Administrativa',dept:'UEN-300',color:'linear-gradient(135deg,#134e4a,#2dd4bf)',username:'patricia.lara',password:'diefra@2026',email:''},
-    {id:110,name:'Rogerio Costa Lima',cargo:'Diretor Técnico',dept:'Dir. Técnica',color:'linear-gradient(135deg,#7f1d1d,#f87171)',username:'rogerio.lima',password:'diefra@2026',email:''},
+    {id:101,name:'Leonardo Alves Martins',cargo:'Coordenador UEN-300',dept:'UEN-300',color:'linear-gradient(135deg,#2563eb,#38bdf8)',username:'leonardo.martins',password:'diefra@2026',email:'',role:'admin'},
+    {id:102,name:'Alex Mota',cargo:'Supervisor de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#7c3aed,#a78bfa)',username:'alex.mota',password:'diefra@2026',email:'',role:'admin'},
+    {id:103,name:'Otarcione Felipe Cesário',cargo:'Técnico de Laboratório',dept:'Laboratório',color:'linear-gradient(135deg,#0891b2,#22d3ee)',username:'otarcione.cesario',password:'diefra@2026',email:'',role:'user'},
+    {id:104,name:'Vera Lucia F. Wenceslau',cargo:'Analista de Laboratório',dept:'Lab. Técnica',color:'linear-gradient(135deg,#be185d,#f472b6)',username:'vera.wenceslau',password:'diefra@2026',email:'',role:'user'},
+    {id:105,name:'Jonathas G. Amaral Melo',cargo:'Engenheiro Civil',dept:'UEN-300',color:'linear-gradient(135deg,#065f46,#34d399)',username:'jonathas.melo',password:'diefra@2026',email:'',role:'user'},
+    {id:106,name:'Adriny Cássia P. da Silva',cargo:'Supervisora de Contrato',dept:'UEN-300',color:'linear-gradient(135deg,#92400e,#fbbf24)',username:'adriny.silva',password:'diefra@2026',email:'',role:'user'},
+    {id:107,name:'Lucas Tayrone Quintiliano',cargo:'Técnico de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#1e3a5f,#60a5fa)',username:'lucas.quintiliano',password:'diefra@2026',email:'',role:'user'},
+    {id:108,name:'Fabio Vinicius Fideliz',cargo:'Assistente Técnico',dept:'UEN-300',color:'linear-gradient(135deg,#3f0764,#c084fc)',username:'fabio.fideliz',password:'diefra@2026',email:'',role:'user'},
+    {id:109,name:'Patricia Duarte Lara',cargo:'Auxiliar Administrativa',dept:'UEN-300',color:'linear-gradient(135deg,#134e4a,#2dd4bf)',username:'patricia.lara',password:'diefra@2026',email:'',role:'user'},
+    {id:110,name:'Rogerio Costa Lima',cargo:'Diretor Técnico',dept:'Dir. Técnica',color:'linear-gradient(135deg,#7f1d1d,#f87171)',username:'rogerio.lima',password:'diefra@2026',email:'',role:'admin'},
   ],
   trips: [],
   audits: [],
   auditsGestao: [],
   entregaveis: [],
-  medicoes: [
-    {id:500,contractId:1,key:'2025-01',previsto:255577.07,realizado:219318.63,obs:''},
-    {id:501,contractId:1,key:'2025-02',previsto:242929.18,realizado:213337.72,obs:''},
-    {id:502,contractId:1,key:'2025-03',previsto:263610.19,realizado:243597.43,obs:''},
-    {id:503,contractId:1,key:'2025-04',previsto:272063.68,realizado:235171.36,obs:''},
-    {id:504,contractId:1,key:'2025-05',previsto:254776.93,realizado:218755.42,obs:''},
-    {id:505,contractId:1,key:'2025-06',previsto:248295.34,realizado:225139.8,obs:''},
-    {id:506,contractId:1,key:'2025-07',previsto:242152.39,realizado:212058.26,obs:''},
-    {id:507,contractId:1,key:'2025-08',previsto:270331.12,realizado:246203.55,obs:''},
-    {id:508,contractId:1,key:'2025-09',previsto:254101.95,realizado:232562.66,obs:''},
-    {id:509,contractId:1,key:'2025-10',previsto:281268.38,realizado:240838.21,obs:''},
-    {id:510,contractId:1,key:'2025-11',previsto:283211.39,realizado:262325.03,obs:''},
-    {id:511,contractId:1,key:'2025-12',previsto:265047.7,realizado:230945.21,obs:''},
-    {id:512,contractId:1,key:'2026-01',previsto:294044.22,realizado:261600.37,obs:''},
-    {id:513,contractId:1,key:'2026-02',previsto:258015.66,realizado:223283.58,obs:''},
-    {id:514,contractId:1,key:'2026-03',previsto:293456.55,realizado:269010.76,obs:''},
-    {id:515,contractId:2,key:'2025-01',previsto:20982.81,realizado:19078.48,obs:''},
-    {id:516,contractId:2,key:'2025-02',previsto:20276.86,realizado:18925.17,obs:''},
-    {id:517,contractId:2,key:'2025-03',previsto:19925.09,realizado:17766.25,obs:''},
-    {id:518,contractId:2,key:'2025-04',previsto:21559.39,realizado:19365.37,obs:''},
-    {id:519,contractId:2,key:'2025-05',previsto:21834.5,realizado:19523.49,obs:''},
-    {id:520,contractId:2,key:'2025-06',previsto:21480.82,realizado:18076.9,obs:''},
-    {id:521,contractId:2,key:'2025-07',previsto:20047.48,realizado:17354.09,obs:''},
-    {id:522,contractId:2,key:'2025-08',previsto:19700.03,realizado:16942.94,obs:''},
-    {id:523,contractId:2,key:'2025-09',previsto:19921.49,realizado:17222.51,obs:''},
-    {id:524,contractId:2,key:'2025-10',previsto:21905.45,realizado:19126.05,obs:''},
-    {id:525,contractId:2,key:'2025-11',previsto:21151.35,realizado:18142.38,obs:''},
-    {id:526,contractId:2,key:'2025-12',previsto:20948.71,realizado:19476.62,obs:''},
-    {id:527,contractId:2,key:'2026-01',previsto:22439.19,realizado:20134.77,obs:''},
-    {id:528,contractId:2,key:'2026-02',previsto:20918.2,realizado:null,obs:''},
-    {id:529,contractId:2,key:'2026-03',previsto:23055.32,realizado:null,obs:''},
-    {id:530,contractId:3,key:'2025-01',previsto:70960.83,realizado:62519.64,obs:''},
-    {id:531,contractId:3,key:'2025-02',previsto:81521.27,realizado:73942.18,obs:''},
-    {id:532,contractId:3,key:'2025-03',previsto:76894.33,realizado:70087.56,obs:''},
-    {id:533,contractId:3,key:'2025-04',previsto:81012.96,realizado:74579.97,obs:''},
-    {id:534,contractId:3,key:'2025-05',previsto:74044.53,realizado:62671.4,obs:''},
-    {id:535,contractId:3,key:'2025-06',previsto:75696.85,realizado:65848.89,obs:''},
-    {id:536,contractId:3,key:'2025-07',previsto:74965.32,realizado:70260.46,obs:''},
-    {id:537,contractId:3,key:'2025-08',previsto:83969.33,realizado:73438.22,obs:''},
-    {id:538,contractId:3,key:'2025-09',previsto:81784.64,realizado:72187.84,obs:''},
-    {id:539,contractId:3,key:'2025-10',previsto:85732.74,realizado:76213.22,obs:''},
-    {id:540,contractId:3,key:'2025-11',previsto:77952.85,realizado:67647.25,obs:''},
-    {id:541,contractId:3,key:'2025-12',previsto:82401.22,realizado:71639.96,obs:''},
-    {id:542,contractId:3,key:'2026-01',previsto:83312.47,realizado:77709.11,obs:''},
-    {id:543,contractId:3,key:'2026-02',previsto:81467.26,realizado:70475.18,obs:''},
-    {id:544,contractId:3,key:'2026-03',previsto:90039.14,realizado:80496.5,obs:''},
-    {id:545,contractId:4,key:'2025-01',previsto:9345.46,realizado:8302.73,obs:''},
-    {id:546,contractId:4,key:'2025-02',previsto:9450.44,realizado:8969.11,obs:''},
-    {id:547,contractId:4,key:'2025-03',previsto:10634.8,realizado:9865.01,obs:''},
-    {id:548,contractId:4,key:'2025-04',previsto:9524.88,realizado:8795.08,obs:''},
-    {id:549,contractId:4,key:'2025-05',previsto:11139.2,realizado:10457.4,obs:''},
-    {id:550,contractId:4,key:'2025-06',previsto:11183.87,realizado:10886.95,obs:''},
-    {id:551,contractId:4,key:'2025-07',previsto:9660.85,realizado:9262.97,obs:''},
-    {id:552,contractId:4,key:'2025-08',previsto:10867.02,realizado:10210.8,obs:''},
-    {id:553,contractId:4,key:'2025-09',previsto:10243.04,realizado:9735.81,obs:''},
-    {id:554,contractId:4,key:'2025-10',previsto:10053.73,realizado:9339.24,obs:''},
-    {id:555,contractId:4,key:'2025-11',previsto:10720.03,realizado:10539.65,obs:''},
-    {id:556,contractId:4,key:'2025-12',previsto:11534.28,realizado:10508.01,obs:''},
-    {id:557,contractId:4,key:'2026-01',previsto:10961.03,realizado:9888.7,obs:''},
-    {id:558,contractId:4,key:'2026-02',previsto:11768.87,realizado:11468.4,obs:''},
-    {id:559,contractId:4,key:'2026-03',previsto:10761.39,realizado:10226.23,obs:''},
-    {id:560,contractId:5,key:'2025-01',previsto:18313.83,realizado:15413.12,obs:''},
-    {id:561,contractId:5,key:'2025-02',previsto:18906.08,realizado:16626.12,obs:''},
-    {id:562,contractId:5,key:'2025-03',previsto:19103.28,realizado:16782.68,obs:''},
-    {id:563,contractId:5,key:'2025-04',previsto:16959.13,realizado:14557.07,obs:''},
-    {id:564,contractId:5,key:'2025-05',previsto:17147.81,realizado:15733.32,obs:''},
-    {id:565,contractId:5,key:'2025-06',previsto:19854.35,realizado:18027.45,obs:''},
-    {id:566,contractId:5,key:'2025-07',previsto:18283.03,realizado:15217.52,obs:''},
-    {id:567,contractId:5,key:'2025-08',previsto:20157.63,realizado:18530.05,obs:''},
-    {id:568,contractId:5,key:'2025-09',previsto:17882.31,realizado:15632.46,obs:''},
-    {id:569,contractId:5,key:'2025-10',previsto:17966.0,realizado:16188.02,obs:''},
-    {id:570,contractId:5,key:'2025-11',previsto:20266.85,realizado:17008.36,obs:''},
-    {id:571,contractId:5,key:'2025-12',previsto:19506.55,realizado:17174.06,obs:''},
-    {id:572,contractId:5,key:'2026-01',previsto:18986.41,realizado:17315.06,obs:''},
-    {id:573,contractId:5,key:'2026-02',previsto:19627.62,realizado:16631.97,obs:''},
-    {id:574,contractId:5,key:'2026-03',previsto:20141.85,realizado:18088.14,obs:''},
-    {id:575,contractId:6,key:'2025-01',previsto:13330.58,realizado:11936.35,obs:''},
-    {id:576,contractId:6,key:'2025-02',previsto:15230.01,realizado:14163.18,obs:''},
-    {id:577,contractId:6,key:'2025-03',previsto:14083.13,realizado:12906.32,obs:''},
-    {id:578,contractId:6,key:'2025-04',previsto:13466.67,realizado:11938.51,obs:''},
-    {id:579,contractId:6,key:'2025-05',previsto:14073.71,realizado:12999.36,obs:''},
-    {id:580,contractId:6,key:'2025-06',previsto:13931.28,realizado:12344.02,obs:''},
-    {id:581,contractId:6,key:'2025-07',previsto:13664.9,realizado:12681.49,obs:''},
-    {id:582,contractId:6,key:'2025-08',previsto:14142.83,realizado:13521.3,obs:''},
-    {id:583,contractId:6,key:'2025-09',previsto:15753.14,realizado:13717.98,obs:''},
-    {id:584,contractId:6,key:'2025-10',previsto:14378.88,realizado:13399.72,obs:''},
-    {id:585,contractId:6,key:'2025-11',previsto:14428.68,realizado:12655.2,obs:''},
-    {id:586,contractId:6,key:'2025-12',previsto:16293.4,realizado:15020.88,obs:''},
-    {id:587,contractId:6,key:'2026-01',previsto:15276.91,realizado:14417.04,obs:''},
-    {id:588,contractId:6,key:'2026-02',previsto:16216.43,realizado:14319.44,obs:''},
-    {id:589,contractId:6,key:'2026-03',previsto:14564.0,realizado:13218.29,obs:''},
-    {id:590,contractId:7,key:'2025-01',previsto:8889.95,realizado:8239.67,obs:''},
-    {id:591,contractId:7,key:'2025-02',previsto:9404.51,realizado:8918.19,obs:''},
-    {id:592,contractId:7,key:'2025-03',previsto:9852.35,realizado:8754.38,obs:''},
-    {id:593,contractId:7,key:'2025-04',previsto:9072.41,realizado:8288.4,obs:''},
-    {id:594,contractId:7,key:'2025-05',previsto:9825.47,realizado:8883.86,obs:''},
-    {id:595,contractId:7,key:'2025-06',previsto:8896.06,realizado:8228.32,obs:''},
-    {id:596,contractId:7,key:'2025-07',previsto:9314.11,realizado:8450.42,obs:''},
-    {id:597,contractId:7,key:'2025-08',previsto:9123.55,realizado:8888.62,obs:''},
-    {id:598,contractId:7,key:'2025-09',previsto:9488.87,realizado:9183.5,obs:''},
-    {id:599,contractId:7,key:'2025-10',previsto:9725.69,realizado:8593.51,obs:''},
-    {id:600,contractId:7,key:'2025-11',previsto:10496.48,realizado:10131.07,obs:''},
-    {id:601,contractId:7,key:'2025-12',previsto:10526.79,realizado:10259.12,obs:''},
-    {id:602,contractId:7,key:'2026-01',previsto:10414.33,realizado:9327.19,obs:''},
-    {id:603,contractId:7,key:'2026-02',previsto:9913.17,realizado:8927.2,obs:''},
-    {id:604,contractId:7,key:'2026-03',previsto:9849.54,realizado:8711.18,obs:''},
-    {id:605,contractId:8,key:'2025-01',previsto:37264.16,realizado:35639.68,obs:''},
-    {id:606,contractId:8,key:'2025-02',previsto:36865.01,realizado:34506.3,obs:''},
-    {id:607,contractId:8,key:'2025-03',previsto:38330.07,realizado:34475.46,obs:''},
-    {id:608,contractId:8,key:'2025-04',previsto:41759.22,realizado:39981.57,obs:''},
-    {id:609,contractId:8,key:'2025-05',previsto:39565.92,realizado:36771.18,obs:''},
-    {id:610,contractId:8,key:'2025-06',previsto:37337.21,realizado:33104.67,obs:''},
-    {id:611,contractId:8,key:'2025-07',previsto:42810.54,realizado:39182.73,obs:''},
-    {id:612,contractId:8,key:'2025-08',previsto:40398.91,realizado:37666.36,obs:''},
-    {id:613,contractId:8,key:'2025-09',previsto:37567.25,realizado:34402.79,obs:''},
-    {id:614,contractId:8,key:'2025-10',previsto:40754.58,realizado:38430.47,obs:''},
-    {id:615,contractId:8,key:'2025-11',previsto:38790.57,realizado:37003.14,obs:''},
-    {id:616,contractId:8,key:'2025-12',previsto:38566.42,realizado:33761.27,obs:''},
-    {id:617,contractId:8,key:'2026-01',previsto:42281.28,realizado:39109.7,obs:''},
-    {id:618,contractId:8,key:'2026-02',previsto:40174.6,realizado:34900.69,obs:''},
-    {id:619,contractId:8,key:'2026-03',previsto:44894.72,realizado:39575.79,obs:''},
-    {id:620,contractId:9,key:'2025-01',previsto:6598.3,realizado:6282.01,obs:''},
-    {id:621,contractId:9,key:'2025-02',previsto:6467.32,realizado:6133.07,obs:''},
-    {id:622,contractId:9,key:'2025-03',previsto:6628.07,realizado:6529.64,obs:''},
-    {id:623,contractId:9,key:'2025-04',previsto:6341.05,realizado:6101.5,obs:''},
-    {id:624,contractId:9,key:'2025-05',previsto:6427.54,realizado:5968.64,obs:''},
-    {id:625,contractId:9,key:'2025-06',previsto:6945.7,realizado:6380.0,obs:''},
-    {id:626,contractId:9,key:'2025-07',previsto:6611.65,realizado:6386.62,obs:''},
-    {id:627,contractId:9,key:'2025-08',previsto:6394.55,realizado:5979.94,obs:''},
-    {id:628,contractId:9,key:'2025-09',previsto:7467.57,realizado:7404.77,obs:''},
-    {id:629,contractId:9,key:'2025-10',previsto:6492.24,realizado:5904.31,obs:''},
-    {id:630,contractId:9,key:'2025-11',previsto:6756.27,realizado:6654.91,obs:''},
-    {id:631,contractId:9,key:'2025-12',previsto:7502.96,realizado:7347.89,obs:''},
-    {id:632,contractId:9,key:'2026-01',previsto:6975.28,realizado:6303.06,obs:''},
-    {id:633,contractId:9,key:'2026-02',previsto:7559.19,realizado:7263.58,obs:''},
-    {id:634,contractId:9,key:'2026-03',previsto:7357.15,realizado:7288.44,obs:''},
-    {id:635,contractId:10,key:'2025-01',previsto:16394.18,realizado:13353.11,obs:''},
-    {id:636,contractId:10,key:'2025-02',previsto:16946.28,realizado:14278.35,obs:''},
-    {id:637,contractId:10,key:'2025-03',previsto:16680.97,realizado:15081.63,obs:''},
-    {id:638,contractId:10,key:'2025-04',previsto:15425.32,realizado:12723.73,obs:''},
-    {id:639,contractId:10,key:'2025-05',previsto:15473.82,realizado:13415.77,obs:''},
-    {id:640,contractId:10,key:'2025-06',previsto:16033.9,realizado:13981.0,obs:''},
-    {id:641,contractId:10,key:'2025-07',previsto:17351.83,realizado:14460.08,obs:''},
-    {id:642,contractId:10,key:'2025-08',previsto:17258.89,realizado:14482.94,obs:''},
-    {id:643,contractId:10,key:'2025-09',previsto:16992.76,realizado:15308.58,obs:''},
-    {id:644,contractId:10,key:'2025-10',previsto:18101.82,realizado:14891.17,obs:''},
-    {id:645,contractId:10,key:'2025-11',previsto:17068.7,realizado:14344.2,obs:''},
-    {id:646,contractId:10,key:'2025-12',previsto:16025.24,realizado:14229.94,obs:''},
-    {id:647,contractId:10,key:'2026-01',previsto:17920.71,realizado:15034.82,obs:''},
-    {id:648,contractId:10,key:'2026-02',previsto:18345.78,realizado:15903.03,obs:''},
-    {id:649,contractId:10,key:'2026-03',previsto:17586.14,realizado:14327.09,obs:''},
-    {id:650,contractId:11,key:'2025-01',previsto:8388.35,realizado:7658.69,obs:''},
-    {id:651,contractId:11,key:'2025-02',previsto:9658.31,realizado:8499.44,obs:''},
-    {id:652,contractId:11,key:'2025-03',previsto:9633.53,realizado:8512.41,obs:''},
-    {id:653,contractId:11,key:'2025-04',previsto:8697.09,realizado:7297.97,obs:''},
-    {id:654,contractId:11,key:'2025-05',previsto:9003.06,realizado:8233.9,obs:''},
-    {id:655,contractId:11,key:'2025-06',previsto:9803.47,realizado:8929.24,obs:''},
-    {id:656,contractId:11,key:'2025-07',previsto:10034.03,realizado:8500.91,obs:''},
-    {id:657,contractId:11,key:'2025-08',previsto:9123.12,realizado:7633.48,obs:''},
-    {id:658,contractId:11,key:'2025-09',previsto:10005.18,realizado:9135.88,obs:''},
-    {id:659,contractId:11,key:'2025-10',previsto:9503.48,realizado:8432.95,obs:''},
-    {id:660,contractId:11,key:'2025-11',previsto:9182.76,realizado:8425.99,obs:''},
-    {id:661,contractId:11,key:'2025-12',previsto:10363.24,realizado:9556.13,obs:''},
-    {id:662,contractId:11,key:'2026-01',previsto:10354.47,realizado:9452.07,obs:''},
-    {id:663,contractId:11,key:'2026-02',previsto:9180.52,realizado:8250.41,obs:''},
-    {id:664,contractId:11,key:'2026-03',previsto:9739.28,realizado:null,obs:''},
-    {id:665,contractId:12,key:'2025-01',previsto:40619.36,realizado:null,obs:''},
-    {id:666,contractId:12,key:'2025-02',previsto:40156.29,realizado:null,obs:''},
-    {id:667,contractId:12,key:'2025-03',previsto:40856.93,realizado:null,obs:''},
-    {id:668,contractId:12,key:'2025-04',previsto:40846.7,realizado:null,obs:''},
-    {id:669,contractId:12,key:'2025-05',previsto:37752.81,realizado:null,obs:''},
-    {id:670,contractId:12,key:'2025-06',previsto:41337.13,realizado:null,obs:''},
-    {id:671,contractId:12,key:'2025-07',previsto:37326.85,realizado:null,obs:''},
-    {id:672,contractId:12,key:'2025-08',previsto:42517.49,realizado:null,obs:''},
-    {id:673,contractId:12,key:'2025-09',previsto:42751.78,realizado:null,obs:''},
-    {id:674,contractId:12,key:'2025-10',previsto:38926.89,realizado:null,obs:''},
-    {id:675,contractId:12,key:'2025-11',previsto:43118.83,realizado:null,obs:''},
-    {id:676,contractId:12,key:'2025-12',previsto:41081.4,realizado:null,obs:''},
-    {id:677,contractId:12,key:'2026-01',previsto:40349.85,realizado:0.0,obs:''},
-    {id:678,contractId:12,key:'2026-02',previsto:40123.53,realizado:0.0,obs:''},
-    {id:679,contractId:12,key:'2026-03',previsto:40181.26,realizado:0.0,obs:''}
-  ],
-  nextId: 200
+  medicoes: [],
+  nextId: 1
 };
 
 let currentFilter = 'todos';
 let currentSearch = '';
 let currentView = '2col';
+// Estado de período por card de contrato { [contractId]: 'YYYY-MM' }
+const _ctCardPeriod = {};
 let deleteCallback = null;
 // ══════════════════════════════════════════════════════════════════════════════
 //  GOOGLE SHEETS CONFIG
@@ -1535,7 +1392,7 @@ let deleteCallback = null;
 //  2. O SYNC_TOKEN deve ser igual ao definido no Apps Script
 // ══════════════════════════════════════════════════════════════════════════════
 const API_CFG = {
-  url:          localStorage.getItem('diefra_gs_url') || '',  // URL do Apps Script
+  url:          localStorage.getItem('diefra_gs_url') || 'https://script.google.com/macros/s/AKfycbwAp1aKuWOIMB1Rq_OhwStOQRxo3FQHSzwQrai7Bsdn-KstvqhsTslRFQANdMHOQmJGNA/exec',
   syncToken:    localStorage.getItem('diefra_gs_token') || 'diefra_sync_2026',
   autoSync:     true,
   syncInterval: 60,   // segundos entre pulls automáticos
@@ -1636,15 +1493,15 @@ function showSec(id,btn){
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
-  // Atualiza os botões ◀ ▶ da seção que ficou visível
   const scrollIds = _secScrollers[id] || [];
   setTimeout(()=>{
     scrollIds.forEach(sid=>{
       const el = document.getElementById(sid);
       if(el && el._updateArrows) el._updateArrows();
     });
-    // Inicializa nav de contratos ao entrar na seção financeiro
     if(id==='financeiro') initFinSec();
+    // Lazy: só re-renderiza gráficos ao entrar na aba Dashboard
+    if(id==='dashboard') initFinCharts();
   }, 50);
 }
 
@@ -1682,14 +1539,17 @@ function renderDashboard(){
     const days=Math.round((new Date(c.end)-today)/86400000);
     return`<div class="uc"><div class="ucl">⚡ Vence em ${days} dias</div><div class="ucn">${c.name}</div><div class="ucs">${c.code} · ${c.gestorTecnico||c.responsible||'—'}</div><div class="uct">Término: <strong>${fmtDate(c.end)}</strong></div></div>`}).join('');
   if(!urgentes.length) document.getElementById('urg-cards').innerHTML='<div style="color:var(--t3);font-size:13px;padding:20px 0">Nenhum contrato com vencimento urgente.</div>';
-  // Populate financial contract selector
-  initFinCharts();
+  // Só renderiza gráficos canvas se o Dashboard estiver visível (lazy render)
+  const isDashActive = document.getElementById('dashboard')?.classList.contains('active');
+  if(isDashActive) initFinCharts();
 }
 
 // ════════════════════════════════════════════════════════════
 //  FINANCIAL CHARTS — por contrato
 // ════════════════════════════════════════════════════════════
 let _finCtId = null;
+// Período selecionado no Dashboard (YYYY-MM) — separado do período da seção Financeiro
+let _finDashPeriod = null;
 
 // ══════════════════════════════════════════════════════════════════════════
 //  LINE CHART — Evolução Faturamento × Custo estimado
@@ -1945,6 +1805,55 @@ function initFinCharts(){
   const valid = ST.contracts.find(ct=>ct.id===prev);
   sel.value = valid ? prev : (ST.contracts[0]||{}).id;
   _finCtId = parseInt(sel.value);
+  // Init period to current month if not set
+  if(!_finDashPeriod){
+    const d=new Date();
+    _finDashPeriod = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }
+  _renderFinDashMonthBar();
+  renderFinCharts();
+}
+
+// ── Barra de meses do Dashboard — Estilo D ──────────────────
+function _renderFinDashMonthBar(){
+  const label = document.getElementById('fin-dash-period-label');
+  if(!_finDashPeriod){
+    const d=new Date();
+    _finDashPeriod = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }
+  if(!label) return;
+  // Format: "MAR DE 26"
+  const d    = new Date(_finDashPeriod+'-02');
+  const mon  = d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','').toUpperCase();
+  const yr   = String(d.getFullYear()).slice(-2);
+  // Dot if the current contract has a medição for this period
+  const hasMed = _finCtId && (ST.medicoes||[]).some(
+    m=>m.contractId===_finCtId && m.key===_finDashPeriod && (m.realizado!=null||m.previsto!=null||m.custo!=null));
+  const dot = hasMed
+    ? `<span style="width:6px;height:6px;border-radius:50%;background:#34d399;flex-shrink:0;display:inline-block"></span>`
+    : '';
+  label.innerHTML = `${mon} DE ${yr} ${dot}`;
+}
+
+function selectFinDashPeriod(key){
+  _finDashPeriod = key;
+  _renderFinDashMonthBar();
+  renderFinCharts();
+}
+
+function finDashPeriodShift(dir){
+  if(!_finDashPeriod) return;
+  const [y,m] = _finDashPeriod.split('-').map(Number);
+  const d = new Date(y, m-1+dir, 1);
+  _finDashPeriod = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  _renderFinDashMonthBar();
+  renderFinCharts();
+}
+
+function finDashPeriodToday(){
+  const d=new Date();
+  _finDashPeriod = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  _renderFinDashMonthBar();
   renderFinCharts();
 }
 
@@ -1964,6 +1873,13 @@ function renderFinCharts(){
   const ct = ST.contracts.find(ct=>ct.id===_finCtId);
   if(!ct) return;
 
+  // Ensure period is set
+  if(!_finDashPeriod){
+    const d=new Date();
+    _finDashPeriod = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }
+
+  // Update contract nav arrows
   const opts=[...sel.options];
   const idx=opts.findIndex(o=>parseInt(o.value)===_finCtId);
   const prevBtn=document.getElementById('fin-prev');
@@ -1971,39 +1887,87 @@ function renderFinCharts(){
   if(prevBtn) prevBtn.style.opacity = idx<=0?'0.25':'1';
   if(nextBtn) nextBtn.style.opacity = idx>=opts.length-1?'0.25':'1';
 
-  const rec   = ct.receita       || 0;
-  const cus   = ct.custoTotal    || ct.custo || 0;
-  const res   = ct.resultado     || 0;
-  const mar   = ct.margem        || 0;
-  const salG  = ct.saldoGlobal   || 0;
-  const medU  = ct.ultimaMedicao || 0;
-  const medP  = ct.medicaoPrevista || 0;
-  const totFat = ct._totalFaturado   != null ? ct._totalFaturado  : 0;
-  const salAFat= ct._saldoAFaturar   != null ? ct._saldoAFaturar  : rec - totFat;
-  const execPct= ct._execPct         != null ? ct._execPct        : (rec>0?Math.min(100,totFat/rec*100):0);
+  // Update month bar to reflect new contract's medições dots
+  _renderFinDashMonthBar();
 
-  document.getElementById('fin-kpi-strip').innerHTML = [
-    {l:'Receita',          v:fmtBRL(rec),            c:'#38bdf8'},
-    {l:'Custo Total',      v:fmtBRL(cus),            c:'#f97316'},
-    {l:'Resultado',        v:fmtBRL(res),            c:res>=0?'#10b981':'#f43f5e'},
-    {l:'Margem',           v:mar.toFixed(2)+'%',     c:mar>=20?'#10b981':mar>=12?'#fbbf24':'#f43f5e'},
-    {l:'Valor Global',     v:fmtBRL(salG),           c:'#64748b'},
-    {l:'Total Faturado',   v:fmtBRL(totFat),         c:'#34d399'},
-    {l:'Saldo a Faturar',  v:fmtBRL(salAFat),        c:salAFat>=0?'#fbbf24':'#f43f5e'},
-    {l:'Execução Fat.',    v:execPct.toFixed(1)+'%', c:'#a78bfa'},
-    {l:'Última Medição',   v:fmtBRL(medU),           c:'#f472b6'},
-    {l:'Med. Prevista',    v:fmtBRL(medP),           c:'#818cf8'},
-  ].map(k=>`<div style="padding:13px 16px;border-radius:10px;background:var(--s2);border:1px solid var(--b1)">
-      <div style="font-size:10px;color:var(--t3);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">${k.l}</div>
-      <div style="font-size:14px;font-weight:800;color:${k.c};font-family:var(--fn)">${k.v}</div>
+  // ── Dados do período selecionado (Mapa de Medições) ──────────
+  const medRec  = (ST.medicoes||[]).find(m=>m.contractId===ct.id && m.key===_finDashPeriod) || {};
+  const mReal   = medRec.realizado != null ? medRec.realizado : null;
+  const mPrev   = medRec.previsto  != null ? medRec.previsto  : null;
+  const mCusto  = medRec.custo     != null ? medRec.custo     : null;
+  const mRes    = (mReal!=null && mCusto!=null) ? mReal - mCusto : null;
+  const mMar    = (mRes!=null && mReal>0) ? (mRes/mReal*100) : null;
+  const mDev    = (mPrev!=null && mReal!=null && mPrev>0) ? ((mReal-mPrev)/mPrev*100) : null;
+  const periodoD  = new Date(_finDashPeriod+'-02');
+  const periodoLbl= periodoD.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).replace(/^\w/,s=>s.toUpperCase());
+
+  // ── Dados acumulados do contrato ──────────────────────────────
+  const rec    = ct.receita    || 0;
+  const salG   = ct.saldoGlobal|| 0;
+  const totFat = ct._totalFaturado != null ? ct._totalFaturado : 0;
+  const salAFat= ct._saldoAFaturar != null ? ct._saldoAFaturar : salG - totFat;
+  const execPct= ct._execPct       != null ? ct._execPct       : (salG>0?Math.min(100,totFat/salG*100):0);
+
+  // ── KPI strip — período selecionado + acumulados ──────────────
+  const hasPeriod = mReal!=null || mPrev!=null || mCusto!=null;
+  const kpiStrip = [
+    // Período
+    { l:'Valor Realizado',  v: mReal!=null  ? fmtBRL(mReal)                  : '—',
+      c: mReal!=null ? '#34d399' : 'var(--t3)',
+      s: hasPeriod ? '📐 '+periodoLbl+' · Mapa de Medições' : 'Sem medição neste período' },
+    { l:'Previsto',        v: mPrev!=null  ? fmtBRL(mPrev)                  : '—',
+      c: mPrev!=null ? '#fbbf24' : 'var(--t3)',
+      s: mDev!=null ? `${mDev>=0?'▲':'▼'} ${Math.abs(mDev).toFixed(1)}% vs previsto` : periodoLbl },
+    { l:'Custo (Período)', v: mCusto!=null ? fmtBRL(mCusto)                 : '—',
+      c: mCusto!=null ? '#fb923c' : 'var(--t3)',
+      s: mCusto!=null&&mReal>0 ? (mCusto/mReal*100).toFixed(1)+'% do realizado' : periodoLbl },
+    { l:'Resultado',       v: mRes!=null   ? fmtBRL(mRes)                   : '—',
+      c: mRes!=null ? (mRes>=0?'#10b981':'#ef4444') : 'var(--t3)',
+      s: mRes!=null ? 'Realizado − Custo' : 'Registre realizado e custo' },
+    { l:'Margem',          v: mMar!=null   ? mMar.toFixed(2)+'%'            : '—',
+      c: mMar!=null ? (mMar>=20?'#10b981':mMar>=12?'#fbbf24':'#ef4444') : 'var(--t3)',
+      s: mMar!=null ? (mMar>=20?'🟢 Saudável':mMar>=12?'🟡 Atenção':'🔴 Crítica') : '—' },
+    // Divisor acumulados
+    { l:'Total Faturado',  v: fmtBRL(totFat),  c:'#34d399',                 s:'Σ realizados acumulado' },
+    { l:'Saldo a Faturar', v: fmtBRL(salAFat), c: salAFat>=0?'#fbbf24':'#f43f5e', s:'VG Atual − Σ faturado' },
+    { l:'Execução',        v: execPct.toFixed(1)+'%', c:'#a78bfa',          s:'Faturado / VG Atual', bar:execPct },
+  ];
+
+  document.getElementById('fin-kpi-strip').innerHTML = kpiStrip.map((k,i)=>`
+    <div style="padding:13px 16px;border-radius:10px;background:var(--s2);border:1px solid var(--b1);
+        ${i===5?'border-top:2px solid rgba(255,255,255,.08);':''}
+        position:relative;overflow:hidden">
+      ${i===5?`<div style="position:absolute;top:0;left:0;right:0;height:2px;background:rgba(255,255,255,.08)"></div>`:''}
+      <div style="font-size:9px;color:var(--t3);font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${k.l}</div>
+      <div style="font-size:14px;font-weight:800;color:${k.c};font-family:var(--fn);margin-bottom:3px">${k.v}</div>
+      <div style="font-size:10px;color:var(--t3)">${k.s||''}</div>
+      ${k.bar!=null?`<div style="margin-top:8px;height:3px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden">
+        <div style="height:100%;width:${Math.min(100,k.bar)}%;background:#a78bfa;border-radius:100px;transition:width .8s ease"></div>
+      </div>`:''}
     </div>`).join('');
 
+  // ── Justificativa ─────────────────────────────────────────────
+  const obsText = medRec.obs || ct.justificativa || '';
   const jDiv = document.getElementById('fin-justif');
-  if(ct.justificativa){ jDiv.style.display='block';
-    jDiv.innerHTML=`<span style="color:var(--t3);font-weight:700;margin-right:6px">💬 Justificativa:</span>${ct.justificativa}`;
+  if(obsText){
+    jDiv.style.display='block';
+    jDiv.innerHTML=`<span style="color:var(--t3);font-weight:700;margin-right:6px">💬 ${medRec.obs?'Observação '+periodoLbl:'Justificativa'}:</span>${obsText}`;
   } else { jDiv.style.display='none'; }
 
-  requestAnimationFrame(()=>{ drawFinDonut(ct); drawFinBar(ct); drawFinGauge(ct); renderFinLineChart(); });
+  // Build a synthetic "ct for charts" using period data where available
+  const ctChart = {
+    ...ct,
+    receita:        mReal  != null ? mReal  : rec,
+    custoTotal:     mCusto != null ? mCusto : (ct.custoTotal||ct.custo||0),
+    custo:          mCusto != null ? mCusto : (ct.custoTotal||ct.custo||0),
+    resultado:      mRes   != null ? mRes   : ct.resultado || 0,
+    saldo:          mRes   != null ? mRes   : ct.saldo     || 0,
+    margem:         mMar   != null ? mMar   : ct.margem    || 0,
+    medicaoPrevista: mPrev != null ? mPrev  : ct.medicaoPrevista || 0,
+    ultimaMedicao:   mReal != null ? mReal  : ct.ultimaMedicao   || 0,
+  };
+
+  requestAnimationFrame(()=>{ drawFinDonut(ctChart); drawFinBar(ctChart); drawFinGauge(ctChart); renderFinLineChart(); });
 }
 
 function drawFinDonut(ct){
@@ -2031,8 +1995,8 @@ function drawFinDonut(ct){
   });
   ctx.fillStyle='rgba(2,26,10,.9)'; ctx.beginPath(); ctx.arc(cx,cy,ri-2,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='bold 10px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('RECEITA',cx,cy-9);
-  ctx.fillStyle='#38bdf8'; ctx.font='bold 11px system-ui';
+  ctx.fillText('REALIZADO',cx,cy-9);
+  ctx.fillStyle='#34d399'; ctx.font='bold 11px system-ui';
   const rs=rec>=1e6?(rec/1e6).toFixed(2)+'M':rec>=1e3?(rec/1e3).toFixed(1)+'k':rec.toFixed(0);
   ctx.fillText('R$ '+rs,cx,cy+8);
   const leg=document.getElementById('fin-donut-legend');
@@ -2050,7 +2014,7 @@ function drawFinBar(ct){
   const CW=card?Math.max(300,card.clientWidth-44):380, CH=220;
   canvas.width=CW; canvas.height=CH; ctx.clearRect(0,0,CW,CH);
   const bars=[
-    {l:'Receita',      v:ct.receita||0,              c:'#38bdf8'},
+    {l:'Realizado',    v:ct.receita||0,              c:'#34d399'},
     {l:'Custo Total',  v:ct.custoTotal||ct.custo||0, c:'#f97316'},
     {l:'Resultado',    v:ct.resultado||0,             c:'#10b981'},
     {l:'Saldo',        v:ct.saldo||0,                 c:'#a78bfa'},
@@ -2119,6 +2083,337 @@ function drawFinGauge(ct){
 // ════════════════════════════════════════════════════════════
 //  CONTRACTS
 // ════════════════════════════════════════════════════════════
+// ── Navegação de período nos cards de contrato ────────────────────────────────
+/**
+ * Retorna o YYYY-MM do período ativo para um card.
+ * Default = mês corrente.
+ */
+function _getCtCardPeriod(ctId){
+  if(_ctCardPeriod[ctId]) return _ctCardPeriod[ctId];
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+
+/**
+ * Avança/recua o período do card e re-renderiza apenas aquele card.
+ * @param {number} ctId  - id do contrato
+ * @param {number} dir   - +1 próximo mês, -1 mês anterior
+ */
+function shiftCtCardPeriod(ctId, dir){
+  event.stopPropagation();
+  const cur = _getCtCardPeriod(ctId);
+  const [y,m] = cur.split('-').map(Number);
+  const d = new Date(y, m-1+dir, 1);
+  _ctCardPeriod[ctId] = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  _rerenderCtCard(ctId);
+}
+
+/**
+ * Re-renderiza somente o card de um contrato específico no DOM,
+ * preservando o estado dos painéis de tarefas abertos.
+ */
+function _rerenderCtCard(ctId){
+  const el = document.querySelector(`.cc[data-id="${ctId}"]`);
+  if(!el) return;
+  const taskOpen = el.querySelector('.tt.open') != null;
+  const c = ST.contracts.find(x=>x.id===ctId);
+  if(!c) return;
+  const tasks = ST.tasks.filter(t=>t.contractId===c.id);
+  const pendT = tasks.filter(t=>!t.done).length;
+  el.outerHTML = _buildContractCard(c, tasks, pendT);
+  // Restaura painel de tarefas se estava aberto
+  if(taskOpen){
+    const newEl = document.querySelector(`.cc[data-id="${ctId}"]`);
+    if(newEl){
+      const btn = newEl.querySelector('.tt');
+      if(btn){ btn.classList.add('open'); btn.nextElementSibling.classList.add('open'); }
+    }
+  }
+  // Anima barras do card recém criado
+  setTimeout(()=>{
+    const newEl = document.querySelector(`.cc[data-id="${ctId}"]`);
+    if(!newEl) return;
+    newEl.querySelectorAll('.mbf').forEach(b=>{b.style.width=b.dataset.w||'0%'});
+    newEl.querySelectorAll('.cc-fat-fill').forEach(b=>{b.style.width=b.dataset.w||'0%'});
+  },80);
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  _buildContractCard — gera o HTML de um card de contrato
+//  Separado para permitir re-render individual (navegação período)
+// ════════════════════════════════════════════════════════════
+function _buildContractCard(c, tasks, pendT){
+  const hoje2 = new Date(); hoje2.setHours(0,0,0,0);
+
+  // ── Tarefas ────────────────────────────────────────────────
+  const taskRows = tasks.map(t=>{
+    const isVenc = !t.done && t.dataPrevisao && new Date(t.dataPrevisao+'T00:00:00') < hoje2;
+    const prazoTag = !t.done && t.dataPrevisao
+      ? (()=>{
+          const d = Math.round((new Date(t.dataPrevisao+'T00:00:00') - hoje2) / 86400000);
+          if(d<0)   return `<span style="font-size:9px;color:var(--rdl);font-weight:800">⚠️ Vencida há ${Math.abs(d)}d</span>`;
+          if(d===0) return `<span style="font-size:9px;color:var(--gl);font-weight:800">🔥 Hoje</span>`;
+          if(d<=3)  return `<span style="font-size:9px;color:var(--gl);font-weight:800">⏳ ${d}d</span>`;
+          return `<span style="font-size:9px;color:var(--t3)">🎯 ${fmtDate(t.dataPrevisao)}</span>`;
+        })()
+      : (t.dataResolucao ? `<span style="font-size:9px;color:var(--gnl)">✅ ${fmtDate(t.dataResolucao)}</span>` : '');
+    return `
+    <div class="tr${t.done?' done':''}" data-tid="${t.id}"
+         style="border-left:2px solid ${t.done?'rgba(16,185,129,.4)':isVenc?'rgba(239,68,68,.5)':'rgba(29,78,216,.35)'};padding-left:8px">
+      <div class="tcb${t.done?' done':''}" onclick="toggleTask(${t.id})"></div>
+      <div style="flex:1;min-width:0">
+        <span class="tt-txt">${t.text}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;align-items:center">
+          ${t.responsavel?`<span style="font-size:9px;font-weight:700;color:#c4b5fd">👤 ${t.responsavel}</span>`:''}
+          ${prazoTag}
+        </div>
+      </div>
+      <div class="tacts">
+        <button class="bic" onclick="openTaskModal(${t.id},${c.id})" title="Editar">✎</button>
+        <button class="bic del" onclick="confirmDelete('task',${t.id})" title="Excluir">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Período do card ────────────────────────────────────────
+  const cardPeriod  = _getCtCardPeriod(c.id);          // YYYY-MM
+  const [cpY, cpM]  = cardPeriod.split('-').map(Number);
+  const cardPeriodD = new Date(cpY, cpM-1, 1);
+  const isCurrentMonth = (()=>{ const n=new Date(); return n.getFullYear()===cpY && n.getMonth()+1===cpM; })();
+  const periodLbl   = cardPeriodD.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})
+                        .replace('.','').toUpperCase();  // ex: "JAN/26"
+
+  // Medição do período selecionado
+  const medPeriod   = (ST.medicoes||[]).find(m=>m.contractId===c.id && m.key===cardPeriod) || {};
+  const mpReal      = medPeriod.realizado != null ? medPeriod.realizado : null;
+  const mpPrev      = medPeriod.previsto  != null ? medPeriod.previsto  : null;
+  const mpCusto     = medPeriod.custo     != null ? medPeriod.custo     : null;
+  const mpRes       = (mpReal!=null && mpCusto!=null) ? mpReal - mpCusto : null;
+  const mpMar       = (mpRes!=null && mpReal>0) ? (mpRes/mpReal*100) : null;
+  const mpDev       = (mpPrev!=null && mpReal!=null && mpPrev>0) ? ((mpReal-mpPrev)/mpPrev*100) : null;
+  const hasPeriodData = mpReal!=null || mpPrev!=null;
+
+  // ── Campos calculados (acumulados do contrato) ─────────────
+  const resultSign   = c.resultado >= 0 ? 'pos' : 'neg';
+  const saldoCtr     = c._saldoContrato != null ? c._saldoContrato : (c.saldoGlobal||0) - (c._totalFaturado||0);
+  const execPct      = c._execPct != null ? c._execPct : 0;
+  const totalFaturado= c._totalFaturado || 0;
+  const vgOrig       = c.valorGlobalOriginal || c.saldoGlobal || 0;
+  const vgAditivo    = c.ultimoAditivo || 0;
+  const vgAtual      = c.saldoGlobal || (vgOrig + vgAditivo);
+  const hoje3        = new Date(); hoje3.setHours(0,0,0,0);
+  const endDate      = new Date(c.end + 'T00:00:00');
+  const daysLeft     = Math.round((endDate - hoje3) / 86400000);
+  const endColor     = daysLeft < 60 ? 'var(--rdl)' : daysLeft < 120 ? 'var(--gl)' : 'var(--tx)';
+  const [sc1,sc2]    = statusColors(c.status);
+
+  return `<div class="cc" data-id="${c.id}" data-status="${c.status}" data-name="${c.name.toLowerCase()}">
+
+    <!-- ══ CABEÇALHO ══ -->
+    <div class="cch" style="background:linear-gradient(135deg,${sc1},transparent);border-bottom:1px solid ${sc2.replace(')',',0.25)')};padding:16px 20px 12px">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex:1;min-width:0">
+        <div class="c-logo-wrap" style="border-color:${sc2.replace(')',',0.3)')}">${c.logo?`<img src="${c.logo}" alt="logo" style="object-fit:${c.logoFit||'contain'};padding:${c.logoPad!==undefined?c.logoPad:3}px">`:`<div class="c-logo-placeholder">🏢</div>`}</div>
+        <div style="min-width:0;flex:1">
+          <div class="cct" style="font-size:15px">${c.name}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+            ${statusBadge(c.status)}
+            ${c.linkContrato?`<a href="${c.linkContrato}" target="_blank" onclick="event.stopPropagation()" title="Abrir no Drive" style="display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:800;color:#38bdf8;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:100px;padding:2px 8px;text-decoration:none">📎 Drive</a>`:''}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+        <!-- ── Navegador de Período ── -->
+        <div style="display:flex;align-items:center;gap:0;background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.1);border-radius:10px;overflow:hidden">
+          <button onclick="shiftCtCardPeriod(${c.id},-1)"
+            style="background:none;border:none;color:var(--t2);font-size:12px;padding:5px 9px;
+                   cursor:pointer;transition:all .15s;line-height:1"
+            onmouseover="this.style.background='rgba(255,255,255,.08)';this.style.color='var(--tx)'"
+            onmouseout="this.style.background='none';this.style.color='var(--t2)'">◀</button>
+          <button onclick="openMedModal(${c.id},'${cardPeriod}');event.stopPropagation()"
+            title="Editar medição do período"
+            style="background:none;border:none;border-left:1px solid rgba(255,255,255,.08);
+                   border-right:1px solid rgba(255,255,255,.08);
+                   color:${isCurrentMonth?'var(--gnl)':'var(--ac2)'};
+                   font-size:10px;font-weight:800;letter-spacing:.5px;padding:5px 10px;
+                   cursor:pointer;font-family:var(--fb);white-space:nowrap;line-height:1;
+                   transition:all .15s"
+            onmouseover="this.style.background='rgba(255,255,255,.06)'"
+            onmouseout="this.style.background='none'">
+            ${periodLbl}${hasPeriodData?` <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#34d399;vertical-align:middle;margin-left:2px"></span>`:''}
+          </button>
+          <button onclick="shiftCtCardPeriod(${c.id},1)"
+            style="background:none;border:none;color:var(--t2);font-size:12px;padding:5px 9px;
+                   cursor:pointer;transition:all .15s;line-height:1"
+            onmouseover="this.style.background='rgba(255,255,255,.08)';this.style.color='var(--tx)'"
+            onmouseout="this.style.background='none';this.style.color='var(--t2)'">▶</button>
+        </div>
+        <!-- ── Ações ── -->
+        <div class="cca" style="margin:0">
+          <button class="bic" onclick="openContractModal(${c.id})" title="Editar">✎</button>
+          <button class="bic del" onclick="confirmDelete('contract',${c.id})" title="Excluir">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LINHA IDENTIFICAÇÃO ══ -->
+    <div class="cc-meta">
+      <div class="cc-meta-item">
+        <span class="cc-meta-lbl">CC</span>
+        <span class="cc-meta-sep">·</span>
+        <span class="cc-meta-val" style="color:var(--ac2)">${c.code}</span>
+      </div>
+      <div class="cc-meta-item">
+        <span class="cc-meta-lbl">Índice</span>
+        <span class="cc-meta-sep">·</span>
+        <span class="cc-meta-val">${c.index||'—'}</span>
+      </div>
+      <div class="cc-meta-item">
+        <span class="cc-meta-lbl">Início</span>
+        <span class="cc-meta-sep">·</span>
+        <span class="cc-meta-val">${fmtDate(c.start)}</span>
+      </div>
+      <div class="cc-meta-item">
+        <span class="cc-meta-lbl">Término</span>
+        <span class="cc-meta-sep">·</span>
+        <span class="cc-meta-val" style="color:${endColor}">${fmtDate(c.end)}${daysLeft<120?` <span style="font-size:9px;font-weight:800">(${daysLeft}d)</span>`:''}</span>
+      </div>
+      <div class="cc-meta-item" style="flex-basis:100%">
+        <span class="cc-meta-lbl">Gestor Técnico</span>
+        <span class="cc-meta-sep">·</span>
+        <span class="cc-meta-val">👤 ${c.gestorTecnico||c.responsible||'—'}</span>
+        ${c.telGestorTec?`<span class="cc-meta-sep">·</span><span class="cc-meta-val"><a href="tel:${c.telGestorTec}" onclick="event.stopPropagation()" style="color:var(--gnl);text-decoration:none">📞 ${c.telGestorTec}</a></span>`:''}
+      </div>
+    </div>
+
+    <!-- ══ SEÇÃO 1: VALORES GLOBAIS ══ -->
+    <div class="cc-section">
+      <div class="cc-section-lbl">📄 Valores Contratuais</div>
+      <div class="cc-g3">
+        <div class="cc-gitem">
+          <div class="gi-lbl">Original</div>
+          <div class="gi-val">${fmtBRL(vgOrig)}</div>
+          <div class="gi-sub">Valor contratado</div>
+        </div>
+        <div class="cc-gitem" style="--gic:${vgAditivo>0?'var(--gl)':'rgba(255,255,255,.08)'}">
+          <div class="gi-lbl">Último Aditivo</div>
+          <div class="gi-val" style="color:${vgAditivo>0?'var(--gl)':'var(--t3)'}">${vgAditivo>0?fmtBRL(vgAditivo):'—'}</div>
+          <div class="gi-sub">${vgAditivo>0?'+'+((vgAditivo/vgOrig*100).toFixed(1))+'% do original':'Sem aditivo'}</div>
+        </div>
+        <div class="cc-gitem auto-field">
+          <div class="gi-lbl">✦ Global Atual</div>
+          <div class="gi-val pos">${fmtBRL(vgAtual)}</div>
+          <div class="gi-sub">Original + Aditivo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SEÇÃO 2: FATURADO ACUMULADO ══ -->
+    <div class="cc-section">
+      <div class="cc-section-lbl">💳 Faturamento Acumulado</div>
+      <div class="cc-fat-wrap">
+        <div class="cc-fat-top">
+          <span class="cc-fat-lbl">Total Faturado</span>
+          <span class="cc-fat-pct">${execPct.toFixed(1)}% executado</span>
+        </div>
+        <div class="cc-fat-val">${fmtBRL(totalFaturado)}</div>
+        <div class="cc-fat-bar" style="margin-top:8px">
+          <div class="cc-fat-fill" style="width:0%" data-w="${Math.min(execPct,100)}%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SEÇÃO 3: DADOS DO PERÍODO SELECIONADO ══ -->
+    <div class="cc-section">
+      <div class="cc-section-lbl" style="justify-content:space-between">
+        <span>📊 Competência</span>
+        <span class="cc-period-badge" style="${hasPeriodData?'':'background:rgba(255,255,255,.04);border-color:var(--b1);color:var(--t3)'}">
+          ${hasPeriodData?'📐 ':''} ${periodLbl}
+        </span>
+      </div>
+      <div class="cc-g5">
+        <div class="cc-gitem" style="--gic:var(--ac)">
+          <div class="gi-lbl" style="font-size:8px">Receita</div>
+          <div class="gi-val" style="font-size:13px;color:#93c5fd">${fmtBRL(c.receita)}</div>
+          <div class="gi-sub">Base contrato</div>
+        </div>
+        <div class="cc-gitem" style="--gic:var(--or)">
+          <div class="gi-lbl" style="font-size:8px">Custo Total</div>
+          <div class="gi-val warn" style="font-size:13px">${mpCusto!=null?fmtBRL(mpCusto):fmtBRL(c.custoTotal||c.custo||0)}</div>
+          <div class="gi-sub">${mpCusto!=null?periodLbl:'Acumulado'}</div>
+        </div>
+        <div class="cc-gitem" style="--gic:${(mpRes!=null?mpRes>=0:c.resultado>=0)?'var(--gnl)':'var(--rdl)'}">
+          <div class="gi-lbl" style="font-size:8px">Resultado</div>
+          <div class="gi-val ${mpRes!=null?(mpRes>=0?'pos':'neg'):resultSign}" style="font-size:13px">${mpRes!=null?fmtBRL(mpRes):fmtBRL(c.resultado)}</div>
+          <div class="gi-sub">${mpRes!=null?periodLbl+' · Margem '+(mpMar!=null?mpMar.toFixed(1)+'%':'—'):'Margem '+c.margem.toFixed(1)+'%'}</div>
+        </div>
+        <div class="cc-gitem" style="--gic:var(--t3)">
+          <div class="gi-lbl" style="font-size:8px">Med. Prevista</div>
+          <div class="gi-val" style="font-size:13px;color:var(--t2)">${mpPrev!=null?fmtBRL(mpPrev):fmtBRL(c.medicaoPrevista||0)}</div>
+          <div class="gi-sub">${mpPrev!=null?periodLbl:'Ref. contrato'}</div>
+        </div>
+        <div class="cc-gitem" style="--gic:var(--gnl)">
+          <div class="gi-lbl" style="font-size:8px">Med. Realizada</div>
+          <div class="gi-val ${mpReal!=null&&mpDev!=null&&mpDev<0?'warn':'pos'}" style="font-size:13px">${mpReal!=null?fmtBRL(mpReal):fmtBRL(c.ultimaMedicao||0)}</div>
+          <div class="gi-sub">${mpReal!=null?(mpDev!=null?(mpDev>=0?'▲':'▼')+Math.abs(mpDev).toFixed(1)+'% vs prev.':periodLbl):'Última med.'}</div>
+        </div>
+      </div>
+      <!-- Barra de margem -->
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;white-space:nowrap">Margem</span>
+        <div class="mbb" style="flex:1;height:5px">
+          <div class="mbf ${barClass(mpMar!=null?mpMar:c.margem)}" style="width:0%"
+               data-w="${Math.min((mpMar!=null?mpMar:c.margem)*2.5,100)}%"></div>
+        </div>
+        <strong style="font-size:11px;font-weight:800;color:${mColor(mpMar!=null?mpMar:c.margem)};font-family:var(--fn);white-space:nowrap">
+          ${mpMar!=null?mpMar.toFixed(2):c.margem.toFixed(2)}%
+        </strong>
+      </div>
+    </div>
+
+    <!-- ══ SEÇÃO 4: JUSTIFICATIVA ══ -->
+    <div class="cc-section">
+      <div class="cc-section-lbl">💬 Justificativa de Diferença de Receita</div>
+      <div class="cc-jus${c.justificativa?'':' empty'}">${c.justificativa||'Nenhuma justificativa registrada.'}</div>
+    </div>
+
+    <!-- ══ SEÇÃO 5: SALDO DO CONTRATO (destaque) ══ -->
+    <div class="cc-section">
+      <div class="cc-section-lbl">💰 Posição do Contrato</div>
+      <div class="cc-gitem saldo-field" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <div>
+          <div class="gi-lbl" style="font-size:9px;letter-spacing:2px">✦ Saldo do Contrato</div>
+          <div style="font-family:var(--fn);font-size:26px;font-weight:900;letter-spacing:-0.8px;color:${saldoCtr>=0?'var(--gnl)':'var(--rdl)'};line-height:1.1;margin-top:4px">${fmtBRL(saldoCtr)}</div>
+          <div class="gi-sub" style="margin-top:5px">Global Atual − Faturado Acumulado</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px">Saldo Exec.</div>
+          <div style="font-family:var(--fn);font-size:16px;font-weight:800;color:${execPct>=90?'var(--rdl)':execPct>=70?'var(--gl)':'var(--ac2)'}">${execPct.toFixed(1)}%</div>
+          <div style="font-size:9px;color:var(--t3);margin-top:2px">${execPct>=90?'⚠ Crítico':execPct>=70?'Em atenção':'Normal'}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SEÇÃO 6: PAINEL DE TAREFAS ══ -->
+    <div class="cc-section contract-tasks-wrap" style="border-bottom:none">
+      <div class="task-panel-hdr">
+        <div class="task-panel-title">📋 Painel de Tarefas</div>
+        <div style="font-size:11px;color:var(--t3)">${tasks.length} tarefa${tasks.length!==1?'s':''} · ${pendT} pendente${pendT!==1?'s':''}</div>
+      </div>
+      <button class="tt" data-cid="${c.id}" onclick="toggleTaskPanel(this)">
+        <span>${pendT>0?`⚠️ ${pendT} pendente${pendT!==1?'s':''}`:''} ${tasks.filter(t=>t.done).length} concluída${tasks.filter(t=>t.done).length!==1?'s':''}</span>
+        <span class="ta">▾</span>
+      </button>
+      <div class="tp">
+        ${taskRows}
+        <button class="tadd" onclick="openTaskModal(null,${c.id})">＋ Adicionar tarefa</button>
+      </div>
+    </div>
+
+  </div>`;
+}
+
 function renderContracts(){
   // Save which task panels are currently open
   const openPanels = [...document.querySelectorAll('.tt.open[data-cid]')].map(b=>b.dataset.cid);
@@ -2137,117 +2432,17 @@ function renderContracts(){
   grid.innerHTML=list.map(c=>{
     const tasks=ST.tasks.filter(t=>t.contractId===c.id);
     const pendT=tasks.filter(t=>!t.done).length;
-    const taskRows=tasks.map(t=>{
-      const hoje2=new Date(); hoje2.setHours(0,0,0,0);
-      const isVenc=!t.done&&t.dataPrevisao&&new Date(t.dataPrevisao+'T00:00:00')<hoje2;
-      const prazoTag = !t.done && t.dataPrevisao
-        ? (() => {
-            const d=Math.round((new Date(t.dataPrevisao+'T00:00:00')-hoje2)/86400000);
-            if(d<0)  return `<span style="font-size:9px;color:var(--rdl);font-weight:800">⚠️ Vencida há ${Math.abs(d)}d</span>`;
-            if(d===0)return `<span style="font-size:9px;color:var(--gl);font-weight:800">🔥 Hoje</span>`;
-            if(d<=3) return `<span style="font-size:9px;color:var(--gl);font-weight:800">⏳ ${d}d</span>`;
-            return `<span style="font-size:9px;color:var(--t3)">🎯 ${fmtDate(t.dataPrevisao)}</span>`;
-          })()
-        : (t.dataResolucao ? `<span style="font-size:9px;color:var(--gnl)">✅ ${fmtDate(t.dataResolucao)}</span>` : '');
-      return `
-      <div class="tr${t.done?' done':''}" data-tid="${t.id}"
-           style="border-left:2px solid ${t.done?'rgba(16,185,129,.4)':isVenc?'rgba(239,68,68,.5)':'rgba(29,78,216,.35)'};padding-left:8px">
-        <div class="tcb${t.done?' done':''}" onclick="toggleTask(${t.id})"></div>
-        <div style="flex:1;min-width:0">
-          <span class="tt-txt">${t.text}</span>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;align-items:center">
-            ${t.responsavel?`<span style="font-size:9px;font-weight:700;color:#c4b5fd">👤 ${t.responsavel}</span>`:''}
-            ${prazoTag}
-          </div>
-        </div>
-        <div class="tacts">
-          <button class="bic" onclick="openTaskModal(${t.id},${c.id})" title="Editar">✎</button>
-          <button class="bic del" onclick="confirmDelete('task',${t.id})" title="Excluir">✕</button>
-        </div>
-      </div>`}).join('');
-    const resultSign=c.resultado>=0?'pos':'neg';
-    const jfHtml=c.justificativa?`<div class="jf">💬 ${c.justificativa}</div>`:`<div class="jf empty">Sem justificativa de diferença de receita registrada.</div>`;
-    return`<div class="cc" data-id="${c.id}" data-status="${c.status}" data-name="${c.name.toLowerCase()}">
-      <div class="cch">
-        <div style="display:flex;align-items:flex-start;gap:0;flex:1;min-width:0">
-          <div class="c-logo-wrap">${c.logo?`<img src="${c.logo}" alt="logo" style="object-fit:${c.logoFit||'contain'};padding:${c.logoPad!==undefined?c.logoPad:3}px">`:`<div class="c-logo-placeholder">🏢</div>`}</div>
-          <div style="min-width:0">
-            <div class="cct">${c.name}</div>
-            <div class="ccc">CC: ${c.code} · Índice: ${c.index}</div>
-          </div>
-        </div>
-        <div class="cca">
-          ${statusBadge(c.status)}
-          <button class="bic" onclick="openContractModal(${c.id})" title="Editar">✎</button>
-          <button class="bic del" onclick="confirmDelete('contract',${c.id})" title="Excluir">✕</button>
-        </div>
-      </div>
-      <div class="ccb">
-        <div class="cm">
-          <div class="cmi"><div class="ml">Início</div><div class="mv">${fmtDate(c.start)}</div></div>
-          <div class="cmi"><div class="ml">Término</div><div class="mv" style="${new Date(c.end)<new Date('2026-06-01')?'color:var(--rdl)':''}">${fmtDate(c.end)}</div></div>
-          <div class="cmi"><div class="ml">Gestor Técnico</div><div class="mv">${c.gestorTecnico||c.responsible||'—'}</div></div>
-        </div>
-        <div class="mb">
-          <div class="mbt"><span class="mbl">Margem Pré-Custo</span><strong style="color:${mColor(c.margem)}">${c.margem.toFixed(2)}%</strong></div>
-          <div class="mbb"><div class="mbf ${barClass(c.margem)}" style="width:0%" data-w="${Math.min(c.margem*2.5,100)}%"></div></div>
-        </div>
-        <div class="fm">
-          <div class="fmi"><div class="fml">Receita</div><div class="fmv">${fmtBRL(c.receita)}</div></div>
-          <div class="fmi"><div class="fml">Custo Total</div><div class="fmv warn">${fmtBRL(c.custoTotal)}</div></div>
-          <div class="fmi"><div class="fml">Resultado</div><div class="fmv ${resultSign}">${fmtBRL(c.resultado)}</div></div>
-          <div class="fmi"><div class="fml">Valor Global</div><div class="fmv">${fmtBRL(c.saldoGlobal||0)}</div></div>
-          <div class="fmi"><div class="fml">Total Faturado</div><div class="fmv pos">${fmtBRL(c._totalFaturado||0)}</div></div>
-          <div class="fmi"><div class="fml">Saldo a Faturar</div><div class="fmv ${(c._saldoAFaturar||0)>=0?'pos':'neg'}">${fmtBRL(c._saldoAFaturar!=null?c._saldoAFaturar:c.receita-(c._totalFaturado||0))}</div></div>
-          <div class="fmi"><div class="fml">Medição Prevista</div><div class="fmv">${fmtBRL(c.medicaoPrevista)}</div></div>
-          <div class="fmi"><div class="fml">Última Medição</div><div class="fmv">${fmtBRL(c.ultimaMedicao)}</div></div>
-        </div>
-        <div style="background:linear-gradient(135deg,rgba(5,150,105,.1),rgba(16,185,129,.04));border:1px solid rgba(16,185,129,.2);border-radius:var(--rs);padding:14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px">
-          <div>
-            <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gnl);font-weight:800;margin-bottom:4px">📅 Saldo do Período</div>
-            <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-0.5px;color:${(c.saldo||0)>=0?'var(--gnl)':'var(--rdl)'}">${fmtBRL(c.saldo||0)}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);font-weight:700;margin-bottom:4px">Centro de Custo</div>
-            <div style="font-family:var(--fn);font-size:14px;font-weight:700;color:var(--t2)">${c.code||'—'}</div>
-          </div>
-        </div>
-        ${jfHtml}
-        ${c.linkContrato ? `
-        <div style="margin-bottom:14px">
-          <a href="${c.linkContrato}" target="_blank" onclick="event.stopPropagation()"
-             style="display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;
-                    color:#38bdf8;text-decoration:none;padding:7px 14px;border-radius:8px;
-                    background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);
-                    transition:all .2s;width:100%;justify-content:center"
-             onmouseover="this.style.background='rgba(56,189,248,.15)'"
-             onmouseout="this.style.background='rgba(56,189,248,.08)'">
-            📎 Abrir Contrato no Google Drive
-          </a>
-        </div>` : ''}
-        <div style="border-top:1px solid var(--b1);padding-top:14px">
-          <div class="task-panel-hdr">
-            <div class="task-panel-title">📋 Painel de Tarefas</div>
-            <div style="font-size:11px;color:var(--t3)">${tasks.length} tarefa${tasks.length!==1?'s':''} · ${pendT} pendente${pendT!==1?'s':''}</div>
-          </div>
-          <button class="tt" data-cid="${c.id}" onclick="toggleTaskPanel(this)">
-            <span>${pendT>0?`⚠️ ${pendT} pendente${pendT!==1?'s':''}`:''} ${tasks.filter(t=>t.done).length} concluída${tasks.filter(t=>t.done).length!==1?'s':''}</span>
-            <span class="ta">▾</span>
-          </button>
-          <div class="tp">
-            ${taskRows}
-            <button class="tadd" onclick="openTaskModal(null,${c.id})">＋ Adicionar tarefa</button>
-          </div>
-        </div>
-      </div>
-    </div>`}).join('');
-  // Restore open task panels
+    return _buildContractCard(c, tasks, pendT);
+  }).join('');
   openPanels.forEach(cid=>{
     const btn=document.querySelector(`.tt[data-cid="${cid}"]`);
     if(btn){ btn.classList.add('open'); btn.nextElementSibling.classList.add('open'); }
   });
   // Animate bars
-  setTimeout(()=>{document.querySelectorAll('.mbf').forEach(b=>{b.style.width=b.dataset.w||'0%'})},100);
+  setTimeout(()=>{
+    document.querySelectorAll('.mbf').forEach(b=>{b.style.width=b.dataset.w||'0%'});
+    document.querySelectorAll('.cc-fat-fill').forEach(b=>{b.style.width=b.dataset.w||'0%'});
+  },100);
 }
 
 function setView(v,btn){
@@ -2429,8 +2624,9 @@ function openContractModal(id){
       // Síntese de medições para exibir no formulário
       const meds_c = (ST.medicoes||[]).filter(m=>m.contractId===(c?c.id:0));
       const totFat  = meds_c.reduce((s,m)=>s+(m.realizado||0),0);
-      const salAFat = (c?c.receita||0:0) - totFat;
-      const execPct = (c&&c.receita>0) ? Math.min(100,(totFat/c.receita*100)).toFixed(1) : '0.0';
+      const vgAtualM = (c ? (c.valorGlobalOriginal||0) + (c.ultimoAditivo||0) : 0) || (c?c.saldoGlobal||c.receita||0:0);
+      const salAFat = vgAtualM - totFat;
+      const execPct = vgAtualM > 0 ? Math.min(100,(totFat/vgAtualM*100)).toFixed(1) : '0.0';
       const nMeds   = meds_c.filter(m=>m.realizado!=null&&m.realizado>0).length;
       const hasData = nMeds > 0;
       return c ? `
@@ -2450,7 +2646,7 @@ function openContractModal(id){
         <div>
           <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">Saldo a Faturar</div>
           <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:${salAFat>=0?'#fbbf24':'#f87171'};white-space:nowrap">${fmtBRL(salAFat)}</div>
-          <div style="font-size:10px;color:var(--t3);margin-top:2px">Receita − Σfaturado</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">VG Atual − Σfaturado</div>
         </div>
         <div>
           <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:#a78bfa;text-transform:uppercase;margin-bottom:4px">Execução</div>
@@ -2493,8 +2689,21 @@ function openContractModal(id){
         <input class="finp" type="number" id="ci-sal" value="${c?c.saldo:''}" placeholder="= Resultado" readonly style="opacity:.7;cursor:default">
       </div>
       <div class="fgrp">
-        <div class="flbl">💰 Valor Global do Contrato</div>
-        <input class="finp" type="number" id="ci-sglobal" value="${c?c.saldoGlobal||'':''}" placeholder="Valor global total do contrato">
+        <div class="flbl">💰 Valor Global Original</div>
+        <input class="finp" type="number" id="ci-sglobal-orig" value="${c?c.valorGlobalOriginal||c.saldoGlobal||'':''}" placeholder="Valor contratado inicialmente" oninput="_recalcGlobal()">
+      </div>
+      <div class="fgrp">
+        <div class="flbl" style="display:flex;align-items:center;gap:6px">
+          💰 Valor do Último Aditivo
+        </div>
+        <input class="finp" type="number" id="ci-aditivo" value="${c?c.ultimoAditivo||'':''}" placeholder="0,00 — deixe vazio se não houver aditivo" oninput="_recalcGlobal()">
+      </div>
+      <div class="fgrp">
+        <div class="flbl" style="display:flex;align-items:center;gap:6px">
+          💰 Valor Global Atual
+          <span style="font-size:9px;background:rgba(16,185,129,.12);color:var(--gnl);border:1px solid rgba(16,185,129,.25);padding:1px 6px;border-radius:100px;font-weight:700">AUTO</span>
+        </div>
+        <input class="finp" type="number" id="ci-sglobal" value="${c?c.saldoGlobal||'':''}" placeholder="Calculado: Original + Último Aditivo" readonly style="opacity:.7;cursor:default">
       </div>
       <div class="fgrp">
         <div class="flbl" style="display:flex;align-items:center;gap:6px">
@@ -2526,6 +2735,15 @@ function openContractModal(id){
     document.getElementById('ci-mar').value = mar.toFixed(2);
     document.getElementById('ci-sal').value = res.toFixed(2);
   }
+  // Auto-calc: Valor Global Atual = Original + Último Aditivo
+  function _recalcGlobal(){
+    const orig    = parseFloat(document.getElementById('ci-sglobal-orig').value)||0;
+    const aditivo = parseFloat(document.getElementById('ci-aditivo')?.value)||0;
+    const el = document.getElementById('ci-sglobal');
+    if(el) el.value = (orig + aditivo).toFixed(2);
+  }
+  // Dispara cálculo inicial se já houver valores
+  _recalcGlobal();
   ['ci-rec','ci-cus'].forEach(fid => {
     const el = document.getElementById(fid);
     if(el) el.addEventListener('input', _recalcFormFinancials);
@@ -2669,7 +2887,9 @@ function saveContract(id){
     receita:     parseFloat(document.getElementById('ci-rec').value)||0,
     custoTotal:  parseFloat(document.getElementById('ci-cus').value)||0,
     custo:       parseFloat(document.getElementById('ci-cus').value)||0,
-    saldoGlobal: parseFloat(document.getElementById('ci-sglobal').value)||0,
+    saldoGlobal:          parseFloat(document.getElementById('ci-sglobal').value)||0,
+    valorGlobalOriginal:  parseFloat(document.getElementById('ci-sglobal-orig').value)||0,
+    ultimoAditivo:        parseFloat(document.getElementById('ci-aditivo')?.value)||0,
     // ── Campos derivados de medições (manuais no form, sobrescritos pelo recalc) ──
     // Medição Prevista e Última Medição: aceita entrada manual quando não há medições
     medicaoPrevista: parseFloat(document.getElementById('ci-mp').value)||0,
@@ -2696,7 +2916,13 @@ function saveContract(id){
   // Recalculate derived financials for this contract
   const _savedCt = id ? getContract(id) : ST.contracts[ST.contracts.length-1];
   recalcContractFinancials(_savedCt);
-  closeModal();renderContracts();renderFinanceiro();renderDashboard();scheduleAutoSync();
+  closeModal();
+  renderContracts();
+  renderFinanceiro();
+  renderDashboard();
+  renderTasks();
+  if(document.getElementById('medicoes')?.classList.contains('active')) renderMedicoes();
+  scheduleAutoSync();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -2724,7 +2950,7 @@ function saveContract(id){
  *
  * Campos COMPUTADOS em runtime (prefixo _, não persistidos):
  *   ct._totalFaturado   = Σ(realizado) de todas as medições
- *   ct._saldoAFaturar   = receita − _totalFaturado
+ *   ct._saldoAFaturar   = saldoGlobal − _totalFaturado
  *   ct._execPct         = _totalFaturado / receita × 100
  *   ct._countMeds       = nº de meses com realizado registrado
  *   ct._ultimaMedicaoKey= YYYY-MM da última medição usada
@@ -2755,6 +2981,21 @@ function recalcContractFinancials(ct) {
     ct._ultimaMedicaoKey   = null;
   }
 
+  // ── 2b. Custo da medição mais recente → ct.custoTotal ────────────────────
+  //    Se houver custo registrado na medição, sobrescreve o custoTotal do contrato
+  const comCusto = meds
+    .filter(m => m.custo != null && m.custo > 0)
+    .sort((a, b) => b.key.localeCompare(a.key));
+  if (comCusto.length > 0) {
+    ct.custoTotal          = comCusto[0].custo;
+    ct.custo               = comCusto[0].custo;
+    ct._custoMedKey        = comCusto[0].key;
+    // Recalcular resultado e margem com o novo custo
+    ct.resultado  = receita - ct.custoTotal;
+    ct.saldo      = ct.resultado;
+    ct.margem     = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
+  }
+
   // ── 3. Medição prevista ─────────────────────────────────────────────────
   //    = previsto do mês corrente; fallback: mês mais recente com previsto
   const recAtual = meds.find(m => m.key === curKey);
@@ -2775,9 +3016,23 @@ function recalcContractFinancials(ct) {
 
   // ── 4. Acumulados a partir de medições ──────────────────────────────────
   ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
-  ct._saldoAFaturar = receita - ct._totalFaturado;
-  ct._execPct       = receita > 0 ? Math.min(100, (ct._totalFaturado / receita) * 100) : 0;
+  // ── 5. Valor Global Atual = Original + Último Aditivo ────────────────────
+  ct._valorGlobalAtual = (ct.valorGlobalOriginal || 0) + (ct.ultimoAditivo || 0);
+  if (ct._valorGlobalAtual > 0) ct.saldoGlobal = ct._valorGlobalAtual;
+  const vgAtualCalc = ct.saldoGlobal || receita;
+  // Saldo a Faturar = Valor Global Atual − Total Faturado
+  ct._saldoAFaturar = vgAtualCalc - ct._totalFaturado;
+  ct._saldoContrato = vgAtualCalc - ct._totalFaturado;
+  ct._execPct       = vgAtualCalc > 0 ? Math.min(100, (ct._totalFaturado / vgAtualCalc) * 100) : 0;
   ct._countMeds     = meds.filter(m => m.realizado != null && m.realizado > 0).length;
+  // ── 6. Medição do mês corrente ─────────────────────────────────────────────
+  const medMesAtual       = meds.find(m => m.key === curKey);
+  ct._medicaoMesAtualReal = medMesAtual ? (medMesAtual.realizado || 0) : 0;
+  ct._medicaoMesAtualPrev = medMesAtual ? (medMesAtual.previsto  || 0) : 0;
+  // aliases usados pelo card de contratos
+  ct._curMonthRealizado   = medMesAtual ? (medMesAtual.realizado ?? null) : null;
+  ct._curMonthPrevisto    = medMesAtual ? (medMesAtual.previsto  ?? null) : null;
+  ct._curMonthCusto       = medMesAtual ? (medMesAtual.custo     ?? null) : null;
 }
 
 /** Recalcula todos os contratos em lote (boot, pull do Sheets). */
@@ -2925,6 +3180,13 @@ function selectFinPeriod(key){
     const d = new Date(key+'-02');
     lbl.textContent = '— '+d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).replace(/^\w/,s=>s.toUpperCase());
   }
+  // Re-render os 4 KPI cards com os dados do período recém selecionado
+  // Usa flag para evitar loop (renderFinKpiCards já chama selectFinPeriod no final)
+  if(!selectFinPeriod._updating){
+    selectFinPeriod._updating = true;
+    renderFinKpiCards();
+    selectFinPeriod._updating = false;
+  }
 }
 
 function finPeriodShift(dir){
@@ -2933,6 +3195,7 @@ function finPeriodShift(dir){
   const d = new Date(y, m-1+dir, 1);
   _finPeriod = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
   renderFinMonthBar();
+  renderFinKpiCards();
   renderFinPeriodRow();
 }
 
@@ -2980,11 +3243,35 @@ function selectFinContract(cid){
   _finCtId    = cid;
   const sel = document.getElementById('fin-ct-sel');
   if(sel) sel.value = cid;
+  // Atualiza pills da nav
   document.querySelectorAll('#fin-nav-scroll .fin-pill').forEach(p=>{
     p.classList.toggle('active', parseInt(p.dataset.cid)===cid);
   });
   _finSecScrollToActive();
   _finSecUpdateArrows();
+  // Atualiza destaque e badge SELECIONADO nas linhas da tabela consolidada
+  document.querySelectorAll('#fin-table tbody tr').forEach(tr=>{
+    const onclick = tr.getAttribute('onclick')||'';
+    const match   = onclick.match(/selectFinContract\((\d+)\)/);
+    if(!match) return;
+    const rowCid = parseInt(match[1]);
+    const isSel  = rowCid === cid;
+    tr.style.background = isSel ? 'rgba(29,78,216,.1)' : '';
+    tr.style.outline    = isSel ? '1px solid rgba(29,78,216,.3)' : '';
+    // badge SELECIONADO — fica na primeira célula, dentro de <strong>
+    const badge = tr.querySelector('.sel-badge');
+    if(badge) badge.remove();
+    if(isSel){
+      const strong = tr.querySelector('td:first-child strong');
+      if(strong){
+        const b = document.createElement('span');
+        b.className = 'sel-badge';
+        b.style.cssText = 'margin-left:6px;font-size:9px;background:rgba(29,78,216,.3);color:var(--ac2);padding:2px 6px;border-radius:100px;font-weight:700';
+        b.textContent = 'SELECIONADO';
+        strong.insertAdjacentElement('afterend', b);
+      }
+    }
+  });
   renderFinKpiCards();
   renderFinPeriodRow();
 }
@@ -3022,7 +3309,7 @@ function renderFinKpiCards(){
       <div class="fin-ct-meta">
         <span>🔖 ${ct.code}</span>
         <span>👤 ${ct.gestorTecnico||ct.responsible||'—'}${ct.telGestorTec?` · <a href="tel:${ct.telGestorTec}" style="color:var(--gnl);text-decoration:none">📞 ${ct.telGestorTec}</a>`:''}</span>
-        ${(ct.gestorAdministrativo)?`<span>🗂️ ${ct.gestorAdministrativo}${ct.telGestorAdm?` · <a href="tel:${ct.telGestorAdm}" style="color:var(--gnl);text-decoration:none">📞 ${ct.telGestorAdm}</a>`:''}</span>`:''}
+        ${ct.gestorAdministrativo?`<span>🗂️ ${ct.gestorAdministrativo}${ct.telGestorAdm?` · <a href="tel:${ct.telGestorAdm}" style="color:var(--gnl);text-decoration:none">📞 ${ct.telGestorAdm}</a>`:''}</span>`:''}
         <span>📅 ${ct.start?fmtDate(ct.start):'—'} → ${ct.end?fmtDate(ct.end):'—'}</span>
         <span>📊 ${ct.index||'—'}</span>
       </div>
@@ -3032,27 +3319,27 @@ function renderFinKpiCards(){
       ${prazoTag}
     </div>`;
 
-  // ── KPI cards ──────────────────────────────────────────────
-  const rec    = ct.receita       || 0;
-  const cus    = ct.custoTotal    || ct.custo || 0;
-  const res    = ct.resultado     || 0;
-  const mar    = ct.margem        || 0;
-  const salG   = ct.saldoGlobal   || 0;
-  const medP   = ct.medicaoPrevista || 0;
-  const medU   = ct.ultimaMedicao   || 0;
-  const totFat = ct._totalFaturado   || 0;
-  const salAFat= ct._saldoAFaturar  != null ? ct._saldoAFaturar : rec - totFat;
-  const execPct= ct._execPct        != null ? ct._execPct       : (rec>0?Math.min(100,totFat/rec*100):0);
-  const nMeds  = ct._countMeds      || 0;
-  const ultKey = ct._ultimaMedicaoKey  ? ` · ref ${ct._ultimaMedicaoKey}`  : '';
-  const medPKey= ct._medicaoPrevistaKey ? ` · ref ${ct._medicaoPrevistaKey}` : '';
-  const medVar = medP>0 ? ((medU-medP)/medP*100) : null;
-  const medVarTxt = medVar!==null
-    ? `<span style="font-size:10px;font-weight:700;color:${medVar>=0?'var(--gnl)':'var(--rdl)'}">
-         ${medVar>=0?'▲':'▼'} ${Math.abs(medVar).toFixed(1)}% vs previsto</span>`
-    : '';
+  // ── Dados acumulados (painel synthHtml) ──────────────────────
+  const totFat = ct._totalFaturado  || 0;
+  const salG   = ct.saldoGlobal     || 0;
+  const salAFat= ct._saldoAFaturar != null ? ct._saldoAFaturar : salG - totFat;
+  const execPct= ct._execPct       != null ? ct._execPct       : (salG>0?Math.min(100,totFat/salG*100):0);
+  const nMeds  = ct._countMeds     || 0;
 
-  // Painel síntese medições
+  // ── Dados do período selecionado (medição) ───────────────────
+  const curPeriod = _finPeriod || (()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); })();
+  const medRec = (ST.medicoes||[]).find(m=>m.contractId===ct.id && m.key===curPeriod) || {};
+  const mReal  = medRec.realizado != null ? medRec.realizado : null;
+  const mPrev  = medRec.previsto  != null ? medRec.previsto  : null;
+  const mCusto = medRec.custo     != null ? medRec.custo     : null;
+  const mRes   = (mReal!=null && mCusto!=null) ? mReal - mCusto : null;
+  const mMar   = (mRes!=null && mReal>0) ? (mRes/mReal*100) : null;
+  const devPct = (mPrev!=null && mReal!=null && mPrev>0) ? ((mReal-mPrev)/mPrev*100) : null;
+
+  const periodoLbl = new Date(curPeriod+'-02')
+    .toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).replace(/^\w/,s=>s.toUpperCase());
+
+  // ── Painel síntese acumulada ─────────────────────────────────
   const synthHtml = `
     <div style="grid-column:1/-1;background:linear-gradient(135deg,rgba(29,78,216,.09),rgba(56,189,248,.04));
          border:1px solid rgba(29,78,216,.3);border-radius:14px;padding:16px 22px;
@@ -3060,9 +3347,9 @@ function renderFinKpiCards(){
       ${[
         {l:'Medições Reg.',v:String(nMeds),c:'#93c5fd',s:'meses c/ realizado'},
         {l:'Total Faturado',v:fmtBRL(totFat),c:'#34d399',s:'Σ realizados c/ medição'},
-        {l:'Saldo a Faturar',v:fmtBRL(salAFat),c:salAFat>=0?'#fbbf24':'#f87171',s:'Receita − Σ faturado'},
+        {l:'Saldo a Faturar',v:fmtBRL(salAFat),c:salAFat>=0?'#fbbf24':'#f87171',s:'VG Atual − Σ faturado'},
         {l:'Execução Fat.',v:execPct.toFixed(1)+'%',c:'#a78bfa',s:null,bar:execPct},
-        {l:'Valor Global',v:fmtBRL(salG),c:'#f472b6',s:rec>0&&salG>0?'Exec. global: '+(Math.min(100,totFat/salG*100)).toFixed(1)+'%':'Valor total contratado'},
+        {l:'Valor Global',v:fmtBRL(salG),c:'#f472b6',s:'Exec. global: '+(salG>0?(Math.min(100,totFat/salG*100)).toFixed(1):0)+'%'},
       ].map(k=>`<div>
         <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:${k.c};text-transform:uppercase;margin-bottom:5px">${k.l}</div>
         <div style="font-family:var(--fn);font-size:${k.bar!=null?'22':'15'}px;font-weight:800;color:${k.c};line-height:1;white-space:nowrap">${k.v}</div>
@@ -3071,31 +3358,82 @@ function renderFinKpiCards(){
       </div>`).join('')}
     </div>`;
 
-  const kpis = [
-    { label:'Receita Contratual', value:fmtBRL(rec), sub:`Custo: ${fmtBRL(cus)}`, cls:'ct', icon:'💵', bar:null },
-    { label:'Resultado Bruto',    value:fmtBRL(res),  sub:'Receita − Custo', cls:res>=0?'cb':'cr', icon:res>=0?'✅':'⚠️', bar:null },
-    { label:'Margem Bruta',       value:mar.toFixed(2)+'%', sub:mar>=20?'🟢 Saudável':mar>=12?'🟡 Atenção':'🔴 Crítica',
-      cls:mar>=20?'cb':mar>=12?'co':'cr', icon:'📊',
-      bar:Math.min(100,Math.max(0,mar/30*100)), barColor:mar>=20?'var(--gnl)':mar>=12?'var(--gl)':'var(--rdl)' },
-    { label:'Custo Total', value:fmtBRL(cus), sub:`${rec>0?(cus/rec*100).toFixed(1):0}% da receita`,
-      cls:'cr', icon:'📉', bar:rec>0?Math.min(100,cus/rec*100):0, barColor:'var(--rdl)' },
-  ];
+  // ── Separador com período e botão editar ─────────────────────
+  const periodHeader = `
+    <div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;
+        padding:8px 0 4px;border-top:1px solid rgba(56,189,248,.15);margin-top:4px">
+      <span style="font-size:9px;font-weight:800;letter-spacing:2px;color:var(--t3);text-transform:uppercase">
+        📐 Medição do Período
+      </span>
+      <span style="font-size:11px;font-weight:800;color:var(--ac2)">— ${periodoLbl}</span>
+      <span style="height:1px;flex:1;background:var(--b1)"></span>
+      <button onclick="openMedModal(${ct.id},'${curPeriod}')"
+        style="background:var(--s2);border:1px solid var(--b1);border-radius:8px;color:var(--t2);
+               font-size:11px;font-weight:700;padding:4px 12px;cursor:pointer;font-family:var(--fb);transition:all .2s"
+        onmouseover="this.style.borderColor='rgba(56,189,248,.4)';this.style.color='var(--ac2)'"
+        onmouseout="this.style.borderColor='var(--b1)';this.style.color='var(--t2)'">✎ Editar Medição</button>
+    </div>`;
 
-  document.getElementById('fin-kpi').innerHTML = synthHtml + kpis.map(k=>`
-    <div class="kc ${k.cls}" style="display:flex;flex-direction:column;gap:0">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div class="kl" style="margin:0;white-space:normal;line-height:1.3">${k.label}</div>
+  // ── Badge de vínculo reutilizável ────────────────────────────
+  const linkBadge = color => `<span style="font-size:9px;font-weight:800;
+    background:${color}1a;color:${color};border:1px solid ${color}40;
+    border-radius:100px;padding:2px 7px;margin-left:6px;white-space:nowrap">↔ Contratos</span>`;
+
+  // ── 4 KPI cards com dados do período selecionado ─────────────
+  const kpi1 = {
+    label:'Valor Realizado', tag: linkBadge('#34d399'),
+    value: mReal!=null ? fmtBRL(mReal) : '<span style="color:var(--t3);font-size:14px">Não registrado</span>',
+    sub: devPct!=null
+      ? `${devPct>=0?'▲':'▼'} <strong style="color:${devPct>=0?'#34d399':'#f87171'}">${Math.abs(devPct).toFixed(1)}%</strong> vs previsto (${fmtBRL(mPrev)})`
+      : mPrev!=null ? `Previsto: ${fmtBRL(mPrev)}` : 'Competência · Clique para registrar',
+    cls:'cb', icon:'✅',
+    bar: (mPrev!=null&&mReal!=null&&mPrev>0) ? Math.min(100,mReal/mPrev*100) : null,
+    barColor: devPct!=null&&devPct>=0 ? '#34d399' : '#f87171',
+  };
+  const kpi2 = {
+    label:'Custo Total', tag: linkBadge('#fb923c'),
+    value: mCusto!=null ? fmtBRL(mCusto) : '<span style="color:var(--t3);font-size:14px">Não registrado</span>',
+    sub: mReal!=null&&mCusto!=null&&mReal>0
+      ? `${(mCusto/mReal*100).toFixed(1)}% do realizado`
+      : 'Custo do período · via Mapa de Medições',
+    cls:'cr', icon:'📉',
+    bar: mReal!=null&&mCusto!=null&&mReal>0 ? Math.min(100,mCusto/mReal*100) : null,
+    barColor:'var(--rdl)',
+  };
+  const kpi3 = {
+    label:'Resultado do Período', tag:'',
+    value: mRes!=null ? fmtBRL(mRes) : '<span style="color:var(--t3);font-size:14px">—</span>',
+    sub: mRes!=null ? 'Realizado − Custo' : 'Registre realizado e custo para calcular',
+    cls: mRes!=null&&mRes>=0?'cb':'cr', icon: mRes!=null&&mRes>=0?'✅':'⚠️',
+    bar:null,
+  };
+  const kpi4 = {
+    label:'Margem do Período', tag:'',
+    value: mMar!=null ? mMar.toFixed(2)+'%' : '<span style="color:var(--t3);font-size:14px">—</span>',
+    sub: mMar!=null ? (mMar>=20?'🟢 Saudável':mMar>=12?'🟡 Atenção':'🔴 Crítica') : 'Requer realizado e custo',
+    cls: mMar!=null?(mMar>=20?'cb':mMar>=12?'co':'cr'):'ct', icon:'📊',
+    bar: mMar!=null ? Math.min(100,Math.max(0,mMar/30*100)) : null,
+    barColor: mMar!=null?(mMar>=20?'var(--gnl)':mMar>=12?'var(--gl)':'var(--rdl)'):'var(--t3)',
+  };
+
+  document.getElementById('fin-kpi').innerHTML = synthHtml + periodHeader
+    + [kpi1,kpi2,kpi3,kpi4].map(k=>`
+    <div class="kc ${k.cls}" style="display:flex;flex-direction:column;gap:0;cursor:pointer"
+         onclick="openMedModal(${ct.id},'${curPeriod}')" title="Clique para editar medição do período">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:4px">
+        <div class="kl" style="margin:0;display:flex;align-items:center;flex-wrap:wrap;line-height:1.4">
+          ${k.label}${k.tag}
+        </div>
         <span style="font-size:18px;line-height:1;flex-shrink:0">${k.icon}</span>
       </div>
       <div class="kv" style="color:var(--kcc,var(--tx));font-size:clamp(14px,1.6vw,22px);margin-bottom:6px">${k.value}</div>
       <div class="ks" style="flex:1">${k.sub}</div>
       ${k.bar!==null?`<div style="margin-top:10px;height:4px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden">
         <div style="height:100%;width:${k.bar}%;background:${k.barColor};border-radius:100px;transition:width .8s ease"></div>
-      </div>`:''}
-    </div>`).join('');
+      </div>`:''}</div>`).join('');
 
-  // Atualiza label do período
-  selectFinPeriod(_finPeriod || (()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); })());
+  // Dispara linha 3 (período) com período atual
+  selectFinPeriod(curPeriod);
 }
 
 // ── LINHA 3: Medição do período + Justificativa ───────────────
@@ -3222,7 +3560,7 @@ function renderFinanceiro(){
         <div style="display:flex;align-items:center">
           ${logoHtml}
           <strong style="line-height:1.3">${c.name}</strong>
-          ${isSelected?'<span style="margin-left:6px;font-size:9px;background:rgba(29,78,216,.3);color:var(--ac2);padding:2px 6px;border-radius:100px;font-weight:700">SELECIONADO</span>':''}
+          ${isSelected?'<span class="sel-badge" style="margin-left:6px;font-size:9px;background:rgba(29,78,216,.3);color:var(--ac2);padding:2px 6px;border-radius:100px;font-weight:700">SELECIONADO</span>':''}
         </div>
       </td>
       <td style="white-space:nowrap;font-size:11px;color:var(--t2);font-family:var(--fn)">${c.code}</td>
@@ -4635,6 +4973,137 @@ function updateReunionDate(v){
   if(span) span.textContent=fmt;
   const yr=document.getElementById('hdr-tag-year');
   if(yr) yr.textContent=d.getFullYear();
+  // Sync footer
+  const ftrDate=document.getElementById('ftr-date');
+  if(ftrDate) ftrDate.textContent=fmt;
+  // Persistir data no localStorage
+  localStorage.setItem('diefra_reunion_date', v);
+}
+
+// Sync sala header → footer in real time
+function _initSalaSync(){
+  const inp = document.getElementById('hdr-sala');
+  if(!inp) return;
+  const sync = ()=>{ const el=document.getElementById('ftr-sala'); if(el) el.textContent=inp.value||'—'; };
+  inp.addEventListener('input', sync);
+  inp.addEventListener('change', sync);
+  sync();
+}
+
+// ════════════════════════════════════════════════════════════
+//  UEN PICKER — seletor de unidade no cabeçalho
+// ════════════════════════════════════════════════════════════
+const UEN_PRESETS = ['UEN-100','UEN-200','UEN-300','UEN-400','UEN-500','UEN-600'];
+
+function _syncUenAll(value){
+  const uenText = document.getElementById('hdr-uen-text');
+  if(uenText) uenText.textContent = value;
+  const ftrUen  = document.getElementById('ftr-uen');
+  if(ftrUen)  ftrUen.textContent  = value;
+  localStorage.setItem('diefra_uen', value);
+  // Update active state in picker
+  document.querySelectorAll('.uen-opt').forEach(el=>{
+    const active = el.dataset.val === value;
+    el.style.background  = active ? 'rgba(16,185,129,.15)' : 'rgba(255,255,255,.03)';
+    el.style.color       = active ? 'var(--gnl)'           : 'var(--t2)';
+    el.style.borderColor = active ? 'rgba(16,185,129,.3)'  : 'var(--b1)';
+  });
+}
+
+function _syncDeptAll(value){
+  const deptText = document.getElementById('hdr-dept-text');
+  if(deptText) deptText.textContent = value;
+  const ftrDept  = document.getElementById('ftr-dept');
+  if(ftrDept)  ftrDept.textContent  = value;
+  localStorage.setItem('diefra_dept', value);
+}
+
+function toggleUenPicker(){
+  const picker  = document.getElementById('hdr-uen-picker');
+  const trigger = document.getElementById('hdr-unit-display');
+  if(!picker || !trigger) return;
+  const isOpen = picker.style.display !== 'none';
+  if(isOpen){ picker.style.display = 'none'; return; }
+  // Position below the trigger using fixed coords
+  const r = trigger.getBoundingClientRect();
+  picker.style.top  = (r.bottom + 8) + 'px';
+  picker.style.left = r.left + 'px';
+  picker.style.display = 'block';
+}
+
+function applyUen(value){
+  if(!value || !value.trim()) return;
+  _syncUenAll(value.trim().toUpperCase());
+  const picker = document.getElementById('hdr-uen-picker');
+  if(picker) picker.style.display = 'none';
+}
+
+function applyUenCustom(){
+  const inp = document.getElementById('hdr-uen-custom');
+  if(!inp || !inp.value.trim()) return;
+  applyUen(inp.value.trim().toUpperCase());
+  inp.value = '';
+}
+
+function _attachDeptEditor(){
+  const deptDisplay = document.getElementById('hdr-dept-display');
+  if(!deptDisplay) return;
+  deptDisplay.onclick = ()=>{
+    const current = document.getElementById('hdr-dept-text')?.textContent || 'Diretoria Técnica';
+    const input   = document.createElement('input');
+    input.value   = current;
+    input.style.cssText = `background:none;border:none;border-bottom:2px solid var(--gnl);
+      color:var(--t2);font-family:var(--fb);font-size:clamp(14px,1.8vw,24px);font-weight:600;
+      outline:none;width:${Math.max(200,current.length*13)}px;padding:0 2px;transition:border-color .2s`;
+    deptDisplay.innerHTML = '';
+    deptDisplay.appendChild(input);
+    input.focus(); input.select();
+    const finish = ()=>{
+      const val = input.value.trim() || 'Diretoria Técnica';
+      _syncDeptAll(val);
+      deptDisplay.innerHTML = `<span id="hdr-dept-text">${val}</span><span style="font-size:11px;color:var(--gnl);margin-left:4px;opacity:.7">✎</span>`;
+      _attachDeptEditor(); // re-attach
+    };
+    input.addEventListener('blur',    finish, {once:true});
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key==='Escape') input.blur(); });
+    deptDisplay.onclick = null; // prevent double-fire while editing
+  };
+}
+
+function _initUenPicker(){
+  // Build preset buttons
+  const opts  = document.getElementById('hdr-uen-options');
+  const saved = localStorage.getItem('diefra_uen') || 'UEN-300';
+  if(opts){
+    opts.innerHTML = UEN_PRESETS.map(u=>`
+      <button class="uen-opt" data-val="${u}" onclick="applyUen('${u}')"
+        style="background:${u===saved?'rgba(16,185,129,.15)':'rgba(255,255,255,.03)'};
+               border:1px solid ${u===saved?'rgba(16,185,129,.3)':'var(--b1)'};
+               color:${u===saved?'var(--gnl)':'var(--t2)'};
+               border-radius:8px;padding:7px 14px;cursor:pointer;font-family:var(--fb);
+               font-size:12px;font-weight:800;text-align:left;letter-spacing:.8px;
+               transition:all .15s">${u}</button>`).join('');
+  }
+
+  // Trigger click on the UEN display
+  const trigger = document.getElementById('hdr-unit-display');
+  if(trigger) trigger.onclick = e=>{ e.stopPropagation(); toggleUenPicker(); };
+
+  // Close picker on outside click
+  document.addEventListener('click', e=>{
+    const picker = document.getElementById('hdr-uen-picker');
+    if(picker && picker.style.display!=='none' && !picker.contains(e.target)){
+      picker.style.display = 'none';
+    }
+  });
+
+  // Restore saved values
+  const savedDept = localStorage.getItem('diefra_dept') || 'Diretoria Técnica';
+  _syncUenAll(saved);
+  _syncDeptAll(savedDept);
+
+  // Attach dept inline editor
+  _attachDeptEditor();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -6323,7 +6792,18 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(salaInp){resizeSala();salaInp.addEventListener('input',resizeSala);}
   // Sync subtitle date with header date input
   const dateInp=document.getElementById('hdr-date');
-  if(dateInp) updateReunionDate(dateInp.value);
+  if(dateInp){
+    // Restaura última data salva ou mantém a padrão do input
+    const savedDate = localStorage.getItem('diefra_reunion_date');
+    if(savedDate){ dateInp.value = savedDate; }
+    updateReunionDate(dateInp.value);
+  }
+  // Sync sala → footer
+  _initSalaSync();
+  // Init UEN picker + dept editor
+  _initUenPicker();
+  // Init color palette
+  _initPalette();
 });
 
 
@@ -6346,206 +6826,6 @@ function finChartShift(dir){
   renderFinCharts();
 }
 
-function renderFinCharts(){
-  const sel = document.getElementById('fin-ct-sel');
-  if(!sel) return;
-  const ctId = parseInt(sel.value);
-  const ct   = ST.contracts.find(c=>c.id===ctId);
-  if(!ct) return;
-
-  // ── Prev/Next arrow state ──────────────────────────────────
-  const idx = [...sel.options].findIndex(o=>parseInt(o.value)===ctId);
-  const prev = document.getElementById('fin-prev');
-  const next = document.getElementById('fin-next');
-  if(prev) prev.disabled = idx<=0;
-  if(next) next.disabled = idx>= sel.options.length-1;
-
-  // ── KPI strip ─────────────────────────────────────────────
-  const kpis = [
-    {l:'Receita',    v:fmtBRL(ct.receita||0),   col:'#10b981', icon:'💰'},
-    {l:'Custo',      v:fmtBRL(ct.custo||0),     col:'#f97316', icon:'📤'},
-    {l:'Resultado',  v:fmtBRL(ct.resultado||0), col:ct.resultado>=0?'#10b981':'#ef4444', icon:'📈'},
-    {l:'Saldo',      v:fmtBRL(ct.saldo||0),     col:ct.saldo>=0?'#38bdf8':'#ef4444', icon:'⚖'},
-    {l:'Margem',     v:(ct.margem||0).toFixed(2)+'%', col:mColor(ct.margem), icon:'📊'},
-  ];
-  document.getElementById('fin-kpi-strip').innerHTML = kpis.map(k=>`
-    <div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:14px 16px;border-top:2px solid ${k.col}">
-      <div style="font-size:10px;color:var(--t3);font-weight:700;letter-spacing:.8px;margin-bottom:6px;font-family:var(--fb)">${k.icon} ${k.l.toUpperCase()}</div>
-      <div style="font-family:var(--fn);font-size:18px;font-weight:800;color:${k.col};letter-spacing:-.5px">${k.v}</div>
-    </div>`).join('');
-
-  // ── Line Evolution Chart ─────────────────────────────────
-  renderFinLineChart();
-
-  // ── Justificativa ─────────────────────────────────────────
-  const jEl = document.getElementById('fin-justif');
-  if(ct.justificativa){
-    jEl.style.display='block';
-    jEl.innerHTML=`<span style="font-weight:700;color:var(--t1)">⚠ Observação: </span>${ct.justificativa}`;
-  } else {
-    jEl.style.display='none';
-  }
-
-  // helper to destroy and recreate canvas
-  function freshCanvas(id){
-    const old = document.getElementById(id);
-    const parent = old.parentNode;
-    const w = old.getAttribute('width');
-    const h = old.getAttribute('height');
-    old.remove();
-    const neo = document.createElement('canvas');
-    neo.id=id; neo.setAttribute('width',w); neo.setAttribute('height',h);
-    neo.style.cssText=old.style.cssText||'';
-    parent.appendChild(neo);
-    return neo;
-  }
-
-  // ── DONUT — Custo vs Resultado vs Saldo ──────────────────
-  freshCanvas('fin-donut');
-  const donutCtx = document.getElementById('fin-donut').getContext('2d');
-  const donutData = {
-    labels: ['Custo', 'Resultado', 'Saldo'],
-    datasets:[{
-      data:[ct.custo||0, Math.max(0,ct.resultado||0), Math.max(0,ct.saldo||0)],
-      backgroundColor:['rgba(249,115,22,.8)','rgba(16,185,129,.8)','rgba(56,189,248,.8)'],
-      borderColor:['#f97316','#10b981','#38bdf8'],
-      borderWidth:2,
-      hoverOffset:8,
-    }]
-  };
-  _finDonutChart = new Chart(donutCtx,{
-    type:'doughnut',
-    data:donutData,
-    options:{
-      responsive:false,
-      cutout:'65%',
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          callbacks:{
-            label:ctx=>' '+fmtBRL(ctx.parsed)
-          },
-          backgroundColor:'rgba(2,26,10,.95)',
-          borderColor:'rgba(16,185,129,.25)',
-          borderWidth:1,
-          titleFont:{family:'Nunito',size:12},
-          bodyFont:{family:'Nunito',size:11},
-        }
-      }
-    }
-  });
-  // Legend
-  document.getElementById('fin-donut-legend').innerHTML = [
-    {l:'Custo',c:'#f97316',v:ct.custo||0},
-    {l:'Resultado',c:'#10b981',v:ct.resultado||0},
-    {l:'Saldo',c:'#38bdf8',v:ct.saldo||0},
-  ].map(d=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-    <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)"><span style="width:10px;height:10px;border-radius:3px;background:${d.c};display:inline-block;flex-shrink:0"></span>${d.l}</span>
-    <strong style="font-size:11px;font-family:var(--fn);color:${d.c}">${fmtBRL(d.v)}</strong>
-  </div>`).join('');
-
-  // ── BAR — all financial indicators ───────────────────────
-  freshCanvas('fin-bar');
-  const barCtx = document.getElementById('fin-bar').getContext('2d');
-  const barLabels = ['Receita','Custo','Resultado','Saldo','Medição\nPrevista','Última\nMedição'];
-  const barValues = [
-    ct.receita||0,
-    ct.custo||0,
-    ct.resultado||0,
-    ct.saldo||0,
-    ct.medicaoPrevista||0,
-    ct.ultimaMedicao||0,
-  ];
-  const barColors = barValues.map((v,i)=>{
-    if(i===0) return 'rgba(16,185,129,.75)';
-    if(i===1) return 'rgba(249,115,22,.75)';
-    if(i===2) return v>=0?'rgba(16,185,129,.9)':'rgba(239,68,68,.9)';
-    if(i===3) return v>=0?'rgba(56,189,248,.75)':'rgba(239,68,68,.75)';
-    return 'rgba(109,40,217,.65)';
-  });
-  const maxVal = Math.max(...barValues.map(Math.abs), 1);
-
-  _finBarChart = new Chart(barCtx,{
-    type:'bar',
-    data:{
-      labels: barLabels,
-      datasets:[{
-        label:'R$',
-        data: barValues,
-        backgroundColor: barColors,
-        borderColor: barColors.map(c=>c.replace('.75','.9').replace('.65','1').replace('.9','1')),
-        borderWidth:1,
-        borderRadius:6,
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:true,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          callbacks:{label:ctx=>' '+fmtBRL(ctx.parsed.y)},
-          backgroundColor:'rgba(2,26,10,.95)',
-          borderColor:'rgba(16,185,129,.25)',
-          borderWidth:1,
-          titleFont:{family:'Nunito',size:12},
-          bodyFont:{family:'Nunito',size:11},
-        }
-      },
-      scales:{
-        x:{
-          grid:{color:'rgba(255,255,255,.05)'},
-          ticks:{color:'rgba(255,255,255,.5)',font:{family:'Nunito',size:10},maxRotation:0},
-        },
-        y:{
-          grid:{color:'rgba(255,255,255,.05)'},
-          ticks:{
-            color:'rgba(255,255,255,.45)',
-            font:{family:'Nunito',size:10},
-            callback:v=>{
-              if(Math.abs(v)>=1000000) return 'R$'+(v/1000000).toFixed(1)+'M';
-              if(Math.abs(v)>=1000)    return 'R$'+(v/1000).toFixed(0)+'k';
-              return 'R$'+v;
-            }
-          },
-          min: Math.min(0, ...barValues)*1.1,
-          max: maxVal*1.15,
-        }
-      }
-    }
-  });
-
-  // ── LINE — evolução faturamento × custos ────────────────
-  renderFinLineChart();
-
-  // ── GAUGE — margem ────────────────────────────────────────
-  freshCanvas('fin-gauge');
-  const gaugeCtx = document.getElementById('fin-gauge').getContext('2d');
-  const margem = ct.margem||0;
-  // Gauge uses doughnut half-circle trick
-  const clampM = Math.max(0, Math.min(100, margem));
-  const gaugeColor = mColor(margem);
-  _finGaugeChart = new Chart(gaugeCtx,{
-    type:'doughnut',
-    data:{
-      datasets:[{
-        data:[clampM, 100-clampM],
-        backgroundColor:[gaugeColor, 'rgba(255,255,255,.06)'],
-        borderWidth:0,
-        circumference:180,
-        rotation:270,
-      }]
-    },
-    options:{
-      responsive:false,
-      cutout:'72%',
-      plugins:{legend:{display:false},tooltip:{enabled:false}}
-    }
-  });
-  document.getElementById('fin-gauge-info').innerHTML=`
-    <div style="font-family:var(--fn);font-size:32px;font-weight:800;color:${gaugeColor};letter-spacing:-1px">${margem.toFixed(1)}%</div>
-    <div style="font-size:10px;color:var(--t3);margin-top:2px;font-family:var(--fb)">${margem>=20?'✅ Margem saudável':margem>=12?'⚠ Margem moderada':'🔴 Margem crítica'}</div>`;
-}
 
 
 
@@ -6609,20 +6889,24 @@ function renderMedicoes(){
 
   // ── thead ──────────────────────────────────────────────────
   const grpHdrs = months.map(m=>`
-    <th class="ag-th" colspan="2" style="text-align:center;background:rgba(37,99,235,.12);color:#93c5fd;
-        letter-spacing:1.2px;font-size:10px;font-weight:800;border-bottom:1px solid rgba(37,99,235,.25);min-width:330px;padding:9px 6px;white-space:nowrap">
+    <th class="ag-th" colspan="3" style="text-align:center;background:rgba(37,99,235,.12);color:#93c5fd;
+        letter-spacing:1.2px;font-size:10px;font-weight:800;border-bottom:1px solid rgba(37,99,235,.25);min-width:495px;padding:9px 6px;white-space:nowrap">
       <div style="font-weight:900;font-size:11px;margin-bottom:1px">${m.short.toUpperCase()}</div>
       <div style="opacity:.55;font-size:9px;font-weight:600">${m.year}</div>
     </th>`).join('');
 
   const subHdrs = months.map(()=>`
-    <th class="ag-th" style="min-width:160px;background:rgba(37,99,235,.06);font-size:10px;
+    <th class="ag-th" style="min-width:155px;background:rgba(37,99,235,.06);font-size:10px;
         color:rgba(251,191,36,.9);text-align:right;padding:7px 14px;white-space:nowrap">
       Valor Previsto &nbsp;<span style="opacity:.6;font-size:9px;font-weight:500">(Pré Custo)</span>
     </th>
-    <th class="ag-th" style="min-width:170px;background:rgba(37,99,235,.06);font-size:10px;
+    <th class="ag-th" style="min-width:165px;background:rgba(37,99,235,.06);font-size:10px;
         color:rgba(52,211,153,.9);text-align:right;padding:7px 14px;white-space:nowrap">
       Valor Realizado &nbsp;<span style="opacity:.6;font-size:9px;font-weight:500">(Competência)</span>
+    </th>
+    <th class="ag-th" style="min-width:175px;background:rgba(37,99,235,.06);font-size:10px;
+        color:rgba(249,115,22,.9);text-align:right;padding:7px 14px;white-space:nowrap">
+      Custo Total &nbsp;<span style="opacity:.6;font-size:9px;font-weight:500">/ Resultado</span>
     </th>`).join('');
 
   const thead = `<thead>
@@ -6636,7 +6920,7 @@ function renderMedicoes(){
   </thead>`;
 
   if(!ST.contracts.length){
-    table.innerHTML = thead + `<tbody><tr><td colspan="${3+MED_COLS*2}" style="padding:50px;text-align:center;color:var(--t3)">Nenhum contrato cadastrado.</td></tr></tbody>`;
+    table.innerHTML = thead + `<tbody><tr><td colspan="${3+MED_COLS*3}" style="padding:50px;text-align:center;color:var(--t3)">Nenhum contrato cadastrado.</td></tr></tbody>`;
     _medRefreshArrows(); return;
   }
 
@@ -6651,7 +6935,9 @@ function renderMedicoes(){
       const rec  = medGetRec(ct.id, m.key);
       const prev = rec ? rec.previsto  : null;
       const real = rec ? rec.realizado : null;
+      const cust = rec ? rec.custo     : null;
 
+      // Cor e badge do realizado vs previsto
       let realColor='var(--t2)';
       let pctBadge='';
       if(prev!=null && real!=null){
@@ -6663,6 +6949,15 @@ function renderMedicoes(){
           pctBadge = `<span style="font-size:9px;font-weight:800;padding:1px 5px;border-radius:100px;background:${bc};color:${tc};margin-left:4px">${pct}%</span>`;
         }
       }
+
+      // Resultado = realizado - custo (quando ambos existem)
+      const resultado = (real!=null && cust!=null) ? real - cust : null;
+      const resColor  = resultado===null ? 'var(--t3)' : resultado>=0 ? '#10b981' : '#ef4444';
+      const resBadge  = resultado!==null
+        ? `<span style="display:block;font-size:9px;font-weight:800;color:${resColor};margin-top:3px;font-family:var(--fn);white-space:nowrap">
+             ${resultado>=0?'▲':'▼'} ${fmtBRL(Math.abs(resultado))}
+           </span>`
+        : '';
 
       const prevTd = `<td style="text-align:right;padding:8px 14px;border-bottom:1px solid var(--b1);
           white-space:nowrap;cursor:pointer;transition:background .15s"
@@ -6687,7 +6982,20 @@ function renderMedicoes(){
           : `<span style="color:var(--t3);font-size:10px;opacity:.35">—</span>`}
       </td>`;
 
-      return prevTd + realTd;
+      const custTd = `<td style="text-align:right;padding:8px 14px;border-bottom:1px solid var(--b1);
+          border-left:1px solid rgba(249,115,22,.12);
+          white-space:nowrap;cursor:pointer;transition:background .15s;background:rgba(249,115,22,.02)"
+          onclick="openMedModal(${ct.id},'${m.key}')"
+          onmouseover="this.style.background='rgba(249,115,22,.07)'" onmouseout="this.style.background='rgba(249,115,22,.02)'">
+        ${cust!=null
+          ? `<div>
+               <span style="font-size:11px;font-weight:700;font-family:var(--fn);color:#fb923c;white-space:nowrap">${fmtBRL(cust)}</span>
+               ${resBadge}
+             </div>`
+          : `<span style="color:var(--t3);font-size:10px;opacity:.35">—</span>`}
+      </td>`;
+
+      return prevTd + realTd + custTd;
     }).join('');
 
     return `<tr class="vr${ci%5}" style="transition:background .15s">
@@ -6710,8 +7018,11 @@ function renderMedicoes(){
   const footCells = months.map(m=>{
     const totP = sorted.reduce((a,ct)=>{ const r=medGetRec(ct.id,m.key); return a+(r?r.previsto||0:0); },0);
     const totR = sorted.reduce((a,ct)=>{ const r=medGetRec(ct.id,m.key); return a+(r?r.realizado||0:0); },0);
+    const totC = sorted.reduce((a,ct)=>{ const r=medGetRec(ct.id,m.key); return a+(r&&r.custo!=null?r.custo:0); },0);
+    const totRes = totR - totC; // resultado consolidado
     const pct  = totP>0 ? ((totR/totP)*100).toFixed(1) : null;
     const pc   = pct ? (parseFloat(pct)>=100?'#10b981':parseFloat(pct)>=85?'#fbbf24':'#ef4444') : 'var(--t3)';
+    const resC = totRes>=0 ? '#10b981' : '#ef4444';
     return `
       <td style="text-align:right;padding:9px 14px;background:rgba(37,99,235,.07);border-top:2px solid rgba(37,99,235,.25);white-space:nowrap">
         <div style="font-size:11px;font-weight:800;color:#fbbf24;font-family:var(--fn);white-space:nowrap">${fmtBRL(totP)}</div>
@@ -6721,6 +7032,12 @@ function renderMedicoes(){
           <span style="font-size:11px;font-weight:800;color:#34d399;font-family:var(--fn);white-space:nowrap">${fmtBRL(totR)}</span>
           ${pct ? `<span style="font-size:9px;font-weight:800;color:${pc};padding:1px 5px;border-radius:100px;background:${pc}22;white-space:nowrap">${parseFloat(pct)>=100?'▲':'▼'} ${pct}%</span>` : ''}
         </div>
+      </td>
+      <td style="text-align:right;padding:9px 14px;background:rgba(249,115,22,.06);border-top:2px solid rgba(249,115,22,.3);border-left:1px solid rgba(249,115,22,.15);white-space:nowrap">
+        ${totC>0 ? `
+        <div style="font-size:11px;font-weight:800;color:#fb923c;font-family:var(--fn);white-space:nowrap">${fmtBRL(totC)}</div>
+        <div style="font-size:9px;font-weight:800;color:${resC};margin-top:2px;white-space:nowrap">${totRes>=0?'▲':'▼'} ${fmtBRL(Math.abs(totRes))}</div>` :
+        `<span style="color:var(--t3);font-size:10px;opacity:.4">—</span>`}
       </td>`;
   }).join('');
 
@@ -6749,38 +7066,51 @@ function _medRenderTotais(months, contracts){
   el.innerHTML = months.map(m=>{
     const totP = contracts.reduce((a,ct)=>{ const r=medGetRec(ct.id,m.key); return a+(r?r.previsto||0:0); },0);
     const totR = contracts.reduce((a,ct)=>{ const r=medGetRec(ct.id,m.key); return a+(r?r.realizado||0:0); },0);
+    const totC = contracts.reduce((a,ct)=>{ const r=medGetRec(ct.id,m.key); return a+(r&&r.custo!=null?r.custo:0); },0);
+    const totRes = totC > 0 ? totR - totC : null;
     const pct  = totP>0 ? (totR/totP*100) : null;
     const pc   = pct===null?'var(--t3)':pct>=100?'#10b981':pct>=85?'#fbbf24':'#ef4444';
     const sym  = pct===null?'':pct>=100?'▲':'▼';
-    return `<div style="background:var(--s2);border:1px solid var(--b1);border-radius:14px;padding:16px 20px;
+    const resC = totRes===null ? 'var(--t3)' : totRes>=0 ? '#10b981' : '#ef4444';
+    return `<div style="background:var(--s2);border:1px solid var(--b1);border-radius:14px;padding:16px 18px;
         border-top:2px solid rgba(37,99,235,.5);min-width:0;overflow:hidden">
       <!-- Header: período -->
       <div style="text-align:center;font-size:11px;font-weight:800;color:#93c5fd;letter-spacing:1px;
           margin-bottom:14px;font-family:var(--fb);text-transform:uppercase">
         ${m.short} / ${m.year}
       </div>
-      <!-- Two columns -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:8px;overflow:hidden;
+      <!-- Three columns: Previsto | Realizado | Custo -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-radius:8px;overflow:hidden;
           border:1px solid rgba(37,99,235,.18)">
         <!-- PREVISTO -->
-        <div style="padding:10px 12px;border-right:1px solid rgba(37,99,235,.18);background:rgba(251,191,36,.04)">
+        <div style="padding:10px 10px;border-right:1px solid rgba(37,99,235,.18);background:rgba(251,191,36,.04)">
           <div style="font-size:9px;font-weight:800;color:#fbbf24;letter-spacing:.6px;margin-bottom:2px;
-              font-family:var(--fb)">VALOR PREVISTO</div>
+              font-family:var(--fb)">PREVISTO</div>
           <div style="font-size:9px;color:rgba(251,191,36,.5);font-family:var(--fb);margin-bottom:8px">(PRÉ CUSTO)</div>
-          <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:#fbbf24;
+          <div style="font-family:var(--fn);font-size:12px;font-weight:800;color:#fbbf24;
               white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${fmtBRL(totP)}</div>
         </div>
         <!-- REALIZADO -->
-        <div style="padding:10px 12px;background:rgba(52,211,153,.04)">
+        <div style="padding:10px 10px;border-right:1px solid rgba(37,99,235,.18);background:rgba(52,211,153,.04)">
           <div style="font-size:9px;font-weight:800;color:#34d399;letter-spacing:.6px;margin-bottom:2px;
-              font-family:var(--fb)">VALOR REALIZADO</div>
+              font-family:var(--fb)">REALIZADO</div>
           <div style="font-size:9px;color:rgba(52,211,153,.5);font-family:var(--fb);margin-bottom:8px">(COMPETÊNCIA)</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap">
-            <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:#34d399;
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap">
+            <div style="font-family:var(--fn);font-size:12px;font-weight:800;color:#34d399;
                 white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${fmtBRL(totR)}</div>
-            ${pct!==null ? `<span style="flex-shrink:0;font-size:10px;font-weight:800;padding:2px 6px;
+            ${pct!==null ? `<span style="flex-shrink:0;font-size:9px;font-weight:800;padding:1px 5px;
                 border-radius:100px;background:${pc}22;color:${pc};white-space:nowrap">${sym}${pct.toFixed(0)}%</span>` : ''}
           </div>
+        </div>
+        <!-- CUSTO TOTAL -->
+        <div style="padding:10px 10px;background:rgba(249,115,22,.04)">
+          <div style="font-size:9px;font-weight:800;color:#fb923c;letter-spacing:.6px;margin-bottom:2px;
+              font-family:var(--fb)">CUSTO TOTAL</div>
+          <div style="font-size:9px;color:rgba(249,115,22,.5);font-family:var(--fb);margin-bottom:8px">/ RESULTADO</div>
+          <div style="font-family:var(--fn);font-size:12px;font-weight:800;color:#fb923c;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${totC>0?fmtBRL(totC):'—'}</div>
+          ${totRes!==null ? `<div style="font-size:9px;font-weight:800;color:${resC};margin-top:3px;font-family:var(--fn);white-space:nowrap">
+            ${totRes>=0?'▲':'▼'} ${fmtBRL(Math.abs(totRes))}</div>` : ''}
         </div>
       </div>
       <!-- Progress bar -->
@@ -6790,6 +7120,38 @@ function _medRenderTotais(months, contracts){
         </div>` : ''}
     </div>`;
   }).join('');
+}
+
+// ── Resultado em tempo real nos modais de medição ────────────────
+function _mnCalcRes(){
+  const real = parseFloat(document.getElementById('mn-real')?.value)||0;
+  const cust = parseFloat(document.getElementById('mn-cust')?.value)||0;
+  const badge = document.getElementById('mn-res-badge');
+  if(!badge) return;
+  const realV = document.getElementById('mn-real')?.value;
+  const custV = document.getElementById('mn-cust')?.value;
+  if(realV===''||custV===''){badge.style.display='none';return;}
+  const res = real - cust;
+  badge.style.display = 'block';
+  badge.style.background = res>=0?'rgba(16,185,129,.08)':'rgba(239,68,68,.08)';
+  badge.style.borderColor = res>=0?'rgba(16,185,129,.2)':'rgba(239,68,68,.2)';
+  badge.style.color = res>=0?'#10b981':'#ef4444';
+  badge.textContent = `Resultado: ${fmtBRL(res)}`;
+}
+function _medCalcRes(){
+  const real = parseFloat(document.getElementById('med-real')?.value)||0;
+  const cust = parseFloat(document.getElementById('med-cust')?.value)||0;
+  const badge = document.getElementById('med-res-badge');
+  if(!badge) return;
+  const realV = document.getElementById('med-real')?.value;
+  const custV = document.getElementById('med-cust')?.value;
+  if(realV===''||custV===''){badge.style.display='none';return;}
+  const res = real - cust;
+  badge.style.display = 'block';
+  badge.style.background = res>=0?'rgba(16,185,129,.08)':'rgba(239,68,68,.08)';
+  badge.style.borderColor = res>=0?'rgba(16,185,129,.2)':'rgba(239,68,68,.2)';
+  badge.style.color = res>=0?'#10b981':'#ef4444';
+  badge.textContent = `Resultado: ${fmtBRL(res)}`;
 }
 
 // ── Modal: Nova Medição (cadastro — escolhe contrato + mês) ──────
@@ -6822,16 +7184,22 @@ function openMedNovaModal(prefillCtId){
         <div class="flbl">📅 Competência (mês / ano)</div>
         <select class="fsel" id="mn-mes">${monthOpts}</select>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
         <div class="fgrp">
           <div class="flbl" style="color:#fbbf24">💰 Valor Previsto (Pré Custo)</div>
-          <input class="finp" type="number" id="mn-prev" placeholder="0,00" step="0.01" min="0">
+          <input class="finp" type="number" id="mn-prev" placeholder="0,00" step="0.01" min="0" oninput="_mnCalcRes()">
         </div>
         <div class="fgrp">
           <div class="flbl" style="color:#34d399">✅ Valor Realizado</div>
-          <input class="finp" type="number" id="mn-real" placeholder="0,00" step="0.01" min="0">
+          <input class="finp" type="number" id="mn-real" placeholder="0,00" step="0.01" min="0" oninput="_mnCalcRes()">
+        </div>
+        <div class="fgrp">
+          <div class="flbl" style="color:#fb923c">🔧 Custo Total</div>
+          <input class="finp" type="number" id="mn-cust" placeholder="0,00" step="0.01" min="0" oninput="_mnCalcRes()">
         </div>
       </div>
+      <div id="mn-res-badge" style="display:none;padding:8px 14px;border-radius:8px;background:rgba(16,185,129,.08);
+          border:1px solid rgba(16,185,129,.2);font-size:12px;font-weight:800;color:#10b981;text-align:center"></div>
       <div class="fgrp">
         <div class="flbl">📝 Observação da Medição
           <span style="font-size:10px;color:var(--t3);font-weight:400;margin-left:4px">— sincroniza com Justificativa do Contrato</span>
@@ -6865,11 +7233,13 @@ function saveMedNova(){
   if(prevStr===''&&realStr===''){ showToast('⛔ Informe ao menos um valor.','rd'); return; }
 
   const existing = ST.medicoes.findIndex(m=>m.contractId===contractId&&m.key===mesKey);
+  const custStr  = document.getElementById('mn-cust').value;
   const obj = {
     contractId,
     key      : mesKey,
     previsto : prevStr!==''?parseFloat(prevStr):null,
     realizado: realStr!==''?parseFloat(realStr):null,
+    custo    : custStr!==''?parseFloat(custStr):null,
     obs,
   };
   if(existing>=0) ST.medicoes[existing]=obj;
@@ -6919,15 +7289,24 @@ function openMedModal(contractId, mesKey){
           <div style="font-size:12px;font-weight:700;margin-top:3px">${ct.code||''} · ${ct.name}</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
         <div class="fgrp">
           <div class="flbl" style="color:#fbbf24">💰 Valor Previsto (Pré Custo)</div>
-          <input class="finp" type="number" id="med-prev" value="${rec.previsto??''}" placeholder="0,00" step="0.01" min="0">
+          <input class="finp" type="number" id="med-prev" value="${rec.previsto??''}" placeholder="0,00" step="0.01" min="0" oninput="_medCalcRes()">
         </div>
         <div class="fgrp">
           <div class="flbl" style="color:#34d399">✅ Valor Realizado</div>
-          <input class="finp" type="number" id="med-real" value="${rec.realizado??''}" placeholder="0,00" step="0.01" min="0">
+          <input class="finp" type="number" id="med-real" value="${rec.realizado??''}" placeholder="0,00" step="0.01" min="0" oninput="_medCalcRes()">
         </div>
+        <div class="fgrp">
+          <div class="flbl" style="color:#fb923c">🔧 Custo Total</div>
+          <input class="finp" type="number" id="med-cust" value="${rec.custo??''}" placeholder="0,00" step="0.01" min="0" oninput="_medCalcRes()">
+        </div>
+      </div>
+      <div id="med-res-badge" style="${rec.realizado!=null&&rec.custo!=null?'':'display:none;'}padding:8px 14px;border-radius:8px;background:${(rec.realizado||0)-(rec.custo||0)>=0?'rgba(16,185,129,.08)':'rgba(239,68,68,.08)'};
+          border:1px solid ${(rec.realizado||0)-(rec.custo||0)>=0?'rgba(16,185,129,.2)':'rgba(239,68,68,.2)'};font-size:12px;font-weight:800;
+          color:${(rec.realizado||0)-(rec.custo||0)>=0?'#10b981':'#ef4444'};text-align:center">
+        ${rec.realizado!=null&&rec.custo!=null ? `Resultado: ${fmtBRL(rec.realizado - rec.custo)}` : ''}
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação da Medição
@@ -6966,6 +7345,7 @@ function saveMed(contractId, mesKey){
   if(!ST.medicoes) ST.medicoes=[];
   const prev = document.getElementById('med-prev').value;
   const real = document.getElementById('med-real').value;
+  const cust = document.getElementById('med-cust').value;
   const obs  = document.getElementById('med-obs').value.trim();
   const link = normalizeUrl((document.getElementById('med-link')||{}).value?.trim()||'');
   if(prev===''&&real===''){ showToast('⛔ Informe ao menos um valor.','rd'); return; }
@@ -6974,6 +7354,7 @@ function saveMed(contractId, mesKey){
     key      : mesKey,
     previsto : prev!==''?parseFloat(prev):null,
     realizado: real!==''?parseFloat(real):null,
+    custo    : cust!==''?parseFloat(cust):null,
     obs, link,
   };
   const idx = ST.medicoes.findIndex(m=>m.contractId===contractId&&m.key===mesKey);
@@ -7468,6 +7849,208 @@ async function deleteUsuario(id, name){
   renderUsuarios();
 }
 
+</script>
+<!-- ══ UEN PICKER (body-level para escapar overflow:hidden do header) ══ -->
+<div id="hdr-uen-picker" style="display:none;position:fixed;z-index:9999;
+    background:rgba(8,20,14,.97);backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid rgba(16,185,129,.28);border-radius:16px;padding:14px;
+    box-shadow:0 16px 48px rgba(0,0,0,.65),0 0 0 1px rgba(16,185,129,.08);min-width:268px">
+  <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:var(--t3);
+      text-transform:uppercase;margin-bottom:10px;padding:0 4px;
+      display:flex;align-items:center;gap:8px">
+    Selecionar Unidade
+    <span style="flex:1;height:1px;background:var(--b1)"></span>
+    <button onclick="document.getElementById('hdr-uen-picker').style.display='none'"
+      style="background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;
+             line-height:1;padding:0 2px;transition:color .15s"
+      onmouseover="this.style.color='var(--rdl)'" onmouseout="this.style.color='var(--t3)'">✕</button>
+  </div>
+  <div id="hdr-uen-options" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px"></div>
+  <div style="border-top:1px solid var(--b1);padding-top:10px">
+    <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);
+        text-transform:uppercase;margin-bottom:6px;padding:0 2px">Outra unidade</div>
+    <div style="display:flex;gap:6px">
+      <input id="hdr-uen-custom" placeholder="Ex: UEN-700" maxlength="12"
+        style="flex:1;background:var(--s2);border:1px solid var(--b1);border-radius:8px;
+               color:var(--tx);font-family:var(--fb);font-size:12px;font-weight:700;
+               padding:7px 10px;outline:none;transition:border-color .2s"
+        onfocus="this.style.borderColor='rgba(16,185,129,.5)'"
+        onblur="this.style.borderColor='var(--b1)'"
+        onkeydown="if(event.key==='Enter')applyUenCustom()">
+      <button onclick="applyUenCustom()"
+        style="background:var(--gnl);border:none;border-radius:8px;color:#fff;
+               font-size:11px;font-weight:800;padding:7px 16px;cursor:pointer;
+               font-family:var(--fb);transition:opacity .15s;white-space:nowrap"
+        onmouseover="this.style.opacity='.82'" onmouseout="this.style.opacity='1'">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PALETTE SWITCHER ══ -->
+<button id="palette-btn" onclick="togglePalette()" title="Trocar tema de cores">🎨</button>
+<div id="palette-panel">
+  <div class="pp-title">Paleta de Cores</div>
+  <div class="pp-grid" id="pp-grid"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  PALETTE SWITCHER
+// ════════════════════════════════════════════════════════════
+const PALETTES = [
+  {
+    id:'verde-escuro', label:'Verde Original',
+    vars:{
+      '--bg':'#0b2215','--s1':'rgba(14,40,24,0.82)','--s2':'rgba(18,52,32,0.72)',
+      '--s3':'#1d5c35','--t3':'#5d9470','--gnl':'#10b981','--gn':'#059669',
+      '--ac':'#1d4ed8','--ach':'#2563eb','--ac2':'#38bdf8',
+      '--tx':'#e2e8f0','--t2':'#94a3b8',
+      '--body-g1':'rgba(16,185,129,0.13)','--body-g2':'rgba(5,150,105,0.11)',
+      '--body-g3':'rgba(10,160,100,0.06)','--body-g4':'rgba(16,185,129,0.07)',
+      '--body-base1':'#091e14','--body-base2':'#0b2215','--body-base3':'#0d2a1c',
+    },
+    preview:'linear-gradient(135deg,#0b2215,#10b981)'
+  },
+  {
+    id:'azul-navy', label:'Azul Navy',
+    vars:{
+      '--bg':'#0a1628','--s1':'rgba(10,22,50,0.85)','--s2':'rgba(14,30,65,0.75)',
+      '--s3':'#1e3a8a','--t3':'#4a6fa5','--gnl':'#3b82f6','--gn':'#2563eb',
+      '--ac':'#7c3aed','--ach':'#8b5cf6','--ac2':'#a78bfa',
+      '--tx':'#e2e8f0','--t2':'#94a3b8',
+      '--body-g1':'rgba(59,130,246,0.12)','--body-g2':'rgba(37,99,235,0.09)',
+      '--body-g3':'rgba(29,78,216,0.06)','--body-g4':'rgba(59,130,246,0.07)',
+      '--body-base1':'#050d1e','--body-base2':'#0a1628','--body-base3':'#0d1e38',
+    },
+    preview:'linear-gradient(135deg,#0a1628,#3b82f6)'
+  },
+  {
+    id:'roxo-violeta', label:'Violeta',
+    vars:{
+      '--bg':'#12082a','--s1':'rgba(20,10,45,0.85)','--s2':'rgba(28,14,60,0.75)',
+      '--s3':'#4c1d95','--t3':'#7c5fb5','--gnl':'#a78bfa','--gn':'#7c3aed',
+      '--ac':'#db2777','--ach':'#ec4899','--ac2':'#f9a8d4',
+      '--tx':'#ede9fe','--t2':'#c4b5fd',
+      '--body-g1':'rgba(139,92,246,0.13)','--body-g2':'rgba(109,40,217,0.10)',
+      '--body-g3':'rgba(91,33,182,0.07)','--body-g4':'rgba(124,58,237,0.08)',
+      '--body-base1':'#0a0418','--body-base2':'#12082a','--body-base3':'#180b35',
+    },
+    preview:'linear-gradient(135deg,#12082a,#a78bfa)'
+  },
+  {
+    id:'ciano-profundo', label:'Ciano',
+    vars:{
+      '--bg':'#041e22','--s1':'rgba(4,30,36,0.85)','--s2':'rgba(6,42,50,0.75)',
+      '--s3':'#134e4a','--t3':'#2d8f8a','--gnl':'#2dd4bf','--gn':'#0d9488',
+      '--ac':'#0284c7','--ach':'#0ea5e9','--ac2':'#67e8f9',
+      '--tx':'#e2f8f7','--t2':'#99d6d4',
+      '--body-g1':'rgba(45,212,191,0.12)','--body-g2':'rgba(13,148,136,0.10)',
+      '--body-g3':'rgba(20,184,166,0.06)','--body-g4':'rgba(45,212,191,0.07)',
+      '--body-base1':'#021214','--body-base2':'#041e22','--body-base3':'#06282e',
+    },
+    preview:'linear-gradient(135deg,#041e22,#2dd4bf)'
+  },
+  {
+    id:'slate-cinza', label:'Slate',
+    vars:{
+      '--bg':'#0f1623','--s1':'rgba(15,22,35,0.87)','--s2':'rgba(20,30,50,0.78)',
+      '--s3':'#1e293b','--t3':'#4a6080','--gnl':'#64748b','--gn':'#475569',
+      '--ac':'#3b82f6','--ach':'#60a5fa','--ac2':'#93c5fd',
+      '--tx':'#e2e8f0','--t2':'#94a3b8',
+      '--body-g1':'rgba(100,116,139,0.10)','--body-g2':'rgba(71,85,105,0.08)',
+      '--body-g3':'rgba(51,65,85,0.06)','--body-g4':'rgba(100,116,139,0.05)',
+      '--body-base1':'#080e18','--body-base2':'#0f1623','--body-base3':'#131e2f',
+    },
+    preview:'linear-gradient(135deg,#0f1623,#64748b)'
+  },
+  {
+    id:'carmesim', label:'Carmesim',
+    vars:{
+      '--bg':'#1a0810','--s1':'rgba(28,8,18,0.85)','--s2':'rgba(40,12,25,0.78)',
+      '--s3':'#7f1d1d','--t3':'#a05050','--gnl':'#f87171','--gn':'#ef4444',
+      '--ac':'#dc2626','--ach':'#ef4444','--ac2':'#fca5a5',
+      '--tx':'#fde8e8','--t2':'#fca5a5',
+      '--body-g1':'rgba(248,113,113,0.12)','--body-g2':'rgba(220,38,38,0.09)',
+      '--body-g3':'rgba(185,28,28,0.06)','--body-g4':'rgba(248,113,113,0.07)',
+      '--body-base1':'#0f0408','--body-base2':'#1a0810','--body-base3':'#220a14',
+    },
+    preview:'linear-gradient(135deg,#1a0810,#f87171)'
+  },
+  {
+    id:'ambar', label:'Âmbar',
+    vars:{
+      '--bg':'#1a1005','--s1':'rgba(28,18,5,0.85)','--s2':'rgba(40,26,6,0.78)',
+      '--s3':'#78350f','--t3':'#a07030','--gnl':'#f59e0b','--gn':'#d97706',
+      '--ac':'#ea580c','--ach':'#f97316','--ac2':'#fed7aa',
+      '--tx':'#fef3c7','--t2':'#fcd34d',
+      '--body-g1':'rgba(245,158,11,0.12)','--body-g2':'rgba(217,119,6,0.09)',
+      '--body-g3':'rgba(180,83,9,0.06)','--body-g4':'rgba(245,158,11,0.07)',
+      '--body-base1':'#0f0900','--body-base2':'#1a1005','--body-base3':'#221505',
+    },
+    preview:'linear-gradient(135deg,#1a1005,#f59e0b)'
+  },
+  {
+    id:'esmeralda', label:'Esmeralda',
+    vars:{
+      '--bg':'#022c1a','--s1':'rgba(2,44,26,0.85)','--s2':'rgba(3,60,35,0.78)',
+      '--s3':'#065f46','--t3':'#1a8060','--gnl':'#34d399','--gn':'#10b981',
+      '--ac':'#0891b2','--ach':'#06b6d4','--ac2':'#67e8f9',
+      '--tx':'#d1fae5','--t2':'#6ee7b7',
+      '--body-g1':'rgba(52,211,153,0.13)','--body-g2':'rgba(16,185,129,0.11)',
+      '--body-g3':'rgba(5,150,105,0.07)','--body-g4':'rgba(52,211,153,0.08)',
+      '--body-base1':'#011a10','--body-base2':'#022c1a','--body-base3':'#033822',
+    },
+    preview:'linear-gradient(135deg,#022c1a,#34d399)'
+  },
+];
+
+let _activePalette = localStorage.getItem('diefra_palette') || 'verde-escuro';
+
+function applyPalette(id){
+  const p = PALETTES.find(x=>x.id===id);
+  if(!p) return;
+  _activePalette = id;
+  localStorage.setItem('diefra_palette', id);
+  const root = document.documentElement;
+  Object.entries(p.vars).forEach(([k,v])=>root.style.setProperty(k,v));
+  // Update body gradient using the vars
+  document.body.style.background = `
+    radial-gradient(ellipse 90% 60% at 10% 5%,  ${p.vars['--body-g1']} 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 88% 90%,  ${p.vars['--body-g2']} 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,  ${p.vars['--body-g3']} 0%, transparent 65%),
+    radial-gradient(ellipse 30% 25% at 75% 15%,  ${p.vars['--body-g4']} 0%, transparent 45%),
+    linear-gradient(160deg, ${p.vars['--body-base1']} 0%, ${p.vars['--body-base2']} 35%, ${p.vars['--body-base3']} 65%, ${p.vars['--body-base1']} 100%)`;
+  // Update swatches active state
+  document.querySelectorAll('.pp-swatch').forEach(el=>{
+    el.classList.toggle('active', el.dataset.pid===id);
+  });
+}
+
+function togglePalette(){
+  document.getElementById('palette-panel').classList.toggle('open');
+}
+
+// Close on outside click
+document.addEventListener('click', e=>{
+  const panel = document.getElementById('palette-panel');
+  const btn   = document.getElementById('palette-btn');
+  if(panel && !panel.contains(e.target) && e.target!==btn){
+    panel.classList.remove('open');
+  }
+});
+
+function _initPalette(){
+  const grid = document.getElementById('pp-grid');
+  if(!grid) return;
+  grid.innerHTML = PALETTES.map(p=>`
+    <div class="pp-swatch${p.id===_activePalette?' active':''}" data-pid="${p.id}"
+         style="background:${p.preview}"
+         onclick="applyPalette('${p.id}')" title="${p.label}">
+      <div class="pp-swatch-lbl">${p.label}</div>
+    </div>`).join('');
+  // Apply saved palette on load
+  if(_activePalette !== 'verde-escuro') applyPalette(_activePalette);
+}
 </script>
 </body>
 </html>
