@@ -460,7 +460,7 @@ body{
 #palette-panel{position:fixed;bottom:78px;right:24px;z-index:500;
   background:rgba(10,25,18,.95);backdrop-filter:blur(24px) saturate(160%);
   border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;
-  width:290px;box-shadow:0 12px 48px rgba(0,0,0,.5);
+  width:340px;box-shadow:0 12px 48px rgba(0,0,0,.5);
   transform:translateY(8px) scale(.97);opacity:0;pointer-events:none;
   transition:all .22s cubic-bezier(.4,0,.2,1)}
 #palette-panel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
@@ -2151,12 +2151,13 @@ function _buildFatSection(c, ST){
   const meds = (ST.medicoes||[]).filter(function(m){
     return m.contractId===c.id && (m.dtEntrega||m.dtAutFat||m.dtFatura||m.resumoFat);
   });
-  if(!meds.length) return '';
+  var hasContratuaisCheck = c.dtInicioEntregaMed||c.dtFimEntregaMed||c.dtInicioAnalise||c.dtFimAnalise||c.dtPagamentoCliente;
+  if(!meds.length && !hasContratuaisCheck) return '';
   meds.sort(function(a,b){ return b.key.localeCompare(a.key); });
-  var mf = meds[0];
-  var parts = mf.key.split('-');
-  var mfLbl = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1)
-    .toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace('.','').toUpperCase();
+  var mf = meds.length ? meds[0] : {};
+  var parts = mf.key ? mf.key.split('-') : ['2000','01'];
+  var mfLbl = mf.key ? new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1)
+    .toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace('.','').toUpperCase() : '';
 
   function fmtD(d){
     if(!d) return '—';
@@ -2173,6 +2174,42 @@ function _buildFatSection(c, ST){
   }
 
   var hasDates = mf.dtEntrega||mf.dtAutFat||mf.dtFatura;
+
+  // ── Cards de Prazos Contratuais (nível contrato) ──────────
+  var hasContratuais = c.dtInicioEntregaMed||c.dtFimEntregaMed||c.dtInicioAnalise||c.dtFimAnalise||c.dtPagamentoCliente;
+  function fmtPeriodo(ini, fim){
+    if(ini && fim) return fmtD(ini)+' — '+fmtD(fim);
+    if(ini) return 'a partir de '+fmtD(ini);
+    if(fim) return 'até '+fmtD(fim);
+    return '—';
+  }
+  var hoje_pag = new Date(); hoje_pag.setHours(0,0,0,0);
+  var diasPag = c.dtPagamentoCliente ? Math.round((new Date(c.dtPagamentoCliente+'T00:00:00') - hoje_pag)/86400000) : null;
+  var pagTag = '';
+  if(diasPag!==null){
+    if(diasPag<0)        pagTag = '<span style="font-size:9px;color:var(--rdl);font-weight:800">⚠️ '+Math.abs(diasPag)+'d atrás</span>';
+    else if(diasPag===0) pagTag = '<span style="font-size:9px;color:var(--gl);font-weight:800">🔥 Hoje</span>';
+    else if(diasPag<=5)  pagTag = '<span style="font-size:9px;color:var(--gl);font-weight:800">⏳ em '+diasPag+'d</span>';
+    else                 pagTag = '<span style="font-size:9px;color:var(--gnl);font-weight:800">📅 em '+diasPag+'d</span>';
+  }
+  var contratuaisHTML = '';
+  if(hasContratuais){
+    contratuaisHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">'
+      +'<div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:9px 10px">'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">📐 Entrega da Medição</div>'
+        +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx)">'+fmtPeriodo(c.dtInicioEntregaMed,c.dtFimEntregaMed)+'</div>'
+      +'</div>'
+      +'<div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.25);border-radius:10px;padding:9px 10px">'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#c4b5fd;text-transform:uppercase;margin-bottom:4px">🔍 Análise do Cliente</div>'
+        +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx)">'+fmtPeriodo(c.dtInicioAnalise,c.dtFimAnalise)+'</div>'
+      +'</div>'
+      +'<div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:9px 10px">'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">💳 Pagamento do Cliente</div>'
+        +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:5px">'+fmtD(c.dtPagamentoCliente)+(pagTag?' '+pagTag:'')+'</div>'
+      +'</div>'
+    +'</div>';
+  }
 
   var datesHTML = '';
   if(hasDates){
@@ -2200,10 +2237,13 @@ function _buildFatSection(c, ST){
     +'</div>';
   }
 
+  if(!hasContratuais && !hasDates && !mf.resumoFat) return '';
   return '<div class="cc-section">'
     +'<div class="cc-section-lbl" style="display:flex;align-items:center;justify-content:space-between">'
-      +'<span>🧾 Faturamento — <span style="font-family:var(--fn);font-size:9px;color:var(--ac2);font-weight:800">'+mfLbl+'</span></span>'
+      +'<span>🧾 Faturamento'+(meds.length?' — <span style="font-family:var(--fn);font-size:9px;color:var(--ac2);font-weight:800">'+mfLbl+'</span>':'')+'</span>'
     +'</div>'
+    +contratuaisHTML
+    +(hasDates||mf.resumoFat?'<div style="border-top:1px solid rgba(255,255,255,.06);margin:8px 0 8px"></div>':'')
     +datesHTML
     +resumoHTML
   +'</div>';
@@ -2399,10 +2439,10 @@ function _buildContractCard(c, tasks, pendT){
         </span>
       </div>
       <div class="cc-g5">
-        <div class="cc-gitem" style="--gic:var(--ac)">
+        <div class="cc-gitem" style="--gic:${mpReal!=null?'var(--gnl)':'var(--ac)'}">
           <div class="gi-lbl" style="font-size:8px">Receita</div>
-          <div class="gi-val" style="font-size:13px;color:#93c5fd">${fmtBRL(c.receita)}</div>
-          <div class="gi-sub">Base contrato</div>
+          <div class="gi-val" style="font-size:13px;color:${mpReal!=null?'#34d399':'#93c5fd'}">${mpReal!=null?fmtBRL(mpReal):fmtBRL(c.receita)}</div>
+          <div class="gi-sub">${mpReal!=null?'✦ Realizado '+periodLbl:'Base contrato'}</div>
         </div>
         <div class="cc-gitem" style="--gic:var(--or)">
           <div class="gi-lbl" style="font-size:8px">Custo Total</div>
@@ -2730,42 +2770,11 @@ function openContractModal(id){
 
     <div class="fg fg3">
       <div class="fgrp">
-        <div class="flbl">Receita Contratual</div>
-        <input class="finp" type="number" id="ci-rec" value="${c?c.receita:''}" placeholder="0.00">
-      </div>
-      <div class="fgrp">
-        <div class="flbl">Custo Total Orçado</div>
-        <input class="finp" type="number" id="ci-cus" value="${c?c.custoTotal:''}" placeholder="0.00">
-      </div>
-      <div class="fgrp">
-        <div class="flbl" style="display:flex;align-items:center;gap:6px">
-          Resultado Bruto
-          <span style="font-size:9px;background:rgba(16,185,129,.15);color:var(--gnl);border:1px solid rgba(16,185,129,.3);padding:1px 6px;border-radius:100px;font-weight:700">AUTO</span>
-        </div>
-        <input class="finp" type="number" id="ci-res" value="${c?c.resultado:''}" placeholder="Receita − Custo" readonly style="opacity:.7;cursor:default">
-      </div>
-      <div class="fgrp">
-        <div class="flbl" style="display:flex;align-items:center;gap:6px">
-          Margem Bruta (%)
-          <span style="font-size:9px;background:rgba(16,185,129,.15);color:var(--gnl);border:1px solid rgba(16,185,129,.3);padding:1px 6px;border-radius:100px;font-weight:700">AUTO</span>
-        </div>
-        <input class="finp" type="number" step="0.01" id="ci-mar" value="${c?c.margem.toFixed(2):''}" placeholder="Calculado automaticamente" readonly style="opacity:.7;cursor:default">
-      </div>
-      <div class="fgrp">
-        <div class="flbl" style="display:flex;align-items:center;gap:6px">
-          Saldo do Período
-          <span style="font-size:9px;background:rgba(16,185,129,.15);color:var(--gnl);border:1px solid rgba(16,185,129,.3);padding:1px 6px;border-radius:100px;font-weight:700">AUTO</span>
-        </div>
-        <input class="finp" type="number" id="ci-sal" value="${c?c.saldo:''}" placeholder="= Resultado" readonly style="opacity:.7;cursor:default">
-      </div>
-      <div class="fgrp">
         <div class="flbl">💰 Valor Global Original</div>
         <input class="finp" type="number" id="ci-sglobal-orig" value="${c?c.valorGlobalOriginal||c.saldoGlobal||'':''}" placeholder="Valor contratado inicialmente" oninput="_recalcGlobal()">
       </div>
       <div class="fgrp">
-        <div class="flbl" style="display:flex;align-items:center;gap:6px">
-          💰 Valor do Último Aditivo
-        </div>
+        <div class="flbl">💰 Valor do Último Aditivo</div>
         <input class="finp" type="number" id="ci-aditivo" value="${c?c.ultimoAditivo||'':''}" placeholder="0,00 — deixe vazio se não houver aditivo" oninput="_recalcGlobal()">
       </div>
       <div class="fgrp">
@@ -2775,36 +2784,18 @@ function openContractModal(id){
         </div>
         <input class="finp" type="number" id="ci-sglobal" value="${c?c.saldoGlobal||'':''}" placeholder="Calculado: Original + Último Aditivo" readonly style="opacity:.7;cursor:default">
       </div>
-      <div class="fgrp">
-        <div class="flbl" style="display:flex;align-items:center;gap:6px">
-          Medição Prevista
-          <span style="font-size:9px;background:rgba(56,189,248,.12);color:var(--ac2);border:1px solid rgba(56,189,248,.25);padding:1px 6px;border-radius:100px;font-weight:700" title="Sincronizado automaticamente com o mapa de medições">📐 MED</span>
-        </div>
-        <input class="finp" type="number" id="ci-mp" value="${c?c.medicaoPrevista:''}" placeholder="0.00"
-          ${c&&c._medicaoPrevistaKey?`title="Ref.: ${c._medicaoPrevistaKey}"`:''}>
-      </div>
-      <div class="fgrp">
-        <div class="flbl" style="display:flex;align-items:center;gap:6px">
-          Última Medição
-          <span style="font-size:9px;background:rgba(56,189,248,.12);color:var(--ac2);border:1px solid rgba(56,189,248,.25);padding:1px 6px;border-radius:100px;font-weight:700" title="Sincronizado automaticamente com o mapa de medições">📐 MED</span>
-        </div>
-        <input class="finp" type="number" id="ci-um" value="${c?c.ultimaMedicao:''}" placeholder="0.00"
-          ${c&&c._ultimaMedicaoKey?`title="Ref.: ${c._ultimaMedicaoKey}"`:''}>
-      </div>
     </div>
     <div style="margin-top:16px">
+      <div class="fgrp full" style="border-top:1px solid var(--b1);padding-top:16px;margin-top:4px">
+        <div class="flbl" style="font-family:var(--fh);font-size:13px;font-weight:700;color:var(--tx);margin-bottom:12px;letter-spacing:.2px">📅 Prazos do Ciclo de Faturamento</div>
+      </div>
+      <div class="fgrp"><div class="flbl">📐 Início — Entrega da Medição</div><input class="finp" type="date" id="ci-dt-ini-ent" value="${c?c.dtInicioEntregaMed||'':''}"></div>
+      <div class="fgrp"><div class="flbl">📐 Fim — Entrega da Medição</div><input class="finp" type="date" id="ci-dt-fim-ent" value="${c?c.dtFimEntregaMed||'':''}"></div>
+      <div class="fgrp"><div class="flbl">🔍 Início — Análise do Cliente</div><input class="finp" type="date" id="ci-dt-ini-ana" value="${c?c.dtInicioAnalise||'':''}"></div>
+      <div class="fgrp"><div class="flbl">🔍 Fim — Análise do Cliente</div><input class="finp" type="date" id="ci-dt-fim-ana" value="${c?c.dtFimAnalise||'':''}"></div>
+      <div class="fgrp"><div class="flbl">💳 Data de Pagamento do Cliente</div><input class="finp" type="date" id="ci-dt-pagamento" value="${c?c.dtPagamentoCliente||'':''}"></div>
       <div class="fgrp"><div class="flbl">Justificativa de Diferença de Receita</div><textarea class="ftxa" id="ci-jus" placeholder="Descreva o motivo da diferença entre receita e resultado esperado...">${c?c.justificativa:''}</textarea></div>
     </div>`;
-  // Auto-calc: resultado, margem, saldo ao digitar receita/custo
-  function _recalcFormFinancials(){
-    const r  = parseFloat(document.getElementById('ci-rec').value)||0;
-    const cu = parseFloat(document.getElementById('ci-cus').value)||0;
-    const res = r - cu;
-    const mar = r > 0 ? (res / r * 100) : 0;
-    document.getElementById('ci-res').value = res.toFixed(2);
-    document.getElementById('ci-mar').value = mar.toFixed(2);
-    document.getElementById('ci-sal').value = res.toFixed(2);
-  }
   // Auto-calc: Valor Global Atual = Original + Último Aditivo
   function _recalcGlobal(){
     const orig    = parseFloat(document.getElementById('ci-sglobal-orig').value)||0;
@@ -2814,10 +2805,6 @@ function openContractModal(id){
   }
   // Dispara cálculo inicial se já houver valores
   _recalcGlobal();
-  ['ci-rec','ci-cus'].forEach(fid => {
-    const el = document.getElementById(fid);
-    if(el) el.addEventListener('input', _recalcFormFinancials);
-  });
   document.getElementById('modal-footer').innerHTML=`
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
     <button class="btn btn-p" onclick="saveContract(${c?c.id:0})">💾 Salvar Contrato</button>`;
@@ -2954,18 +2941,18 @@ function saveContract(id){
     telGestorAdm:document.getElementById('ci-gadm-tel').value.trim(),
     index:document.getElementById('ci-idx').value,
     // ── Campos base (definidos pelo usuário) ──
-    receita:     parseFloat(document.getElementById('ci-rec').value)||0,
-    custoTotal:  parseFloat(document.getElementById('ci-cus').value)||0,
-    custo:       parseFloat(document.getElementById('ci-cus').value)||0,
     saldoGlobal:          parseFloat(document.getElementById('ci-sglobal').value)||0,
     valorGlobalOriginal:  parseFloat(document.getElementById('ci-sglobal-orig').value)||0,
     ultimoAditivo:        parseFloat(document.getElementById('ci-aditivo')?.value)||0,
-    // ── Campos derivados de medições (manuais no form, sobrescritos pelo recalc) ──
-    // Medição Prevista e Última Medição: aceita entrada manual quando não há medições
-    medicaoPrevista: parseFloat(document.getElementById('ci-mp').value)||0,
-    ultimaMedicao:   parseFloat(document.getElementById('ci-um').value)||0,
-    // ── resultado / margem / saldo calculados pelo recalc logo abaixo ──
+    // ── Campos financeiros calculados pelo recalcContractFinancials ──
+    receita:0, custoTotal:0, custo:0,
+    medicaoPrevista:0, ultimaMedicao:0,
     resultado:0, margem:0, saldo:0,
+    dtInicioEntregaMed:  document.getElementById('ci-dt-ini-ent').value  || null,
+    dtFimEntregaMed:     document.getElementById('ci-dt-fim-ent').value  || null,
+    dtInicioAnalise:     document.getElementById('ci-dt-ini-ana').value  || null,
+    dtFimAnalise:        document.getElementById('ci-dt-fim-ana').value  || null,
+    dtPagamentoCliente:  document.getElementById('ci-dt-pagamento').value || null,
     justificativa:document.getElementById('ci-jus').value.trim(),
     logo, logoFit, logoPad,
     nObra: document.getElementById('ci-nobra').value.trim(),
@@ -8130,6 +8117,111 @@ const PALETTES = [
     },
     preview:'linear-gradient(135deg,#022c1a,#34d399)'
   },
+  // ── 8 NOVAS PALETAS ──────────────────────────────────────────
+  {
+    id:'synthwave', label:'Synthwave',
+    vars:{
+      '--bg':'#1a0d2e','--s1':'rgba(38,18,68,0.88)','--s2':'rgba(52,24,92,0.78)',
+      '--s3':'#6b21a8','--t3':'#a855f7','--gnl':'#e879f9','--gn':'#d946ef',
+      '--ac':'#06b6d4','--ach':'#22d3ee','--ac2':'#67e8f9',
+      '--tx':'#fdf4ff','--t2':'#e9d5ff',
+      '--body-g1':'rgba(232,121,249,0.18)','--body-g2':'rgba(217,70,239,0.12)',
+      '--body-g3':'rgba(6,182,212,0.10)','--body-g4':'rgba(168,85,247,0.08)',
+      '--body-base1':'#0d0618','--body-base2':'#1a0d2e','--body-base3':'#22104a',
+    },
+    preview:'linear-gradient(135deg,#1a0d2e 0%,#d946ef 50%,#22d3ee 100%)'
+  },
+  {
+    id:'aurora', label:'Aurora',
+    vars:{
+      '--bg':'#081c2a','--s1':'rgba(8,30,48,0.88)','--s2':'rgba(10,42,65,0.78)',
+      '--s3':'#0e4d4d','--t3':'#22c9b0','--gnl':'#4ade80','--gn':'#22c55e',
+      '--ac':'#818cf8','--ach':'#a5b4fc','--ac2':'#c7d2fe',
+      '--tx':'#f0fdf4','--t2':'#bbf7d0',
+      '--body-g1':'rgba(74,222,128,0.15)','--body-g2':'rgba(34,197,94,0.11)',
+      '--body-g3':'rgba(129,140,248,0.10)','--body-g4':'rgba(74,222,128,0.07)',
+      '--body-base1':'#040e16','--body-base2':'#081c2a','--body-base3':'#0c2438',
+    },
+    preview:'linear-gradient(135deg,#081c2a 0%,#4ade80 50%,#818cf8 100%)'
+  },
+  {
+    id:'neomint', label:'Neo Mint',
+    vars:{
+      '--bg':'#0d2626','--s1':'rgba(14,42,42,0.88)','--s2':'rgba(18,58,58,0.78)',
+      '--s3':'#115e59','--t3':'#2dd4bf','--gnl':'#5eead4','--gn':'#2dd4bf',
+      '--ac':'#f472b6','--ach':'#fb7185','--ac2':'#fda4af',
+      '--tx':'#f0fdfa','--t2':'#99f6e4',
+      '--body-g1':'rgba(94,234,212,0.16)','--body-g2':'rgba(45,212,191,0.12)',
+      '--body-g3':'rgba(244,114,182,0.09)','--body-g4':'rgba(94,234,212,0.07)',
+      '--body-base1':'#061616','--body-base2':'#0d2626','--body-base3':'#103030',
+    },
+    preview:'linear-gradient(135deg,#0d2626 0%,#5eead4 55%,#f472b6 100%)'
+  },
+  {
+    id:'holographic', label:'Holo',
+    vars:{
+      '--bg':'#111827','--s1':'rgba(17,26,42,0.90)','--s2':'rgba(22,34,56,0.80)',
+      '--s3':'#1e3a5f','--t3':'#7dd3fc','--gnl':'#a5f3fc','--gn':'#22d3ee',
+      '--ac':'#f0abfc','--ach':'#e879f9','--ac2':'#fde68a',
+      '--tx':'#f8fafc','--t2':'#bae6fd',
+      '--body-g1':'rgba(165,243,252,0.14)','--body-g2':'rgba(34,211,238,0.10)',
+      '--body-g3':'rgba(240,171,252,0.09)','--body-g4':'rgba(253,230,138,0.07)',
+      '--body-base1':'#080e18','--body-base2':'#111827','--body-base3':'#162032',
+    },
+    preview:'linear-gradient(135deg,#111827 0%,#22d3ee 40%,#f0abfc 70%,#fde68a 100%)'
+  },
+  {
+    id:'neon-tokyo', label:'Neon Tokyo',
+    vars:{
+      '--bg':'#0f0f1a','--s1':'rgba(15,15,32,0.90)','--s2':'rgba(20,20,45,0.82)',
+      '--s3':'#1e1b4b','--t3':'#6366f1','--gnl':'#818cf8','--gn':'#6366f1',
+      '--ac':'#f43f5e','--ach':'#fb7185','--ac2':'#fda4af',
+      '--tx':'#f8f8ff','--t2':'#c7d2fe',
+      '--body-g1':'rgba(129,140,248,0.18)','--body-g2':'rgba(99,102,241,0.13)',
+      '--body-g3':'rgba(244,63,94,0.10)','--body-g4':'rgba(129,140,248,0.07)',
+      '--body-base1':'#08080f','--body-base2':'#0f0f1a','--body-base3':'#141428',
+    },
+    preview:'linear-gradient(135deg,#0f0f1a 0%,#818cf8 50%,#f43f5e 100%)'
+  },
+  {
+    id:'solaris', label:'Solaris',
+    vars:{
+      '--bg':'#1c1400','--s1':'rgba(32,22,0,0.88)','--s2':'rgba(46,32,0,0.80)',
+      '--s3':'#713f12','--t3':'#f59e0b','--gnl':'#fcd34d','--gn':'#fbbf24',
+      '--ac':'#fb923c','--ach':'#fdba74','--ac2':'#fed7aa',
+      '--tx':'#fffbeb','--t2':'#fde68a',
+      '--body-g1':'rgba(252,211,77,0.18)','--body-g2':'rgba(251,191,36,0.13)',
+      '--body-g3':'rgba(251,146,60,0.10)','--body-g4':'rgba(252,211,77,0.07)',
+      '--body-base1':'#100c00','--body-base2':'#1c1400','--body-base3':'#251c00',
+    },
+    preview:'linear-gradient(135deg,#1c1400 0%,#fcd34d 55%,#fb923c 100%)'
+  },
+  {
+    id:'rose-quartz', label:'Rose Quartz',
+    vars:{
+      '--bg':'#1f0d18','--s1':'rgba(38,14,30,0.88)','--s2':'rgba(55,18,42,0.80)',
+      '--s3':'#831843','--t3':'#f9a8d4','--gnl':'#fbcfe8','--gn':'#f472b6',
+      '--ac':'#f43f5e','--ach':'#fb7185','--ac2':'#fda4af',
+      '--tx':'#fdf2f8','--t2':'#fce7f3',
+      '--body-g1':'rgba(251,207,232,0.18)','--body-g2':'rgba(244,114,182,0.14)',
+      '--body-g3':'rgba(244,63,94,0.10)','--body-g4':'rgba(251,207,232,0.07)',
+      '--body-base1':'#12080e','--body-base2':'#1f0d18','--body-base3':'#2a1022',
+    },
+    preview:'linear-gradient(135deg,#1f0d18 0%,#f472b6 55%,#fda4af 100%)'
+  },
+  {
+    id:'ice-crystal', label:'Ice Crystal',
+    vars:{
+      '--bg':'#0c1a2e','--s1':'rgba(12,28,50,0.90)','--s2':'rgba(16,38,68,0.82)',
+      '--s3':'#1e3a5f','--t3':'#93c5fd','--gnl':'#bfdbfe','--gn':'#93c5fd',
+      '--ac':'#a5f3fc','--ach':'#cffafe','--ac2':'#e0f2fe',
+      '--tx':'#f0f9ff','--t2':'#dbeafe',
+      '--body-g1':'rgba(191,219,254,0.16)','--body-g2':'rgba(147,197,253,0.12)',
+      '--body-g3':'rgba(165,243,252,0.10)','--body-g4':'rgba(191,219,254,0.07)',
+      '--body-base1':'#060f1c','--body-base2':'#0c1a2e','--body-base3':'#10223c',
+    },
+    preview:'linear-gradient(135deg,#0c1a2e 0%,#93c5fd 50%,#cffafe 100%)'
+  },
 ];
 
 let _activePalette = localStorage.getItem('diefra_palette') || 'verde-escuro';
@@ -8170,12 +8262,18 @@ document.addEventListener('click', e=>{
 function _initPalette(){
   const grid = document.getElementById('pp-grid');
   if(!grid) return;
-  grid.innerHTML = PALETTES.map(p=>`
+  const makeSwatches = arr => arr.map(p=>`
     <div class="pp-swatch${p.id===_activePalette?' active':''}" data-pid="${p.id}"
          style="background:${p.preview}"
          onclick="applyPalette('${p.id}')" title="${p.label}">
       <div class="pp-swatch-lbl">${p.label}</div>
     </div>`).join('');
+  const sep = (lbl) => `<div style="grid-column:1/-1;font-size:9px;font-weight:800;letter-spacing:1.8px;color:rgba(255,255,255,.35);text-transform:uppercase;padding:4px 0 2px;border-top:1px solid rgba(255,255,255,.07);margin-top:4px">${lbl}</div>`;
+  grid.innerHTML =
+    sep('Clássicas') +
+    makeSwatches(PALETTES.slice(0,8)) +
+    sep('✦ Futuristas') +
+    makeSwatches(PALETTES.slice(8));
   // Apply saved palette on load
   if(_activePalette !== 'verde-escuro') applyPalette(_activePalette);
 }
