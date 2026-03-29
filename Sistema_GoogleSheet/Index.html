@@ -4057,7 +4057,9 @@ function renderManagers(){
 
 function deleteManager(id){
   ST.managers=ST.managers.filter(m=>m.id!==id);
+  ST.vacations=ST.vacations.filter(v=>v.managerId!==id);
   renderManagers();renderVacations();
+  scheduleAutoSync();showToast('🗑 Gestor removido.','gn');
 }
 
 function openManagerModal(id){
@@ -5148,13 +5150,38 @@ function confirmDelete(type,id){
   };
   document.getElementById('confirm-text').textContent=msgs[type]||'Este item será excluído.';
   document.getElementById('confirm-yes-btn').onclick=()=>{
-    if(type==='contract'){ST.contracts=ST.contracts.filter(c=>c.id!==id);ST.tasks=ST.tasks.filter(t=>t.contractId!==id);renderContracts();renderTasks();renderFinanceiro();renderDashboard()}
-    else if(type==='task'){ST.tasks=ST.tasks.filter(t=>t.id!==id);renderTasks();renderContracts();renderDashboard()}
-    else if(type==='vacation'){ST.vacations=ST.vacations.filter(v=>v.id!==id);renderVacations()}
-    else if(type==='manager'){ST.managers=ST.managers.filter(m=>m.id!==id);ST.vacations=ST.vacations.filter(v=>v.managerId!==id);renderManagers();renderVacations()}
+    if(type==='contract'){
+      const ctName=(ST.contracts.find(c=>c.id===id)||{}).name||'Contrato';
+      ST.contracts=ST.contracts.filter(c=>c.id!==id);
+      ST.tasks=ST.tasks.filter(t=>t.contractId!==id);
+      ST.medicoes=ST.medicoes.filter(m=>m.contractId!==id);
+      ST.audits=ST.audits.filter(a=>a.contractId!==id);
+      ST.auditsGestao=ST.auditsGestao.filter(a=>a.contractId!==id);
+      ST.entregaveis=ST.entregaveis.filter(e=>e.contractId!==id);
+      renderContracts();renderTasks();renderFinanceiro();renderDashboard();
+      scheduleAutoSync();showToast('🗑 Contrato "'+ctName+'" excluído do banco.','rd');
+    }
+    else if(type==='task'){
+      ST.tasks=ST.tasks.filter(t=>t.id!==id);
+      renderTasks();renderContracts();renderDashboard();
+      scheduleAutoSync();showToast('🗑 Tarefa excluída.','gn');
+    }
+    else if(type==='vacation'){
+      ST.vacations=ST.vacations.filter(v=>v.id!==id);
+      renderVacations();
+      scheduleAutoSync();showToast('🗑 Férias excluídas.','gn');
+    }
+    else if(type==='manager'){
+      ST.managers=ST.managers.filter(m=>m.id!==id);
+      ST.vacations=ST.vacations.filter(v=>v.managerId!==id);
+      renderManagers();renderVacations();
+      scheduleAutoSync();showToast('🗑 Gestor removido.','gn');
+    }
     else if(type==='participant'){
-      if(!currentUser || currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
-      ST.participants=ST.participants.filter(p=>p.id!==id);renderParticipants();
+      if(!currentUser||currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
+      ST.participants=ST.participants.filter(p=>p.id!==id);
+      renderParticipants();
+      scheduleAutoSync();showToast('🗑 Participante removido.','gn');
     }
     closeConfirm();
   };
