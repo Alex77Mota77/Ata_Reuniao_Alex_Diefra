@@ -3122,9 +3122,8 @@ function saveContract(id){
     valorGlobalOriginal:  parseFloat(document.getElementById('ci-sglobal-orig').value)||0,
     ultimoAditivo:        parseFloat(document.getElementById('ci-aditivo')?.value)||0,
     // ── Campos financeiros calculados pelo recalcContractFinancials ──
-    receita:0, custoTotal:0, custo:0,
+    // Não zerar receita/resultado aqui — recalcContractFinancials os recalcula a partir das medições
     medicaoPrevista:0, ultimaMedicao:0,
-    resultado:0, margem:0, saldo:0,
     dtInicioEntregaMed:  document.getElementById('ci-dt-ini-ent').value  || null,
     dtFimEntregaMed:     document.getElementById('ci-dt-fim-ent').value  || null,
     dtInicioAnalise:     document.getElementById('ci-dt-ini-ana').value  || null,
@@ -3178,9 +3177,10 @@ function saveContract(id){
  *   ct.saldoGlobal   — valor global do contrato (aditivos incluídos)
  *
  * Campos DERIVADOS (auto-calculados, não devem ser editados manualmente):
- *   ct.resultado     = receita − custoTotal              (lucro bruto nominal)
- *   ct.saldo         = receita − custoTotal              (= resultado; compat. histórica)
- *   ct.margem        = resultado / receita × 100         (margem bruta %)
+ *   ct.custoTotal    = Σ(custo) de todas as medições acumuladas (espelho de receita)
+ *   ct.resultado     = receita − custoTotal              (resultado vida do contrato)
+ *   ct.saldo         = resultado                          (= resultado; compat. histórica)
+ *   ct.margem        = resultado / receita × 100         (margem bruta % vida do contrato)
  *   ct.ultimaMedicao = realizado do mês mais recente     (de ST.medicoes)
  *   ct.medicaoPrevista = previsto do mês corrente        (de ST.medicoes)
  *
@@ -3198,15 +3198,34 @@ function recalcContractFinancials(ct) {
   const curKey = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0');
   const meds   = (ST.medicoes || []).filter(m => m.contractId === ct.id);
 
-  // ── 1. Campos financeiros base ──────────────────────────────────────────
-  const receita = ct.receita     || 0;
-  const custo   = ct.custoTotal  || ct.custo || 0;
-  ct.resultado  = receita - custo;
-  ct.saldo      = receita - custo;                      // mantém semântica anterior
-  ct.margem     = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
+  // ── 1. Total faturado = soma de todos os realizados nas medições ────────
+  ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
 
-  // ── 2. Última medição realizada ─────────────────────────────────────────
-  //    = realizado do mês mais recente com valor > 0
+  // ── 2. Receita = total efetivamente faturado (realizado acumulado) ──────
+  //    Preserva valor manual se não houver medições registradas
+  ct.receita = ct._totalFaturado > 0 ? ct._totalFaturado : (ct._receitaManual || 0);
+
+  // ── 3. Custo Total = soma acumulada de todos os meses (espelho de receita) ─
+  const _custoAcum = meds.reduce((s, m) => s + (m.custo || 0), 0);
+  if (_custoAcum > 0) {
+    ct.custoTotal = _custoAcum;
+    ct.custo      = _custoAcum;
+    // Referência ao mês mais recente com custo (para exibição no card)
+    const _ultimoCusto = meds
+      .filter(m => m.custo != null && m.custo > 0)
+      .sort((a, b) => b.key.localeCompare(a.key));
+    ct._custoMedKey = _ultimoCusto.length > 0 ? _ultimoCusto[0].key : null;
+  }
+  const custo = ct.custoTotal || ct.custo || 0;
+
+  // ── 4. Resultado, Saldo e Margem — vida do contrato ──────────────────────
+  //    Resultado = Receita acumulada − Custo acumulado
+  const receita    = ct.receita;
+  ct.resultado     = receita - custo;
+  ct.saldo         = ct.resultado;
+  ct.margem        = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
+
+  // ── 5. Última medição realizada ─────────────────────────────────────────
   const realizados = meds
     .filter(m => m.realizado != null && m.realizado > 0)
     .sort((a, b) => b.key.localeCompare(a.key));
@@ -3217,23 +3236,7 @@ function recalcContractFinancials(ct) {
     ct._ultimaMedicaoKey   = null;
   }
 
-  // ── 2b. Custo da medição mais recente → ct.custoTotal ────────────────────
-  //    Se houver custo registrado na medição, sobrescreve o custoTotal do contrato
-  const comCusto = meds
-    .filter(m => m.custo != null && m.custo > 0)
-    .sort((a, b) => b.key.localeCompare(a.key));
-  if (comCusto.length > 0) {
-    ct.custoTotal          = comCusto[0].custo;
-    ct.custo               = comCusto[0].custo;
-    ct._custoMedKey        = comCusto[0].key;
-    // Recalcular resultado e margem com o novo custo
-    ct.resultado  = receita - ct.custoTotal;
-    ct.saldo      = ct.resultado;
-    ct.margem     = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
-  }
-
-  // ── 3. Medição prevista ─────────────────────────────────────────────────
-  //    = previsto do mês corrente; fallback: mês mais recente com previsto
+  // ── 6. Medição prevista ─────────────────────────────────────────────────
   const recAtual = meds.find(m => m.key === curKey);
   if (recAtual && recAtual.previsto != null) {
     ct.medicaoPrevista        = recAtual.previsto;
@@ -3250,8 +3253,7 @@ function recalcContractFinancials(ct) {
     }
   }
 
-  // ── 4. Acumulados a partir de medições ──────────────────────────────────
-  ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
+  // (já calculado no passo 1 acima)
   // ── 5. Valor Global Atual = Original + Último Aditivo ────────────────────
   ct._valorGlobalAtual = (ct.valorGlobalOriginal || 0) + (ct.ultimoAditivo || 0);
   if (ct._valorGlobalAtual > 0) ct.saldoGlobal = ct._valorGlobalAtual;
