@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIEFRA · Dashboard de Gestão 2026</title>
+<title>DIEFRA · Gestão de Contratos 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Nunito:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -905,7 +905,7 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
     <div style="text-align:center;margin-top:16px">
       <button onclick="openRecoverPass(document.getElementById('lg-user').value.trim())" style="background:none;border:none;color:var(--t3);font-family:var(--fb);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:color .2s" onmouseover="this.style.color='var(--gnl)'" onmouseout="this.style.color='var(--t3)'">Esqueci minha senha</button>
     </div>
-    <div class="lg-footer">DIEFRA · Dashboard de Gestão · Acesso Restrito</div>
+    <div class="lg-footer">DIEFRA · Gestão de Contratos · Acesso Restrito</div>
   </div>
 </div>
 
@@ -972,7 +972,7 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
       </svg>
     </div>
     <div>
-      <div class="hdr-tag" id="hdr-tag-label">DASHBOARD DE GESTÃO · DIEFRA-<span id="hdr-tag-year">2026</span></div>
+      <div class="hdr-tag" id="hdr-tag-label">GESTÃO DE CONTRATOS · DIEFRA-<span id="hdr-tag-year">2026</span></div>
       <h1 id="hdr-h1" style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
         <span id="hdr-unit-display" style="cursor:pointer;position:relative" title="Clique para editar a unidade">
           <em id="hdr-uen-text">UEN-300</em>
@@ -2347,15 +2347,15 @@ function _buildFatSection(c, ST){
     contratuaisHTML =
       '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">'
       +'<div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">📐 Entrega da Medição</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">📐 Período de Entrega da Medição</div>'
         +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx)">'+fmtPeriodo(c.dtInicioEntregaMed,c.dtFimEntregaMed)+'</div>'
       +'</div>'
       +'<div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.25);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#c4b5fd;text-transform:uppercase;margin-bottom:4px">🔍 Análise do Cliente</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#c4b5fd;text-transform:uppercase;margin-bottom:4px">🔍 Período de Aprovação da Medição</div>'
         +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx)">'+fmtPeriodo(c.dtInicioAnalise,c.dtFimAnalise)+'</div>'
       +'</div>'
       +'<div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">💳 Pagamento do Cliente</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">💳 Período de Pagamento da Medição</div>'
         +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:5px">'+fmtD(c.dtPagamentoCliente)+(pagTag?' '+pagTag:'')+'</div>'
       +'</div>'
     +'</div>';
@@ -2365,15 +2365,15 @@ function _buildFatSection(c, ST){
   if(hasDates){
     datesHTML = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:'+(mf.resumoFat?'10px':'0')+'">'
       +'<div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">📬 Entrega Med.</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">📬 Data Entrega Medição</div>'
         +'<div style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--tx)">'+fmtD(mf.dtEntrega)+'</div>'
       +'</div>'
       +'<div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.18);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">✅ Aut. Faturamento</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">✅ Data Autorização Faturamento</div>'
         +'<div style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--tx)">'+fmtD(mf.dtAutFat)+'</div>'
       +'</div>'
       +'<div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#38bdf8;text-transform:uppercase;margin-bottom:4px">📤 Envio Fatura</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#38bdf8;text-transform:uppercase;margin-bottom:4px">📤 Envio da Nota Fiscal</div>'
         +'<div style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:5px">'+fmtD(mf.dtFatura)+(diasTag?' '+diasTag:'')+'</div>'
       +'</div>'
     +'</div>';
@@ -2397,9 +2397,18 @@ function _buildFatSection(c, ST){
     +'</div>';
   }
 
+  var periodoMedBadge = c.periodoMedicao
+    ? '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(56,189,248,0.10);border:1px solid rgba(56,189,248,0.30);border-radius:6px;padding:2px 9px">'
+      +'<span style="font-size:8px;font-weight:800;letter-spacing:1px;color:var(--t3);text-transform:uppercase">Período</span>'
+      +'<span style="font-family:var(--fn);font-size:11px;font-weight:800;color:var(--ac2);letter-spacing:0.5px">'+c.periodoMedicao+'</span>'
+      +'</span>'
+    : '';
   return '<div class="cc-section">'
     +'<div class="cc-section-lbl" style="display:flex;align-items:center;justify-content:space-between">'
-      +'<span>🧾 Faturamento'+(meds.length?' — <span style="font-family:var(--fn);font-size:9px;color:var(--ac2);font-weight:800">'+mfLbl+'</span>':'')+'</span>'
+      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+        +'<span>🧾 Faturamento'+(meds.length?' — <span style="font-family:var(--fn);font-size:9px;color:var(--ac2);font-weight:800">'+mfLbl+'</span>':'')+'</span>'
+        +periodoMedBadge
+      +'</div>'
     +'</div>'
     +comentFatHTML
     +contratuaisHTML
@@ -2949,6 +2958,10 @@ function openContractModal(id){
       <div class="fgrp full" style="border-top:1px solid var(--b1);padding-top:16px;margin-top:4px">
         <div class="flbl" style="font-family:var(--fh);font-size:13px;font-weight:700;color:var(--tx);margin-bottom:12px;letter-spacing:.2px">📅 Prazos do Ciclo de Faturamento</div>
       </div>
+      <div class="fgrp full" style="margin-bottom:4px">
+        <div class="flbl">📅 Período de Medição <span style="background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:8px;padding:1px 6px;border-radius:3px;margin-left:4px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Novo</span></div>
+        <input class="finp" type="text" id="ci-periodo-med" value="${c?c.periodoMedicao||'':''}" placeholder="Ex: 21 - 20  (dia início — dia fim do ciclo)">
+      </div>
       <div class="fgrp"><div class="flbl">📐 Início — Entrega da Medição</div><input class="finp" type="date" id="ci-dt-ini-ent" value="${c?c.dtInicioEntregaMed||'':''}"></div>
       <div class="fgrp"><div class="flbl">📐 Fim — Entrega da Medição</div><input class="finp" type="date" id="ci-dt-fim-ent" value="${c?c.dtFimEntregaMed||'':''}"></div>
       <div class="fgrp"><div class="flbl">🔍 Início — Análise do Cliente</div><input class="finp" type="date" id="ci-dt-ini-ana" value="${c?c.dtInicioAnalise||'':''}"></div>
@@ -3109,14 +3122,14 @@ function saveContract(id){
     valorGlobalOriginal:  parseFloat(document.getElementById('ci-sglobal-orig').value)||0,
     ultimoAditivo:        parseFloat(document.getElementById('ci-aditivo')?.value)||0,
     // ── Campos financeiros calculados pelo recalcContractFinancials ──
-    receita:0, custoTotal:0, custo:0,
+    // Não zerar receita/resultado aqui — recalcContractFinancials os recalcula a partir das medições
     medicaoPrevista:0, ultimaMedicao:0,
-    resultado:0, margem:0, saldo:0,
     dtInicioEntregaMed:  document.getElementById('ci-dt-ini-ent').value  || null,
     dtFimEntregaMed:     document.getElementById('ci-dt-fim-ent').value  || null,
     dtInicioAnalise:     document.getElementById('ci-dt-ini-ana').value  || null,
     dtFimAnalise:        document.getElementById('ci-dt-fim-ana').value  || null,
     dtPagamentoCliente:  document.getElementById('ci-dt-pagamento').value || null,
+    periodoMedicao:       (document.getElementById('ci-periodo-med')||{}).value?.trim()||null,
     comentFat:           (document.getElementById('ci-coment-fat')||{}).value?.trim()||null,
     justificativa:document.getElementById('ci-jus').value.trim(),
     logo, logoFit, logoPad,
@@ -3164,9 +3177,10 @@ function saveContract(id){
  *   ct.saldoGlobal   — valor global do contrato (aditivos incluídos)
  *
  * Campos DERIVADOS (auto-calculados, não devem ser editados manualmente):
- *   ct.resultado     = receita − custoTotal              (lucro bruto nominal)
- *   ct.saldo         = receita − custoTotal              (= resultado; compat. histórica)
- *   ct.margem        = resultado / receita × 100         (margem bruta %)
+ *   ct.custoTotal    = Σ(custo) de todas as medições acumuladas (espelho de receita)
+ *   ct.resultado     = receita − custoTotal              (resultado vida do contrato)
+ *   ct.saldo         = resultado                          (= resultado; compat. histórica)
+ *   ct.margem        = resultado / receita × 100         (margem bruta % vida do contrato)
  *   ct.ultimaMedicao = realizado do mês mais recente     (de ST.medicoes)
  *   ct.medicaoPrevista = previsto do mês corrente        (de ST.medicoes)
  *
@@ -3184,15 +3198,34 @@ function recalcContractFinancials(ct) {
   const curKey = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0');
   const meds   = (ST.medicoes || []).filter(m => m.contractId === ct.id);
 
-  // ── 1. Campos financeiros base ──────────────────────────────────────────
-  const receita = ct.receita     || 0;
-  const custo   = ct.custoTotal  || ct.custo || 0;
-  ct.resultado  = receita - custo;
-  ct.saldo      = receita - custo;                      // mantém semântica anterior
-  ct.margem     = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
+  // ── 1. Total faturado = soma de todos os realizados nas medições ────────
+  ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
 
-  // ── 2. Última medição realizada ─────────────────────────────────────────
-  //    = realizado do mês mais recente com valor > 0
+  // ── 2. Receita = total efetivamente faturado (realizado acumulado) ──────
+  //    Preserva valor manual se não houver medições registradas
+  ct.receita = ct._totalFaturado > 0 ? ct._totalFaturado : (ct._receitaManual || 0);
+
+  // ── 3. Custo Total = soma acumulada de todos os meses (espelho de receita) ─
+  const _custoAcum = meds.reduce((s, m) => s + (m.custo || 0), 0);
+  if (_custoAcum > 0) {
+    ct.custoTotal = _custoAcum;
+    ct.custo      = _custoAcum;
+    // Referência ao mês mais recente com custo (para exibição no card)
+    const _ultimoCusto = meds
+      .filter(m => m.custo != null && m.custo > 0)
+      .sort((a, b) => b.key.localeCompare(a.key));
+    ct._custoMedKey = _ultimoCusto.length > 0 ? _ultimoCusto[0].key : null;
+  }
+  const custo = ct.custoTotal || ct.custo || 0;
+
+  // ── 4. Resultado, Saldo e Margem — vida do contrato ──────────────────────
+  //    Resultado = Receita acumulada − Custo acumulado
+  const receita    = ct.receita;
+  ct.resultado     = receita - custo;
+  ct.saldo         = ct.resultado;
+  ct.margem        = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
+
+  // ── 5. Última medição realizada ─────────────────────────────────────────
   const realizados = meds
     .filter(m => m.realizado != null && m.realizado > 0)
     .sort((a, b) => b.key.localeCompare(a.key));
@@ -3203,23 +3236,7 @@ function recalcContractFinancials(ct) {
     ct._ultimaMedicaoKey   = null;
   }
 
-  // ── 2b. Custo da medição mais recente → ct.custoTotal ────────────────────
-  //    Se houver custo registrado na medição, sobrescreve o custoTotal do contrato
-  const comCusto = meds
-    .filter(m => m.custo != null && m.custo > 0)
-    .sort((a, b) => b.key.localeCompare(a.key));
-  if (comCusto.length > 0) {
-    ct.custoTotal          = comCusto[0].custo;
-    ct.custo               = comCusto[0].custo;
-    ct._custoMedKey        = comCusto[0].key;
-    // Recalcular resultado e margem com o novo custo
-    ct.resultado  = receita - ct.custoTotal;
-    ct.saldo      = ct.resultado;
-    ct.margem     = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
-  }
-
-  // ── 3. Medição prevista ─────────────────────────────────────────────────
-  //    = previsto do mês corrente; fallback: mês mais recente com previsto
+  // ── 6. Medição prevista ─────────────────────────────────────────────────
   const recAtual = meds.find(m => m.key === curKey);
   if (recAtual && recAtual.previsto != null) {
     ct.medicaoPrevista        = recAtual.previsto;
@@ -3236,8 +3253,7 @@ function recalcContractFinancials(ct) {
     }
   }
 
-  // ── 4. Acumulados a partir de medições ──────────────────────────────────
-  ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
+  // (já calculado no passo 1 acima)
   // ── 5. Valor Global Atual = Original + Último Aditivo ────────────────────
   ct._valorGlobalAtual = (ct.valorGlobalOriginal || 0) + (ct.ultimoAditivo || 0);
   if (ct._valorGlobalAtual > 0) ct.saldoGlobal = ct._valorGlobalAtual;
@@ -4043,7 +4059,9 @@ function renderManagers(){
 
 function deleteManager(id){
   ST.managers=ST.managers.filter(m=>m.id!==id);
+  ST.vacations=ST.vacations.filter(v=>v.managerId!==id);
   renderManagers();renderVacations();
+  scheduleAutoSync();showToast('🗑 Gestor removido.','gn');
 }
 
 function openManagerModal(id){
@@ -5134,13 +5152,38 @@ function confirmDelete(type,id){
   };
   document.getElementById('confirm-text').textContent=msgs[type]||'Este item será excluído.';
   document.getElementById('confirm-yes-btn').onclick=()=>{
-    if(type==='contract'){ST.contracts=ST.contracts.filter(c=>c.id!==id);ST.tasks=ST.tasks.filter(t=>t.contractId!==id);renderContracts();renderTasks();renderFinanceiro();renderDashboard()}
-    else if(type==='task'){ST.tasks=ST.tasks.filter(t=>t.id!==id);renderTasks();renderContracts();renderDashboard()}
-    else if(type==='vacation'){ST.vacations=ST.vacations.filter(v=>v.id!==id);renderVacations()}
-    else if(type==='manager'){ST.managers=ST.managers.filter(m=>m.id!==id);ST.vacations=ST.vacations.filter(v=>v.managerId!==id);renderManagers();renderVacations()}
+    if(type==='contract'){
+      const ctName=(ST.contracts.find(c=>c.id===id)||{}).name||'Contrato';
+      ST.contracts=ST.contracts.filter(c=>c.id!==id);
+      ST.tasks=ST.tasks.filter(t=>t.contractId!==id);
+      ST.medicoes=ST.medicoes.filter(m=>m.contractId!==id);
+      ST.audits=ST.audits.filter(a=>a.contractId!==id);
+      ST.auditsGestao=ST.auditsGestao.filter(a=>a.contractId!==id);
+      ST.entregaveis=ST.entregaveis.filter(e=>e.contractId!==id);
+      renderContracts();renderTasks();renderFinanceiro();renderDashboard();
+      scheduleAutoSync();showToast('🗑 Contrato "'+ctName+'" excluído do banco.','rd');
+    }
+    else if(type==='task'){
+      ST.tasks=ST.tasks.filter(t=>t.id!==id);
+      renderTasks();renderContracts();renderDashboard();
+      scheduleAutoSync();showToast('🗑 Tarefa excluída.','gn');
+    }
+    else if(type==='vacation'){
+      ST.vacations=ST.vacations.filter(v=>v.id!==id);
+      renderVacations();
+      scheduleAutoSync();showToast('🗑 Férias excluídas.','gn');
+    }
+    else if(type==='manager'){
+      ST.managers=ST.managers.filter(m=>m.id!==id);
+      ST.vacations=ST.vacations.filter(v=>v.managerId!==id);
+      renderManagers();renderVacations();
+      scheduleAutoSync();showToast('🗑 Gestor removido.','gn');
+    }
     else if(type==='participant'){
-      if(!currentUser || currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
-      ST.participants=ST.participants.filter(p=>p.id!==id);renderParticipants();
+      if(!currentUser||currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
+      ST.participants=ST.participants.filter(p=>p.id!==id);
+      renderParticipants();
+      scheduleAutoSync();showToast('🗑 Participante removido.','gn');
     }
     closeConfirm();
   };

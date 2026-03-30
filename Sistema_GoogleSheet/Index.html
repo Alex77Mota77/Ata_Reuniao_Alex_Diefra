@@ -972,7 +972,7 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
       </svg>
     </div>
     <div>
-      <div class="hdr-tag" id="hdr-tag-label">GESTÃO DE CONTRATOS · DIEFRA-<span id="hdr-tag-year">2026</span></div>
+      <div class="hdr-tag" id="hdr-tag-label">GESTÃO DE CONTRATOS · DIEFRA — <span id="hdr-tag-year">2026</span></div>
       <h1 id="hdr-h1" style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
         <span id="hdr-unit-display" style="cursor:pointer;position:relative" title="Clique para editar a unidade">
           <em id="hdr-uen-text">UEN-300</em>
@@ -1158,6 +1158,45 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
     </div>
   </div>
 
+
+  <!-- ══ ANÁLISE INTEGRAL & DERIVADA ══ -->
+  <div id="dash-intg-wrap" style="margin:32px 0 0;padding-top:28px;border-top:1px solid var(--b1)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+      <div>
+        <h2 style="font-family:var(--fh);font-size:20px;font-weight:700;margin:0">📈 Análise Integral &amp; Derivada</h2>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--fb)">Acumulado · Taxa mensal · Rentabilidade · Fluxo de caixa — reativo ao contrato e período selecionados</div>
+      </div>
+    </div>
+    <!-- 6 KPI cards -->
+    <div id="dash-intg-kpis" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px"></div>
+    <!-- 4 gráficos 2×2 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+      <div class="tbl-wrap" style="padding:16px 18px">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Integral — Faturamento &amp; Custos Acumulados</div>
+        <canvas id="dash-intg-chart-integral" height="200"></canvas>
+      </div>
+      <div class="tbl-wrap" style="padding:16px 18px">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Derivada — Taxa Mensal</div>
+        <canvas id="dash-intg-chart-derivada" height="200"></canvas>
+      </div>
+      <div class="tbl-wrap" style="padding:16px 18px">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Margem — Rentabilidade %</div>
+        <canvas id="dash-intg-chart-margem" height="200"></canvas>
+      </div>
+      <div class="tbl-wrap" style="padding:16px 18px">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Fluxo de Caixa — Resultado Mensal</div>
+        <canvas id="dash-intg-chart-fluxo" height="200"></canvas>
+      </div>
+    </div>
+    <!-- 4 insights -->
+    <div id="dash-intg-insights" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:8px"></div>
+    <!-- empty state -->
+    <div id="dash-intg-empty" style="display:none;text-align:center;padding:40px 0;color:var(--t3)">
+      <div style="font-size:36px;margin-bottom:10px">📈</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t2);margin-bottom:6px">Sem dados para analisar</div>
+      <div style="font-size:12px">Cadastre medições com faturamento e custo no <strong>Mapa de Medições</strong>.</div>
+    </div>
+  </div>
 
   <h2 style="font-family:var(--fh);font-size:20px;font-weight:700;margin:32px 0 20px;padding-top:28px;padding-bottom:14px;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)">Contratos com Vencimento Urgente</h2>
   <div class="urg" id="urg-cards"></div>
@@ -1659,6 +1698,8 @@ function showSec(id,btn){
 //  DASHBOARD
 // ════════════════════════════════════════════════════════════
 function renderDashboard(){
+  // Análise integral (não bloqueia se ainda sem dados)
+  setTimeout(_dashIntgRenderAll, 0);
   const totalRec=ST.contracts.reduce((a,c)=>a+c.receita,0);
   const totalRes=ST.contracts.reduce((a,c)=>a+c.resultado,0);
   const pendTasks=ST.tasks.filter(t=>!t.done).length;
@@ -2117,7 +2158,8 @@ function renderFinCharts(){
     ultimaMedicao:   mReal != null ? mReal  : ct.ultimaMedicao   || 0,
   };
 
-  requestAnimationFrame(()=>{ drawFinDonut(ctChart); drawFinBar(ctChart); drawFinGauge(ctChart); renderFinLineChart(); });
+  requestAnimationFrame(()=>{ drawFinDonut(ctChart); drawFinBar(ctChart); drawFinGauge(ctChart); renderFinLineChart(); });  // Atualiza análise integral
+  _dashIntgRenderAll();
 }
 
 function drawFinDonut(ct){
@@ -3122,8 +3164,9 @@ function saveContract(id){
     valorGlobalOriginal:  parseFloat(document.getElementById('ci-sglobal-orig').value)||0,
     ultimoAditivo:        parseFloat(document.getElementById('ci-aditivo')?.value)||0,
     // ── Campos financeiros calculados pelo recalcContractFinancials ──
-    // Não zerar receita/resultado aqui — recalcContractFinancials os recalcula a partir das medições
+    receita:0, custoTotal:0, custo:0,
     medicaoPrevista:0, ultimaMedicao:0,
+    resultado:0, margem:0, saldo:0,
     dtInicioEntregaMed:  document.getElementById('ci-dt-ini-ent').value  || null,
     dtFimEntregaMed:     document.getElementById('ci-dt-fim-ent').value  || null,
     dtInicioAnalise:     document.getElementById('ci-dt-ini-ana').value  || null,
@@ -3177,10 +3220,9 @@ function saveContract(id){
  *   ct.saldoGlobal   — valor global do contrato (aditivos incluídos)
  *
  * Campos DERIVADOS (auto-calculados, não devem ser editados manualmente):
- *   ct.custoTotal    = Σ(custo) de todas as medições acumuladas (espelho de receita)
- *   ct.resultado     = receita − custoTotal              (resultado vida do contrato)
- *   ct.saldo         = resultado                          (= resultado; compat. histórica)
- *   ct.margem        = resultado / receita × 100         (margem bruta % vida do contrato)
+ *   ct.resultado     = receita − custoTotal              (lucro bruto nominal)
+ *   ct.saldo         = receita − custoTotal              (= resultado; compat. histórica)
+ *   ct.margem        = resultado / receita × 100         (margem bruta %)
  *   ct.ultimaMedicao = realizado do mês mais recente     (de ST.medicoes)
  *   ct.medicaoPrevista = previsto do mês corrente        (de ST.medicoes)
  *
@@ -3198,34 +3240,15 @@ function recalcContractFinancials(ct) {
   const curKey = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0');
   const meds   = (ST.medicoes || []).filter(m => m.contractId === ct.id);
 
-  // ── 1. Total faturado = soma de todos os realizados nas medições ────────
-  ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
+  // ── 1. Campos financeiros base ──────────────────────────────────────────
+  const receita = ct.receita     || 0;
+  const custo   = ct.custoTotal  || ct.custo || 0;
+  ct.resultado  = receita - custo;
+  ct.saldo      = receita - custo;                      // mantém semântica anterior
+  ct.margem     = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
 
-  // ── 2. Receita = total efetivamente faturado (realizado acumulado) ──────
-  //    Preserva valor manual se não houver medições registradas
-  ct.receita = ct._totalFaturado > 0 ? ct._totalFaturado : (ct._receitaManual || 0);
-
-  // ── 3. Custo Total = soma acumulada de todos os meses (espelho de receita) ─
-  const _custoAcum = meds.reduce((s, m) => s + (m.custo || 0), 0);
-  if (_custoAcum > 0) {
-    ct.custoTotal = _custoAcum;
-    ct.custo      = _custoAcum;
-    // Referência ao mês mais recente com custo (para exibição no card)
-    const _ultimoCusto = meds
-      .filter(m => m.custo != null && m.custo > 0)
-      .sort((a, b) => b.key.localeCompare(a.key));
-    ct._custoMedKey = _ultimoCusto.length > 0 ? _ultimoCusto[0].key : null;
-  }
-  const custo = ct.custoTotal || ct.custo || 0;
-
-  // ── 4. Resultado, Saldo e Margem — vida do contrato ──────────────────────
-  //    Resultado = Receita acumulada − Custo acumulado
-  const receita    = ct.receita;
-  ct.resultado     = receita - custo;
-  ct.saldo         = ct.resultado;
-  ct.margem        = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
-
-  // ── 5. Última medição realizada ─────────────────────────────────────────
+  // ── 2. Última medição realizada ─────────────────────────────────────────
+  //    = realizado do mês mais recente com valor > 0
   const realizados = meds
     .filter(m => m.realizado != null && m.realizado > 0)
     .sort((a, b) => b.key.localeCompare(a.key));
@@ -3236,7 +3259,23 @@ function recalcContractFinancials(ct) {
     ct._ultimaMedicaoKey   = null;
   }
 
-  // ── 6. Medição prevista ─────────────────────────────────────────────────
+  // ── 2b. Custo da medição mais recente → ct.custoTotal ────────────────────
+  //    Se houver custo registrado na medição, sobrescreve o custoTotal do contrato
+  const comCusto = meds
+    .filter(m => m.custo != null && m.custo > 0)
+    .sort((a, b) => b.key.localeCompare(a.key));
+  if (comCusto.length > 0) {
+    ct.custoTotal          = comCusto[0].custo;
+    ct.custo               = comCusto[0].custo;
+    ct._custoMedKey        = comCusto[0].key;
+    // Recalcular resultado e margem com o novo custo
+    ct.resultado  = receita - ct.custoTotal;
+    ct.saldo      = ct.resultado;
+    ct.margem     = receita > 0 ? parseFloat(((ct.resultado / receita) * 100).toFixed(4)) : 0;
+  }
+
+  // ── 3. Medição prevista ─────────────────────────────────────────────────
+  //    = previsto do mês corrente; fallback: mês mais recente com previsto
   const recAtual = meds.find(m => m.key === curKey);
   if (recAtual && recAtual.previsto != null) {
     ct.medicaoPrevista        = recAtual.previsto;
@@ -3253,7 +3292,8 @@ function recalcContractFinancials(ct) {
     }
   }
 
-  // (já calculado no passo 1 acima)
+  // ── 4. Acumulados a partir de medições ──────────────────────────────────
+  ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
   // ── 5. Valor Global Atual = Original + Último Aditivo ────────────────────
   ct._valorGlobalAtual = (ct.valorGlobalOriginal || 0) + (ct.ultimoAditivo || 0);
   if (ct._valorGlobalAtual > 0) ct.saldoGlobal = ct._valorGlobalAtual;
@@ -4059,9 +4099,7 @@ function renderManagers(){
 
 function deleteManager(id){
   ST.managers=ST.managers.filter(m=>m.id!==id);
-  ST.vacations=ST.vacations.filter(v=>v.managerId!==id);
   renderManagers();renderVacations();
-  scheduleAutoSync();showToast('🗑 Gestor removido.','gn');
 }
 
 function openManagerModal(id){
@@ -5152,38 +5190,13 @@ function confirmDelete(type,id){
   };
   document.getElementById('confirm-text').textContent=msgs[type]||'Este item será excluído.';
   document.getElementById('confirm-yes-btn').onclick=()=>{
-    if(type==='contract'){
-      const ctName=(ST.contracts.find(c=>c.id===id)||{}).name||'Contrato';
-      ST.contracts=ST.contracts.filter(c=>c.id!==id);
-      ST.tasks=ST.tasks.filter(t=>t.contractId!==id);
-      ST.medicoes=ST.medicoes.filter(m=>m.contractId!==id);
-      ST.audits=ST.audits.filter(a=>a.contractId!==id);
-      ST.auditsGestao=ST.auditsGestao.filter(a=>a.contractId!==id);
-      ST.entregaveis=ST.entregaveis.filter(e=>e.contractId!==id);
-      renderContracts();renderTasks();renderFinanceiro();renderDashboard();
-      scheduleAutoSync();showToast('🗑 Contrato "'+ctName+'" excluído do banco.','rd');
-    }
-    else if(type==='task'){
-      ST.tasks=ST.tasks.filter(t=>t.id!==id);
-      renderTasks();renderContracts();renderDashboard();
-      scheduleAutoSync();showToast('🗑 Tarefa excluída.','gn');
-    }
-    else if(type==='vacation'){
-      ST.vacations=ST.vacations.filter(v=>v.id!==id);
-      renderVacations();
-      scheduleAutoSync();showToast('🗑 Férias excluídas.','gn');
-    }
-    else if(type==='manager'){
-      ST.managers=ST.managers.filter(m=>m.id!==id);
-      ST.vacations=ST.vacations.filter(v=>v.managerId!==id);
-      renderManagers();renderVacations();
-      scheduleAutoSync();showToast('🗑 Gestor removido.','gn');
-    }
+    if(type==='contract'){ST.contracts=ST.contracts.filter(c=>c.id!==id);ST.tasks=ST.tasks.filter(t=>t.contractId!==id);renderContracts();renderTasks();renderFinanceiro();renderDashboard()}
+    else if(type==='task'){ST.tasks=ST.tasks.filter(t=>t.id!==id);renderTasks();renderContracts();renderDashboard()}
+    else if(type==='vacation'){ST.vacations=ST.vacations.filter(v=>v.id!==id);renderVacations()}
+    else if(type==='manager'){ST.managers=ST.managers.filter(m=>m.id!==id);ST.vacations=ST.vacations.filter(v=>v.managerId!==id);renderManagers();renderVacations()}
     else if(type==='participant'){
-      if(!currentUser||currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
-      ST.participants=ST.participants.filter(p=>p.id!==id);
-      renderParticipants();
-      scheduleAutoSync();showToast('🗑 Participante removido.','gn');
+      if(!currentUser || currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
+      ST.participants=ST.participants.filter(p=>p.id!==id);renderParticipants();
     }
     closeConfirm();
   };
@@ -7058,10 +7071,13 @@ window.addEventListener('DOMContentLoaded',()=>{
   // Sync subtitle date with header date input
   const dateInp=document.getElementById('hdr-date');
   if(dateInp){
-    // Restaura última data salva ou mantém a padrão do input
     const savedDate = localStorage.getItem('diefra_reunion_date');
-    if(savedDate){ dateInp.value = savedDate; }
+    if(savedDate && savedDate.trim()){
+      dateInp.value = savedDate.trim();
+    }
     updateReunionDate(dateInp.value);
+    // Garante que qualquer mudança futura salva
+    dateInp.addEventListener('change', function(){ updateReunionDate(this.value); });
   }
   // Sync sala → footer
   _initSalaSync();
@@ -8512,6 +8528,193 @@ function _initPalette(){
   // Apply saved palette on load
   if(_activePalette !== 'verde-escuro') applyPalette(_activePalette);
 }
+// ════════════════════════════════════════════════════════════════════════════
+//  ANÁLISE INTEGRAL & DERIVADA — Dashboard
+//  Reage a _finCtId (contrato) e _finDashPeriod (período) já existentes
+// ════════════════════════════════════════════════════════════════════════════
+let _dashIntgCharts = {};
+
+function _dashIntgDestroy(id){
+  if(_dashIntgCharts[id]){ _dashIntgCharts[id].destroy(); delete _dashIntgCharts[id]; }
+}
+
+function _dashIntgBuildSeries(ctId, upToPeriod){
+  const allMeds = (ST.medicoes || []);
+  const meds = ctId ? allMeds.filter(m => m.contractId === ctId) : allMeds;
+  if(!meds.length) return null;
+
+  const map = {};
+  meds.forEach(m => {
+    if(!m.key) return;
+    if(upToPeriod && m.key > upToPeriod) return;
+    if(!map[m.key]) map[m.key] = { fat:0, cust:0 };
+    map[m.key].fat  += (m.realizado || 0);
+    map[m.key].cust += (m.custo     || 0);
+  });
+
+  const keys = Object.keys(map).sort();
+  if(!keys.length) return null;
+
+  const labels = keys.map(k => {
+    const [y,mo] = k.split('-');
+    return new Date(parseInt(y), parseInt(mo)-1, 1)
+      .toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})
+      .replace('.','').toUpperCase();
+  });
+
+  let acumFat=0, acumCust=0;
+  const intFat=[], intCust=[];
+  keys.forEach(k => { acumFat+=map[k].fat; acumCust+=map[k].cust; intFat.push(acumFat); intCust.push(acumCust); });
+
+  const derivFat  = keys.map(k => map[k].fat);
+  const derivCust = keys.map(k => map[k].cust);
+  const margem    = keys.map(k => map[k].fat>0 ? parseFloat(((map[k].fat-map[k].cust)/map[k].fat*100).toFixed(2)) : 0);
+  const fluxo     = keys.map(k => map[k].fat - map[k].cust);
+  const curIdx    = upToPeriod ? keys.indexOf(upToPeriod) : keys.length - 1;
+
+  return { keys, labels, intFat, intCust, derivFat, derivCust, margem, fluxo,
+    totalFat: acumFat, totalCust: acumCust, curIdx };
+}
+
+function _dashIntgOpts(yFmt){
+  const yCb = yFmt === '%'
+    ? v => v.toFixed(1)+'%'
+    : v => v>=1e6?'R$'+(v/1e6).toFixed(1)+'M':v>=1e3?'R$'+(v/1e3).toFixed(0)+'k':'R$'+v;
+  return {
+    responsive:true, maintainAspectRatio:true,
+    plugins:{ legend:{ labels:{ color:'#94a3b8', font:{size:10}, boxWidth:12 } } },
+    scales:{
+      x:{ ticks:{color:'#5d9470',font:{size:9}}, grid:{color:'rgba(255,255,255,.04)'} },
+      y:{ ticks:{color:'#5d9470',font:{size:9}, callback:yCb}, grid:{color:'rgba(255,255,255,.06)'} }
+    }
+  };
+}
+
+function _dashIntgRenderKPIs(s, ctId){
+  const el = document.getElementById('dash-intg-kpis');
+  if(!el) return;
+  if(!s){ el.innerHTML=''; return; }
+  const n    = s.keys.length || 1;
+  const taxaM= s.totalFat / n;
+  const margL= s.totalFat>0 ? (s.totalFat-s.totalCust)/s.totalFat*100 : 0;
+  let previsao = '—';
+  if(ctId){
+    const ct = ST.contracts.find(c=>c.id===ctId);
+    if(ct && ct.saldoGlobal && taxaM>0){
+      const rest = Math.ceil((ct.saldoGlobal - s.totalFat) / taxaM);
+      previsao = rest>0 ? rest+'m restantes' : 'Concluído';
+    }
+  }
+  const kpis = [
+    { l:'Total Faturado',   v:fmtBRL(s.totalFat),             c:'#34d399', s:'Σ realizados acumulados'   },
+    { l:'Total Custos',     v:fmtBRL(s.totalCust),            c:'#f87171', s:'Σ custos acumulados'        },
+    { l:'Margem Líquida',   v:fmtBRL(s.totalFat-s.totalCust), c:margL>=20?'#10b981':margL>=10?'#fbbf24':'#ef4444', s:margL.toFixed(1)+'% de margem' },
+    { l:'Taxa Média/mês',   v:fmtBRL(taxaM),                  c:'#38bdf8', s:'Faturamento médio'         },
+    { l:'Previsão',         v:previsao,                        c:'#c4b5fd', s:'Baseado na taxa média'     },
+    { l:'Períodos Reg.',    v:n+' meses',                      c:'#94a3b8', s:'Com medição'               },
+  ];
+  el.innerHTML = kpis.map(k=>`
+    <div class="tbl-wrap" style="padding:12px 14px">
+      <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:5px">${k.l}</div>
+      <div style="font-family:var(--fn);font-size:15px;font-weight:800;color:${k.c};white-space:nowrap">${k.v}</div>
+      <div style="font-size:9px;color:var(--t3);margin-top:3px">${k.s}</div>
+    </div>`).join('');
+}
+
+function _dashIntgRenderCharts(s){
+  ['integral','derivada','margem','fluxo'].forEach(id=>_dashIntgDestroy(id));
+  const empty = document.getElementById('dash-intg-empty');
+  if(!s){
+    if(empty) empty.style.display='block';
+    return;
+  }
+  if(empty) empty.style.display='none';
+
+  const hl = (arr, idx, base, hi) => arr.map((_,i)=> i===idx ? hi : base);
+
+  _dashIntgCharts['integral'] = new Chart(
+    document.getElementById('dash-intg-chart-integral'),
+    { type:'line', data:{ labels:s.labels, datasets:[
+        { label:'Fat. Acum.', data:s.intFat,  borderColor:'#38bdf8', backgroundColor:'rgba(56,189,248,.08)', tension:.35, pointRadius:3, fill:true },
+        { label:'Custo Acum.',data:s.intCust, borderColor:'#f87171', backgroundColor:'rgba(248,113,113,.08)', tension:.35, pointRadius:3, fill:true },
+      ]}, options:_dashIntgOpts() }
+  );
+
+  _dashIntgCharts['derivada'] = new Chart(
+    document.getElementById('dash-intg-chart-derivada'),
+    { type:'bar', data:{ labels:s.labels, datasets:[
+        { label:'Fat. Mensal',  data:s.derivFat,  backgroundColor:hl(s.derivFat, s.curIdx,'rgba(56,189,248,.6)','#38bdf8'),  borderRadius:4 },
+        { label:'Custo Mensal', data:s.derivCust, backgroundColor:hl(s.derivCust,s.curIdx,'rgba(248,113,113,.5)','#f87171'), borderRadius:4 },
+      ]}, options:_dashIntgOpts() }
+  );
+
+  const margColors = s.margem.map((v,i)=> i===s.curIdx?'#fff': v>=20?'rgba(16,185,129,.8)':v>=10?'rgba(251,191,36,.8)':'rgba(239,68,68,.8)');
+  _dashIntgCharts['margem'] = new Chart(
+    document.getElementById('dash-intg-chart-margem'),
+    { type:'line', data:{ labels:s.labels, datasets:[{
+        label:'Margem %', data:s.margem, borderColor:'#10b981',
+        backgroundColor:'rgba(16,185,129,.08)', tension:.35, pointRadius:4,
+        pointBackgroundColor:margColors, fill:true
+      }]}, options:_dashIntgOpts('%') }
+  );
+
+  _dashIntgCharts['fluxo'] = new Chart(
+    document.getElementById('dash-intg-chart-fluxo'),
+    { type:'bar', data:{ labels:s.labels, datasets:[{
+        label:'Resultado Mensal',
+        data:s.fluxo,
+        backgroundColor:s.fluxo.map((v,i)=> i===s.curIdx?'#fff': v>=0?'rgba(16,185,129,.75)':'rgba(239,68,68,.75)'),
+        borderRadius:4
+      }]}, options:_dashIntgOpts() }
+  );
+}
+
+function _dashIntgRenderInsights(s){
+  const el = document.getElementById('dash-intg-insights');
+  if(!el || !s || s.keys.length<2){ if(el) el.innerHTML=''; return; }
+  const n=s.keys.length, mid=Math.floor(n/2);
+  const a1=s.derivFat.slice(0,mid).reduce((a,v)=>a+v,0)/mid;
+  const a2=s.derivFat.slice(mid).reduce((a,v)=>a+v,0)/(n-mid);
+  const tPct=a1>0?(a2-a1)/a1*100:0;
+  const tend=tPct>10?{i:'🚀',t:'Acelerando',c:'#10b981',s:`+${tPct.toFixed(1)}% vs 1ª metade`}
+            :tPct<-10?{i:'📉',t:'Desacelerando',c:'#ef4444',s:`${tPct.toFixed(1)}% vs 1ª metade`}
+            :{i:'➡️',t:'Estável',c:'#fbbf24',s:`Var. ${tPct.toFixed(1)}%`};
+  const mL=s.totalFat>0?(s.totalFat-s.totalCust)/s.totalFat*100:0;
+  const rent=mL>=20?{i:'💎',t:'Excelente',c:'#10b981',s:`Margem ${mL.toFixed(1)}% (>20%)`}
+            :mL>=10?{i:'✅',t:'Adequada',c:'#fbbf24',s:`Margem ${mL.toFixed(1)}% (10-20%)`}
+            :{i:'⚠️',t:'Baixa',c:'#ef4444',s:`Margem ${mL.toFixed(1)}% (<10%)`};
+  const taxM=s.totalFat/n, uF=s.derivFat[n-1]||0;
+  const pPct=taxM>0?(uF/taxM-1)*100:0;
+  const prev=pPct>10?{i:'⚡',t:'Adiantado',c:'#10b981',s:`Últ. mês +${pPct.toFixed(1)}% da taxa`}
+            :pPct<-10?{i:'🔴',t:'Atrasado',c:'#ef4444',s:`Últ. mês ${pPct.toFixed(1)}% da taxa`}
+            :{i:'🎯',t:'Em Dia',c:'#fbbf24',s:'Dentro da taxa média'};
+  const c1=s.derivCust.slice(0,mid).reduce((a,v)=>a+v,0)/mid;
+  const c2=s.derivCust.slice(mid).reduce((a,v)=>a+v,0)/(n-mid);
+  const cP=c1>0?(c2-c1)/c1*100:0;
+  const cust=cP>15?{i:'🔴',t:'Acelerando',c:'#ef4444',s:`Custos +${cP.toFixed(1)}% na 2ª metade`}
+            :cP<-10?{i:'🟢',t:'Reduzindo',c:'#10b981',s:`Custos ${cP.toFixed(1)}% na 2ª metade`}
+            :{i:'🟡',t:'Controlado',c:'#fbbf24',s:`Var. ${cP.toFixed(1)}% nos custos`};
+  el.innerHTML=[{titulo:'Tendência',...tend},{titulo:'Rentabilidade',...rent},{titulo:'Previsão',...prev},{titulo:'Status Custos',...cust}]
+    .map(x=>`
+    <div class="tbl-wrap" style="padding:14px 16px">
+      <div style="font-size:18px;margin-bottom:6px">${x.i}</div>
+      <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">${x.titulo}</div>
+      <div style="font-size:14px;font-weight:800;color:${x.c};margin-bottom:3px">${x.t}</div>
+      <div style="font-size:10px;color:var(--t2)">${x.s}</div>
+    </div>`).join('');
+}
+
+// Entry point — chamado por renderFinCharts() e renderDashboard()
+function _dashIntgRenderAll(){
+  if(!document.getElementById('dashboard')?.classList.contains('active')) return;
+  const ctId  = _finCtId  || null;
+  const period = _finDashPeriod || null;
+  const s = _dashIntgBuildSeries(ctId, period);
+  _dashIntgRenderKPIs(s, ctId);
+  _dashIntgRenderCharts(s);
+  _dashIntgRenderInsights(s);
+}
+
 </script>
 </body>
 </html>
