@@ -1869,15 +1869,17 @@ function showSec(id,btn){
 // ════════════════════════════════════════════════════════════
 function renderDashboard(){
   setTimeout(_dashIntgRenderAll,0);
-  const totalRec=ST.contracts.reduce((a,c)=>a+c.receita,0);
-  const totalRes=ST.contracts.reduce((a,c)=>a+c.resultado,0);
+  // Receita = Σ(realizados das medições) — fonte: Mapa de Medições
+  const totalRec = ST.contracts.reduce((a,c)=>a+(c._totalFaturado||0),0);
+  const totalCus = ST.contracts.reduce((a,c)=>a+(c._totalCusto||0),0);
+  const totalRes = totalRec - totalCus;
   const pendTasks=ST.tasks.filter(t=>!t.done).length;
-  const avgMargem=(ST.contracts.reduce((a,c)=>a+c.margem,0)/ST.contracts.length).toFixed(1);
+  const totMar   = totalRec>0 ? (totalRes/totalRec*100).toFixed(1) : '0.0';
   const ativos=ST.contracts.filter(c=>c.status==='ativo').length;
   document.getElementById('kpi-g').innerHTML=`
-    <div class="kc ct"><div class="kl">Receita Total</div><div class="kv" style="font-size:16px;white-space:nowrap">${fmtBRL(totalRec)}</div><div class="ks">Todos os contratos</div></div>
+    <div class="kc ct"><div class="kl">Receita Total</div><div class="kv" style="font-size:16px;white-space:nowrap">${fmtBRL(totalRec)}</div><div class="ks">Σ realizados · Mapa de Medições</div></div>
     <div class="kc cb"><div class="kl">Contratos Ativos</div><div class="kv">${ativos}</div><div class="ks">${ST.contracts.filter(c=>['desmob','desmobilizando'].includes(c.status)).length} desmob · ${ST.contracts.filter(c=>['mob'].includes(c.status)).length} mob</div></div>
-    <div class="kc co"><div class="kl">Resultado Bruto</div><div class="kv" style="font-size:16px;white-space:nowrap">${fmtBRL(totalRes)}</div><div class="ks">Soma dos resultados</div></div>
+    <div class="kc co"><div class="kl">Resultado Bruto</div><div class="kv" style="font-size:16px;white-space:nowrap;color:${totalRes>=0?'var(--gnl)':'var(--rdl)'}">${fmtBRL(totalRes)}</div><div class="ks">Margem: ${totMar}%</div></div>
     <div class="kc cr"><div class="kl">Tarefas Pendentes</div><div class="kv">${pendTasks}</div><div class="ks">De ${ST.tasks.length} tarefas totais</div></div>`;
 
   const today=new Date('2026-03-07');
@@ -3711,6 +3713,7 @@ function recalcContractFinancials(ct) {
 
   // ── 4. Acumulados a partir de medições ──────────────────────────────────
   ct._totalFaturado = meds.reduce((s, m) => s + (m.realizado || 0), 0);
+  ct._totalCusto    = meds.reduce((s, m) => s + (m.custo     || 0), 0);
   // ── 5. Valor Global Atual = Original + Último Aditivo ────────────────────
   ct._valorGlobalAtual = (ct.valorGlobalOriginal || 0) + (ct.ultimoAditivo || 0);
   if (ct._valorGlobalAtual > 0) ct.saldoGlobal = ct._valorGlobalAtual;
@@ -3774,21 +3777,27 @@ function renderFinKpiAll(){
   if(!el) return;
 
   const ativos = ST.contracts.filter(c=>c.status==='ativo').length;
-  const totRec  = ST.contracts.reduce((s,c)=>s+(c.receita||0),0);
-  const totCus  = ST.contracts.reduce((s,c)=>s+(c.custoTotal||c.custo||0),0);
-  const totRes  = ST.contracts.reduce((s,c)=>s+(c.resultado||0),0);
-  const totFat  = ST.contracts.reduce((s,c)=>s+(c._totalFaturado||0),0);
-  const totSalF = ST.contracts.reduce((s,c)=>s+(c._saldoAFaturar!=null?c._saldoAFaturar:(c.receita||0)-(c._totalFaturado||0)),0);
+  // Receita Total = Σ(realizados das medições) por contrato
+  const totRec  = ST.contracts.reduce((s,c)=>s+(c._totalFaturado||0),0);
+  // Custo Total   = Σ(custos das medições) por contrato
+  const totCus  = ST.contracts.reduce((s,c)=>s+(c._totalCusto||0),0);
+  const totRes  = totRec - totCus;
+  const totFat  = totRec; // totalFaturado já é a receita realizada
+  const totSalF = ST.contracts.reduce((s,c)=>{
+    const vg = c.saldoGlobal||c.valorGlobalOriginal||0;
+    return s + Math.max(0, vg - (c._totalFaturado||0));
+  },0);
   const totMar  = totRec>0 ? (totRes/totRec*100) : 0;
-  const execPct = totRec>0 ? Math.min(100, totFat/totRec*100) : 0;
+  const totVG   = ST.contracts.reduce((s,c)=>s+(c.saldoGlobal||c.valorGlobalOriginal||0),0);
+  const execPct = totVG>0 ? Math.min(100, totRec/totVG*100) : 0;
 
   if(ct_el) ct_el.textContent = `${ST.contracts.length} contratos · ${ativos} ativos`;
 
   const kpis = [
     { l:'Receita Total',       v:fmtBRL(totRec),          c:'#38bdf8', icon:'💵',
-      sub:`Custo: ${fmtBRL(totCus)}`, bar:null },
+      sub:`Custo: ${fmtBRL(totCus)} · Σ realizados das medições`, bar:null },
     { l:'Resultado Bruto',     v:fmtBRL(totRes),           c:totRes>=0?'#10b981':'#f43f5e', icon:totRes>=0?'✅':'⚠️',
-      sub:'Receita − Custo', bar:null },
+      sub:'Receita realizada − Custo das medições', bar:null },
     { l:'Margem Média',        v:totMar.toFixed(2)+'%',    c:totMar>=20?'#10b981':totMar>=12?'#fbbf24':'#f43f5e', icon:'📊',
       sub:totMar>=20?'🟢 Saudável':totMar>=12?'🟡 Atenção':'🔴 Crítica',
       bar:Math.min(100,Math.max(0,totMar/30*100)), barColor:totMar>=20?'#10b981':totMar>=12?'#fbbf24':'#f43f5e' },
@@ -4237,11 +4246,11 @@ function renderFinanceiro(){
   renderFinKpiCards();
   renderFinPeriodRow();
 
-  // Tabela consolidada
-  const totRec = ST.contracts.reduce((a,c)=>a+(c.receita||0),0);
-  const totCus = ST.contracts.reduce((a,c)=>a+(c.custoTotal||c.custo||0),0);
-  const totRes = ST.contracts.reduce((a,c)=>a+(c.resultado||0),0);
-  const totSal = ST.contracts.reduce((a,c)=>a+(c.saldo||0),0);
+  // Tabela consolidada — baseada em medições realizadas
+  const totRec = ST.contracts.reduce((a,c)=>a+(c._totalFaturado||0),0);
+  const totCus = ST.contracts.reduce((a,c)=>a+(c._totalCusto||0),0);
+  const totRes = totRec - totCus;
+  const totSal = totRes;
 
   const rows = ST.contracts.map((c)=>{
     const rc = (c.resultado||0)>=0 ? 'pos' : 'neg';
@@ -4261,13 +4270,14 @@ function renderFinanceiro(){
       <td style="white-space:nowrap;font-size:11px;color:var(--t2);font-family:var(--fn)">${c.code}</td>
       <td>${statusBadge(c.status)}</td>
       <td style="white-space:nowrap">${c.gestorTecnico||c.responsible||'—'}</td>
-      <td style="text-align:right;white-space:nowrap"><strong>${fmtBRL(c.receita)}</strong></td>
-      <td style="text-align:right;white-space:nowrap">${fmtBRL(c.custoTotal||c.custo||0)}</td>
+      <td style="text-align:right;white-space:nowrap"><strong>${fmtBRL(c._totalFaturado||0)}</strong></td>
+      <td style="text-align:right;white-space:nowrap">${fmtBRL(c._totalCusto||0)}</td>
       <td style="text-align:right;white-space:nowrap">${fmtBRL(c.medicaoPrevista||0)}</td>
       <td style="text-align:right;white-space:nowrap">${fmtBRL(c.ultimaMedicao||0)}</td>
-      <td style="text-align:right;white-space:nowrap">${fmtBRL(c.saldo||0)}</td>
-      <td style="text-align:right;white-space:nowrap"><strong class="${rc}">${fmtBRL(c.resultado||0)}</strong></td>
-      <td style="text-align:right;white-space:nowrap"><strong style="color:${mColor(c.margem)}">${(c.margem||0).toFixed(2)}%</strong></td>
+      ${(()=>{const r=(c._totalFaturado||0)-(c._totalCusto||0);const rc=r>=0?'pos':'neg';const m=(c._totalFaturado||0)>0?(r/(c._totalFaturado||1)*100):0;return`
+      <td style="text-align:right;white-space:nowrap">${fmtBRL(r)}</td>
+      <td style="text-align:right;white-space:nowrap"><strong class="${rc}">${fmtBRL(r)}</strong></td>
+      <td style="text-align:right;white-space:nowrap"><strong style="color:${mColor(m)}">${m.toFixed(2)}%</strong></td>`;})()}
     </tr>`;
   }).join('');
 
