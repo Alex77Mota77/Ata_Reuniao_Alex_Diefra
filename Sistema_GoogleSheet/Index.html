@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIEFRA · Gestão de Contratos 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Nunito:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Nunito:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Slab:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b2215;
@@ -453,6 +453,31 @@ body{
 .ftrbr{font-family:var(--fh);font-size:16px;font-weight:900;color:var(--t2);letter-spacing:1px}
 
 /* ── PALETTE SWITCHER ── */
+#font-btn{position:fixed;bottom:24px;right:80px;z-index:9500;width:48px;height:48px;
+  border-radius:50%;border:2px solid rgba(255,255,255,.18);background:var(--s2);
+  backdrop-filter:blur(16px) saturate(160%);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;box-shadow:0 6px 24px rgba(0,0,0,.4),0 0 0 1px rgba(16,185,129,.08);transition:all .22s}
+#font-btn:hover{transform:scale(1.10) translateY(-1px);border-color:rgba(16,185,129,.5);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 3px rgba(16,185,129,.12)}
+#font-panel{position:fixed;bottom:78px;right:80px;z-index:9500;
+  background:rgba(8,22,14,.97);backdrop-filter:blur(32px) saturate(200%);
+  border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:20px 18px 18px;
+  width:360px;box-shadow:0 20px 64px rgba(0,0,0,.6),0 0 0 1px rgba(16,185,129,.06);
+  transform:translateY(10px) scale(.96);opacity:0;pointer-events:none;
+  transition:all .24s cubic-bezier(.4,0,.2,1)}
+#font-panel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+.fp-title{font-size:10px;font-weight:800;letter-spacing:2.2px;color:var(--t3);
+  text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--b1)}
+.fp-list{display:flex;flex-direction:column;gap:6px;max-height:380px;overflow-y:auto;scrollbar-width:thin}
+.fp-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;
+  border:1px solid var(--b1);background:rgba(255,255,255,.03);cursor:pointer;transition:all .18s}
+.fp-item:hover{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.25)}
+.fp-item.active{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4)}
+.fp-preview{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.fp-preview-title{font-size:15px;font-weight:700;color:var(--tx);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fp-preview-body{font-size:11px;color:var(--t2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fp-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--b1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s}
+.fp-item.active .fp-check{background:var(--gnl);border-color:var(--gnl);color:#fff}
+
 #palette-btn{position:fixed;bottom:24px;right:24px;z-index:9500;width:48px;height:48px;
   border-radius:50%;border:2px solid rgba(255,255,255,.18);background:var(--s2);
   backdrop-filter:blur(16px) saturate(160%);cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -480,6 +505,20 @@ body{
   font-size:8px;font-weight:800;text-align:center;letter-spacing:.5px;
   background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.95);text-transform:uppercase;line-height:1.3}
 .pp-swatch.active .pp-swatch-lbl::before{content:'✓ ';}
+
+.gestor-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(16,185,129,.4);flex-shrink:0;background:var(--s2)}
+.gestor-avatar-placeholder{width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--ac),var(--ac2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:#fff;flex-shrink:0;
+  font-family:var(--fh);border:2px solid rgba(56,189,248,.35)}
+.gestor-foto-zone{width:80px;height:80px;border-radius:50%;border:2px dashed var(--b1);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:4px;transition:all .2s;flex-shrink:0;position:relative;overflow:hidden}
+.gestor-foto-zone:hover{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.05)}
+.gestor-foto-zone img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.gestor-foto-zone-lbl{font-size:9px;font-weight:700;color:var(--t3);text-align:center;line-height:1.3}
 
 /* URGENT CARD */
 .urg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -1164,38 +1203,146 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px">
       <div>
         <h2 style="font-family:var(--fh);font-size:20px;font-weight:700;margin:0">📈 Análise Integral &amp; Derivada</h2>
-        <div style="font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--fb)">Acumulado · Taxa mensal · Rentabilidade · Fluxo de caixa — reativo ao contrato e período selecionados</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--fb)">Acumulado · Taxa mensal · Rentabilidade · Fluxo de caixa</div>
       </div>
     </div>
-    <!-- 6 KPI cards -->
     <div id="dash-intg-kpis" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px"></div>
-    <!-- 4 gráficos 2×2 -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
-      <div class="tbl-wrap" style="padding:16px 18px">
-        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Integral — Faturamento &amp; Custos Acumulados</div>
-        <canvas id="dash-intg-chart-integral" height="200"></canvas>
-      </div>
-      <div class="tbl-wrap" style="padding:16px 18px">
-        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Derivada — Taxa Mensal</div>
-        <canvas id="dash-intg-chart-derivada" height="200"></canvas>
-      </div>
-      <div class="tbl-wrap" style="padding:16px 18px">
-        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Margem — Rentabilidade %</div>
-        <canvas id="dash-intg-chart-margem" height="200"></canvas>
-      </div>
-      <div class="tbl-wrap" style="padding:16px 18px">
-        <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Fluxo de Caixa — Resultado Mensal</div>
-        <canvas id="dash-intg-chart-fluxo" height="200"></canvas>
-      </div>
+      <div class="tbl-wrap" style="padding:16px 18px"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Integral — Faturamento &amp; Custos Acumulados</div><canvas id="dash-intg-chart-integral" height="200"></canvas></div>
+      <div class="tbl-wrap" style="padding:16px 18px"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Derivada — Taxa Mensal</div><canvas id="dash-intg-chart-derivada" height="200"></canvas></div>
+      <div class="tbl-wrap" style="padding:16px 18px"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Margem — Rentabilidade %</div><canvas id="dash-intg-chart-margem" height="200"></canvas></div>
+      <div class="tbl-wrap" style="padding:16px 18px"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">Fluxo de Caixa — Resultado Mensal</div><canvas id="dash-intg-chart-fluxo" height="200"></canvas></div>
     </div>
-    <!-- 4 insights -->
     <div id="dash-intg-insights" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:8px"></div>
-    <!-- empty state -->
     <div id="dash-intg-empty" style="display:none;text-align:center;padding:40px 0;color:var(--t3)">
       <div style="font-size:36px;margin-bottom:10px">📈</div>
       <div style="font-size:14px;font-weight:700;color:var(--t2);margin-bottom:6px">Sem dados para analisar</div>
       <div style="font-size:12px">Cadastre medições com faturamento e custo no <strong>Mapa de Medições</strong>.</div>
     </div>
+  </div>
+
+  <!-- ══ CALCULADORA DE VIRADA DE CONTRATO ══ -->
+  <div id="dash-virada-wrap" style="margin:32px 0 0;padding-top:28px;border-top:1px solid var(--b1)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+      <div>
+        <h2 style="font-family:var(--fh);font-size:20px;font-weight:700;margin:0">📐 Calculadora de Virada de Contrato</h2>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--fb)" id="virada-subtitle">Análise de break-even para o contrato selecionado</div>
+      </div>
+    </div>
+
+    <!-- Banner resultado -->
+    <div id="virada-banner" style="border-radius:14px;padding:16px 22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;border:1px solid rgba(16,185,129,.3);background:rgba(5,150,105,.10)">
+      <div>
+        <div id="virada-ban-lbl" style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;color:#5d9470">Virada do contrato</div>
+        <div id="virada-ban-date" style="font-family:var(--fn);font-size:24px;font-weight:800;letter-spacing:-.5px;color:#10b981">—</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;color:#5d9470">Mês exato</div>
+        <div id="virada-ban-m" style="font-family:var(--fn);font-size:24px;font-weight:800;color:#10b981">—</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;color:#5d9470">Lucro líquido até o fim</div>
+        <div id="virada-ban-profit" style="font-family:var(--fn);font-size:24px;font-weight:800;color:#10b981">—</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;color:#5d9470">ROI projetado</div>
+        <div id="virada-ban-roi" style="font-family:var(--fn);font-size:24px;font-weight:800;color:#10b981">—</div>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div id="virada-kpis" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:18px"></div>
+
+    <!-- Ajustes da projeção -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:14px;padding:18px 22px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:var(--t3);text-transform:uppercase">Parâmetros da projeção</div>
+        <div id="virada-source-tag" style="font-size:9px;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:100px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#5d9470"></div>
+      </div>
+
+      <!-- Linha 1 — Receita e Custo mensal (inputs numéricos editáveis) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 36px;margin-bottom:16px">
+        <div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Receita mensal (R$)</div>
+          <div style="display:flex;align-items:center;gap:8px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:10px 14px">
+            <span style="font-size:13px;color:#5d9470;font-weight:700;flex-shrink:0">R$</span>
+            <input type="number" id="virada-revmes" min="0" step="100" placeholder="0"
+              style="background:none;border:none;outline:none;color:#10b981;font-family:var(--fn);font-size:16px;font-weight:800;width:100%;letter-spacing:-.3px">
+            <span style="font-size:10px;color:#5d9470;flex-shrink:0">/mês</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Custo fixo mensal (R$)</div>
+          <div style="display:flex;align-items:center;gap:8px;background:rgba(234,88,12,.07);border:1px solid rgba(234,88,12,.25);border-radius:10px;padding:10px 14px">
+            <span style="font-size:13px;color:#9a5a3a;font-weight:700;flex-shrink:0">R$</span>
+            <input type="number" id="virada-cfmes" min="0" step="100" placeholder="0"
+              style="background:none;border:none;outline:none;color:#f97316;font-family:var(--fn);font-size:16px;font-weight:800;width:100%;letter-spacing:-.3px">
+            <span style="font-size:10px;color:#9a5a3a;flex-shrink:0">/mês</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha 2 — Sliders -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 36px">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <label style="font-size:11px;font-weight:700;color:var(--t2)">Investimento inicial estimado (R$)</label>
+            <span style="font-family:var(--fn);font-size:12px;font-weight:800;color:#10b981" id="virada-inv-val">R$ 0</span>
+          </div>
+          <input type="range" id="virada-inv" min="0" max="2000000" step="1000" value="0" style="width:100%;accent-color:#10b981">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <label style="font-size:11px;font-weight:700;color:var(--t2)">Ramp-up — meses para receita plena</label>
+            <span style="font-family:var(--fn);font-size:12px;font-weight:800;color:#10b981" id="virada-ramp-val">imediato</span>
+          </div>
+          <input type="range" id="virada-ramp" min="0" max="12" step="1" value="0" style="width:100%;accent-color:#10b981">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <label style="font-size:11px;font-weight:700;color:var(--t2)">Reajuste da receita ao ano (%) — IPCA / IGPM</label>
+            <span style="font-family:var(--fn);font-size:12px;font-weight:800;color:#10b981" id="virada-rrev-val">0.00%</span>
+          </div>
+          <input type="range" id="virada-rrev" min="0" max="25" step="0.01" value="0" style="width:100%;accent-color:#10b981">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <label style="font-size:11px;font-weight:700;color:var(--t2)">Reajuste dos custos ao ano (%) — salários / infra</label>
+            <span style="font-family:var(--fn);font-size:12px;font-weight:800;color:#ef4444" id="virada-rcost-val">0.00%</span>
+          </div>
+          <input type="range" id="virada-rcost" min="0" max="25" step="0.01" value="0" style="width:100%;accent-color:#ef4444">
+        </div>
+      </div>
+      <div id="virada-spread" style="margin-top:14px;padding:8px 14px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--b1);font-size:11px;color:var(--t3)"></div>
+    </div>
+
+    <!-- Charts -->
+    <div style="display:grid;grid-template-columns:1.8fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:14px;padding:18px 22px">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Resultado Acumulado — Ponto de Virada</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:12px" id="virada-chart-sub">—</div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+          <span style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#ef4444"><span style="width:16px;height:2px;background:#ef4444;display:inline-block;border-radius:2px"></span>Prejuízo acum.</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#10b981"><span style="width:16px;height:2px;background:#10b981;display:inline-block;border-radius:2px"></span>Lucro acum.</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#f59e0b"><span style="width:16px;height:2px;background:#f59e0b;display:inline-block;border-radius:2px"></span>Receita acum.</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#38bdf8"><span style="width:14px;height:0;border-top:2px dashed #38bdf8;display:inline-block"></span>Virada</span>
+        </div>
+        <div style="position:relative;height:240px"><canvas id="virada-chart-cum"></canvas></div>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:14px;padding:18px 22px">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;color:var(--t3);text-transform:uppercase;margin-bottom:14px">Fluxo de Caixa Mensal</div>
+        <div style="position:relative;height:240px"><canvas id="virada-chart-bar"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:10px;padding:14px 18px;margin-bottom:16px">
+      <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;color:var(--t3);text-transform:uppercase;margin-bottom:10px">Linha do tempo mensal — passe o mouse para ver o valor</div>
+      <div id="virada-timeline-bars" style="display:flex;gap:2px;width:100%"></div>
+    </div>
+
+    <!-- Yearly table -->
+    <div id="virada-yearly"></div>
   </div>
 
   <h2 style="font-family:var(--fh);font-size:20px;font-weight:700;margin:32px 0 20px;padding-top:28px;padding-bottom:14px;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)">Contratos com Vencimento Urgente</h2>
@@ -1640,6 +1787,29 @@ function calcReturn(start,dias){if(!start||!dias)return '';const d=new Date(star
 function initials(n){return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
 function getContract(id){return ST.contracts.find(c=>c.id===id)}
 function getManager(id){return ST.managers.find(m=>m.id===id)}
+
+// Retorna o objeto pessoa (participante ou gestor) vinculado a uma férias
+// Suporta formato novo vacPersonRef='p:5'|'m:3' e legado managerId
+function _getVacPerson(v){
+  if(!v) return null;
+  if(v.vacPersonRef){
+    const [type,sid]=v.vacPersonRef.split(':');
+    const id=parseInt(sid);
+    if(type==='p') return ST.participants.find(p=>p.id===id)||null;
+    if(type==='m') return ST.managers.find(m=>m.id===id)||null;
+  }
+  return getManager(v.managerId)||null;
+}
+
+// Renderiza avatar circular com foto (participante) ou iniciais (gestor/sem foto)
+function _vacPersonAvatar(person, size=32){
+  if(!person) return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:rgba(255,255,255,.1);flex-shrink:0"></div>`;
+  const sz=`width:${size}px;height:${size}px`;
+  if(person.foto)
+    return `<div style="${sz};border-radius:50%;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(255,255,255,.15)"><img src="${person.foto}" alt="${person.name}" style="width:100%;height:100%;object-fit:cover"></div>`;
+  const fs=Math.round(size*0.35);
+  return `<div style="${sz};border-radius:50%;background:${person.color||'#1d4ed8'};display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:900;font-family:var(--fh);flex-shrink:0">${initials(person.name)}</div>`;
+}
 function barClass(p){return p>=20?'bh':p>=12?'bm':'bl'}
 function mColor(p){return p>=20?'var(--gnl)':p>=12?'var(--gl)':'var(--rdl)'}
 function statusBadge(s){const m={
@@ -1698,8 +1868,7 @@ function showSec(id,btn){
 //  DASHBOARD
 // ════════════════════════════════════════════════════════════
 function renderDashboard(){
-  // Análise integral (não bloqueia se ainda sem dados)
-  setTimeout(_dashIntgRenderAll, 0);
+  setTimeout(_dashIntgRenderAll,0);
   const totalRec=ST.contracts.reduce((a,c)=>a+c.receita,0);
   const totalRes=ST.contracts.reduce((a,c)=>a+c.resultado,0);
   const pendTasks=ST.tasks.filter(t=>!t.done).length;
@@ -2058,6 +2227,8 @@ function finChartShift(dir){
 }
 
 function renderFinCharts(){
+  setTimeout(_dashIntgRenderAll,0);
+  setTimeout(renderViradasChart,0);
   const sel = document.getElementById('fin-ct-sel');
   if(!sel) return;
   _finCtId = parseInt(sel.value);
@@ -2158,8 +2329,7 @@ function renderFinCharts(){
     ultimaMedicao:   mReal != null ? mReal  : ct.ultimaMedicao   || 0,
   };
 
-  requestAnimationFrame(()=>{ drawFinDonut(ctChart); drawFinBar(ctChart); drawFinGauge(ctChart); renderFinLineChart(); });  // Atualiza análise integral
-  _dashIntgRenderAll();
+  requestAnimationFrame(()=>{ drawFinDonut(ctChart); drawFinBar(ctChart); drawFinGauge(ctChart); renderFinLineChart(); });
 }
 
 function drawFinDonut(ct){
@@ -2280,24 +2450,35 @@ function drawFinGauge(ct){
  * Retorna o YYYY-MM do período ativo para um card.
  * Default = mês corrente.
  */
+// Período global sincronizado — todos os cards usam o mesmo mês
+let _globalCardPeriod = (()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); })();
+
 function _getCtCardPeriod(ctId){
-  if(_ctCardPeriod[ctId]) return _ctCardPeriod[ctId];
-  const d = new Date();
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  return _globalCardPeriod;
 }
 
-/**
- * Avança/recua o período do card e re-renderiza apenas aquele card.
- * @param {number} ctId  - id do contrato
- * @param {number} dir   - +1 próximo mês, -1 mês anterior
- */
 function shiftCtCardPeriod(ctId, dir){
   event.stopPropagation();
-  const cur = _getCtCardPeriod(ctId);
-  const [y,m] = cur.split('-').map(Number);
+  const [y,m] = _globalCardPeriod.split('-').map(Number);
   const d = new Date(y, m-1+dir, 1);
-  _ctCardPeriod[ctId] = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-  _rerenderCtCard(ctId);
+  _globalCardPeriod = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  // Re-renderiza TODOS os cards sincronizados
+  ST.contracts.forEach(c=>{
+    const el = document.querySelector(`.cc[data-id="${c.id}"]`);
+    if(!el) return;
+    const taskOpen = el.querySelector('.tt.open') != null;
+    const tasks = ST.tasks.filter(t=>t.contractId===c.id);
+    const pendT = tasks.filter(t=>!t.done).length;
+    el.outerHTML = _buildContractCard(c, tasks, pendT);
+    if(taskOpen){
+      const newEl = document.querySelector(`.cc[data-id="${c.id}"]`);
+      if(newEl){ const btn=newEl.querySelector('.tt'); if(btn){btn.classList.add('open');btn.nextElementSibling.classList.add('open');} }
+    }
+  });
+  setTimeout(()=>{
+    document.querySelectorAll('.mbf').forEach(b=>{b.style.width=b.dataset.w||'0%'});
+    document.querySelectorAll('.cc-fat-fill').forEach(b=>{b.style.width=b.dataset.w||'0%'});
+  },80);
 }
 
 /**
@@ -2339,17 +2520,28 @@ function _rerenderCtCard(ctId){
 //  _buildFatSection — Seção de Faturamento no card do contrato
 //  Busca a medição mais recente com dados de faturamento
 // ════════════════════════════════════════════════════════════
-function _buildFatSection(c, ST){
+function _buildFatSection(c, ST, activePeriod){
   const meds = (ST.medicoes||[]).filter(function(m){
     return m.contractId===c.id && (m.dtEntrega||m.dtAutFat||m.dtFatura||m.resumoFat);
   });
-  var hasContratuaisCheck = c.dtInicioEntregaMed||c.dtFimEntregaMed||c.dtInicioAnalise||c.dtFimAnalise||c.dtPagamentoCliente;
+  var hasContratuaisCheck = c.periodoEntrega||c.periodoAnalise||c.periodoPagamento||c.dtInicioEntregaMed||c.dtFimEntregaMed||c.dtInicioAnalise||c.dtFimAnalise||c.dtPagamentoCliente;
   if(!meds.length && !hasContratuaisCheck) return '';
   meds.sort(function(a,b){ return b.key.localeCompare(a.key); });
-  var mf = meds.length ? meds[0] : {};
-  var parts = mf.key ? mf.key.split('-') : ['2000','01'];
-  var mfLbl = mf.key ? new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1)
-    .toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace('.','').toUpperCase() : '';
+  // Usa o período do card se disponível, senão cai no mais recente
+  var mf = {};
+  if(activePeriod){
+    mf = meds.find(function(m){ return m.key===activePeriod; }) || meds[0] || {};
+  } else {
+    mf = meds.length ? meds[0] : {};
+  }
+  // mfLbl sempre reflete o mês SELECIONADO no card (não o da medição com dados)
+  var _lblKey = activePeriod || mf.key || null;
+  var mfLbl = _lblKey
+    ? (function(){ var p=_lblKey.split('-'); return new Date(parseInt(p[0]),parseInt(p[1])-1,1).toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace('.','').toUpperCase(); })()
+    : '';
+  // mf traz os dados de faturamento do mês selecionado (se existir), senão mais recente
+  var mfPeriod = (ST.medicoes||[]).find(function(m){ return m.contractId===c.id && m.key===activePeriod && (m.dtEntrega||m.dtAutFat||m.dtFatura); });
+  if(activePeriod && mfPeriod) mf = mfPeriod;
 
   function fmtD(d){
     if(!d) return '—';
@@ -2368,44 +2560,43 @@ function _buildFatSection(c, ST){
   var hasDates = mf.dtEntrega||mf.dtAutFat||mf.dtFatura;
 
   // ── Cards de Prazos Contratuais (nível contrato) ──────────
-  var hasContratuais = c.dtInicioEntregaMed||c.dtFimEntregaMed||c.dtInicioAnalise||c.dtFimAnalise||c.dtPagamentoCliente;
-  function fmtPeriodo(ini, fim){
-    if(ini && fim) return fmtD(ini)+' — '+fmtD(fim);
-    if(ini) return 'a partir de '+fmtD(ini);
-    if(fim) return 'até '+fmtD(fim);
+  var hasContratuais = c.periodoEntrega||c.periodoAnalise||c.periodoPagamento||c.dtInicioEntregaMed||c.dtFimEntregaMed||c.dtInicioAnalise||c.dtFimAnalise||c.dtPagamentoCliente;
+
+  // Helper: mostra período novo (texto) ou fallback para datas antigas
+  function fmtPeriodoTexto(novo, iniLeg, fimLeg){
+    if(novo) return novo;
+    if(iniLeg && fimLeg) return fmtD(iniLeg)+' — '+fmtD(fimLeg);
+    if(iniLeg) return 'a partir de '+fmtD(iniLeg);
+    if(fimLeg) return 'até '+fmtD(fimLeg);
     return '—';
   }
-  var hoje_pag = new Date(); hoje_pag.setHours(0,0,0,0);
-  var diasPag = c.dtPagamentoCliente ? Math.round((new Date(c.dtPagamentoCliente+'T00:00:00') - hoje_pag)/86400000) : null;
-  var pagTag = '';
-  if(diasPag!==null){
-    if(diasPag<0)        pagTag = '<span style="font-size:9px;color:var(--rdl);font-weight:800">⚠️ '+Math.abs(diasPag)+'d atrás</span>';
-    else if(diasPag===0) pagTag = '<span style="font-size:9px;color:var(--gl);font-weight:800">🔥 Hoje</span>';
-    else if(diasPag<=5)  pagTag = '<span style="font-size:9px;color:var(--gl);font-weight:800">⏳ em '+diasPag+'d</span>';
-    else                 pagTag = '<span style="font-size:9px;color:var(--gnl);font-weight:800">📅 em '+diasPag+'d</span>';
+  function fmtPagamentoTexto(novo, dataLeg){
+    if(novo) return novo;
+    return fmtD(dataLeg);
   }
+
   var contratuaisHTML = '';
   if(hasContratuais){
     contratuaisHTML =
       '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">'
       +'<div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:9px 10px">'
         +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">📐 Período de Entrega da Medição</div>'
-        +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx)">'+fmtPeriodo(c.dtInicioEntregaMed,c.dtFimEntregaMed)+'</div>'
+        +'<div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:.3px">'+fmtPeriodoTexto(c.periodoEntrega,c.dtInicioEntregaMed,c.dtFimEntregaMed)+'</div>'
       +'</div>'
       +'<div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.25);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#c4b5fd;text-transform:uppercase;margin-bottom:4px">🔍 Período de Aprovação da Medição</div>'
-        +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx)">'+fmtPeriodo(c.dtInicioAnalise,c.dtFimAnalise)+'</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#c4b5fd;text-transform:uppercase;margin-bottom:4px">🔍 Período de Análise do Cliente</div>'
+        +'<div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:.3px">'+fmtPeriodoTexto(c.periodoAnalise,c.dtInicioAnalise,c.dtFimAnalise)+'</div>'
       +'</div>'
       +'<div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:9px 10px">'
-        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">💳 Período de Pagamento da Medição</div>'
-        +'<div style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:5px">'+fmtD(c.dtPagamentoCliente)+(pagTag?' '+pagTag:'')+'</div>'
+        +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#34d399;text-transform:uppercase;margin-bottom:4px">💳 Período de Pagamento</div>'
+        +'<div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:.3px">'+fmtPagamentoTexto(c.periodoPagamento,c.dtPagamentoCliente)+'</div>'
       +'</div>'
     +'</div>';
   }
 
   var datesHTML = '';
   if(hasDates){
-    datesHTML = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:'+(mf.resumoFat?'10px':'0')+'">'
+    datesHTML = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:0">'
       +'<div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);border-radius:10px;padding:9px 10px">'
         +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px">📬 Data Entrega Medição</div>'
         +'<div style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--tx)">'+fmtD(mf.dtEntrega)+'</div>'
@@ -2421,23 +2612,7 @@ function _buildFatSection(c, ST){
     +'</div>';
   }
 
-  var resumoHTML = '';
-  if(mf.resumoFat){
-    resumoHTML = '<div style="background:rgba(196,181,253,.05);border:1px solid rgba(196,181,253,.15);border-radius:10px;padding:10px 12px">'
-      +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#c4b5fd;text-transform:uppercase;margin-bottom:6px">📋 Resumo / Prazos Contratuais</div>'
-      +'<div style="font-size:11px;color:var(--t2);line-height:1.55;white-space:pre-wrap">'+mf.resumoFat+'</div>'
-    +'</div>';
-  }
-
-  if(!hasContratuais && !hasDates && !mf.resumoFat && !c.comentFat) return '';
-
-  var comentFatHTML = '';
-  if(c.comentFat){
-    comentFatHTML = '<div style="background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.18);border-radius:10px;padding:10px 14px;margin-bottom:10px">'
-      +'<div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#38bdf8;text-transform:uppercase;margin-bottom:6px">💬 Comentário do Contrato</div>'
-      +'<div style="font-size:11px;color:var(--t2);line-height:1.6;white-space:pre-wrap">'+c.comentFat+'</div>'
-    +'</div>';
-  }
+  if(!hasContratuais && !hasDates) return '';
 
   var periodoMedBadge = c.periodoMedicao
     ? '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(56,189,248,0.10);border:1px solid rgba(56,189,248,0.30);border-radius:6px;padding:2px 9px">'
@@ -2452,11 +2627,9 @@ function _buildFatSection(c, ST){
         +periodoMedBadge
       +'</div>'
     +'</div>'
-    +comentFatHTML
     +contratuaisHTML
-    +(hasDates||mf.resumoFat?'<div style="border-top:1px solid rgba(255,255,255,.06);margin:8px 0 8px"></div>':'')
+    +(hasDates?'<div style="border-top:1px solid rgba(255,255,255,.06);margin:8px 0 8px"></div>':'')
     +datesHTML
-    +resumoHTML
   +'</div>';
 }
 
@@ -2581,6 +2754,11 @@ function _buildContractCard(c, tasks, pendT){
         <span class="cc-meta-sep">·</span>
         <span class="cc-meta-val" style="color:var(--ac2)">${c.code}</span>
       </div>
+      ${c.nObra?`<div class="cc-meta-item">
+        <span class="cc-meta-lbl">Nº Obra</span>
+        <span class="cc-meta-sep">·</span>
+        <span class="cc-meta-val" style="color:var(--gl)">${c.nObra}</span>
+      </div>`:''}
       <div class="cc-meta-item">
         <span class="cc-meta-lbl">Índice</span>
         <span class="cc-meta-sep">·</span>
@@ -2596,12 +2774,39 @@ function _buildContractCard(c, tasks, pendT){
         <span class="cc-meta-sep">·</span>
         <span class="cc-meta-val" style="color:${endColor}">${fmtDate(c.end)}${daysLeft<120?` <span style="font-size:9px;font-weight:800">(${daysLeft}d)</span>`:''}</span>
       </div>
-      <div class="cc-meta-item" style="flex-basis:100%">
-        <span class="cc-meta-lbl">Gestor Técnico</span>
-        <span class="cc-meta-sep">·</span>
-        <span class="cc-meta-val">👤 ${c.gestorTecnico||c.responsible||'—'}</span>
-        ${c.telGestorTec?`<span class="cc-meta-sep">·</span><span class="cc-meta-val"><a href="tel:${c.telGestorTec}" onclick="event.stopPropagation()" style="color:var(--gnl);text-decoration:none">📞 ${c.telGestorTec}</a></span>`:''}
+      <div class="cc-meta-item" style="flex-basis:100%;display:flex;align-items:center;gap:10px">
+        ${(()=>{
+          const _gNome = c.gestorTecnico||c.responsible||'';
+          const _gInic = _gNome ? _gNome.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : '?';
+          const _avHtml = c.fotoGestorTec
+            ? `<img class="gestor-avatar" src="${c.fotoGestorTec}" alt="${_gNome}" title="${_gNome}">`
+            : `<div class="gestor-avatar-placeholder" title="${_gNome}">${_gInic}</div>`;
+          return _avHtml;
+        })()}
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="cc-meta-lbl">Gestor Técnico</span>
+            <span class="cc-meta-sep">·</span>
+            <span class="cc-meta-val" style="font-weight:700">${c.gestorTecnico||c.responsible||'—'}</span>
+          </div>
+          ${c.telGestorTec?`<span style="font-size:11px;color:var(--gnl)"><a href="tel:${c.telGestorTec}" onclick="event.stopPropagation()" style="color:var(--gnl);text-decoration:none">📞 ${c.telGestorTec}</a></span>`:''}
+        </div>
       </div>
+      ${c.gestorAdministrativo?`<div class="cc-meta-item" style="flex-basis:100%;display:flex;align-items:center;gap:10px;padding-top:4px;border-top:1px solid var(--b2);margin-top:4px">
+        ${c.fotoGestorAdm
+          ? `<img class="gestor-avatar" src="${c.fotoGestorAdm}" alt="${c.gestorAdministrativo}" title="${c.gestorAdministrativo}" style="border-color:rgba(217,119,6,.4)">`
+          : `<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--go),var(--gl));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;font-family:var(--fh);flex-shrink:0">
+              ${c.gestorAdministrativo.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+             </div>`}
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="cc-meta-lbl">Gestor Adm.</span>
+            <span class="cc-meta-sep">·</span>
+            <span class="cc-meta-val" style="font-weight:700">${c.gestorAdministrativo}</span>
+          </div>
+          ${c.telGestorAdm?`<span style="font-size:11px;color:var(--gl)"><a href="tel:${c.telGestorAdm}" onclick="event.stopPropagation()" style="color:var(--gl);text-decoration:none">📞 ${c.telGestorAdm}</a></span>`:''}
+        </div>
+      </div>`:''}
     </div>
 
     <!-- ══ SEÇÃO 1: VALORES GLOBAIS ══ -->
@@ -2652,8 +2857,21 @@ function _buildContractCard(c, tasks, pendT){
       <div class="cc-g5">
         <div class="cc-gitem" style="--gic:${mpReal!=null?'var(--gnl)':'var(--ac)'}">
           <div class="gi-lbl" style="font-size:8px">Receita</div>
-          <div class="gi-val" style="font-size:13px;color:${mpReal!=null?'#34d399':'#93c5fd'}">${mpReal!=null?fmtBRL(mpReal):fmtBRL(c.receita)}</div>
-          <div class="gi-sub">${mpReal!=null?'✦ Realizado '+periodLbl:'Base contrato'}</div>
+          ${(()=>{
+            const revVal = mpReal!=null ? mpReal : (c.receita||0);
+            const hasVal = revVal > 0;
+            const estM = (!hasVal && (c.saldoGlobal||c.valorGlobalOriginal)) ? (()=>{
+              const sD=c.start?new Date(c.start+'T00:00:00'):null;
+              const eD=c.end  ?new Date(c.end  +'T00:00:00'):null;
+              if(!sD||!eD) return 0;
+              const dur=Math.max(1,(eD.getFullYear()-sD.getFullYear())*12+(eD.getMonth()-sD.getMonth()));
+              return Math.round((c.saldoGlobal||c.valorGlobalOriginal||0)/dur);
+            })() : 0;
+            if(mpReal!=null) return `<div class="gi-val" style="font-size:13px;color:#34d399">${fmtBRL(mpReal)}</div><div class="gi-sub">✦ Realizado ${periodLbl}</div>`;
+            if(c.receita>0) return `<div class="gi-val" style="font-size:13px;color:#93c5fd">${fmtBRL(c.receita)}</div><div class="gi-sub">Base contrato</div>`;
+            if(estM>0) return `<div class="gi-val" style="font-size:13px;color:var(--t3)">${fmtBRL(estM)}</div><div class="gi-sub">Estimado (VG÷meses)</div>`;
+            return `<div class="gi-val" style="font-size:11px;color:var(--t3);font-style:italic">Sem medição</div><div class="gi-sub" style="cursor:pointer;color:var(--ac2)" onclick="openMedModal(${c.id},'${cardPeriod}')">+ Registrar medição</div>`;
+          })()}
         </div>
         <div class="cc-gitem" style="--gic:var(--or)">
           <div class="gi-lbl" style="font-size:8px">Custo Total</div>
@@ -2689,10 +2907,27 @@ function _buildContractCard(c, tasks, pendT){
       </div>
     </div>
 
-    <!-- ══ SEÇÃO 4: JUSTIFICATIVA ══ -->
+    <!-- ══ SEÇÃO 4: OBSERVAÇÃO DO PERÍODO ══ -->
     <div class="cc-section">
-      <div class="cc-section-lbl">💬 Justificativa de Diferença de Receita</div>
-      <div class="cc-jus${c.justificativa?'':' empty'}">${c.justificativa||'Nenhuma justificativa registrada.'}</div>
+      <div class="cc-section-lbl" style="display:flex;align-items:center;justify-content:space-between">
+        <span style="display:flex;align-items:center;gap:6px">
+          💬 Observação da Medição
+          <span style="font-family:var(--fn);font-size:9px;color:var(--ac2);font-weight:800">${periodLbl}</span>
+        </span>
+        <button onclick="openMedModal(${c.id},'${cardPeriod}');event.stopPropagation()"
+          style="background:none;border:1px solid var(--b1);border-radius:6px;color:var(--t3);
+                 font-size:10px;font-weight:700;padding:3px 10px;cursor:pointer;font-family:var(--fb);transition:all .2s"
+          onmouseover="this.style.borderColor='rgba(56,189,248,.4)';this.style.color='var(--ac2)'"
+          onmouseout="this.style.borderColor='var(--b1)';this.style.color='var(--t3)'">✎ Editar</button>
+      </div>
+      ${medPeriod.obs
+        ? `<div class="cc-jus" style="white-space:pre-wrap">${medPeriod.obs}</div>`
+        : `<div class="cc-jus empty" style="cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--t3)"
+               onclick="openMedModal(${c.id},'${cardPeriod}');event.stopPropagation()">
+             <span style="font-size:16px;opacity:.4">💬</span>
+             <span style="font-size:11px">Nenhuma observação registrada para ${periodLbl} — clique para adicionar</span>
+           </div>`
+      }
     </div>
 
     <!-- ══ SEÇÃO 5: SALDO DO CONTRATO (destaque) ══ -->
@@ -2713,7 +2948,7 @@ function _buildContractCard(c, tasks, pendT){
     </div>
 
     <!-- ══ SEÇÃO 6: FATURAMENTO ══ -->
-    ${_buildFatSection(c, ST)}
+    ${_buildFatSection(c, ST, cardPeriod)}
 
     <!-- ══ SEÇÃO 7: PAINEL DE TAREFAS ══ -->
     <!-- ══ SEÇÃO 7: PAINEL DE TAREFAS ══ -->
@@ -2869,6 +3104,7 @@ function openContractModal(id){
   _pendingLogo=null;
   _pendingFit=null;
   _pendingPad=null;
+  _pendingGestorFoto=null;
   document.getElementById('modal-title').textContent=c?'Editar Contrato':'Novo Contrato';
   document.getElementById('modal-body').innerHTML=`
     <div style="margin-bottom:20px">
@@ -2918,10 +3154,48 @@ function openContractModal(id){
       <div class="fgrp full" style="border-top:1px solid var(--b1);padding-top:16px;margin-top:4px">
         <div class="flbl" style="font-family:var(--fh);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:12px;letter-spacing:.2px">👷 Gestores do Contrato</div>
       </div>
-      <div class="fgrp"><div class="flbl">Gestor Técnico</div><input class="finp" id="ci-gtec" value="${c?c.gestorTecnico||c.responsible||'':''}" placeholder="Nome do gestor técnico"></div>
-      <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}" placeholder="(31) 9 0000-0000"></div>
-      <div class="fgrp"><div class="flbl">Gestor Administrativo</div><input class="finp" id="ci-gadm" value="${c?c.gestorAdministrativo||'':''}" placeholder="Nome do gestor administrativo"></div>
-      <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}" placeholder="(31) 9 0000-0000"></div>
+      <div class="fgrp" style="grid-column:1/-1">
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="flex-shrink:0">
+            <div class="flbl" style="margin-bottom:6px">📷 Foto do Gestor</div>
+            <div class="gestor-foto-zone" id="ci-gtec-foto-zone"
+                 onclick="document.getElementById('ci-gtec-foto-inp').click()"
+                 title="Clique para adicionar foto">
+              ${c&&c.fotoGestorTec
+                ? `<img src="${c.fotoGestorTec}" alt="foto">`
+                : `<span style="font-size:24px">👤</span><span class="gestor-foto-zone-lbl">Adicionar foto</span>`}
+            </div>
+            <input type="file" accept="image/*" id="ci-gtec-foto-inp" style="display:none" onchange="handleGestorFotoChange(event)">
+            ${c&&c.fotoGestorTec ? `<button type="button" onclick="removeGestorFoto()" style="margin-top:4px;background:none;border:none;color:var(--rdl);font-size:10px;font-weight:700;cursor:pointer;padding:0;display:block;width:80px;text-align:center">✕ Remover</button>` : ''}
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+            <div class="fgrp"><div class="flbl">Gestor Técnico</div><input class="finp" id="ci-gtec" value="${c?c.gestorTecnico||c.responsible||'':''}" placeholder="Nome do gestor técnico"></div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}" placeholder="(31) 9 0000-0000"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fgrp" style="grid-column:1/-1;border-top:1px solid var(--b1);padding-top:14px;margin-top:4px">
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="flex-shrink:0">
+            <div class="flbl" style="margin-bottom:6px">📷 Foto do Gestor Adm.</div>
+            <div class="gestor-foto-zone" id="ci-gadm-foto-zone"
+                 onclick="document.getElementById('ci-gadm-foto-inp').click()"
+                 title="Clique para adicionar foto"
+                 style="border-color:rgba(217,119,6,.35)">
+              ${c&&c.fotoGestorAdm
+                ? `<img src="${c.fotoGestorAdm}" alt="foto">`
+                : `<span style="font-size:24px">🗂️</span><span class="gestor-foto-zone-lbl">Adicionar foto</span>`}
+            </div>
+            <input type="file" accept="image/*" id="ci-gadm-foto-inp" style="display:none" onchange="handleGestorAdmFotoChange(event)">
+            ${c&&c.fotoGestorAdm ? `<button type="button" onclick="removeGestorAdmFoto()" style="margin-top:4px;background:none;border:none;color:var(--rdl);font-size:10px;font-weight:700;cursor:pointer;padding:0;display:block;width:80px;text-align:center">✕ Remover</button>` : ''}
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+            <div class="fgrp"><div class="flbl">Gestor Administrativo</div><input class="finp" id="ci-gadm" value="${c?c.gestorAdministrativo||'':''}" placeholder="Nome do gestor administrativo"></div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}" placeholder="(31) 9 0000-0000"></div>
+          </div>
+        </div>
+      </div>
       <div class="fgrp"><div class="flbl">Índice de Reajuste</div><select class="fsel" id="ci-idx">
         <option value=""               ${!c||!c.index?                   'selected':''}>— Selecione —</option>
         <option value="IPCA"           ${c&&c.index==='IPCA'?            'selected':''}>IPCA</option>
@@ -3001,19 +3275,21 @@ function openContractModal(id){
         <div class="flbl" style="font-family:var(--fh);font-size:13px;font-weight:700;color:var(--tx);margin-bottom:12px;letter-spacing:.2px">📅 Prazos do Ciclo de Faturamento</div>
       </div>
       <div class="fgrp full" style="margin-bottom:4px">
-        <div class="flbl">📅 Período de Medição <span style="background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:8px;padding:1px 6px;border-radius:3px;margin-left:4px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Novo</span></div>
+        <div class="flbl">📅 Período de Medição</div>
         <input class="finp" type="text" id="ci-periodo-med" value="${c?c.periodoMedicao||'':''}" placeholder="Ex: 21 - 20  (dia início — dia fim do ciclo)">
       </div>
-      <div class="fgrp"><div class="flbl">📐 Início — Entrega da Medição</div><input class="finp" type="date" id="ci-dt-ini-ent" value="${c?c.dtInicioEntregaMed||'':''}"></div>
-      <div class="fgrp"><div class="flbl">📐 Fim — Entrega da Medição</div><input class="finp" type="date" id="ci-dt-fim-ent" value="${c?c.dtFimEntregaMed||'':''}"></div>
-      <div class="fgrp"><div class="flbl">🔍 Início — Análise do Cliente</div><input class="finp" type="date" id="ci-dt-ini-ana" value="${c?c.dtInicioAnalise||'':''}"></div>
-      <div class="fgrp"><div class="flbl">🔍 Fim — Análise do Cliente</div><input class="finp" type="date" id="ci-dt-fim-ana" value="${c?c.dtFimAnalise||'':''}"></div>
-      <div class="fgrp"><div class="flbl">💳 Data de Pagamento do Cliente</div><input class="finp" type="date" id="ci-dt-pagamento" value="${c?c.dtPagamentoCliente||'':''}"></div>
-      <div class="fgrp full" style="margin-top:8px">
-        <div class="flbl">💬 Comentário do Contrato (Faturamento)</div>
-        <textarea class="ftxa" id="ci-coment-fat" placeholder="Observações gerais sobre o ciclo de faturamento, condições contratuais, restrições, pendências ou informações relevantes..." style="min-height:110px">${c?c.comentFat||'':''}</textarea>
+      <div class="fgrp">
+        <div class="flbl">📐 Período de Entrega da Medição</div>
+        <input class="finp" type="text" id="ci-periodo-entrega" value="${c?c.periodoEntrega||'':''}" placeholder="Ex: 12 - 15  (dia início — dia fim)">
       </div>
-      <div class="fgrp"><div class="flbl">Justificativa de Diferença de Receita</div><textarea class="ftxa" id="ci-jus" placeholder="Descreva o motivo da diferença entre receita e resultado esperado...">${c?c.justificativa:''}</textarea></div>
+      <div class="fgrp">
+        <div class="flbl">🔍 Período de Análise do Cliente</div>
+        <input class="finp" type="text" id="ci-periodo-analise" value="${c?c.periodoAnalise||'':''}" placeholder="Ex: 16 - 20  (dia início — dia fim)">
+      </div>
+      <div class="fgrp">
+        <div class="flbl">💳 Período de Pagamento do Cliente</div>
+        <input class="finp" type="text" id="ci-periodo-pagamento" value="${c?c.periodoPagamento||'':''}" placeholder="Ex: 25  (dia do pagamento)">
+      </div>
     </div>`;
   // Auto-calc: Valor Global Atual = Original + Último Aditivo
   function _recalcGlobal(){
@@ -3031,6 +3307,72 @@ function openContractModal(id){
 }
 
 let _pendingLogo = null;
+
+// ════════════════════════════════════════════════════════════════════════════
+//  FOTO DO GESTOR TÉCNICO
+// ════════════════════════════════════════════════════════════════════════════
+let _pendingGestorFoto = null;
+
+function handleGestorFotoChange(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  _compressGestorFoto(file, src => {
+    _pendingGestorFoto = src;
+    const zone = document.getElementById('ci-gtec-foto-zone');
+    if(zone) zone.innerHTML = `<img src="${src}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    // Mostra botão remover
+    const inp = document.getElementById('ci-gtec-foto-inp');
+    if(inp && inp.nextElementSibling && inp.nextElementSibling.tagName!=='BUTTON'){
+      const rm = document.createElement('button');
+      rm.type='button'; rm.onclick=removeGestorFoto;
+      rm.style.cssText='margin-top:4px;background:none;border:none;color:var(--rdl);font-size:10px;font-weight:700;cursor:pointer;padding:0;display:block;width:80px;text-align:center';
+      rm.textContent='✕ Remover';
+      inp.after(rm);
+    }
+  });
+}
+
+function removeGestorFoto(){
+  _pendingGestorFoto = '';
+  const zone = document.getElementById('ci-gtec-foto-zone');
+  if(zone) zone.innerHTML = '<span style="font-size:24px">👤</span><span class="gestor-foto-zone-lbl">Adicionar foto</span>';
+  const inp = document.getElementById('ci-gtec-foto-inp');
+  if(inp) inp.value = '';
+  document.querySelectorAll('#ci-gtec-foto-inp + button').forEach(b=>b.remove());
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  FOTO DO GESTOR ADMINISTRATIVO
+// ════════════════════════════════════════════════════════════════════════════
+let _pendingGestorAdmFoto = null;
+
+function handleGestorAdmFotoChange(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  _compressGestorFoto(file, src => {
+    _pendingGestorAdmFoto = src;
+    const zone = document.getElementById('ci-gadm-foto-zone');
+    if(zone) zone.innerHTML = `<img src="${src}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    const inp = document.getElementById('ci-gadm-foto-inp');
+    if(inp && !(inp.nextElementSibling && inp.nextElementSibling.tagName==='BUTTON')){
+      const rm = document.createElement('button');
+      rm.type='button'; rm.onclick=removeGestorAdmFoto;
+      rm.style.cssText='margin-top:4px;background:none;border:none;color:var(--rdl);font-size:10px;font-weight:700;cursor:pointer;padding:0;display:block;width:80px;text-align:center';
+      rm.textContent='✕ Remover';
+      inp.after(rm);
+    }
+  });
+}
+
+function removeGestorAdmFoto(){
+  _pendingGestorAdmFoto = '';
+  const zone = document.getElementById('ci-gadm-foto-zone');
+  if(zone) zone.innerHTML = '<span style="font-size:24px">🗂️</span><span class="gestor-foto-zone-lbl">Adicionar foto</span>';
+  const inp = document.getElementById('ci-gadm-foto-inp');
+  if(inp) inp.value = '';
+  document.querySelectorAll('#ci-gadm-foto-inp + button').forEach(b=>b.remove());
+}
+
 let _pendingFit = null;
 let _pendingPad = null;
 
@@ -3040,26 +3382,86 @@ let _pendingPad = null;
 // o limite de 50.000 chars por célula.
 
 function _buildLogosPayload(){
-  // Returns array of {id, b64, fit, pad} for contracts that have a logo
-  return ST.contracts
-    .filter(ct=>ct.logo)
-    .map(ct=>({id:ct.id, b64:ct.logo, fit:ct.logoFit||'contain', pad:ct.logoPad!=null?ct.logoPad:4}));
+  const contractLogos = ST.contracts
+    .filter(ct=>ct.logo||ct.fotoGestorTec||ct.fotoGestorAdm)
+    .map(ct=>({
+      id:  ct.id,
+      b64: ct.logo||'',
+      fit: ct.logoFit||'contain',
+      pad: ct.logoPad!=null?ct.logoPad:4,
+      gestorFoto:    ct.fotoGestorTec||'',
+      gestorAdmFoto: ct.fotoGestorAdm||'',
+    }));
+  const participantFotos = ST.participants
+    .filter(p=>p.foto)
+    .map(p=>({ pid: p.id, pfoto: p.foto }));
+  const managerFotos = ST.managers
+    .filter(m=>m.foto)
+    .map(m=>({ mid: m.id, mfoto: m.foto }));
+  return { contracts: contractLogos, participants: participantFotos, managers: managerFotos };
 }
 
-function _mergeLogosFromSheets(logoArr){
-  // logoArr: [{id, b64, fit, pad}] received from Sheets
-  if(!Array.isArray(logoArr)) return;
-  const map = {};
-  logoArr.forEach(l=>{ map[l.id]=l; });
-  ST.contracts.forEach(ct=>{
-    if(map[ct.id]){ ct.logo=map[ct.id].b64; ct.logoFit=map[ct.id].fit; ct.logoPad=map[ct.id].pad; }
-  });
+function _compressGestorFoto(file, cb){
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 200; // Menor que logo para economizar payload
+      let w = img.width, h = img.height;
+      // Crop circular: usa o menor lado
+      const side = Math.min(w, h);
+      const sx = (w - side) / 2, sy = (h - side) / 2;
+      const cvs = document.createElement('canvas');
+      const sz = Math.min(side, MAX);
+      cvs.width = sz; cvs.height = sz;
+      cvs.getContext('2d').drawImage(img, sx, sy, side, side, 0, 0, sz, sz);
+      let result = cvs.toDataURL('image/jpeg', 0.80);
+      if(result.length > 40000) result = cvs.toDataURL('image/jpeg', 0.65);
+      cb(result);
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function _mergeLogosFromSheets(logoData){
+  if(!logoData) return;
+  // Suporta formato novo {contracts, participants, managers} e formato legado (array)
+  const logoArr = Array.isArray(logoData) ? logoData : (logoData.contracts||[]);
+  const partArr = Array.isArray(logoData) ? [] : (logoData.participants||[]);
+  const mgrArr  = Array.isArray(logoData) ? [] : (logoData.managers||[]);
+
+  // Contratos: logos + fotos de gestor
+  if(Array.isArray(logoArr) && logoArr.length){
+    const map = {};
+    logoArr.forEach(l=>{ map[l.id]=l; });
+    ST.contracts.forEach(ct=>{
+      if(map[ct.id]){
+        if(map[ct.id].b64)           { ct.logo=map[ct.id].b64; ct.logoFit=map[ct.id].fit; ct.logoPad=map[ct.id].pad; }
+        if(map[ct.id].gestorFoto)    { ct.fotoGestorTec=map[ct.id].gestorFoto; }
+        if(map[ct.id].gestorAdmFoto) { ct.fotoGestorAdm=map[ct.id].gestorAdmFoto; }
+      }
+    });
+  }
+
+  // Gestores
+  if(mgrArr.length){
+    const mmap={};
+    mgrArr.forEach(x=>{ mmap[x.mid]=x.mfoto; });
+    ST.managers.forEach(m=>{ if(mmap[m.id]) m.foto=mmap[m.id]; });
+  }
+
+  // Participantes
+  if(partArr.length){
+    const pmap={};
+    partArr.forEach(x=>{ pmap[x.pid]=x.pfoto; });
+    ST.participants.forEach(p=>{ if(pmap[p.id]) p.foto=pmap[p.id]; });
+  }
 }
 
 function _stripLogosForSync(contracts){
-  // Returns contracts without logo fields (sent in main payload)
   return contracts.map(ct=>{
-    const {logo, logoFit, logoPad, ...rest} = ct;
+    const {logo, logoFit, logoPad, fotoGestorTec, fotoGestorAdm, ...rest} = ct;
     return rest;
   });
 }
@@ -3155,7 +3557,7 @@ function saveContract(id){
     end:document.getElementById('ci-end').value,
     responsible:document.getElementById('ci-gtec').value.trim(), // backward-compat
     gestorTecnico:document.getElementById('ci-gtec').value.trim(),
-    telGestorTec:document.getElementById('ci-gtec-tel').value.trim(),
+    telGestorTec:(document.getElementById('ci-gtec-tel')||{}).value?.trim()||'',
     gestorAdministrativo:document.getElementById('ci-gadm').value.trim(),
     telGestorAdm:document.getElementById('ci-gadm-tel').value.trim(),
     index:document.getElementById('ci-idx').value,
@@ -3167,15 +3569,24 @@ function saveContract(id){
     receita:0, custoTotal:0, custo:0,
     medicaoPrevista:0, ultimaMedicao:0,
     resultado:0, margem:0, saldo:0,
-    dtInicioEntregaMed:  document.getElementById('ci-dt-ini-ent').value  || null,
-    dtFimEntregaMed:     document.getElementById('ci-dt-fim-ent').value  || null,
-    dtInicioAnalise:     document.getElementById('ci-dt-ini-ana').value  || null,
-    dtFimAnalise:        document.getElementById('ci-dt-fim-ana').value  || null,
-    dtPagamentoCliente:  document.getElementById('ci-dt-pagamento').value || null,
-    periodoMedicao:       (document.getElementById('ci-periodo-med')||{}).value?.trim()||null,
-    comentFat:           (document.getElementById('ci-coment-fat')||{}).value?.trim()||null,
-    justificativa:document.getElementById('ci-jus').value.trim(),
+    dtInicioEntregaMed:  id ? (getContract(id)||{}).dtInicioEntregaMed||null : null,
+    dtFimEntregaMed:     id ? (getContract(id)||{}).dtFimEntregaMed||null   : null,
+    dtInicioAnalise:     id ? (getContract(id)||{}).dtInicioAnalise||null   : null,
+    dtFimAnalise:        id ? (getContract(id)||{}).dtFimAnalise||null      : null,
+    dtPagamentoCliente:  id ? (getContract(id)||{}).dtPagamentoCliente||null: null,
+    periodoMedicao:      (document.getElementById('ci-periodo-med')||{}).value?.trim()||null,
+    periodoEntrega:      (document.getElementById('ci-periodo-entrega')||{}).value?.trim()||null,
+    periodoAnalise:      (document.getElementById('ci-periodo-analise')||{}).value?.trim()||null,
+    periodoPagamento:    (document.getElementById('ci-periodo-pagamento')||{}).value?.trim()||null,
+    comentFat:           id ? (getContract(id)||{}).comentFat||null : null,
+    justificativa: id ? (getContract(id)||{}).justificativa||'' : '',
     logo, logoFit, logoPad,
+    fotoGestorTec: _pendingGestorFoto !== null
+      ? _pendingGestorFoto
+      : (id ? (getContract(id)||{}).fotoGestorTec||'' : ''),
+    fotoGestorAdm: _pendingGestorAdmFoto !== null
+      ? _pendingGestorAdmFoto
+      : (id ? (getContract(id)||{}).fotoGestorAdm||'' : ''),
     nObra: document.getElementById('ci-nobra').value.trim(),
     linkContrato: normalizeUrl(((document.getElementById('ci-link')||{}).value||'').trim()),
   };
@@ -3184,6 +3595,10 @@ function saveContract(id){
     // Preserve fields not managed by this modal
     if(existing.mapaMedicoes) data.mapaMedicoes = existing.mapaMedicoes;
     if(existing.tasks) data.tasks = existing.tasks;
+    // Preserva foto e logo se não foram alterados (string vazia = remover, null = não alterado)
+    if(!data.fotoGestorTec && existing.fotoGestorTec && _pendingGestorFoto === null) data.fotoGestorTec = existing.fotoGestorTec;
+    if(!data.fotoGestorAdm && existing.fotoGestorAdm && _pendingGestorAdmFoto === null) data.fotoGestorAdm = existing.fotoGestorAdm;
+    if(!data.logo && existing.logo && _pendingLogo === null) { data.logo=existing.logo; data.logoFit=existing.logoFit; data.logoPad=existing.logoPad; }
     Object.assign(existing, data);
   } else {
     data.id=++ST.nextId; data.mapaMedicoes={}; ST.contracts.push(data);
@@ -3191,6 +3606,8 @@ function saveContract(id){
   _pendingLogo=null;
   _pendingFit=null;
   _pendingPad=null;
+  _pendingGestorFoto=null;
+  _pendingGestorAdmFoto=null;
   // Recalculate derived financials for this contract
   const _savedCt = id ? getContract(id) : ST.contracts[ST.contracts.length-1];
   recalcContractFinancials(_savedCt);
@@ -4086,8 +4503,11 @@ function renderManagers(){
   document.getElementById('managers-grid').innerHTML=ST.managers.map(m=>{
     const ct=ST.contracts.find(c=>c.id===m.contractId);
     const ctLabel=ct?ct.name.split(' ').slice(0,2).join(' '):'—';
+    const avatarEl = m.foto
+      ? `<div class="mca" style="background:transparent;overflow:hidden;padding:0"><img src="${m.foto}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>`
+      : `<div class="mca" style="background:${m.color}">${initials(m.name)}</div>`;
     return`<div class="mc" title="Admissão: ${m.admissao?fmtDate(m.admissao):'—'} · Contrato: ${ct?ct.name:'—'}">
-      <div class="mca" style="background:${m.color}">${initials(m.name)}</div>
+      ${avatarEl}
       <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
         <span style="font-weight:700;font-size:12px">${m.name}</span>
         <span style="font-size:10px;color:var(--t3)">${m.dept}${ct?' · '+ctLabel:''}</span>
@@ -4104,12 +4524,44 @@ function deleteManager(id){
 
 function openManagerModal(id){
   const m=id?ST.managers.find(x=>x.id===id):null;
-  // uses global COLORS
+  _pendingManagerFoto=null;
   const contractOpts=ST.contracts.map(c=>`<option value="${c.id}"${m&&m.contractId===c.id?' selected':''}>${c.name} (${c.code})</option>`).join('');
+  const initColor=m?m.color:COLORS[0].val;
+  const initInits=m?initials(m.name):'?';
   document.getElementById('modal-title').textContent=m?'Editar Gestor':'Cadastrar Gestor';
   document.getElementById('modal-body').innerHTML=`
     <div class="fg">
-      <div class="fgrp full"><div class="flbl">Nome Completo</div><input class="finp" id="mg-name" value="${m?m.name:''}" placeholder="Nome completo do gestor"></div>
+      <!-- preview ao vivo -->
+      <div class="fgrp full" style="display:flex;align-items:center;gap:14px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.12);border-radius:14px;padding:12px 16px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+          <div id="mg-av-prev"
+            style="width:60px;height:60px;border-radius:50%;background:${initColor};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:18px;font-weight:900;font-family:var(--fh);cursor:pointer;transition:background .25s"
+            onclick="document.getElementById('mg-foto-inp').click()" title="Clique para adicionar foto">
+            ${m&&m.foto?`<img src="${m.foto}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:initInits}
+          </div>
+          <div id="mg-foto-zone" onclick="document.getElementById('mg-foto-inp').click()"
+            style="cursor:pointer;font-size:9px;font-weight:700;color:var(--t3);text-align:center;padding:2px 0;white-space:nowrap">
+            📷 ${m&&m.foto?'Trocar foto':'Adicionar foto'}
+          </div>
+          <button id="mg-foto-rm" type="button" onclick="removeManagerFoto()"
+            style="display:${m&&m.foto?'block':'none'};background:none;border:none;color:var(--rdl);font-size:9px;font-weight:700;cursor:pointer;padding:0;text-align:center;width:100%">
+            ✕ Remover
+          </button>
+          <input type="file" accept="image/*" id="mg-foto-inp" style="display:none" onchange="handleManagerFotoChange(event)">
+        </div>
+        <div>
+          <div id="mg-name-prev" style="font-weight:700;font-size:15px">${m?m.name:'Novo gestor'}</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">${m?m.dept||'':'—'}</div>
+        </div>
+      </div>
+
+      <div class="fgrp full"><div class="flbl">Nome Completo</div>
+        <input class="finp" id="mg-name" value="${m?m.name:''}" placeholder="Nome completo do gestor"
+          oninput="const v=this.value.trim()||'?';
+            document.getElementById('mg-name-prev').textContent=this.value||'Novo gestor';
+            const av=document.getElementById('mg-av-prev');
+            if(av&&!av.querySelector('img')){av.textContent=v.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');}">
+      </div>
       <div class="fgrp"><div class="flbl">Departamento / UEN</div><input class="finp" id="mg-dept" value="${m?m.dept:''}" placeholder="Ex: UEN-300, Lab. Técnica"></div>
       <div class="fgrp"><div class="flbl">Data de Admissão</div><input class="finp" type="date" id="mg-adm" value="${m?m.admissao||'':''}"></div>
       <div class="fgrp full"><div class="flbl">Contrato Vinculado</div>
@@ -4120,10 +4572,11 @@ function openManagerModal(id){
       </div>
       <div class="fgrp full">
         <div class="flbl">Cor do Avatar</div>
-        <input type="hidden" id="mg-color" value="${m?m.color:COLORS[0].val}">
+        <input type="hidden" id="mg-color" value="${initColor}">
         <div id="color-picker-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px">
           ${COLORS.map((c,i)=>{const sel=m?m.color===c.val:i===0;return`
-            <div class="cpopt${sel?' cpsel':''}" data-val="${c.val}" onclick="selectColor(this,'${c.val}','mg-color')"
+            <div class="cpopt${sel?' cpsel':''}" data-val="${c.val}"
+              onclick="selectColor(this,'${c.val}','mg-color');const av=document.getElementById('mg-av-prev');if(av&&!av.querySelector('img')){av.style.background='${c.val}';}"
               style="cursor:pointer;border-radius:10px;border:2px solid ${sel?'rgba(56,189,248,.7)':'rgba(255,255,255,.08)'};overflow:hidden;transition:all .2s">
               <div style="height:32px;background:${c.val}"></div>
               <div style="padding:6px 10px;background:var(--s2);display:flex;align-items:center;gap:8px">
@@ -4157,10 +4610,49 @@ function saveManager(id){
   const admissao=document.getElementById('mg-adm').value;
   const contractId=parseInt(document.getElementById('mg-cid').value)||null;
   const color=document.getElementById('mg-color').value;
-  if(!name){alert('Informe o nome do gestor.');return}
-  if(id){const m=ST.managers.find(x=>x.id===id);Object.assign(m,{name,dept:dept||'—',admissao,contractId,color})}
-  else{ST.managers.push({id:++ST.nextId,name,dept:dept||'—',admissao,contractId,color})}
-  closeModal();renderManagers();renderVacations();
+  if(!name){alert('Informe o nome do gestor.');return;}
+  if(id){
+    const m=ST.managers.find(x=>x.id===id);
+    Object.assign(m,{name,dept:dept||'—',admissao,contractId,color});
+    if(_pendingManagerFoto!==null) m.foto=_pendingManagerFoto;
+  } else {
+    ST.managers.push({id:++ST.nextId,name,dept:dept||'—',admissao,contractId,color,foto:_pendingManagerFoto||''});
+  }
+  _pendingManagerFoto=null;
+  closeModal();renderManagers();renderVacations();scheduleAutoSync();
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  FOTO DO GESTOR (cadastro de gestores — seção Férias)
+// ════════════════════════════════════════════════════════════════════════════
+let _pendingManagerFoto = null;
+
+function handleManagerFotoChange(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  _compressGestorFoto(file,src=>{
+    _pendingManagerFoto=src;
+    const zone=document.getElementById('mg-foto-zone');
+    if(zone) zone.innerHTML=`<img src="${src}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    const av=document.getElementById('mg-av-prev');
+    if(av){av.innerHTML=`<img src="${src}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;av.style.background='transparent';}
+    const rm=document.getElementById('mg-foto-rm');
+    if(rm) rm.style.display='block';
+  });
+}
+
+function removeManagerFoto(){
+  _pendingManagerFoto='';
+  const zone=document.getElementById('mg-foto-zone');
+  const av=document.getElementById('mg-av-prev');
+  const rm=document.getElementById('mg-foto-rm');
+  const colorVal=(document.getElementById('mg-color')||{}).value||'';
+  const nm=(document.getElementById('mg-name')||{}).value||'?';
+  if(zone) zone.innerHTML='<span style="font-size:22px">📷</span><span style="font-size:9px;font-weight:700;color:var(--t3);display:block;margin-top:4px;text-align:center">Adicionar foto</span>';
+  if(av){av.textContent=nm.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');av.style.background=colorVal;}
+  if(rm) rm.style.display='none';
+  const inp=document.getElementById('mg-foto-inp');
+  if(inp) inp.value='';
 }
 
 // ════════════════════════════════════════════════════════════
@@ -4199,7 +4691,7 @@ function _buildVacPalette(){
     {bg:'rgba(16,185,129,.14)',  border:'#10b981', text:'#6ee7b7', label:'green'},
   ];
   const ctCount={};
-  ST.vacations.forEach(v=>{const mgr=getManager(v.managerId);const ctId=mgr&&mgr.contractId?mgr.contractId:0;ctCount[ctId]=(ctCount[ctId]||0)+1;});
+  ST.vacations.forEach(v=>{const mgr=_getVacPerson(v);const ctId=mgr&&mgr.contractId?mgr.contractId:0;ctCount[ctId]=(ctCount[ctId]||0)+1;});
   const ctPalMap={};let palIdx=0;
   Object.entries(ctCount).forEach(([ctId,cnt])=>{if(cnt>=2)ctPalMap[ctId]=PALETTE[palIdx++%PALETTE.length];});
   return{PALETTE,ctCount,ctPalMap};
@@ -4236,8 +4728,8 @@ function _renderVacTable(){
 
   // ── ORDENAR: grupos primeiro (agrupados por contrato), depois neutros ─────
   const sorted=[...ST.vacations].sort((a,b)=>{
-    const aCtId=getManager(a.managerId)?.contractId||0;
-    const bCtId=getManager(b.managerId)?.contractId||0;
+    const aCtId=_getVacPerson(a)?.contractId||0;
+    const bCtId=_getVacPerson(b)?.contractId||0;
     const aGrp=ctPalMap[aCtId]!==undefined;
     const bGrp=ctPalMap[bCtId]!==undefined;
     if(aGrp&&!bGrp) return -1;
@@ -4246,57 +4738,32 @@ function _renderVacTable(){
     return 0;
   });
   const rows=sorted.map(v=>{
-    const mgr=getManager(v.managerId);
+    const mgr=_getVacPerson(v);
     const ct=mgr&&mgr.contractId?ST.contracts.find(c=>c.id===mgr.contractId):null;
     const ctId=mgr&&mgr.contractId?mgr.contractId:0;
     const pal=ctPalMap[ctId];
     const isGrouped=!!pal;
-
-    // Estilos inline por linha
     const trClass=isGrouped?'vt-grouped':'vt-neutral';
-    const trStyle=isGrouped
-      ?`style="background:${pal.bg};--grp-border:${pal.border}"`
-      :``;
-
-    // Badge "N simultâneos" na célula do contrato
+    const trStyle=isGrouped?`style="background:${pal.bg};--grp-border:${pal.border}"`:``;
     const badge=isGrouped
-      ?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:4px;
-           background:${pal.border}22;border:1px solid ${pal.border}66;border-radius:100px;
-           padding:2px 8px;font-size:10px;font-weight:700;color:${pal.text}">
-           ⚡ ${ctCount[ctId]} simultâneos
-         </div>`
-      :'';
-
+      ?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:4px;background:${pal.border}22;border:1px solid ${pal.border}66;border-radius:100px;padding:2px 8px;font-size:10px;font-weight:700;color:${pal.text}">⚡ ${ctCount[ctId]} simultâneos</div>`:'';
     const ctCell=ct
-      ?`<div>
-          <span style="background:rgba(29,78,216,.12);color:var(--ac2);padding:3px 9px;border-radius:8px;font-size:11px;font-weight:600">
-            ${ct.name.split(' ').slice(0,3).join(' ')}
-          </span>${badge}
-        </div>`
+      ?`<div><span style="background:rgba(29,78,216,.12);color:var(--ac2);padding:3px 9px;border-radius:8px;font-size:11px;font-weight:600">${ct.name.split(' ').slice(0,3).join(' ')}</span>${badge}</div>`
       :`<span style="color:var(--t3)">—</span>`;
 
-    // Colaborador
     const mgrCell=mgr
       ?`<div style="display:flex;align-items:center;gap:10px">
-          <div style="width:32px;height:32px;border-radius:50%;background:${mgr.color};display:flex;align-items:center;
-               justify-content:center;font-size:10px;font-weight:900;font-family:var(--fh);flex-shrink:0">
-            ${initials(mgr.name)}
-          </div>
+          ${_vacPersonAvatar(mgr,32)}
           <div>
             <strong style="white-space:nowrap">${mgr.name}</strong><br>
-            <span style="font-size:11px;color:var(--t2)">${mgr.dept}</span>
+            <span style="font-size:11px;color:var(--t2)">${mgr.dept||'—'}</span>
           </div>
-        </div>`
-      :'—';
+        </div>`:'—';
 
-    // Substituto
     const sub=v.substitutoId?ST.participants.find(p=>p.id===v.substitutoId):null;
     const subCell=sub
       ?`<div style="display:flex;align-items:center;gap:8px">
-          <div style="width:26px;height:26px;border-radius:50%;background:${sub.color};display:flex;align-items:center;
-               justify-content:center;font-size:9px;font-weight:900;font-family:var(--fh);flex-shrink:0">
-            ${initials(sub.name)}
-          </div>
+          ${_vacPersonAvatar(sub,26)}
           <span style="font-size:12px;white-space:nowrap">${sub.name.split(' ').slice(0,2).join(' ')}</span>
         </div>`
       :`<span style="color:var(--t3);font-size:12px">—</span>`;
@@ -4410,7 +4877,7 @@ function _renderVacTimeline(){
 
   let bodyRows='';
   sorted.forEach((v,idx)=>{
-    const mgr=getManager(v.managerId);
+    const mgr=_getVacPerson(v);
     if(!mgr) return;
     const color = mgr.color||BAR_COLORS[idx%BAR_COLORS.length];
     const name  = mgr.name;
@@ -4430,7 +4897,7 @@ function _renderVacTimeline(){
     let row=`<tr>
       <td class="vac-tl-name-cell">
         <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:28px;height:28px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;flex-shrink:0;font-family:var(--fh)">${initials(mgr.name)}</div>
+          ${_vacPersonAvatar(mgr,28)}
           <div>
             <div style="font-size:12px;font-weight:700">${name}</div>
             <div class="sub">${dept}</div>
@@ -4555,7 +5022,7 @@ function _renderVacCards(){
   });
 
   const cards = sorted.map(v=>{
-    const mgr = getManager(v.managerId);
+    const mgr = _getVacPerson(v);
     if(!mgr) return '';
     const ct  = mgr.contractId?ST.contracts.find(c=>c.id===mgr.contractId):null;
     const sub = v.substitutoId?ST.participants.find(p=>p.id===v.substitutoId):null;
@@ -4565,17 +5032,16 @@ function _renderVacCards(){
     const barWidth = (parseFloat(barRight)-parseFloat(barLeft)).toFixed(1);
     const ctId = mgr.contractId||0;
     const pal  = ctPalMap[ctId];
+    const barColor = mgr.color||'#1d4ed8';
 
     return `
       <div class="vac-card ${st.cardCls}">
         <div class="vac-card-head">
           <div class="vac-card-person">
-            <div class="vac-card-avatar" style="background:${mgr.color}">
-              ${initials(mgr.name)}
-            </div>
+            ${_vacPersonAvatar(mgr,42)}
             <div class="vac-card-info">
               <div class="vac-card-name">${mgr.name}</div>
-              <div class="vac-card-dept">${mgr.dept||'—'}</div>
+              <div class="vac-card-dept">${mgr.dept||'—'}${mgr.cargo?` · ${mgr.cargo}`:''}</div>
             </div>
           </div>
           <span class="vac-card-status ${st.cls}">${st.label}</span>
@@ -4605,12 +5071,12 @@ function _renderVacCards(){
             <span>${barLeft}% → ${barRight}%</span>
           </div>
           <div class="vac-card-bar-bg">
-            <div style="margin-left:${barLeft}%;width:${barWidth}%;height:100%;border-radius:100px;background:${mgr.color};min-width:4px;box-shadow:0 0 8px ${mgr.color}55"></div>
+            <div style="margin-left:${barLeft}%;width:${barWidth}%;height:100%;border-radius:100px;background:${barColor};min-width:4px;box-shadow:0 0 8px ${barColor}55"></div>
           </div>
         </div>
 
         ${sub?`<div class="vac-card-sub">
-          <div style="width:24px;height:24px;border-radius:50%;background:${sub.color};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;font-family:var(--fh);flex-shrink:0">${initials(sub.name)}</div>
+          ${_vacPersonAvatar(sub,24)}
           <span>Substituto: <strong>${sub.name.split(' ').slice(0,2).join(' ')}</strong></span>
         </div>`:''}
 
@@ -4628,9 +5094,23 @@ function _renderVacCards(){
 
 function openVacModal(vid){
   const v=vid?ST.vacations.find(x=>x.id===vid):null;
-  const mgrOpts=ST.managers.map(m=>`<option value="${m.id}"${v&&v.managerId===m.id?' selected':''}>${m.name} — ${m.dept}</option>`).join('');
-  if(!ST.managers.length){alert('Cadastre gestores antes de programar férias.');return}
+
+  // Determina referência atual do colaborador
+  let currentRef = v?.vacPersonRef || (v?.managerId ? `m:${v.managerId}` : '');
+
+  // Lista combinada: todos os participantes + gestores sem correspondência por nome
+  const partNames = new Set(ST.participants.map(p=>p.name.toLowerCase().trim()));
+  const uniqueMgrs = ST.managers.filter(m=>!partNames.has(m.name.toLowerCase().trim()));
+  const allPersons = [
+    ...ST.participants.map(p=>({ref:`p:${p.id}`, label:`${p.name}${p.cargo?` · ${p.cargo}`:''}${p.dept&&p.dept!=='—'?` — ${p.dept}`:''}`, foto:p.foto||'', color:p.color})),
+    ...uniqueMgrs.map(m=>({ref:`m:${m.id}`, label:`${m.name}${m.dept?` — ${m.dept}`:''}`, foto:'', color:m.color}))
+  ];
+
+  if(!allPersons.length){alert('Cadastre participantes antes de programar férias.');return;}
+
+  const mgrOpts = allPersons.map(x=>`<option value="${x.ref}"${currentRef===x.ref?' selected':''}>${x.label}</option>`).join('');
   const partOpts=`<option value="">— Nenhum / A definir —</option>`+ST.participants.map(p=>`<option value="${p.id}"${v&&v.substitutoId===p.id?' selected':''}>${p.name}</option>`).join('');
+
   document.getElementById('modal-title').textContent=v?'Editar Férias':'Programar Férias';
   document.getElementById('modal-body').innerHTML=`
     <div class="fg">
@@ -4669,7 +5149,11 @@ function updateVacReturn(){
 }
 
 function saveVacation(id){
-  const managerId=parseInt(document.getElementById('vi-mgr').value);
+  const vacPersonRef=document.getElementById('vi-mgr').value;
+  if(!vacPersonRef){alert('Selecione um colaborador.');return;}
+  // Mantém managerId para retrocompatibilidade quando for gestor
+  let managerId=null;
+  if(vacPersonRef.startsWith('m:')) managerId=parseInt(vacPersonRef.split(':')[1]);
   const periodoAquisitivo=document.getElementById('vi-pa').value.trim();
   const ufInicio=document.getElementById('vi-uf-ini').value;
   const ufFim=document.getElementById('vi-uf-fim').value;
@@ -4678,9 +5162,10 @@ function saveVacation(id){
   const retorno=document.getElementById('vi-ret').value;
   const substitutoId=document.getElementById('vi-sub').value?parseInt(document.getElementById('vi-sub').value):null;
   const obs=document.getElementById('vi-obs').value.trim();
-  if(!inicioFérias){alert('Informe a data de início das férias.');return}
-  if(id){const v=ST.vacations.find(x=>x.id===id);Object.assign(v,{managerId,periodoAquisitivo,ufInicio,ufFim,inicioFérias,dias,retorno,substitutoId,obs})}
-  else{ST.vacations.push({id:++ST.nextId,managerId,periodoAquisitivo,ufInicio,ufFim,inicioFérias,dias,retorno,substitutoId,obs})}
+  if(!inicioFérias){alert('Informe a data de início das férias.');return;}
+  const entry={vacPersonRef,managerId,periodoAquisitivo,ufInicio,ufFim,inicioFérias,dias,retorno,substitutoId,obs};
+  if(id){const v=ST.vacations.find(x=>x.id===id);Object.assign(v,entry);}
+  else{ST.vacations.push({id:++ST.nextId,...entry});}
   closeModal();renderVacations();scheduleAutoSync();
 }
 
@@ -4709,7 +5194,10 @@ function renderParticipants(){
     return `
     <div class="pc${isMe?' pc-mine':''}">
       ${tag}
-      <div class="pav" style="background:${p.color}">${initials(p.name)}</div>
+      ${p.foto
+        ? `<div class="pav" style="background:transparent;overflow:hidden;padding:0"><img src="${p.foto}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>`
+        : `<div class="pav" style="background:${p.color}">${initials(p.name)}</div>`
+      }
       <div class="pn">${p.name}</div>
       ${p.cargo ? `<div class="pc-cargo">${p.cargo}</div>` : ''}
       <div class="pd">${p.dept||'—'}</div>
@@ -4750,6 +5238,7 @@ function colorPickerHTML(selectedVal, targetId, previewId){
 
 function openParticipantModal(id){
   const p = id ? ST.participants.find(x=>x.id===id) : null;
+  _pendingParticipantFoto = null;
   // Guard: só o próprio usuário logado pode editar seu perfil
   if(p && (!currentUser || currentUser.id !== p.id)){
     showToast('⛔ Você não tem permissão para editar este perfil.','rd');
@@ -4769,11 +5258,27 @@ function openParticipantModal(id){
       <!-- preview ao vivo -->
       <div style="display:flex;align-items:center;gap:14px;background:rgba(16,185,129,.05);
                   border:1px solid rgba(16,185,129,.12);border-radius:14px;padding:12px 16px">
-        <div id="pi-av-prev"
-          style="width:50px;height:50px;border-radius:50%;background:${initColor};flex-shrink:0;
-                 display:flex;align-items:center;justify-content:center;
-                 font-size:16px;font-weight:900;font-family:var(--fh);transition:background .25s">
-          ${initInits}
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+          <div id="pi-av-prev"
+            style="width:60px;height:60px;border-radius:50%;background:${initColor};flex-shrink:0;
+                   display:flex;align-items:center;justify-content:center;overflow:hidden;
+                   font-size:18px;font-weight:900;font-family:var(--fh);transition:background .25s;cursor:pointer"
+            onclick="document.getElementById('pi-foto-inp').click()" title="Clique para adicionar foto">
+            ${p&&p.foto ? `<img src="${p.foto}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initInits}
+          </div>
+          <div style="position:relative">
+            <div id="pi-foto-zone"
+              onclick="document.getElementById('pi-foto-inp').click()"
+              style="cursor:pointer;font-size:9px;font-weight:700;color:var(--t3);text-align:center;padding:2px 0;white-space:nowrap">
+              📷 ${p&&p.foto?'Trocar foto':'Adicionar foto'}
+            </div>
+            <button id="pi-foto-rm" type="button" onclick="removeParticipantFoto()"
+              style="display:${p&&p.foto?'block':'none'};background:none;border:none;color:var(--rdl);
+                     font-size:9px;font-weight:700;cursor:pointer;padding:0;text-align:center;width:100%">
+              ✕ Remover
+            </button>
+          </div>
+          <input type="file" accept="image/*" id="pi-foto-inp" style="display:none" onchange="handleParticipantFotoChange(event)">
         </div>
         <div>
           <div id="pi-name-prev" style="font-weight:700;font-size:15px">${initName||'Novo participante'}</div>
@@ -4916,15 +5421,17 @@ function saveParticipant(id){
     p.email    = email.trim();
     if(passEl && passEl.value) p.password = passEl.value;
     if(newpass) p.password = newpass;
+    if(_pendingParticipantFoto !== null) p.foto = _pendingParticipantFoto;
 
     // Atualizar pill do nav se for o usuário logado
     if(currentUser && currentUser.id===id){
-      currentUser.name=p.name; currentUser.color=p.color;
+      currentUser.name=p.name; currentUser.color=p.color; currentUser.foto=p.foto||'';
       const av=document.getElementById('nav-av');
       const un=document.getElementById('nav-uname');
-      if(av){av.style.background=p.color;av.textContent=initials(p.name);}
+      if(av) _updateNavAvatar(av, p);
       if(un) un.textContent=p.name.split(' ').filter(Boolean).slice(0,2).join(' ');
     }
+    _pendingParticipantFoto=null;
     closeModal(); renderParticipants(); scheduleAutoSync();
     showToast('✅ Participante atualizado!','gn');
 
@@ -4938,8 +5445,10 @@ function saveParticipant(id){
       color,
       username: username.trim(),
       email: email.trim(),
-      password: passEl ? passEl.value : ''
+      password: passEl ? passEl.value : '',
+      foto: _pendingParticipantFoto || '',
     });
+    _pendingParticipantFoto=null;
     closeModal(); renderParticipants(); scheduleAutoSync();
     showToast('✅ Participante cadastrado!','gn');
   }
@@ -4950,6 +5459,52 @@ function togglePassVis(inputId,btn){
   const inp=document.getElementById(inputId);
   if(inp.type==='password'){inp.type='text';btn.textContent='🙈'}
   else{inp.type='password';btn.textContent='👁'}
+}
+
+// Helper: atualiza o avatar do nav com foto ou iniciais
+function _updateNavAvatar(el, p){
+  if(!el||!p) return;
+  if(p.foto){
+    el.innerHTML=`<img src="${p.foto}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    el.style.background='transparent';
+  } else {
+    el.innerHTML='';
+    el.textContent=(p.name||'U').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    el.style.background=p.color||'#1d4ed8';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  FOTO DO PARTICIPANTE
+// ════════════════════════════════════════════════════════════════════════════
+let _pendingParticipantFoto = null;
+
+function handleParticipantFotoChange(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  _compressGestorFoto(file, src => {
+    _pendingParticipantFoto = src;
+    const zone = document.getElementById('pi-foto-zone');
+    if(zone) zone.innerHTML = `<img src="${src}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    // Atualiza preview ao vivo
+    const av = document.getElementById('pi-av-prev');
+    if(av){ av.innerHTML=`<img src="${src}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`; av.style.background='transparent'; }
+    const rm = document.getElementById('pi-foto-rm');
+    if(rm) rm.style.display='block';
+  });
+}
+
+function removeParticipantFoto(){
+  _pendingParticipantFoto = '';
+  const zone = document.getElementById('pi-foto-zone');
+  const av   = document.getElementById('pi-av-prev');
+  const rm   = document.getElementById('pi-foto-rm');
+  const colorVal = (document.getElementById('pi-color')||{}).value||'';
+  if(zone) zone.innerHTML = '<span style="font-size:22px">📷</span><span style="font-size:9px;font-weight:700;color:var(--t3);text-align:center;line-height:1.3;display:block;margin-top:4px">Adicionar foto</span>';
+  if(av){ const nm=(document.getElementById('pi-name')||{}).value||'?'; av.textContent=nm.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join(''); av.style.background=colorVal; av.innerHTML=av.textContent; }
+  if(rm) rm.style.display='none';
+  const inp=document.getElementById('pi-foto-inp');
+  if(inp) inp.value='';
 }
 
 function toggleCardPass(el,pwd){
@@ -5190,13 +5745,38 @@ function confirmDelete(type,id){
   };
   document.getElementById('confirm-text').textContent=msgs[type]||'Este item será excluído.';
   document.getElementById('confirm-yes-btn').onclick=()=>{
-    if(type==='contract'){ST.contracts=ST.contracts.filter(c=>c.id!==id);ST.tasks=ST.tasks.filter(t=>t.contractId!==id);renderContracts();renderTasks();renderFinanceiro();renderDashboard()}
-    else if(type==='task'){ST.tasks=ST.tasks.filter(t=>t.id!==id);renderTasks();renderContracts();renderDashboard()}
-    else if(type==='vacation'){ST.vacations=ST.vacations.filter(v=>v.id!==id);renderVacations()}
-    else if(type==='manager'){ST.managers=ST.managers.filter(m=>m.id!==id);ST.vacations=ST.vacations.filter(v=>v.managerId!==id);renderManagers();renderVacations()}
+    if(type==='contract'){
+      const _ctN=(ST.contracts.find(c=>c.id===id)||{}).name||'Contrato';
+      ST.contracts=ST.contracts.filter(c=>c.id!==id);
+      ST.tasks=ST.tasks.filter(t=>t.contractId!==id);
+      ST.medicoes=(ST.medicoes||[]).filter(m=>m.contractId!==id);
+      ST.audits=(ST.audits||[]).filter(a=>a.contractId!==id);
+      ST.auditsGestao=(ST.auditsGestao||[]).filter(a=>a.contractId!==id);
+      ST.entregaveis=(ST.entregaveis||[]).filter(e=>e.contractId!==id);
+      renderContracts();renderTasks();renderFinanceiro();renderDashboard();
+      scheduleAutoSync();showToast('Contrato "'+_ctN+'" excluído.','rd');
+    }
+    else if(type==='task'){
+      ST.tasks=ST.tasks.filter(t=>t.id!==id);
+      renderTasks();renderContracts();renderDashboard();
+      scheduleAutoSync();showToast('Tarefa excluída.','gn');
+    }
+    else if(type==='vacation'){
+      ST.vacations=ST.vacations.filter(v=>v.id!==id);
+      renderVacations();
+      scheduleAutoSync();showToast('Férias excluídas.','gn');
+    }
+    else if(type==='manager'){
+      ST.managers=ST.managers.filter(m=>m.id!==id);
+      ST.vacations=ST.vacations.filter(v=>v.managerId!==id);
+      renderManagers();renderVacations();
+      scheduleAutoSync();showToast('Gestor removido.','gn');
+    }
     else if(type==='participant'){
-      if(!currentUser || currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
-      ST.participants=ST.participants.filter(p=>p.id!==id);renderParticipants();
+      if(!currentUser||currentUser.id!==id){showToast('⛔ Você não pode excluir outro participante.','rd');closeConfirm();return;}
+      ST.participants=ST.participants.filter(p=>p.id!==id);
+      renderParticipants();
+      scheduleAutoSync();showToast('Participante removido.','gn');
     }
     closeConfirm();
   };
@@ -5410,7 +5990,7 @@ async function doLogin(){
       // ── Validação local (sem sincronização configurada) ─────────────────
       const p = ST.participants.find(x=>(x.username===email||x.email===email)&&x.password===pass);
       if(!p) throw new Error('Credenciais inválidas');
-      userData = { id:p.id, name:p.name, cargo:p.cargo, role: p.role||'gestor' };
+      userData = { id:p.id, name:p.name, cargo:p.cargo, role: p.role||'gestor', foto: p.foto||'' };
     }
 
     // Salva sessão
@@ -5422,8 +6002,8 @@ async function doLogin(){
     const av   = document.getElementById('nav-av');
     const un   = document.getElementById('nav-uname');
     if(pill && av && un){
-      av.style.background = '#1d4ed8';
-      av.textContent = (userData.name||'U').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+      const fullP = ST.participants.find(x=>x.id===userData.id);
+      _updateNavAvatar(av, fullP||userData);
       un.textContent = userData.name;
       pill.style.display = 'flex';
     }
@@ -5654,7 +6234,7 @@ function renderAgenda(){
       let row = `<tr>
         <td class="ag-name" onclick="openTripModal(null,${p.id})" title="Adicionar viagem para ${p.name}">
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:28px;height:28px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;flex-shrink:0">${initials(p.name)}</div>
+            ${_vacPersonAvatar(p,28)}
             <div>
               <div style="font-size:12px;font-weight:700">${p.name.split(' ')[0]} ${p.name.split(' ').slice(-1)[0]}</div>
               <div class="ag-sub">${p.cargo||''}</div>
@@ -5867,8 +6447,8 @@ async function pushToSheets(silent){
       logos:        _buildLogosPayload(),
       tasks:        ST.tasks,
       vacations:    ST.vacations,
-      managers:     ST.managers,
-      participants: ST.participants,
+      managers:     ST.managers.map(m=>{ const {foto,...rest}=m; return rest; }),
+      participants: ST.participants.map(p=>{ const {foto,...rest}=p; return rest; }),
       trips:        ST.trips,
       audits:       ST.audits,
       auditsGestao: ST.auditsGestao,
@@ -5919,6 +6499,13 @@ async function pullFromSheets(silent){
       if(data.finRows) ST.finRows = data.finRows;
       if(data.logos)   _mergeLogosFromSheets(data.logos);
       recalcAllContracts();
+      window._vcLastCtId = null;
+      // Atualiza nav avatar do usuário logado após restaurar fotos
+      if(currentUser){
+        const me = ST.participants.find(x=>x.id===currentUser.id);
+        const av = document.getElementById('nav-av');
+        if(me && av) _updateNavAvatar(av, me);
+      }
       renderDashboard(); renderContracts(); renderFinanceiro();
       renderTasks(); renderManagers(); renderVacations(); renderParticipants();
       if(document.getElementById('agenda')?.classList.contains('active')) renderAgenda();
@@ -7031,8 +7618,8 @@ window.addEventListener('DOMContentLoaded',()=>{
       const av   = document.getElementById('nav-av');
       const un   = document.getElementById('nav-uname');
       if(pill && av && un){
-        av.style.background = '#1d4ed8';
-        av.textContent = currentUser.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+        const fullP = ST.participants.find(x=>x.id===currentUser.id);
+        _updateNavAvatar(av, fullP||currentUser);
         un.textContent = currentUser.name;
         pill.style.display = 'flex';
       }
@@ -7071,13 +7658,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   // Sync subtitle date with header date input
   const dateInp=document.getElementById('hdr-date');
   if(dateInp){
+    // Restaura última data salva ou mantém a padrão do input
     const savedDate = localStorage.getItem('diefra_reunion_date');
-    if(savedDate && savedDate.trim()){
-      dateInp.value = savedDate.trim();
-    }
+    if(savedDate){ dateInp.value = savedDate; }
     updateReunionDate(dateInp.value);
-    // Garante que qualquer mudança futura salva
-    dateInp.addEventListener('change', function(){ updateReunionDate(this.value); });
   }
   // Sync sala → footer
   _initSalaSync();
@@ -7085,6 +7669,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   _initUenPicker();
   // Init color palette
   _initPalette();
+  _initFontPanel();
 });
 
 
@@ -7483,7 +8068,7 @@ function openMedNovaModal(prefillCtId){
           border:1px solid rgba(16,185,129,.2);font-size:12px;font-weight:800;color:#10b981;text-align:center"></div>
       <div class="fgrp">
         <div class="flbl">📝 Observação da Medição
-          <span style="font-size:10px;color:var(--t3);font-weight:400;margin-left:4px">— sincroniza com Justificativa do Contrato</span>
+          <span style="font-size:10px;color:var(--t3);font-weight:400;margin-left:4px">— salva individualmente por mês</span>
         </div>
         <textarea class="ftxa" id="mn-obs" placeholder="Observações sobre esta medição..."></textarea>
       </div>
@@ -7509,7 +8094,7 @@ function openMedNovaModal(prefillCtId){
         </div>
       </div>
       <div class="fgrp" style="margin-top:4px">
-        <div class="flbl" style="color:#c4b5fd">📋 Resumo / Prazos de Faturamento do Contrato</div>
+        <div class="flbl" style="color:#c4b5fd">📋 Regras de Faturamento do Contrato</div>
         <textarea class="ftxa" id="mn-resumo-fat" placeholder="Descreva prazos contratuais de faturamento, condições, observações gerais sobre o ciclo de medição e pagamento..." style="min-height:90px"></textarea>
       </div>
     </div>`;
@@ -7555,9 +8140,8 @@ function saveMedNova(){
   if(existing>=0) ST.medicoes[existing]=obj;
   else ST.medicoes.push(obj);
 
-  // ── Sincroniza obs → justificativa do contrato ──────────────────────
   const _ctNova = ST.contracts.find(c => c.id === contractId);
-  if(_ctNova && obs) _ctNova.justificativa = obs;
+  if(_ctNova && resumoFat) _ctNova.comentFat = resumoFat;
   recalcContractFinancials(_ctNova);
 
   // Navigate to the saved month
@@ -7620,7 +8204,7 @@ function openMedModal(contractId, mesKey){
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação da Medição
-          <span style="font-size:10px;color:var(--t3);font-weight:400;margin-left:4px">— sincroniza com Justificativa do Contrato</span>
+          <span style="font-size:10px;color:var(--t3);font-weight:400;margin-left:4px">— salva individualmente por mês</span>
         </div>
         <textarea class="ftxa" id="med-obs" placeholder="Observações sobre esta medição...">${rec.obs||''}</textarea>
       </div>
@@ -7650,7 +8234,7 @@ function openMedModal(contractId, mesKey){
         </div>
       </div>
       <div class="fgrp" style="margin-top:4px">
-        <div class="flbl" style="color:#c4b5fd">📋 Resumo / Prazos de Faturamento do Contrato</div>
+        <div class="flbl" style="color:#c4b5fd">📋 Regras de Faturamento do Contrato</div>
         <textarea class="ftxa" id="med-resumo-fat" placeholder="Descreva prazos contratuais de faturamento, condições e observações sobre o ciclo de medição e pagamento..." style="min-height:90px">${rec.resumoFat||''}</textarea>
       </div>
       ${hasDev ? `
@@ -7698,9 +8282,8 @@ function saveMed(contractId, mesKey){
   };
   const idx = ST.medicoes.findIndex(m=>m.contractId===contractId&&m.key===mesKey);
   if(idx>=0) ST.medicoes[idx]=obj; else ST.medicoes.push(obj);
-  // ── Sincroniza obs → justificativa do contrato ──────────────────────
   const _ctEdit = ST.contracts.find(c => c.id === contractId);
-  if(_ctEdit && obs) _ctEdit.justificativa = obs;
+  if(_ctEdit && resumoFat) _ctEdit.comentFat = resumoFat;
   recalcContractFinancials(_ctEdit);
   closeModal(); renderMedicoes(); renderFinanceiro(); renderContracts(); renderDashboard(); scheduleAutoSync();
   showToast('✅ Medição salva!','gn');
@@ -8227,6 +8810,11 @@ async function deleteUsuario(id, name){
 </div>
 
 <!-- ══ PALETTE SWITCHER ══ -->
+<button id="font-btn" onclick="toggleFontPanel()" title="Trocar conjunto de fontes">🔤</button>
+<div id="font-panel">
+  <div class="fp-title">🔤 Conjunto de Fontes</div>
+  <div class="fp-list" id="fp-list"></div>
+</div>
 <button id="palette-btn" onclick="togglePalette()" title="Trocar tema de cores">🎨</button>
 <div id="palette-panel">
   <div class="pp-title">Paleta de Cores</div>
@@ -8499,6 +9087,8 @@ function applyPalette(id){
 
 function togglePalette(){
   document.getElementById('palette-panel').classList.toggle('open');
+  // Fecha painel de fontes se aberto
+  document.getElementById('font-panel').classList.remove('open');
 }
 
 // Close on outside click
@@ -8530,189 +9120,450 @@ function _initPalette(){
 }
 // ════════════════════════════════════════════════════════════════════════════
 //  ANÁLISE INTEGRAL & DERIVADA — Dashboard
-//  Reage a _finCtId (contrato) e _finDashPeriod (período) já existentes
 // ════════════════════════════════════════════════════════════════════════════
 let _dashIntgCharts = {};
-
-function _dashIntgDestroy(id){
-  if(_dashIntgCharts[id]){ _dashIntgCharts[id].destroy(); delete _dashIntgCharts[id]; }
-}
-
+function _dashIntgDestroy(id){ if(_dashIntgCharts[id]){ _dashIntgCharts[id].destroy(); delete _dashIntgCharts[id]; } }
 function _dashIntgBuildSeries(ctId, upToPeriod){
-  const allMeds = (ST.medicoes || []);
-  const meds = ctId ? allMeds.filter(m => m.contractId === ctId) : allMeds;
+  const allMeds=(ST.medicoes||[]);
+  const meds=ctId?allMeds.filter(m=>m.contractId===ctId):allMeds;
   if(!meds.length) return null;
-
-  const map = {};
-  meds.forEach(m => {
+  const map={};
+  meds.forEach(m=>{
     if(!m.key) return;
-    if(upToPeriod && m.key > upToPeriod) return;
-    if(!map[m.key]) map[m.key] = { fat:0, cust:0 };
-    map[m.key].fat  += (m.realizado || 0);
-    map[m.key].cust += (m.custo     || 0);
+    if(upToPeriod && m.key>upToPeriod) return;
+    if(!map[m.key]) map[m.key]={fat:0,cust:0};
+    map[m.key].fat+=(m.realizado||0);
+    map[m.key].cust+=(m.custo||0);
   });
-
-  const keys = Object.keys(map).sort();
+  const keys=Object.keys(map).sort();
   if(!keys.length) return null;
-
-  const labels = keys.map(k => {
-    const [y,mo] = k.split('-');
-    return new Date(parseInt(y), parseInt(mo)-1, 1)
-      .toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})
-      .replace('.','').toUpperCase();
-  });
-
-  let acumFat=0, acumCust=0;
-  const intFat=[], intCust=[];
-  keys.forEach(k => { acumFat+=map[k].fat; acumCust+=map[k].cust; intFat.push(acumFat); intCust.push(acumCust); });
-
-  const derivFat  = keys.map(k => map[k].fat);
-  const derivCust = keys.map(k => map[k].cust);
-  const margem    = keys.map(k => map[k].fat>0 ? parseFloat(((map[k].fat-map[k].cust)/map[k].fat*100).toFixed(2)) : 0);
-  const fluxo     = keys.map(k => map[k].fat - map[k].cust);
-  const curIdx    = upToPeriod ? keys.indexOf(upToPeriod) : keys.length - 1;
-
-  return { keys, labels, intFat, intCust, derivFat, derivCust, margem, fluxo,
-    totalFat: acumFat, totalCust: acumCust, curIdx };
+  const labels=keys.map(k=>{const[y,mo]=k.split('-');return new Date(parseInt(y),parseInt(mo)-1,1).toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace('.','').toUpperCase();});
+  let aF=0,aC=0; const iF=[],iC=[];
+  keys.forEach(k=>{aF+=map[k].fat;aC+=map[k].cust;iF.push(aF);iC.push(aC);});
+  const dF=keys.map(k=>map[k].fat), dC=keys.map(k=>map[k].cust);
+  const mg=keys.map(k=>map[k].fat>0?parseFloat(((map[k].fat-map[k].cust)/map[k].fat*100).toFixed(2)):0);
+  const fl=keys.map(k=>map[k].fat-map[k].cust);
+  const ci=upToPeriod?keys.indexOf(upToPeriod):keys.length-1;
+  return{keys,labels,intFat:iF,intCust:iC,derivFat:dF,derivCust:dC,margem:mg,fluxo:fl,totalFat:aF,totalCust:aC,curIdx:ci};
 }
-
-function _dashIntgOpts(yFmt){
-  const yCb = yFmt === '%'
-    ? v => v.toFixed(1)+'%'
-    : v => v>=1e6?'R$'+(v/1e6).toFixed(1)+'M':v>=1e3?'R$'+(v/1e3).toFixed(0)+'k':'R$'+v;
-  return {
-    responsive:true, maintainAspectRatio:true,
-    plugins:{ legend:{ labels:{ color:'#94a3b8', font:{size:10}, boxWidth:12 } } },
-    scales:{
-      x:{ ticks:{color:'#5d9470',font:{size:9}}, grid:{color:'rgba(255,255,255,.04)'} },
-      y:{ ticks:{color:'#5d9470',font:{size:9}, callback:yCb}, grid:{color:'rgba(255,255,255,.06)'} }
-    }
-  };
+function _dashIntgOpts(pct){
+  const cb=pct?v=>v.toFixed(1)+'%':v=>v>=1e6?'R$'+(v/1e6).toFixed(1)+'M':v>=1e3?'R$'+(v/1e3).toFixed(0)+'k':'R$'+v;
+  return{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10},boxWidth:12}}},scales:{x:{ticks:{color:'#5d9470',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#5d9470',font:{size:9},callback:cb},grid:{color:'rgba(255,255,255,.06)'}}}};
 }
-
-function _dashIntgRenderKPIs(s, ctId){
-  const el = document.getElementById('dash-intg-kpis');
-  if(!el) return;
-  if(!s){ el.innerHTML=''; return; }
-  const n    = s.keys.length || 1;
-  const taxaM= s.totalFat / n;
-  const margL= s.totalFat>0 ? (s.totalFat-s.totalCust)/s.totalFat*100 : 0;
-  let previsao = '—';
-  if(ctId){
-    const ct = ST.contracts.find(c=>c.id===ctId);
-    if(ct && ct.saldoGlobal && taxaM>0){
-      const rest = Math.ceil((ct.saldoGlobal - s.totalFat) / taxaM);
-      previsao = rest>0 ? rest+'m restantes' : 'Concluído';
-    }
-  }
-  const kpis = [
-    { l:'Total Faturado',   v:fmtBRL(s.totalFat),             c:'#34d399', s:'Σ realizados acumulados'   },
-    { l:'Total Custos',     v:fmtBRL(s.totalCust),            c:'#f87171', s:'Σ custos acumulados'        },
-    { l:'Margem Líquida',   v:fmtBRL(s.totalFat-s.totalCust), c:margL>=20?'#10b981':margL>=10?'#fbbf24':'#ef4444', s:margL.toFixed(1)+'% de margem' },
-    { l:'Taxa Média/mês',   v:fmtBRL(taxaM),                  c:'#38bdf8', s:'Faturamento médio'         },
-    { l:'Previsão',         v:previsao,                        c:'#c4b5fd', s:'Baseado na taxa média'     },
-    { l:'Períodos Reg.',    v:n+' meses',                      c:'#94a3b8', s:'Com medição'               },
-  ];
-  el.innerHTML = kpis.map(k=>`
-    <div class="tbl-wrap" style="padding:12px 14px">
-      <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:5px">${k.l}</div>
-      <div style="font-family:var(--fn);font-size:15px;font-weight:800;color:${k.c};white-space:nowrap">${k.v}</div>
-      <div style="font-size:9px;color:var(--t3);margin-top:3px">${k.s}</div>
-    </div>`).join('');
+function _dashIntgRenderKPIs(s,ctId){
+  const el=document.getElementById('dash-intg-kpis');if(!el)return;if(!s){el.innerHTML='';return;}
+  const n=s.keys.length||1,tM=s.totalFat/n,mL=s.totalFat>0?(s.totalFat-s.totalCust)/s.totalFat*100:0;
+  let prev='—';if(ctId){const ct=ST.contracts.find(c=>c.id===ctId);if(ct&&ct.saldoGlobal&&tM>0){const r=Math.ceil((ct.saldoGlobal-s.totalFat)/tM);prev=r>0?r+'m restantes':'Concluído';}}
+  el.innerHTML=[{l:'Total Faturado',v:fmtBRL(s.totalFat),c:'#34d399',s:'Σ realizados'},{l:'Total Custos',v:fmtBRL(s.totalCust),c:'#f87171',s:'Σ custos'},{l:'Margem Líquida',v:fmtBRL(s.totalFat-s.totalCust),c:mL>=20?'#10b981':mL>=10?'#fbbf24':'#ef4444',s:mL.toFixed(1)+'%'},{l:'Taxa Média/mês',v:fmtBRL(tM),c:'#38bdf8',s:'Média mensal'},{l:'Previsão',v:prev,c:'#c4b5fd',s:'Pela taxa'},{l:'Períodos',v:n+' meses',c:'#94a3b8',s:'Com medição'}]
+    .map(k=>`<div class="tbl-wrap" style="padding:12px 14px"><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:5px">${k.l}</div><div style="font-family:var(--fn);font-size:15px;font-weight:800;color:${k.c};white-space:nowrap">${k.v}</div><div style="font-size:9px;color:var(--t3);margin-top:3px">${k.s}</div></div>`).join('');
 }
-
 function _dashIntgRenderCharts(s){
   ['integral','derivada','margem','fluxo'].forEach(id=>_dashIntgDestroy(id));
-  const empty = document.getElementById('dash-intg-empty');
-  if(!s){
-    if(empty) empty.style.display='block';
-    return;
-  }
-  if(empty) empty.style.display='none';
-
-  const hl = (arr, idx, base, hi) => arr.map((_,i)=> i===idx ? hi : base);
-
-  _dashIntgCharts['integral'] = new Chart(
-    document.getElementById('dash-intg-chart-integral'),
-    { type:'line', data:{ labels:s.labels, datasets:[
-        { label:'Fat. Acum.', data:s.intFat,  borderColor:'#38bdf8', backgroundColor:'rgba(56,189,248,.08)', tension:.35, pointRadius:3, fill:true },
-        { label:'Custo Acum.',data:s.intCust, borderColor:'#f87171', backgroundColor:'rgba(248,113,113,.08)', tension:.35, pointRadius:3, fill:true },
-      ]}, options:_dashIntgOpts() }
-  );
-
-  _dashIntgCharts['derivada'] = new Chart(
-    document.getElementById('dash-intg-chart-derivada'),
-    { type:'bar', data:{ labels:s.labels, datasets:[
-        { label:'Fat. Mensal',  data:s.derivFat,  backgroundColor:hl(s.derivFat, s.curIdx,'rgba(56,189,248,.6)','#38bdf8'),  borderRadius:4 },
-        { label:'Custo Mensal', data:s.derivCust, backgroundColor:hl(s.derivCust,s.curIdx,'rgba(248,113,113,.5)','#f87171'), borderRadius:4 },
-      ]}, options:_dashIntgOpts() }
-  );
-
-  const margColors = s.margem.map((v,i)=> i===s.curIdx?'#fff': v>=20?'rgba(16,185,129,.8)':v>=10?'rgba(251,191,36,.8)':'rgba(239,68,68,.8)');
-  _dashIntgCharts['margem'] = new Chart(
-    document.getElementById('dash-intg-chart-margem'),
-    { type:'line', data:{ labels:s.labels, datasets:[{
-        label:'Margem %', data:s.margem, borderColor:'#10b981',
-        backgroundColor:'rgba(16,185,129,.08)', tension:.35, pointRadius:4,
-        pointBackgroundColor:margColors, fill:true
-      }]}, options:_dashIntgOpts('%') }
-  );
-
-  _dashIntgCharts['fluxo'] = new Chart(
-    document.getElementById('dash-intg-chart-fluxo'),
-    { type:'bar', data:{ labels:s.labels, datasets:[{
-        label:'Resultado Mensal',
-        data:s.fluxo,
-        backgroundColor:s.fluxo.map((v,i)=> i===s.curIdx?'#fff': v>=0?'rgba(16,185,129,.75)':'rgba(239,68,68,.75)'),
-        borderRadius:4
-      }]}, options:_dashIntgOpts() }
-  );
-}
-
-function _dashIntgRenderInsights(s){
-  const el = document.getElementById('dash-intg-insights');
-  if(!el || !s || s.keys.length<2){ if(el) el.innerHTML=''; return; }
-  const n=s.keys.length, mid=Math.floor(n/2);
-  const a1=s.derivFat.slice(0,mid).reduce((a,v)=>a+v,0)/mid;
-  const a2=s.derivFat.slice(mid).reduce((a,v)=>a+v,0)/(n-mid);
-  const tPct=a1>0?(a2-a1)/a1*100:0;
-  const tend=tPct>10?{i:'🚀',t:'Acelerando',c:'#10b981',s:`+${tPct.toFixed(1)}% vs 1ª metade`}
-            :tPct<-10?{i:'📉',t:'Desacelerando',c:'#ef4444',s:`${tPct.toFixed(1)}% vs 1ª metade`}
-            :{i:'➡️',t:'Estável',c:'#fbbf24',s:`Var. ${tPct.toFixed(1)}%`};
+  const emp=document.getElementById('dash-intg-empty');
+  if(!s){if(emp)emp.style.display='block';return;}if(emp)emp.style.display='none';
+  const hl=(arr,i,b,h)=>arr.map((_,j)=>j===i?h:b);
+  _dashIntgCharts['integral']=new Chart(document.getElementById('dash-intg-chart-integral'),{type:'line',data:{labels:s.labels,datasets:[{label:'Fat. Acum.',data:s.intFat,borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.08)',tension:.35,pointRadius:3,fill:true},{label:'Custo Acum.',data:s.intCust,borderColor:'#f87171',backgroundColor:'rgba(248,113,113,.08)',tension:.35,pointRadius:3,fill:true}]},options:_dashIntgOpts()});
+  _dashIntgCharts['derivada']=new Chart(document.getElementById('dash-intg-chart-derivada'),{type:'bar',data:{labels:s.labels,datasets:[{label:'Fat. Mensal',data:s.derivFat,backgroundColor:hl(s.derivFat,s.curIdx,'rgba(56,189,248,.6)','#38bdf8'),borderRadius:4},{label:'Custo Mensal',data:s.derivCust,backgroundColor:hl(s.derivCust,s.curIdx,'rgba(248,113,113,.5)','#f87171'),borderRadius:4}]},options:_dashIntgOpts()});
+  const mc=s.margem.map((v,i)=>i===s.curIdx?'#fff':v>=20?'rgba(16,185,129,.8)':v>=10?'rgba(251,191,36,.8)':'rgba(239,68,68,.8)');
+  _dashIntgCharts['margem']=new Chart(document.getElementById('dash-intg-chart-margem'),{type:'line',data:{labels:s.labels,datasets:[{label:'Margem %',data:s.margem,borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.08)',tension:.35,pointRadius:4,pointBackgroundColor:mc,fill:true}]},options:_dashIntgOpts(true)});
+  _dashIntgCharts['fluxo']=new Chart(document.getElementById('dash-intg-chart-fluxo'),{type:'bar',data:{labels:s.labels,datasets:[{label:'Resultado Mensal',data:s.fluxo,backgroundColor:s.fluxo.map((v,i)=>i===s.curIdx?'#fff':v>=0?'rgba(16,185,129,.75)':'rgba(239,68,68,.75)'),borderRadius:4}]},options:_dashIntgOpts()});
+  const ins=document.getElementById('dash-intg-insights');
+  if(!ins||s.keys.length<2){if(ins)ins.innerHTML='';return;}
+  const n=s.keys.length,mid=Math.floor(n/2);
+  const a1=s.derivFat.slice(0,mid).reduce((a,v)=>a+v,0)/mid,a2=s.derivFat.slice(mid).reduce((a,v)=>a+v,0)/(n-mid);
+  const tp=a1>0?(a2-a1)/a1*100:0;
+  const tend=tp>10?{i:'🚀',t:'Acelerando',c:'#10b981',s:'+'+tp.toFixed(1)+'% vs 1ª metade'}:tp<-10?{i:'📉',t:'Desacelerando',c:'#ef4444',s:tp.toFixed(1)+'% vs 1ª metade'}:{i:'➡️',t:'Estável',c:'#fbbf24',s:'Var. '+tp.toFixed(1)+'%'};
   const mL=s.totalFat>0?(s.totalFat-s.totalCust)/s.totalFat*100:0;
-  const rent=mL>=20?{i:'💎',t:'Excelente',c:'#10b981',s:`Margem ${mL.toFixed(1)}% (>20%)`}
-            :mL>=10?{i:'✅',t:'Adequada',c:'#fbbf24',s:`Margem ${mL.toFixed(1)}% (10-20%)`}
-            :{i:'⚠️',t:'Baixa',c:'#ef4444',s:`Margem ${mL.toFixed(1)}% (<10%)`};
-  const taxM=s.totalFat/n, uF=s.derivFat[n-1]||0;
-  const pPct=taxM>0?(uF/taxM-1)*100:0;
-  const prev=pPct>10?{i:'⚡',t:'Adiantado',c:'#10b981',s:`Últ. mês +${pPct.toFixed(1)}% da taxa`}
-            :pPct<-10?{i:'🔴',t:'Atrasado',c:'#ef4444',s:`Últ. mês ${pPct.toFixed(1)}% da taxa`}
-            :{i:'🎯',t:'Em Dia',c:'#fbbf24',s:'Dentro da taxa média'};
-  const c1=s.derivCust.slice(0,mid).reduce((a,v)=>a+v,0)/mid;
-  const c2=s.derivCust.slice(mid).reduce((a,v)=>a+v,0)/(n-mid);
-  const cP=c1>0?(c2-c1)/c1*100:0;
-  const cust=cP>15?{i:'🔴',t:'Acelerando',c:'#ef4444',s:`Custos +${cP.toFixed(1)}% na 2ª metade`}
-            :cP<-10?{i:'🟢',t:'Reduzindo',c:'#10b981',s:`Custos ${cP.toFixed(1)}% na 2ª metade`}
-            :{i:'🟡',t:'Controlado',c:'#fbbf24',s:`Var. ${cP.toFixed(1)}% nos custos`};
-  el.innerHTML=[{titulo:'Tendência',...tend},{titulo:'Rentabilidade',...rent},{titulo:'Previsão',...prev},{titulo:'Status Custos',...cust}]
-    .map(x=>`
-    <div class="tbl-wrap" style="padding:14px 16px">
-      <div style="font-size:18px;margin-bottom:6px">${x.i}</div>
-      <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">${x.titulo}</div>
-      <div style="font-size:14px;font-weight:800;color:${x.c};margin-bottom:3px">${x.t}</div>
-      <div style="font-size:10px;color:var(--t2)">${x.s}</div>
-    </div>`).join('');
+  const rent=mL>=20?{i:'💎',t:'Excelente',c:'#10b981',s:'Margem '+mL.toFixed(1)+'%'}:mL>=10?{i:'✅',t:'Adequada',c:'#fbbf24',s:'Margem '+mL.toFixed(1)+'%'}:{i:'⚠️',t:'Baixa',c:'#ef4444',s:'Margem '+mL.toFixed(1)+'%'};
+  const tM=s.totalFat/n,uF=s.derivFat[n-1]||0,pp=tM>0?(uF/tM-1)*100:0;
+  const prev=pp>10?{i:'⚡',t:'Adiantado',c:'#10b981',s:'Últ. mês +'+pp.toFixed(1)+'%'}:pp<-10?{i:'🔴',t:'Atrasado',c:'#ef4444',s:'Últ. mês '+pp.toFixed(1)+'%'}:{i:'🎯',t:'Em Dia',c:'#fbbf24',s:'Dentro da taxa'};
+  const c1=s.derivCust.slice(0,mid).reduce((a,v)=>a+v,0)/mid,c2=s.derivCust.slice(mid).reduce((a,v)=>a+v,0)/(n-mid),cp=c1>0?(c2-c1)/c1*100:0;
+  const cust=cp>15?{i:'🔴',t:'Acelerando',c:'#ef4444',s:'Custos +'+cp.toFixed(1)+'%'}:cp<-10?{i:'🟢',t:'Reduzindo',c:'#10b981',s:'Custos '+cp.toFixed(1)+'%'}:{i:'🟡',t:'Controlado',c:'#fbbf24',s:'Var. '+cp.toFixed(1)+'%'};
+  ins.innerHTML=[{titulo:'Tendência',...tend},{titulo:'Rentabilidade',...rent},{titulo:'Previsão',...prev},{titulo:'Status Custos',...cust}].map(x=>`<div class="tbl-wrap" style="padding:14px 16px"><div style="font-size:18px;margin-bottom:6px">${x.i}</div><div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">${x.titulo}</div><div style="font-size:14px;font-weight:800;color:${x.c};margin-bottom:3px">${x.t}</div><div style="font-size:10px;color:var(--t2)">${x.s}</div></div>`).join('');
 }
-
-// Entry point — chamado por renderFinCharts() e renderDashboard()
 function _dashIntgRenderAll(){
   if(!document.getElementById('dashboard')?.classList.contains('active')) return;
-  const ctId  = _finCtId  || null;
-  const period = _finDashPeriod || null;
-  const s = _dashIntgBuildSeries(ctId, period);
-  _dashIntgRenderKPIs(s, ctId);
+  const s=_dashIntgBuildSeries(_finCtId||null,_finDashPeriod||null);
+  _dashIntgRenderKPIs(s,_finCtId||null);
   _dashIntgRenderCharts(s);
-  _dashIntgRenderInsights(s);
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  FONT SWITCHER
+// ════════════════════════════════════════════════════════════════════════════
+const FONT_SETS = [
+  {
+    id: 'classico',
+    label: 'Clássico (Padrão)',
+    fh: "'Playfair Display', serif",
+    fb: "'Nunito', sans-serif",
+    fn: "'Outfit', sans-serif",
+    previewTitle: 'Playfair Display',
+    previewBody: 'Nunito · Outfit',
+  },
+  {
+    id: 'roboto',
+    label: 'Roboto',
+    fh: "'Roboto Slab', serif",
+    fb: "'Roboto', sans-serif",
+    fn: "'Roboto', sans-serif",
+    previewTitle: 'Roboto Slab',
+    previewBody: 'Roboto',
+  },
+  {
+    id: 'inter',
+    label: 'Inter (Moderno)',
+    fh: "'Inter', sans-serif",
+    fb: "'Inter', sans-serif",
+    fn: "'Inter', sans-serif",
+    previewTitle: 'Inter Bold',
+    previewBody: 'Inter Regular',
+  },
+  {
+    id: 'montserrat',
+    label: 'Montserrat',
+    fh: "'Montserrat', sans-serif",
+    fb: "'Montserrat', sans-serif",
+    fn: "'Montserrat', sans-serif",
+    previewTitle: 'Montserrat Bold',
+    previewBody: 'Montserrat Regular',
+  },
+  {
+    id: 'poppins',
+    label: 'Poppins',
+    fh: "'Poppins', sans-serif",
+    fb: "'Poppins', sans-serif",
+    fn: "'Poppins', sans-serif",
+    previewTitle: 'Poppins Bold',
+    previewBody: 'Poppins Light',
+  },
+  {
+    id: 'lato',
+    label: 'Lato',
+    fh: "'Merriweather', serif",
+    fb: "'Lato', sans-serif",
+    fn: "'Lato', sans-serif",
+    previewTitle: 'Merriweather',
+    previewBody: 'Lato',
+  },
+  {
+    id: 'dm-sans',
+    label: 'DM Sans',
+    fh: "'DM Sans', sans-serif",
+    fb: "'DM Sans', sans-serif",
+    fn: "'DM Sans', sans-serif",
+    previewTitle: 'DM Sans Bold',
+    previewBody: 'DM Sans Regular',
+  },
+  {
+    id: 'ibm',
+    label: 'IBM Plex',
+    fh: "'IBM Plex Sans', sans-serif",
+    fb: "'IBM Plex Sans', sans-serif",
+    fn: "'IBM Plex Sans', sans-serif",
+    previewTitle: 'IBM Plex Sans Bold',
+    previewBody: 'IBM Plex Sans Light',
+  },
+  {
+    id: 'source',
+    label: 'Source Sans',
+    fh: "'Merriweather', serif",
+    fb: "'Source Sans 3', sans-serif",
+    fn: "'Source Sans 3', sans-serif",
+    previewTitle: 'Merriweather',
+    previewBody: 'Source Sans 3',
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// CALCULADORA DE VIRADA DE CONTRATO — integrada ao dashboard
+// Lê dados reais do contrato selecionado em fin-ct-sel
+// ═══════════════════════════════════════════════════════════════
+let _vcChartCum = null, _vcChartBar = null, _vcBeMonth = null, _vcInitDone = false;
+
+function _vcFmt(n){
+  const a=Math.abs(Math.round(n));
+  const s=a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e3?(a/1e3).toFixed(0)+'k':a.toString();
+  return (n<0?'-R$ ':'R$ ')+s;
+}
+function _vcFull(n){
+  return (n<0?'-R$ ':'R$ ')+Math.abs(Math.round(n)).toLocaleString('pt-BR');
+}
+
+function renderViradasChart(){
+  const ct = ST.contracts.find(c=>c.id===_finCtId);
+  if(!ct){ const el=document.getElementById('virada-subtitle'); if(el) el.textContent='Nenhum contrato selecionado'; return; }
+
+  // Wiring única de todos os inputs
+  if(!_vcInitDone){
+    const allIds=['virada-inv','virada-ramp','virada-rrev','virada-rcost','virada-revmes','virada-cfmes'];
+    allIds.forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      el.addEventListener('input',()=>{
+        const c2=ST.contracts.find(x=>x.id===_finCtId);
+        if(c2){
+          c2.viradaInv    = +document.getElementById('virada-inv').value;
+          c2.viradaRamp   = +document.getElementById('virada-ramp').value;
+          c2.viradaRrev   = +document.getElementById('virada-rrev').value;
+          c2.viradaRcost  = +document.getElementById('virada-rcost').value;
+          c2.viradaRevMes = +document.getElementById('virada-revmes').value||null;
+          c2.viradaCfMes  = +document.getElementById('virada-cfmes').value||null;
+          scheduleAutoSync();
+        }
+        renderViradasChart();
+      });
+    });
+    _vcInitDone=true;
+  }
+
+  // Ao trocar de contrato carrega valores salvos ou sugere do contrato
+  if(window._vcLastCtId!==_finCtId){
+    window._vcLastCtId=_finCtId;
+    const sD=ct.start?new Date(ct.start+'T00:00:00'):new Date();
+    const eD=ct.end  ?new Date(ct.end  +'T00:00:00'):new Date();
+    const dT=Math.max(1,(eD.getFullYear()-sD.getFullYear())*12+(eD.getMonth()-sD.getMonth()));
+    const defRev = ct.receita>0 ? Math.round(ct.receita/dT) : 0;
+    const defCf  = (ct.custoTotal||ct.custo||0)>0 ? Math.round((ct.custoTotal||ct.custo||0)/dT) : 0;
+    document.getElementById('virada-inv').value   = ct.viradaInv   ?? 0;
+    document.getElementById('virada-ramp').value  = ct.viradaRamp  ?? 0;
+    document.getElementById('virada-rrev').value  = ct.viradaRrev  ?? 0;
+    document.getElementById('virada-rcost').value = ct.viradaRcost ?? 0;
+    document.getElementById('virada-revmes').value= ct.viradaRevMes != null ? ct.viradaRevMes : (defRev||''  );
+    document.getElementById('virada-cfmes').value = ct.viradaCfMes  != null ? ct.viradaCfMes  : (defCf ||''  );
+    const tag=document.getElementById('virada-source-tag');
+    if(tag){
+      const hasRev=ct.receita>0;
+      tag.textContent  =hasRev?'✓ Dados importados do contrato':'⚠ Contrato sem receita — insira manualmente';
+      tag.style.background =hasRev?'rgba(16,185,129,.12)':'rgba(234,88,12,.12)';
+      tag.style.borderColor=hasRev?'rgba(16,185,129,.25)':'rgba(234,88,12,.35)';
+      tag.style.color      =hasRev?'#5d9470'             :'#ea580c';
+    }
+  }
+
+  const MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const startD=ct.start?new Date(ct.start+'T00:00:00'):new Date();
+  const endD  =ct.end  ?new Date(ct.end  +'T00:00:00'):new Date();
+  const dur   =Math.max(1,(endD.getFullYear()-startD.getFullYear())*12+(endD.getMonth()-startD.getMonth()));
+
+  const inputRevMes=+document.getElementById('virada-revmes').value;
+  const inputCfMes =+document.getElementById('virada-cfmes').value;
+  const revMes=inputRevMes>0?inputRevMes:(ct.receita>0?ct.receita/dur:0);
+  const cfMes =inputCfMes >0?inputCfMes :((ct.custoTotal||ct.custo||0)>0?(ct.custoTotal||ct.custo||0)/dur:0);
+
+  const inv   =+document.getElementById('virada-inv').value;
+  const ramp  =+document.getElementById('virada-ramp').value;
+  const rRev  =+document.getElementById('virada-rrev').value/100;
+  const rCost =+document.getElementById('virada-rcost').value/100;
+
+  document.getElementById('virada-inv-val').textContent   =_vcFull(inv);
+  document.getElementById('virada-ramp-val').textContent  =ramp===0?'imediato':ramp+(ramp===1?' mês':' meses');
+  document.getElementById('virada-rrev-val').textContent  =parseFloat(document.getElementById('virada-rrev').value).toFixed(2)+'%';
+  document.getElementById('virada-rcost-val').textContent =parseFloat(document.getElementById('virada-rcost').value).toFixed(2)+'%';
+
+  function lbl(m){const tot=startD.getMonth()+m;return MESES[tot%12]+'/'+String(startD.getFullYear()+Math.floor(tot/12)).slice(2);}
+
+  const labels=[lbl(0)],cumData=[-inv],cumRevData=[0],netData=[],yearly=[];
+  let cum=-inv,cumRev=0,beMonth=null,beDate=null,totRevP=0,totCostP=inv,yAcc={r:0,c:0,n:0},yr=1;
+
+  for(let m=1;m<=dur;m++){
+    const yIdx=Math.floor((m-1)/12);
+    const mRev=revMes*Math.pow(1+rRev,yIdx)*(ramp===0?1:Math.min(1,m/ramp));
+    const mCf =cfMes *Math.pow(1+rCost,yIdx);
+    const net =mRev-mCf;
+    totRevP+=mRev; totCostP+=mCf; cumRev+=mRev; cum+=net;
+    netData.push(Math.round(net)); cumData.push(Math.round(cum)); cumRevData.push(Math.round(cumRev)); labels.push(lbl(m));
+    yAcc.r+=mRev; yAcc.c+=mCf; yAcc.n+=net;
+    if(m%12===0||m===dur){yearly.push({year:yr,rev:yAcc.r,cost:yAcc.c,net:yAcc.n,rM:revMes*Math.pow(1+rRev,yIdx),cM:cfMes*Math.pow(1+rCost,yIdx)});yAcc={r:0,c:0,n:0};yr++;}
+    if(beMonth===null&&cum>=0){beMonth=m;const tot=startD.getMonth()+m;beDate=MESES[tot%12]+'/'+(startD.getFullYear()+Math.floor(tot/12));}
+  }
+  _vcBeMonth=beMonth;
+  const fp=cum, roi=totCostP>0?Math.round(fp/totCostP*100):0;
+  const semDados=revMes===0&&cfMes===0;
+
+  document.getElementById('virada-subtitle').textContent=semDados
+    ?ct.name+' — ⚠ Insira a receita e o custo mensal para calcular a virada'
+    :ct.name+' · '+dur+' meses · '+lbl(0)+' → '+lbl(dur);
+  document.getElementById('virada-chart-sub').textContent=semDados
+    ?'Preencha os campos de receita e custo acima para ver a projeção'
+    :beMonth?'Virada no '+beMonth+'º mês ('+beDate+') — Receita/mês: '+_vcFull(revMes):'Sem ponto de virada dentro do período do contrato';
+
+  const ok=beMonth!==null&&!semDados;
+  const ban=document.getElementById('virada-banner');
+  if(ban){
+    ban.style.background=ok?'rgba(5,150,105,.12)':semDados?'rgba(255,255,255,.04)':'rgba(220,38,38,.10)';
+    ban.style.borderColor=ok?'rgba(16,185,129,.35)':semDados?'var(--b1)':'rgba(220,38,38,.35)';
+    const tc=ok?'#10b981':semDados?'var(--t3)':'#ef4444';
+    ['virada-ban-lbl','virada-ban-date','virada-ban-m','virada-ban-profit','virada-ban-roi'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.color=tc;});
+  }
+  document.getElementById('virada-ban-date').textContent   =semDados?'—':ok?beDate:'Sem virada no período';
+  document.getElementById('virada-ban-m').textContent      =semDados||!ok?'—':beMonth+'º mês';
+  document.getElementById('virada-ban-profit').textContent =semDados?'—':_vcFmt(fp);
+  document.getElementById('virada-ban-roi').textContent    =semDados?'—':(fp>=0?'+':'')+roi+'%';
+
+  const kpiEl=document.getElementById('virada-kpis');
+  if(kpiEl) kpiEl.innerHTML=[
+    {l:'Receita mensal base',    v:revMes>0?_vcFmt(revMes):'—',                    c:'#10b981'},
+    {l:'Custo fixo mensal base', v:cfMes>0?_vcFmt(cfMes):'—',                     c:'#f97316'},
+    {l:'Duração do contrato',    v:dur+' meses',                                   c:'#38bdf8'},
+    {l:'Receita total projetada',v:totRevP>0?_vcFmt(totRevP):'—',                 c:'#f59e0b'},
+    {l:'Resultado ao fim',       v:semDados?'—':(fp>=0?'+':'')+_vcFmt(fp),         c:fp>=0?'#10b981':'#ef4444'},
+  ].map(k=>`<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;border-top:2px solid ${k.c}">
+    <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">${k.l}</div>
+    <div style="font-family:var(--fn);font-size:15px;font-weight:800;color:${k.c}">${k.v}</div>
+  </div>`).join('');
+
+  const spread=parseFloat((+document.getElementById('virada-rrev').value)-(+document.getElementById('virada-rcost').value));
+  const sc=spread>=0?'#10b981':'#ef4444', lastY=Math.floor((dur-1)/12);
+  const spEl=document.getElementById('virada-spread');
+  if(spEl) spEl.innerHTML=`Receita no último ano: <strong style="color:#10b981">${_vcFull(revMes*Math.pow(1+rRev,lastY))}/mês</strong>
+    &nbsp;·&nbsp; Custo no último ano: <strong style="color:#f97316">${_vcFull(cfMes*Math.pow(1+rCost,lastY))}/mês</strong>
+    &nbsp;·&nbsp; Spread receita–custo: <strong style="color:${sc}">${spread>=0?'+':''  }${spread.toFixed(2)}% a.a.</strong>`;
+
+  if(semDados) return;
+
+  _vcDrawCharts(labels,cumData,cumRevData,netData);
+
+  const tlEl=document.getElementById('virada-timeline-bars');
+  if(tlEl) tlEl.innerHTML=netData.map((v,i)=>{
+    const iv=beMonth!==null&&(i+1)===beMonth;
+    return `<div title="${labels[i+1]}: ${_vcFull(v)}" style="flex:1;min-width:8px;height:22px;background:${v>=0?'#10b981':'#ef4444'};border:${iv?'2px solid #38bdf8':'none'};border-radius:3px;opacity:${v>=0?.75:.55};cursor:default"></div>`;
+  }).join('');
+
+  const yEl=document.getElementById('virada-yearly');
+  if(yEl&&yearly.length){
+    const rows=yearly.map(y=>{
+      const nc=y.net>=0?'#10b981':'#ef4444';
+      return `<tr style="border-top:1px solid rgba(255,255,255,.06)">
+        <td style="padding:8px 12px;font-size:12px;color:var(--t2)">Ano ${y.year}</td>
+        <td style="padding:8px 12px;font-size:12px;color:#10b981;text-align:right">${_vcFull(y.rM)}<span style="font-size:9px;opacity:.6">/mês</span></td>
+        <td style="padding:8px 12px;font-size:12px;color:#f97316;text-align:right">${_vcFull(y.cM)}<span style="font-size:9px;opacity:.6">/mês</span></td>
+        <td style="padding:8px 12px;font-size:13px;font-family:var(--fn);font-weight:800;color:${nc};text-align:right">${y.net>=0?'+':''  }${_vcFull(y.net)}</td>
+      </tr>`;
+    }).join('');
+    yEl.innerHTML=`<div style="font-size:9px;font-weight:800;letter-spacing:1.8px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Resumo por ano com reajuste aplicado</div>
+    <div style="border:1px solid rgba(255,255,255,.09);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.02)">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:rgba(255,255,255,.04)">
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:left">Período</th>
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:right">Receita/mês</th>
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:right">Custo/mês</th>
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:right">Resultado anual</th>
+      </tr></thead><tbody>${rows}</tbody>
+    </table></div>`;
+  }
+}
+
+
+const _vcBePlugin={
+  id:'vcBeLine',
+  afterDraw(chart){
+    if(_vcBeMonth===null) return;
+    const {ctx,scales:{x,y}}=chart;
+    const px=x.getPixelForValue(_vcBeMonth);
+    ctx.save();
+    ctx.strokeStyle='#38bdf8'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(px,y.top); ctx.lineTo(px,y.bottom); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#38bdf8'; ctx.font='700 10px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Virada!',px+5,y.top+13);
+    ctx.restore();
+  }
+};
+
+function _vcDrawCharts(labels,cumData,cumRevData,netData){
+  if(_vcChartCum){_vcChartCum.destroy();_vcChartCum=null;}
+  if(_vcChartBar){_vcChartBar.destroy();_vcChartBar=null;}
+  const cc=document.getElementById('virada-chart-cum');
+  const cb=document.getElementById('virada-chart-bar');
+  if(!cc||!cb) return;
+  _vcChartCum=new Chart(cc,{
+    type:'line',plugins:[_vcBePlugin],
+    data:{labels,datasets:[
+      {label:'Resultado acumulado',data:cumData,
+        segment:{borderColor:ctx=>ctx.p1.parsed.y<0?'#ef4444':'#10b981'},
+        borderColor:'#10b981',fill:'origin',backgroundColor:'rgba(16,185,129,.06)',
+        tension:0.3,pointRadius:0,pointHoverRadius:4,borderWidth:2.5,order:1},
+      {label:'Receita acumulada',data:cumRevData,
+        borderColor:'#f59e0b',backgroundColor:'transparent',
+        tension:0.3,pointRadius:0,borderWidth:1.5,borderDash:[4,3],order:2}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{
+        const v=ctx.parsed.y; return ctx.dataset.label+': '+(v>=0?'+':'')+_vcFull(v);
+      }}}},
+      scales:{
+        x:{ticks:{color:'#5d9470',font:{size:10},autoSkip:true,maxRotation:0},grid:{display:false}},
+        y:{ticks:{color:'#5d9470',font:{size:10},callback:v=>_vcFmt(v)},grid:{color:'rgba(255,255,255,.05)'}}
+      }}
+  });
+  _vcChartBar=new Chart(cb,{
+    type:'bar',
+    data:{labels:labels.slice(1),datasets:[{
+      data:netData,
+      backgroundColor:netData.map(v=>v>=0?'rgba(16,185,129,.6)':'rgba(239,68,68,.6)'),
+      borderColor:netData.map(v=>v>=0?'#10b981':'#ef4444'),
+      borderWidth:0.5,borderRadius:2
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{
+        const v=ctx.parsed.y; return (v>=0?'+':'')+_vcFull(v)+'/mês';
+      }}}},
+      scales:{
+        x:{ticks:{color:'#5d9470',font:{size:10},autoSkip:true,maxRotation:0},grid:{display:false}},
+        y:{ticks:{color:'#5d9470',font:{size:10},callback:v=>_vcFmt(v)},grid:{color:'rgba(255,255,255,.05)'}}
+      }}
+  });
+}
+
+let _activeFont = localStorage.getItem('diefra_font') || 'classico';
+
+function applyFont(id){
+  const f = FONT_SETS.find(x=>x.id===id);
+  if(!f) return;
+  _activeFont = id;
+  localStorage.setItem('diefra_font', id);
+  const root = document.documentElement;
+  root.style.setProperty('--fh', f.fh);
+  root.style.setProperty('--fb', f.fb);
+  root.style.setProperty('--fn', f.fn);
+  // Update active state
+  document.querySelectorAll('.fp-item').forEach(el=>{
+    const isActive = el.dataset.fid === id;
+    el.classList.toggle('active', isActive);
+    const check = el.querySelector('.fp-check');
+    if(check) check.textContent = isActive ? '✓' : '';
+  });
+}
+
+function toggleFontPanel(){
+  document.getElementById('font-panel').classList.toggle('open');
+  // Close palette if open
+  document.getElementById('palette-panel').classList.remove('open');
+}
+
+function _initFontPanel(){
+  const list = document.getElementById('fp-list');
+  if(!list) return;
+  list.innerHTML = FONT_SETS.map(f=>`
+    <div class="fp-item${f.id===_activeFont?' active':''}" data-fid="${f.id}"
+         onclick="applyFont('${f.id}')">
+      <div class="fp-preview">
+        <div class="fp-preview-title" style="font-family:${f.fh}">${f.previewTitle}</div>
+        <div class="fp-preview-body" style="font-family:${f.fb}">${f.previewBody} — DIEFRA 2026</div>
+      </div>
+      <div class="fp-check">${f.id===_activeFont?'✓':''}</div>
+    </div>`).join('');
+  // Restore saved font
+  if(_activeFont !== 'classico') applyFont(_activeFont);
+  // Close on outside click
+  document.addEventListener('click', e=>{
+    const panel = document.getElementById('font-panel');
+    const btn   = document.getElementById('font-btn');
+    if(panel && !panel.contains(e.target) && e.target!==btn){
+      panel.classList.remove('open');
+    }
+  });
 }
 
 </script>
