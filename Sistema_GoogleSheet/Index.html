@@ -1251,7 +1251,7 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
     </div>
 
     <!-- KPI strip -->
-    <div id="virada-kpis" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:18px"></div>
+    <div id="virada-kpis" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:18px"></div>
 
     <!-- Ajustes da projeção -->
     <div style="background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:14px;padding:18px 22px;margin-bottom:18px">
@@ -1260,10 +1260,13 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
         <div id="virada-source-tag" style="font-size:9px;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:100px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#5d9470"></div>
       </div>
 
-      <!-- Linha 1 — Receita e Custo mensal (inputs numéricos editáveis) -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 36px;margin-bottom:16px">
+      <!-- Linha 1 — Receita, Custo Fixo, Custo Variável -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
         <div>
-          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Receita mensal (R$)</div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">
+            Receita mensal (R$)
+            <span style="font-size:8px;font-weight:600;opacity:.6;text-transform:none;letter-spacing:0;margin-left:4px">campo realizado ou manual</span>
+          </div>
           <div style="display:flex;align-items:center;gap:8px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:10px 14px">
             <span style="font-size:13px;color:#5d9470;font-weight:700;flex-shrink:0">R$</span>
             <input type="number" id="virada-revmes" min="0" step="100" placeholder="0"
@@ -1272,12 +1275,27 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
           </div>
         </div>
         <div>
-          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Custo fixo mensal (R$)</div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">
+            Custo fixo mensal (R$)
+            <span style="font-size:8px;font-weight:600;opacity:.6;text-transform:none;letter-spacing:0;margin-left:4px">equipe, infra, overhead</span>
+          </div>
           <div style="display:flex;align-items:center;gap:8px;background:rgba(234,88,12,.07);border:1px solid rgba(234,88,12,.25);border-radius:10px;padding:10px 14px">
             <span style="font-size:13px;color:#9a5a3a;font-weight:700;flex-shrink:0">R$</span>
             <input type="number" id="virada-cfmes" min="0" step="100" placeholder="0"
               style="background:none;border:none;outline:none;color:#f97316;font-family:var(--fn);font-size:16px;font-weight:800;width:100%;letter-spacing:-.3px">
             <span style="font-size:10px;color:#9a5a3a;flex-shrink:0">/mês</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">
+            Custo variável mensal (R$)
+            <span style="font-size:8px;font-weight:600;opacity:.6;text-transform:none;letter-spacing:0;margin-left:4px">insumos, materiais, comissões</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.25);border-radius:10px;padding:10px 14px">
+            <span style="font-size:13px;color:#9a3a3a;font-weight:700;flex-shrink:0">R$</span>
+            <input type="number" id="virada-cvmes" min="0" step="100" placeholder="0"
+              style="background:none;border:none;outline:none;color:#ef4444;font-family:var(--fn);font-size:16px;font-weight:800;width:100%;letter-spacing:-.3px">
+            <span style="font-size:10px;color:#9a3a3a;flex-shrink:0">/mês</span>
           </div>
         </div>
       </div>
@@ -3582,6 +3600,7 @@ function saveContract(id){
     periodoPagamento:    (document.getElementById('ci-periodo-pagamento')||{}).value?.trim()||null,
     comentFat:           id ? (getContract(id)||{}).comentFat||null : null,
     justificativa: id ? (getContract(id)||{}).justificativa||'' : '',
+    viradaCvMes:   id ? (getContract(id)||{}).viradaCvMes||null : null,
     logo, logoFit, logoPad,
     fotoGestorTec: _pendingGestorFoto !== null
       ? _pendingGestorFoto
@@ -5859,9 +5878,287 @@ function _initSalaSync(){
 }
 
 // ════════════════════════════════════════════════════════════
-//  UEN PICKER — seletor de unidade no cabeçalho
+//  UEN PICKER — seletor de unidade com logos por UEN
 // ════════════════════════════════════════════════════════════
-const UEN_PRESETS = ['UEN-100','UEN-200','UEN-300','UEN-400','UEN-500','UEN-600'];
+
+const UEN_LOGOS = {
+
+  // UEN-300 · Mineração e Indústria
+  'UEN-300': {
+    label: 'Mineração e Indústria',
+    dept: 'Diretoria Técnica',
+    color: '#38bdf8',
+    glow: 'rgba(37,99,235,.35)',
+    svg: `<svg id="logo-svg" viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1d4ed8" stop-opacity="0.5"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0.2"/></linearGradient>
+        <linearGradient id="g1b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.4"/><stop offset="100%" stop-color="#1d4ed8" stop-opacity="0.1"/></linearGradient>
+      </defs>
+      <polygon points="8,112 44,42 80,112" fill="url(#g1a)" stroke="#2563eb" stroke-width="1.2"/>
+      <polygon points="50,112 95,25 140,112" fill="url(#g1b)" stroke="#38bdf8" stroke-width="1.2"/>
+      <polygon points="44,42 36,62 52,62" fill="rgba(56,189,248,0.35)"/>
+      <polygon points="95,25 82,52 108,52" fill="rgba(56,189,248,0.3)"/>
+      <rect x="18" y="88" width="32" height="20" rx="2" fill="#0d1a2e" stroke="#38bdf8" stroke-width="1.5"/>
+      <polygon points="18,88 25,77 43,77 50,88" fill="#0f2040" stroke="#38bdf8" stroke-width="1.2"/>
+      <rect x="23" y="81" width="5" height="7" fill="rgba(56,189,248,0.4)" rx="1"/>
+      <rect x="31" y="81" width="5" height="7" fill="rgba(56,189,248,0.4)" rx="1"/>
+      <rect x="39" y="81" width="5" height="7" fill="rgba(56,189,248,0.4)" rx="1"/>
+      <circle cx="27" cy="110" r="5.5" fill="#0d1a2e" stroke="#38bdf8" stroke-width="1.8"/>
+      <circle cx="27" cy="110" r="2" fill="#38bdf8"/>
+      <circle cx="41" cy="110" r="5.5" fill="#0d1a2e" stroke="#38bdf8" stroke-width="1.8"/>
+      <circle cx="41" cy="110" r="2" fill="#38bdf8"/>
+      <line x1="4" y1="116" x2="156" y2="116" stroke="#1d4ed8" stroke-width="2"/>
+      <line x1="4" y1="122" x2="156" y2="122" stroke="#1d4ed8" stroke-width="2"/>
+      <line x1="15" y1="115" x2="15" y2="123" stroke="#0f2040" stroke-width="3"/>
+      <line x1="32" y1="115" x2="32" y2="123" stroke="#0f2040" stroke-width="3"/>
+      <line x1="55" y1="115" x2="55" y2="123" stroke="#0f2040" stroke-width="3"/>
+      <line x1="78" y1="115" x2="78" y2="123" stroke="#0f2040" stroke-width="3"/>
+      <line x1="101" y1="115" x2="101" y2="123" stroke="#0f2040" stroke-width="3"/>
+      <line x1="124" y1="115" x2="124" y2="123" stroke="#0f2040" stroke-width="3"/>
+      <line x1="147" y1="115" x2="147" y2="123" stroke="#0f2040" stroke-width="3"/>
+      <g id="gear-g"></g>
+      <rect x="127" y="72" width="12" height="38" rx="2" fill="#0d1a2e" stroke="#60a5fa" stroke-width="1.2"/>
+      <rect x="124" y="70" width="18" height="5" rx="1" fill="#0f2040" stroke="#60a5fa" stroke-width="1"/>
+      <circle cx="133" cy="62" r="5" fill="none" stroke="#60a5fa" stroke-width="1.2" opacity=".6"/>
+      <circle cx="136" cy="52" r="6" fill="none" stroke="#60a5fa" stroke-width="1" opacity=".35"/>
+      <circle cx="131" cy="43" r="7" fill="none" stroke="#60a5fa" stroke-width=".8" opacity=".18"/>
+      <line x1="64" y1="72" x2="78" y2="58" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+      <path d="M64,72 Q60,64 66,61 Q72,64 78,58" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M78,58 Q82,52 88,55 Q86,62 78,58" fill="rgba(56,189,248,0.4)" stroke="#38bdf8" stroke-width="1.2"/>
+    </svg>`
+  },
+
+  // UEN-100 · Operações (rodovia + balança rodoviária)
+  'UEN-100': {
+    label: 'Operações',
+    dept: 'Diretoria de Operações',
+    color: '#34d399',
+    glow: 'rgba(52,211,153,.32)',
+    svg: `<svg id="logo-svg" viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g2road" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#374151" stop-opacity="0.9"/><stop offset="100%" stop-color="#111827" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g2mach" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#059669" stop-opacity="0.7"/><stop offset="100%" stop-color="#064e3b" stop-opacity="0.95"/></linearGradient>
+        <linearGradient id="g2plat" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#059669" stop-opacity="0.6"/><stop offset="100%" stop-color="#064e3b" stop-opacity="0.9"/></linearGradient>
+      </defs>
+      <path d="M0,130 L50,65 L110,65 L160,130 Z" fill="url(#g2road)"/>
+      <line x1="80" y1="130" x2="80" y2="118" stroke="#f9fafb" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+      <line x1="80" y1="110" x2="80" y2="98" stroke="#f9fafb" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+      <line x1="80" y1="90" x2="80" y2="78" stroke="#f9fafb" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+      <line x1="80" y1="73" x2="80" y2="67" stroke="#f9fafb" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      <line x1="50" y1="65" x2="0" y2="130" stroke="#34d399" stroke-width="1.2" opacity=".6"/>
+      <line x1="110" y1="65" x2="160" y2="130" stroke="#34d399" stroke-width="1.2" opacity=".6"/>
+      <rect x="10" y="44" width="55" height="22" rx="2" fill="#0d2218" stroke="#10b981" stroke-width="1.2"/>
+      <rect x="40" y="36" width="16" height="10" rx="2" fill="#0f2a1c" stroke="#34d399" stroke-width="1"/>
+      <rect x="42" y="38" width="7" height="5" rx="1" fill="rgba(52,211,153,0.3)"/>
+      <circle cx="20" cy="68" r="5.5" fill="#0d2218" stroke="#34d399" stroke-width="1.5"/>
+      <circle cx="20" cy="68" r="2" fill="#34d399"/>
+      <circle cx="36" cy="68" r="5.5" fill="#0d2218" stroke="#34d399" stroke-width="1.5"/>
+      <circle cx="36" cy="68" r="2" fill="#34d399"/>
+      <circle cx="54" cy="68" r="5.5" fill="#0d2218" stroke="#34d399" stroke-width="1.5"/>
+      <circle cx="54" cy="68" r="2" fill="#34d399"/>
+      <rect x="10" y="64" width="55" height="5" rx="2" fill="url(#g2plat)" stroke="#10b981" stroke-width="1.5"/>
+      <rect x="10" y="68" width="55" height="4" rx="1" fill="rgba(16,185,129,.15)" stroke="#34d399" stroke-width="0.8"/>
+      <rect x="14" y="71" width="6" height="8" rx="1" fill="#064e3b" stroke="#10b981" stroke-width="1"/>
+      <rect x="55" y="71" width="6" height="8" rx="1" fill="#064e3b" stroke="#10b981" stroke-width="1"/>
+      <rect x="10" y="78" width="55" height="4" rx="2" fill="#047857" stroke="#059669" stroke-width="1"/>
+      <rect x="78" y="38" width="30" height="22" rx="3" fill="#0d2218" stroke="#34d399" stroke-width="1.5"/>
+      <rect x="80" y="40" width="26" height="14" rx="2" fill="rgba(52,211,153,0.12)" stroke="#6ee7b7" stroke-width="0.8"/>
+      <line x1="82" y1="46" x2="88" y2="46" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="82" y1="50" x2="88" y2="50" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="91" y1="43" x2="91" y2="53" stroke="#6ee7b7" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="95" y1="43" x2="95" y2="53" stroke="#6ee7b7" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="98" y1="46" x2="104" y2="46" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="98" y1="50" x2="104" y2="50" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="80" y="55" width="26" height="4" rx="1" fill="rgba(52,211,153,0.3)"/>
+      <line x1="93" y1="36" x2="93" y2="28" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="93,25 90,31 96,31" fill="#10b981"/>
+      <polygon points="114,15 120,35 108,35" fill="rgba(5,150,105,0.15)" stroke="#059669" stroke-width="0.8" opacity=".5"/>
+      <polygon points="128,20 138,42 118,42" fill="rgba(5,150,105,0.1)" stroke="#34d399" stroke-width="0.6" opacity=".4"/>
+      <circle cx="150" cy="30" r="8" fill="rgba(52,211,153,0.1)" stroke="#34d399" stroke-width="0.7" opacity=".5"/>
+    </svg>`
+  },
+
+  // UEN-200 · Infraestrutura (rodovia, asfalto, fiscalização)
+  'UEN-200': {
+    label: 'Infraestrutura',
+    dept: 'Diretoria de Infraestrutura',
+    color: '#f97316',
+    glow: 'rgba(249,115,22,.32)',
+    svg: `<svg id="logo-svg" viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g3road" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#374151" stop-opacity="0.95"/><stop offset="100%" stop-color="#111827" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g3mach" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ea580c" stop-opacity="0.7"/><stop offset="100%" stop-color="#c2410c" stop-opacity="0.4"/></linearGradient>
+      </defs>
+      <path d="M0,130 L55,55 L105,55 L160,130 Z" fill="url(#g3road)"/>
+      <line x1="55" y1="55" x2="0" y2="130" stroke="#f97316" stroke-width="1.5" opacity=".7"/>
+      <line x1="105" y1="55" x2="160" y2="130" stroke="#f97316" stroke-width="1.5" opacity=".7"/>
+      <line x1="80" y1="130" x2="80" y2="118" stroke="#fef3c7" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+      <line x1="80" y1="110" x2="80" y2="98" stroke="#fef3c7" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+      <line x1="80" y1="90" x2="80" y2="78" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+      <line x1="80" y1="71" x2="80" y2="62" stroke="#fef3c7" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      <rect x="112" y="55" width="44" height="7" rx="0" fill="#374151" stroke="#6b7280" stroke-width="0.8"/>
+      <rect x="112" y="62" width="44" height="6" rx="0" fill="#4b5563" stroke="#6b7280" stroke-width="0.6"/>
+      <rect x="112" y="68" width="44" height="8" rx="0" fill="#6b7280" stroke="#9ca3af" stroke-width="0.6"/>
+      <rect x="112" y="76" width="44" height="9" rx="0" fill="#92400e" stroke="#b45309" stroke-width="0.6" opacity=".7"/>
+      <line x1="110" y1="59" x2="108" y2="59" stroke="#f97316" stroke-width="1"/>
+      <line x1="110" y1="65" x2="108" y2="65" stroke="#f97316" stroke-width="1"/>
+      <line x1="110" y1="72" x2="108" y2="72" stroke="#f97316" stroke-width="1"/>
+      <line x1="110" y1="80" x2="108" y2="80" stroke="#f97316" stroke-width="1"/>
+      <rect x="12" y="72" width="40" height="22" rx="3" fill="url(#g3mach)" stroke="#f97316" stroke-width="1.5"/>
+      <rect x="20" y="66" width="22" height="10" rx="2" fill="#7c2d12" stroke="#ea580c" stroke-width="1.2"/>
+      <rect x="22" y="68" width="8" height="5" rx="1" fill="rgba(249,115,22,0.3)" stroke="#fdba74" stroke-width="0.7"/>
+      <ellipse cx="20" cy="96" rx="8" ry="8" fill="#1c1917" stroke="#f97316" stroke-width="2"/>
+      <ellipse cx="20" cy="96" rx="3" ry="3" fill="#f97316" opacity=".8"/>
+      <ellipse cx="50" cy="96" rx="8" ry="8" fill="#1c1917" stroke="#f97316" stroke-width="2"/>
+      <ellipse cx="50" cy="96" rx="3" ry="3" fill="#f97316" opacity=".8"/>
+      <line x1="12" y1="96" x2="62" y2="96" stroke="#374151" stroke-width="4" opacity=".6"/>
+      <rect x="64" y="18" width="38" height="28" rx="4" fill="#7c2d12" stroke="#f97316" stroke-width="2"/>
+      <line x1="64" y1="46" x2="83" y2="58" stroke="#b45309" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="64" y1="18" x2="102" y2="18" stroke="none"/>
+      <line x1="70" y1="26" x2="96" y2="26" stroke="#fdba74" stroke-width="2" stroke-linecap="round"/>
+      <line x1="70" y1="32" x2="90" y2="32" stroke="#fdba74" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+      <line x1="70" y1="37" x2="94" y2="37" stroke="#fdba74" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+      <path d="M74,41 L79,45 L92,38" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="80" y="56" width="6" height="10" rx="1" fill="#92400e" stroke="#b45309" stroke-width="0.8"/>
+    </svg>`
+  },
+
+  // UEN-400 · Energia (torre de transmissão)
+  'UEN-400': {
+    label: 'Energia',
+    dept: 'Diretoria de Energia',
+    color: '#fbbf24',
+    glow: 'rgba(251,191,36,.35)',
+    svg: `<svg id="logo-svg" viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g4b" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fcd34d" stop-opacity="0.9"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/></linearGradient>
+      </defs>
+      <line x1="80" y1="10" x2="56" y2="115" stroke="#92400e" stroke-width="3" stroke-linecap="round"/>
+      <line x1="80" y1="10" x2="104" y2="115" stroke="#92400e" stroke-width="3" stroke-linecap="round"/>
+      <line x1="64" y1="60" x2="96" y2="60" stroke="#92400e" stroke-width="2"/>
+      <line x1="60" y1="80" x2="100" y2="80" stroke="#92400e" stroke-width="2"/>
+      <line x1="57" y1="100" x2="103" y2="100" stroke="#92400e" stroke-width="2"/>
+      <line x1="36" y1="28" x2="124" y2="28" stroke="#b45309" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="40" y1="40" x2="120" y2="40" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="36" cy="28" r="3.5" fill="#0d1a0d" stroke="#fbbf24" stroke-width="1.2"/>
+      <circle cx="80" cy="28" r="3.5" fill="#0d1a0d" stroke="#fbbf24" stroke-width="1.2"/>
+      <circle cx="124" cy="28" r="3.5" fill="#0d1a0d" stroke="#fbbf24" stroke-width="1.2"/>
+      <circle cx="40" cy="40" r="3" fill="#0d1a0d" stroke="#fcd34d" stroke-width="1"/>
+      <circle cx="80" cy="40" r="3" fill="#0d1a0d" stroke="#fcd34d" stroke-width="1"/>
+      <circle cx="120" cy="40" r="3" fill="#0d1a0d" stroke="#fcd34d" stroke-width="1"/>
+      <path d="M36,28 Q58,38 80,28 Q102,18 124,28" fill="none" stroke="#fbbf24" stroke-width="1.2" opacity=".8"/>
+      <path d="M40,40 Q60,50 80,40 Q100,30 120,40" fill="none" stroke="#fcd34d" stroke-width="1" opacity=".6"/>
+      <polygon points="74,55 68,75 78,72 72,95 88,68 76,72 84,55" fill="url(#g4b)" stroke="#fbbf24" stroke-width="1"/>
+      <rect x="48" y="114" width="64" height="8" rx="3" fill="#0d1a0d" stroke="#b45309" stroke-width="1.2"/>
+      <circle cx="80" cy="28" r="8" fill="none" stroke="#fbbf24" stroke-width="0.8" opacity=".4"/>
+      <circle cx="80" cy="28" r="14" fill="none" stroke="#fbbf24" stroke-width="0.5" opacity=".2"/>
+      <line x1="20" y1="122" x2="140" y2="122" stroke="#92400e" stroke-width="1.5"/>
+      <line x1="30" y1="126" x2="130" y2="126" stroke="#92400e" stroke-width="1" opacity=".5"/>
+    </svg>`
+  },
+
+  // UEN-500 · Conserva (roçada, limpeza, verde em rodovias)
+  'UEN-500': {
+    label: 'Conserva',
+    dept: 'Diretoria de Conserva',
+    color: '#86efac',
+    glow: 'rgba(134,239,172,.3)',
+    svg: `<svg id="logo-svg" viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g5road" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#374151" stop-opacity="0.9"/><stop offset="100%" stop-color="#111827" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g5green" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.9"/><stop offset="100%" stop-color="#15803d" stop-opacity="0.6"/></linearGradient>
+        <linearGradient id="g5mach" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#15803d" stop-opacity="0.8"/><stop offset="100%" stop-color="#14532d" stop-opacity="0.95"/></linearGradient>
+      </defs>
+      <path d="M0,130 L52,62 L108,62 L160,130 Z" fill="url(#g5road)"/>
+      <path d="M0,130 L52,62 L38,62 L0,112 Z" fill="url(#g5green)" opacity=".7"/>
+      <path d="M160,130 L108,62 L122,62 L160,112 Z" fill="url(#g5green)" opacity=".7"/>
+      <ellipse cx="16" cy="85" rx="13" ry="7" fill="#16a34a" opacity=".8"/>
+      <ellipse cx="10" cy="92" rx="9" ry="5" fill="#15803d" opacity=".9"/>
+      <ellipse cx="26" cy="80" rx="10" ry="6" fill="#22c55e" opacity=".6"/>
+      <ellipse cx="144" cy="85" rx="13" ry="7" fill="#16a34a" opacity=".8"/>
+      <ellipse cx="150" cy="92" rx="9" ry="5" fill="#15803d" opacity=".9"/>
+      <ellipse cx="134" cy="80" rx="10" ry="6" fill="#22c55e" opacity=".6"/>
+      <line x1="80" y1="130" x2="80" y2="118" stroke="#f9fafb" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+      <line x1="80" y1="110" x2="80" y2="98" stroke="#f9fafb" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+      <line x1="80" y1="90" x2="80" y2="78" stroke="#f9fafb" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+      <rect x="28" y="48" width="44" height="18" rx="3" fill="url(#g5mach)" stroke="#22c55e" stroke-width="1.5"/>
+      <rect x="36" y="42" width="20" height="10" rx="2" fill="#14532d" stroke="#4ade80" stroke-width="1"/>
+      <rect x="38" y="44" width="8" height="5" rx="1" fill="rgba(134,239,172,0.25)" stroke="#86efac" stroke-width="0.7"/>
+      <circle cx="36" cy="68" r="6" fill="#1a1a1a" stroke="#4ade80" stroke-width="1.8"/>
+      <circle cx="36" cy="68" r="2.5" fill="#4ade80"/>
+      <circle cx="64" cy="68" r="6" fill="#1a1a1a" stroke="#4ade80" stroke-width="1.8"/>
+      <circle cx="64" cy="68" r="2.5" fill="#4ade80"/>
+      <rect x="8" y="62" width="24" height="4" rx="1" fill="#059669" stroke="#34d399" stroke-width="1"/>
+      <polygon points="8,62 2,64 8,66" fill="#34d399"/>
+      <line x1="4" y1="72" x2="7" y2="66" stroke="#4ade80" stroke-width="1" opacity=".7"/>
+      <line x1="10" y1="74" x2="12" y2="67" stroke="#4ade80" stroke-width="1" opacity=".6"/>
+      <line x1="16" y1="73" x2="17" y2="67" stroke="#22c55e" stroke-width="1" opacity=".5"/>
+      <rect x="90" y="43" width="52" height="18" rx="2" fill="#14532d" stroke="#22c55e" stroke-width="1.2" opacity=".85"/>
+      <rect x="126" y="36" width="16" height="9" rx="2" fill="#15803d" stroke="#4ade80" stroke-width="1"/>
+      <rect x="128" y="38" width="6" height="5" rx="1" fill="rgba(134,239,172,0.25)"/>
+      <circle cx="98" cy="62" r="5.5" fill="#1a1a1a" stroke="#4ade80" stroke-width="1.5"/>
+      <circle cx="98" cy="62" r="2" fill="#4ade80"/>
+      <circle cx="114" cy="62" r="5.5" fill="#1a1a1a" stroke="#4ade80" stroke-width="1.5"/>
+      <circle cx="114" cy="62" r="2" fill="#4ade80"/>
+      <circle cx="133" cy="62" r="5.5" fill="#1a1a1a" stroke="#4ade80" stroke-width="1.5"/>
+      <circle cx="133" cy="62" r="2" fill="#4ade80"/>
+      <ellipse cx="108" cy="49" rx="18" ry="7" fill="#166534" stroke="#22c55e" stroke-width="1" opacity=".8"/>
+      <line x1="90" y1="58" x2="80" y2="68" stroke="#67e8f9" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+      <line x1="90" y1="58" x2="76" y2="64" stroke="#67e8f9" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+      <line x1="90" y1="58" x2="78" y2="72" stroke="#67e8f9" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+      <circle cx="148" cy="18" r="10" fill="rgba(134,239,172,0.1)" stroke="#4ade80" stroke-width="0.8" opacity=".5"/>
+      <circle cx="148" cy="18" r="5" fill="rgba(134,239,172,0.2)" stroke="#86efac" stroke-width="0.6" opacity=".7"/>
+    </svg>`
+  },
+
+  // Laboratório Central (sem UEN — referência de nome apenas)
+  'LAB': {
+    label: 'Laboratório Central',
+    dept: 'Laboratório Central',
+    color: '#c084fc',
+    glow: 'rgba(192,132,252,.3)',
+    svg: `<svg id="logo-svg" viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g6a" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#7c3aed" stop-opacity="0.5"/><stop offset="100%" stop-color="#c084fc" stop-opacity="0.1"/></linearGradient>
+      </defs>
+      <path d="M62,20 L62,62 L32,108 L128,108 L98,62 L98,20 Z" fill="url(#g6a)" stroke="#a855f7" stroke-width="1.8"/>
+      <path d="M62,20 L98,20" stroke="#c084fc" stroke-width="3" stroke-linecap="round"/>
+      <rect x="66" y="14" width="28" height="8" rx="3" fill="#0d0a1a" stroke="#a855f7" stroke-width="1.2"/>
+      <path d="M42,96 Q80,86 118,96 L128,108 L32,108 Z" fill="rgba(192,132,252,0.3)"/>
+      <path d="M38,100 Q80,90 122,100" fill="none" stroke="#c084fc" stroke-width="1" opacity=".6"/>
+      <circle cx="60" cy="90" r="4" fill="none" stroke="#ddd6fe" stroke-width="1" opacity=".7"/>
+      <circle cx="80" cy="82" r="3" fill="none" stroke="#ddd6fe" stroke-width="1" opacity=".5"/>
+      <circle cx="100" cy="88" r="4.5" fill="none" stroke="#ddd6fe" stroke-width="1" opacity=".6"/>
+      <line x1="18" y1="35" x2="32" y2="35" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/>
+      <line x1="25" y1="28" x2="25" y2="42" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/>
+      <rect x="118" y="30" width="32" height="7" rx="1" fill="rgba(192,132,252,0.15)" stroke="#a855f7" stroke-width="0.8"/>
+      <rect x="118" y="40" width="32" height="7" rx="1" fill="rgba(192,132,252,0.25)" stroke="#a855f7" stroke-width="0.8"/>
+      <rect x="118" y="50" width="32" height="7" rx="1" fill="rgba(192,132,252,0.35)" stroke="#a855f7" stroke-width="0.8"/>
+      <rect x="118" y="60" width="32" height="7" rx="1" fill="rgba(192,132,252,0.45)" stroke="#a855f7" stroke-width="0.8"/>
+      <line x1="118" y1="28" x2="118" y2="68" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="10" y1="20" x2="10" y2="108" stroke="#7c3aed" stroke-width="1.2"/>
+      <polygon points="10,18 7,26 13,26" fill="#7c3aed"/>
+      <polygon points="10,110 7,102 13,102" fill="#7c3aed"/>
+      <rect x="24" y="108" width="112" height="6" rx="2" fill="#0d0a1a" stroke="#7c3aed" stroke-width="1"/>
+      <rect x="32" y="114" width="8" height="10" rx="1" fill="#0d0a1a" stroke="#7c3aed" stroke-width="0.8"/>
+      <rect x="120" y="114" width="8" height="10" rx="1" fill="#0d0a1a" stroke="#7c3aed" stroke-width="0.8"/>
+    </svg>`
+  }
+};
+
+// Ordem de exibição no picker
+const UEN_ORDER = ['UEN-300','UEN-100','UEN-200','UEN-400','UEN-500','LAB'];
+
+function _applyLogoToHeader(uenKey){
+  const def = UEN_LOGOS[uenKey] || UEN_LOGOS['UEN-300'];
+  const wrap = document.querySelector('.hdr-logo');
+  if(wrap){
+    wrap.innerHTML = def.svg;
+    wrap.querySelector('svg').style.filter = `drop-shadow(0 0 14px ${def.glow})`;
+  }
+  // Re-draw gear if on Mineração
+  if(uenKey === 'UEN-300') setTimeout(_drawGear, 0);
+}
 
 function _syncUenAll(value){
   const uenText = document.getElementById('hdr-uen-text');
@@ -5869,12 +6166,13 @@ function _syncUenAll(value){
   const ftrUen  = document.getElementById('ftr-uen');
   if(ftrUen)  ftrUen.textContent  = value;
   localStorage.setItem('diefra_uen', value);
-  // Update active state in picker
+  _applyLogoToHeader(value);
+  // Active state no picker
   document.querySelectorAll('.uen-opt').forEach(el=>{
     const active = el.dataset.val === value;
-    el.style.background  = active ? 'rgba(16,185,129,.15)' : 'rgba(255,255,255,.03)';
-    el.style.color       = active ? 'var(--gnl)'           : 'var(--t2)';
-    el.style.borderColor = active ? 'rgba(16,185,129,.3)'  : 'var(--b1)';
+    el.style.borderColor = active ? (UEN_LOGOS[el.dataset.val]?.color||'var(--gnl)') : 'rgba(255,255,255,.08)';
+    el.style.background  = active ? 'rgba(255,255,255,.06)' : 'transparent';
+    el.querySelector('.uen-opt-dot')?.style && (el.querySelector('.uen-opt-dot').style.opacity = active ? '1' : '0.4');
   });
 }
 
@@ -5892,7 +6190,6 @@ function toggleUenPicker(){
   if(!picker || !trigger) return;
   const isOpen = picker.style.display !== 'none';
   if(isOpen){ picker.style.display = 'none'; return; }
-  // Position below the trigger using fixed coords
   const r = trigger.getBoundingClientRect();
   picker.style.top  = (r.bottom + 8) + 'px';
   picker.style.left = r.left + 'px';
@@ -5901,7 +6198,16 @@ function toggleUenPicker(){
 
 function applyUen(value){
   if(!value || !value.trim()) return;
-  _syncUenAll(value.trim().toUpperCase());
+  const key = value.trim().toUpperCase();
+  _syncUenAll(key);
+  // Se a UEN tiver dept padrão, pré-preencher
+  const def = UEN_LOGOS[key];
+  if(def && def.dept){
+    _syncDeptAll(def.dept);
+    const deptDisplay = document.getElementById('hdr-dept-display');
+    if(deptDisplay) deptDisplay.innerHTML = `<span id="hdr-dept-text">${def.dept}</span><span style="font-size:11px;color:var(--gnl);margin-left:4px;opacity:.7">✎</span>`;
+    _attachDeptEditor();
+  }
   const picker = document.getElementById('hdr-uen-picker');
   if(picker) picker.style.display = 'none';
 }
@@ -5930,34 +6236,45 @@ function _attachDeptEditor(){
       const val = input.value.trim() || 'Diretoria Técnica';
       _syncDeptAll(val);
       deptDisplay.innerHTML = `<span id="hdr-dept-text">${val}</span><span style="font-size:11px;color:var(--gnl);margin-left:4px;opacity:.7">✎</span>`;
-      _attachDeptEditor(); // re-attach
+      _attachDeptEditor();
     };
     input.addEventListener('blur',    finish, {once:true});
     input.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key==='Escape') input.blur(); });
-    deptDisplay.onclick = null; // prevent double-fire while editing
+    deptDisplay.onclick = null;
   };
 }
 
 function _initUenPicker(){
-  // Build preset buttons
   const opts  = document.getElementById('hdr-uen-options');
   const saved = localStorage.getItem('diefra_uen') || 'UEN-300';
+
   if(opts){
-    opts.innerHTML = UEN_PRESETS.map(u=>`
-      <button class="uen-opt" data-val="${u}" onclick="applyUen('${u}')"
-        style="background:${u===saved?'rgba(16,185,129,.15)':'rgba(255,255,255,.03)'};
-               border:1px solid ${u===saved?'rgba(16,185,129,.3)':'var(--b1)'};
-               color:${u===saved?'var(--gnl)':'var(--t2)'};
-               border-radius:8px;padding:7px 14px;cursor:pointer;font-family:var(--fb);
-               font-size:12px;font-weight:800;text-align:left;letter-spacing:.8px;
-               transition:all .15s">${u}</button>`).join('');
+    opts.innerHTML = UEN_ORDER.map(key=>{
+      const def = UEN_LOGOS[key];
+      const active = key === saved;
+      return `<button class="uen-opt" data-val="${key}" onclick="applyUen('${key}')"
+        style="display:flex;align-items:center;gap:10px;padding:10px 12px;
+               background:${active?'rgba(255,255,255,.06)':'transparent'};
+               border:1px solid ${active?(def.color||'rgba(16,185,129,.5)'):'rgba(255,255,255,.08)'};
+               border-radius:12px;cursor:pointer;width:100%;text-align:left;
+               transition:all .18s;position:relative;overflow:hidden">
+        <div style="width:44px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+                    background:rgba(0,0,0,.3);border-radius:8px;border:1px solid rgba(255,255,255,.06)">
+          <svg viewBox="0 0 160 130" style="width:40px;height:32px;filter:drop-shadow(0 0 4px ${def.color}55)">${def.svg.replace(/^<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'')}</svg>
+        </div>
+        <div style="min-width:0">
+          <div style="font-size:11px;font-weight:800;color:${active?def.color:'var(--t2)'};letter-spacing:.5px;margin-bottom:2px">${key}</div>
+          <div style="font-size:10px;color:var(--t3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${def.label}</div>
+        </div>
+        <span class="uen-opt-dot" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
+          width:6px;height:6px;border-radius:50%;background:${def.color};opacity:${active?1:.3}"></span>
+      </button>`;
+    }).join('');
   }
 
-  // Trigger click on the UEN display
   const trigger = document.getElementById('hdr-unit-display');
   if(trigger) trigger.onclick = e=>{ e.stopPropagation(); toggleUenPicker(); };
 
-  // Close picker on outside click
   document.addEventListener('click', e=>{
     const picker = document.getElementById('hdr-uen-picker');
     if(picker && picker.style.display!=='none' && !picker.contains(e.target)){
@@ -5965,7 +6282,6 @@ function _initUenPicker(){
     }
   });
 
-  // Restore saved values
   const savedDept = localStorage.getItem('diefra_dept') || 'Diretoria Técnica';
   _syncUenAll(saved);
   _syncDeptAll(savedDept);
@@ -8785,11 +9101,11 @@ async function deleteUsuario(id, name){
 </script>
 <!-- ══ UEN PICKER (body-level para escapar overflow:hidden do header) ══ -->
 <div id="hdr-uen-picker" style="display:none;position:fixed;z-index:9999;
-    background:rgba(8,20,14,.97);backdrop-filter:blur(24px) saturate(160%);
-    border:1px solid rgba(16,185,129,.28);border-radius:16px;padding:14px;
-    box-shadow:0 16px 48px rgba(0,0,0,.65),0 0 0 1px rgba(16,185,129,.08);min-width:268px">
+    background:rgba(6,16,10,.97);backdrop-filter:blur(28px) saturate(180%);
+    border:1px solid rgba(16,185,129,.22);border-radius:18px;padding:16px;
+    box-shadow:0 20px 60px rgba(0,0,0,.75),0 0 0 1px rgba(16,185,129,.06);min-width:310px">
   <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:var(--t3);
-      text-transform:uppercase;margin-bottom:10px;padding:0 4px;
+      text-transform:uppercase;margin-bottom:12px;padding:0 4px;
       display:flex;align-items:center;gap:8px">
     Selecionar Unidade
     <span style="flex:1;height:1px;background:var(--b1)"></span>
@@ -8798,7 +9114,7 @@ async function deleteUsuario(id, name){
              line-height:1;padding:0 2px;transition:color .15s"
       onmouseover="this.style.color='var(--rdl)'" onmouseout="this.style.color='var(--t3)'">✕</button>
   </div>
-  <div id="hdr-uen-options" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px"></div>
+  <div id="hdr-uen-options" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
   <div style="border-top:1px solid var(--b1);padding-top:10px">
     <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);
         text-transform:uppercase;margin-bottom:6px;padding:0 2px">Outra unidade</div>
@@ -9304,9 +9620,9 @@ function renderViradasChart(){
   const ct = ST.contracts.find(c=>c.id===_finCtId);
   if(!ct){ const el=document.getElementById('virada-subtitle'); if(el) el.textContent='Nenhum contrato selecionado'; return; }
 
-  // Wiring única de todos os inputs
+  // ── Wiring única de todos os inputs (executada apenas uma vez) ──────────
   if(!_vcInitDone){
-    const allIds=['virada-inv','virada-ramp','virada-rrev','virada-rcost','virada-revmes','virada-cfmes'];
+    const allIds=['virada-inv','virada-ramp','virada-rrev','virada-rcost','virada-revmes','virada-cfmes','virada-cvmes'];
     allIds.forEach(id=>{
       const el=document.getElementById(id);
       if(!el) return;
@@ -9319,6 +9635,7 @@ function renderViradasChart(){
           c2.viradaRcost  = +document.getElementById('virada-rcost').value;
           c2.viradaRevMes = +document.getElementById('virada-revmes').value||null;
           c2.viradaCfMes  = +document.getElementById('virada-cfmes').value||null;
+          c2.viradaCvMes  = +document.getElementById('virada-cvmes').value||null;
           scheduleAutoSync();
         }
         renderViradasChart();
@@ -9327,27 +9644,51 @@ function renderViradasChart(){
     _vcInitDone=true;
   }
 
-  // Ao trocar de contrato carrega valores salvos ou sugere do contrato
+  // ── Ao trocar de contrato, carrega valores salvos ou sugere do contrato ──
   if(window._vcLastCtId!==_finCtId){
     window._vcLastCtId=_finCtId;
     const sD=ct.start?new Date(ct.start+'T00:00:00'):new Date();
     const eD=ct.end  ?new Date(ct.end  +'T00:00:00'):new Date();
     const dT=Math.max(1,(eD.getFullYear()-sD.getFullYear())*12+(eD.getMonth()-sD.getMonth()));
-    const defRev = ct.receita>0 ? Math.round(ct.receita/dT) : 0;
-    const defCf  = (ct.custoTotal||ct.custo||0)>0 ? Math.round((ct.custoTotal||ct.custo||0)/dT) : 0;
+
+    // Receita: prioridade → realizados/mês médio → VG÷dur → manual
+    const medRealMes = ct._totalFaturado>0 && ct._countMeds>0
+      ? Math.round(ct._totalFaturado / ct._countMeds) : 0;
+    const defRev = ct.viradaRevMes!=null ? ct.viradaRevMes
+      : medRealMes>0 ? medRealMes
+      : ct.receita>0 ? Math.round(ct.receita/dT)
+      : ct.saldoGlobal>0 ? Math.round(ct.saldoGlobal/dT) : 0;
+
+    // Custo fixo: prioridade → _totalCusto/meds médio → manual
+    const medCustMes = ct._totalCusto>0 && ct._countMeds>0
+      ? Math.round(ct._totalCusto / ct._countMeds) : 0;
+    const defCf = ct.viradaCfMes!=null ? ct.viradaCfMes
+      : medCustMes>0 ? medCustMes
+      : ct.custoTotal>0 ? Math.round(ct.custoTotal/dT) : 0;
+
+    const defCv = ct.viradaCvMes!=null ? ct.viradaCvMes : 0;
+
     document.getElementById('virada-inv').value   = ct.viradaInv   ?? 0;
     document.getElementById('virada-ramp').value  = ct.viradaRamp  ?? 0;
     document.getElementById('virada-rrev').value  = ct.viradaRrev  ?? 0;
     document.getElementById('virada-rcost').value = ct.viradaRcost ?? 0;
-    document.getElementById('virada-revmes').value= ct.viradaRevMes != null ? ct.viradaRevMes : (defRev||''  );
-    document.getElementById('virada-cfmes').value = ct.viradaCfMes  != null ? ct.viradaCfMes  : (defCf ||''  );
+    document.getElementById('virada-revmes').value= defRev||'';
+    document.getElementById('virada-cfmes').value = defCf||'';
+    document.getElementById('virada-cvmes').value = defCv||'';
+
+    // Tag de origem dos dados
     const tag=document.getElementById('virada-source-tag');
     if(tag){
-      const hasRev=ct.receita>0;
-      tag.textContent  =hasRev?'✓ Dados importados do contrato':'⚠ Contrato sem receita — insira manualmente';
-      tag.style.background =hasRev?'rgba(16,185,129,.12)':'rgba(234,88,12,.12)';
-      tag.style.borderColor=hasRev?'rgba(16,185,129,.25)':'rgba(234,88,12,.35)';
-      tag.style.color      =hasRev?'#5d9470'             :'#ea580c';
+      const hasMedData = medRealMes>0;
+      const hasCusto   = medCustMes>0;
+      tag.textContent  = hasMedData
+        ? `✓ Receita: média de ${ct._countMeds} medições`
+        : ct.receita>0 || ct.saldoGlobal>0
+        ? '↗ Dados do contrato (sem medições)'
+        : '⚠ Insira manualmente — sem dados';
+      tag.style.background  = hasMedData ? 'rgba(16,185,129,.12)' : hasCusto||ct.receita>0 ? 'rgba(56,189,248,.1)' : 'rgba(234,88,12,.12)';
+      tag.style.borderColor = hasMedData ? 'rgba(16,185,129,.25)' : hasCusto||ct.receita>0 ? 'rgba(56,189,248,.25)' : 'rgba(234,88,12,.35)';
+      tag.style.color       = hasMedData ? '#5d9470'              : hasCusto||ct.receita>0 ? '#38bdf8'              : '#ea580c';
     }
   }
 
@@ -9356,10 +9697,16 @@ function renderViradasChart(){
   const endD  =ct.end  ?new Date(ct.end  +'T00:00:00'):new Date();
   const dur   =Math.max(1,(endD.getFullYear()-startD.getFullYear())*12+(endD.getMonth()-startD.getMonth()));
 
-  const inputRevMes=+document.getElementById('virada-revmes').value;
-  const inputCfMes =+document.getElementById('virada-cfmes').value;
-  const revMes=inputRevMes>0?inputRevMes:(ct.receita>0?ct.receita/dur:0);
-  const cfMes =inputCfMes >0?inputCfMes :((ct.custoTotal||ct.custo||0)>0?(ct.custoTotal||ct.custo||0)/dur:0);
+  // ── Leitura dos inputs ────────────────────────────────────────────────────
+  const inputRevMes=+document.getElementById('virada-revmes').value||0;
+  const inputCfMes =+document.getElementById('virada-cfmes').value||0;
+  const inputCvMes =+document.getElementById('virada-cvmes').value||0;
+
+  // Custo total mensal = fixo + variável
+  const revMes     = inputRevMes;
+  const cfMes      = inputCfMes;
+  const cvMes      = inputCvMes;
+  const custoMesTotal = cfMes + cvMes;
 
   const inv   =+document.getElementById('virada-inv').value;
   const ramp  =+document.getElementById('virada-ramp').value;
@@ -9373,31 +9720,50 @@ function renderViradasChart(){
 
   function lbl(m){const tot=startD.getMonth()+m;return MESES[tot%12]+'/'+String(startD.getFullYear()+Math.floor(tot/12)).slice(2);}
 
+  // ── Simulação mês a mês ───────────────────────────────────────────────────
   const labels=[lbl(0)],cumData=[-inv],cumRevData=[0],netData=[],yearly=[];
   let cum=-inv,cumRev=0,beMonth=null,beDate=null,totRevP=0,totCostP=inv,yAcc={r:0,c:0,n:0},yr=1;
 
   for(let m=1;m<=dur;m++){
     const yIdx=Math.floor((m-1)/12);
-    const mRev=revMes*Math.pow(1+rRev,yIdx)*(ramp===0?1:Math.min(1,m/ramp));
-    const mCf =cfMes *Math.pow(1+rCost,yIdx);
-    const net =mRev-mCf;
-    totRevP+=mRev; totCostP+=mCf; cumRev+=mRev; cum+=net;
+    const rampFactor=ramp===0?1:Math.min(1,m/ramp);
+    const mRev = revMes * Math.pow(1+rRev,yIdx) * rampFactor;
+    const mCf  = cfMes  * Math.pow(1+rCost,yIdx);
+    const mCv  = cvMes  * Math.pow(1+rCost,yIdx) * rampFactor; // variável escala com rampup
+    const mCost= mCf + mCv;
+    const net  = mRev - mCost;
+    totRevP+=mRev; totCostP+=mCost; cumRev+=mRev; cum+=net;
     netData.push(Math.round(net)); cumData.push(Math.round(cum)); cumRevData.push(Math.round(cumRev)); labels.push(lbl(m));
-    yAcc.r+=mRev; yAcc.c+=mCf; yAcc.n+=net;
-    if(m%12===0||m===dur){yearly.push({year:yr,rev:yAcc.r,cost:yAcc.c,net:yAcc.n,rM:revMes*Math.pow(1+rRev,yIdx),cM:cfMes*Math.pow(1+rCost,yIdx)});yAcc={r:0,c:0,n:0};yr++;}
-    if(beMonth===null&&cum>=0){beMonth=m;const tot=startD.getMonth()+m;beDate=MESES[tot%12]+'/'+(startD.getFullYear()+Math.floor(tot/12));}
+    yAcc.r+=mRev; yAcc.c+=mCost; yAcc.n+=net;
+    if(m%12===0||m===dur){
+      yearly.push({year:yr,rev:yAcc.r,cost:yAcc.c,net:yAcc.n,
+        rM:revMes*Math.pow(1+rRev,yIdx),
+        cfM:cfMes*Math.pow(1+rCost,yIdx),
+        cvM:cvMes*Math.pow(1+rCost,yIdx)});
+      yAcc={r:0,c:0,n:0};yr++;
+    }
+    if(beMonth===null&&cum>=0){
+      beMonth=m;
+      const tot=startD.getMonth()+m;
+      beDate=MESES[tot%12]+'/'+(startD.getFullYear()+Math.floor(tot/12));
+    }
   }
   _vcBeMonth=beMonth;
-  const fp=cum, roi=totCostP>0?Math.round(fp/totCostP*100):0;
-  const semDados=revMes===0&&cfMes===0;
+  const fp=cum;
+  const roi=totCostP>0?Math.round(fp/totCostP*100):0;
+  const margemMedia=totRevP>0?((totRevP-totCostP)/totRevP*100):0;
+  const semDados=revMes===0&&custoMesTotal===0;
 
+  // ── Subtitle e Chart sub ─────────────────────────────────────────────────
   document.getElementById('virada-subtitle').textContent=semDados
-    ?ct.name+' — ⚠ Insira a receita e o custo mensal para calcular a virada'
+    ?ct.name+' — ⚠ Insira receita e custo para calcular a virada'
     :ct.name+' · '+dur+' meses · '+lbl(0)+' → '+lbl(dur);
   document.getElementById('virada-chart-sub').textContent=semDados
-    ?'Preencha os campos de receita e custo acima para ver a projeção'
-    :beMonth?'Virada no '+beMonth+'º mês ('+beDate+') — Receita/mês: '+_vcFull(revMes):'Sem ponto de virada dentro do período do contrato';
+    ?'Preencha os campos acima para ver a projeção'
+    :beMonth?'Virada no '+beMonth+'º mês ('+beDate+') — Receita/mês: '+_vcFull(revMes)
+            :'Sem ponto de virada dentro do período do contrato';
 
+  // ── Banner ────────────────────────────────────────────────────────────────
   const ok=beMonth!==null&&!semDados;
   const ban=document.getElementById('virada-banner');
   if(ban){
@@ -9411,44 +9777,55 @@ function renderViradasChart(){
   document.getElementById('virada-ban-profit').textContent =semDados?'—':_vcFmt(fp);
   document.getElementById('virada-ban-roi').textContent    =semDados?'—':(fp>=0?'+':'')+roi+'%';
 
+  // ── KPIs ─────────────────────────────────────────────────────────────────
   const kpiEl=document.getElementById('virada-kpis');
   if(kpiEl) kpiEl.innerHTML=[
-    {l:'Receita mensal base',    v:revMes>0?_vcFmt(revMes):'—',                    c:'#10b981'},
-    {l:'Custo fixo mensal base', v:cfMes>0?_vcFmt(cfMes):'—',                     c:'#f97316'},
-    {l:'Duração do contrato',    v:dur+' meses',                                   c:'#38bdf8'},
-    {l:'Receita total projetada',v:totRevP>0?_vcFmt(totRevP):'—',                 c:'#f59e0b'},
-    {l:'Resultado ao fim',       v:semDados?'—':(fp>=0?'+':'')+_vcFmt(fp),         c:fp>=0?'#10b981':'#ef4444'},
-  ].map(k=>`<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;border-top:2px solid ${k.c}">
-    <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px">${k.l}</div>
-    <div style="font-family:var(--fn);font-size:15px;font-weight:800;color:${k.c}">${k.v}</div>
+    {l:'Receita mensal base',    v:revMes>0?_vcFmt(revMes):'—',                          c:'#10b981'},
+    {l:'Custo fixo mensal',      v:cfMes>0?_vcFmt(cfMes):'—',                            c:'#f97316'},
+    {l:'Custo variável mensal',  v:cvMes>0?_vcFmt(cvMes):'—',                            c:'#ef4444'},
+    {l:'Margem bruta mensal',    v:revMes>0?((revMes-custoMesTotal)/revMes*100).toFixed(1)+'%':'—', c:(revMes-custoMesTotal)>=0?'#10b981':'#ef4444'},
+    {l:'Duração do contrato',    v:dur+' meses',                                          c:'#38bdf8'},
+    {l:'Resultado ao fim',       v:semDados?'—':(fp>=0?'+':'')+_vcFmt(fp),               c:fp>=0?'#10b981':'#ef4444'},
+  ].map(k=>`<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px 13px;border-top:2px solid ${k.c}">
+    <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:5px">${k.l}</div>
+    <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:${k.c}">${k.v}</div>
   </div>`).join('');
 
+  // ── Spread / análise ─────────────────────────────────────────────────────
   const spread=parseFloat((+document.getElementById('virada-rrev').value)-(+document.getElementById('virada-rcost').value));
-  const sc=spread>=0?'#10b981':'#ef4444', lastY=Math.floor((dur-1)/12);
+  const sc=spread>=0?'#10b981':'#ef4444';
+  const lastY=Math.floor((dur-1)/12);
   const spEl=document.getElementById('virada-spread');
-  if(spEl) spEl.innerHTML=`Receita no último ano: <strong style="color:#10b981">${_vcFull(revMes*Math.pow(1+rRev,lastY))}/mês</strong>
-    &nbsp;·&nbsp; Custo no último ano: <strong style="color:#f97316">${_vcFull(cfMes*Math.pow(1+rCost,lastY))}/mês</strong>
-    &nbsp;·&nbsp; Spread receita–custo: <strong style="color:${sc}">${spread>=0?'+':''  }${spread.toFixed(2)}% a.a.</strong>`;
+  if(spEl) spEl.innerHTML=
+    `Receita/mês (último ano): <strong style="color:#10b981">${_vcFull(revMes*Math.pow(1+rRev,lastY))}</strong>`
+    +` &nbsp;·&nbsp; Custo total/mês (último ano): <strong style="color:#f97316">${_vcFull((cfMes+cvMes)*Math.pow(1+rCost,lastY))}</strong>`
+    +` &nbsp;·&nbsp; Margem projetada: <strong style="color:${sc}">${margemMedia.toFixed(1)}%</strong>`
+    +` &nbsp;·&nbsp; Spread: <strong style="color:${sc}">${spread>=0?'+':''}${spread.toFixed(2)}% a.a.</strong>`;
 
   if(semDados) return;
 
   _vcDrawCharts(labels,cumData,cumRevData,netData);
 
+  // Timeline
   const tlEl=document.getElementById('virada-timeline-bars');
   if(tlEl) tlEl.innerHTML=netData.map((v,i)=>{
     const iv=beMonth!==null&&(i+1)===beMonth;
     return `<div title="${labels[i+1]}: ${_vcFull(v)}" style="flex:1;min-width:8px;height:22px;background:${v>=0?'#10b981':'#ef4444'};border:${iv?'2px solid #38bdf8':'none'};border-radius:3px;opacity:${v>=0?.75:.55};cursor:default"></div>`;
   }).join('');
 
+  // Yearly table
   const yEl=document.getElementById('virada-yearly');
   if(yEl&&yearly.length){
     const rows=yearly.map(y=>{
       const nc=y.net>=0?'#10b981':'#ef4444';
+      const mar=y.rev>0?((y.rev-y.cost)/y.rev*100).toFixed(1)+'%':'—';
       return `<tr style="border-top:1px solid rgba(255,255,255,.06)">
         <td style="padding:8px 12px;font-size:12px;color:var(--t2)">Ano ${y.year}</td>
         <td style="padding:8px 12px;font-size:12px;color:#10b981;text-align:right">${_vcFull(y.rM)}<span style="font-size:9px;opacity:.6">/mês</span></td>
-        <td style="padding:8px 12px;font-size:12px;color:#f97316;text-align:right">${_vcFull(y.cM)}<span style="font-size:9px;opacity:.6">/mês</span></td>
-        <td style="padding:8px 12px;font-size:13px;font-family:var(--fn);font-weight:800;color:${nc};text-align:right">${y.net>=0?'+':''  }${_vcFull(y.net)}</td>
+        <td style="padding:8px 12px;font-size:12px;color:#f97316;text-align:right">${_vcFull(y.cfM)}<span style="font-size:9px;opacity:.6">/mês</span></td>
+        <td style="padding:8px 12px;font-size:12px;color:#ef4444;text-align:right">${_vcFull(y.cvM)}<span style="font-size:9px;opacity:.6">/mês</span></td>
+        <td style="padding:8px 12px;font-size:12px;color:var(--t2);text-align:right">${mar}</td>
+        <td style="padding:8px 12px;font-size:13px;font-family:var(--fn);font-weight:800;color:${nc};text-align:right">${y.net>=0?'+':''}${_vcFull(y.net)}</td>
       </tr>`;
     }).join('');
     yEl.innerHTML=`<div style="font-size:9px;font-weight:800;letter-spacing:1.8px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Resumo por ano com reajuste aplicado</div>
@@ -9456,8 +9833,10 @@ function renderViradasChart(){
     <table style="width:100%;border-collapse:collapse">
       <thead><tr style="background:rgba(255,255,255,.04)">
         <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:left">Período</th>
-        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:right">Receita/mês</th>
-        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:right">Custo/mês</th>
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:#10b981;text-transform:uppercase;text-align:right">Receita/mês</th>
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:#f97316;text-transform:uppercase;text-align:right">Custo fixo/mês</th>
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:#ef4444;text-transform:uppercase;text-align:right">Custo variável/mês</th>
+        <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:right">Margem</th>
         <th style="padding:8px 12px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;text-align:right">Resultado anual</th>
       </tr></thead><tbody>${rows}</tbody>
     </table></div>`;
