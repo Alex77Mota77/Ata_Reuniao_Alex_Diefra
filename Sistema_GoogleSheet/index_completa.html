@@ -816,11 +816,11 @@ select option:hover,select option:focus,select option:checked{background:#1d4ed8
 .nav-logout{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);color:var(--rdl);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:14px;line-height:1;transition:all .2s}
 .nav-logout:hover{background:rgba(220,38,38,.25);transform:scale(1.1)}
 
-/* ── Topbar flutuante — controles do usuário ───────────────────── */
+/* ── Topbar de controles — dentro do header ────────────────────── */
 #user-topbar{
-  position:fixed;
-  top:14px;left:20px;
-  z-index:9000;
+  position:absolute;
+  bottom:14px;left:20px;
+  z-index:200;
   display:flex;align-items:center;gap:8px;
   background:rgba(7,22,13,0.82);
   backdrop-filter:blur(20px) saturate(180%);
@@ -1721,8 +1721,24 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
     </div>
     <div class="hdr-stats">
       <div class="sp"><div class="sl">Data da Reunião</div><input class="sv hdr-date-inp" type="date" id="hdr-date" value="2026-03-05" title="Clique para editar a data da reunião" onchange="updateReunionDate(this.value)"></div>
-      <div class="sp"><div class="sl">Participantes</div><div class="sv">10 pessoas</div></div>
+      <div class="sp"><div class="sl">Participantes</div><div class="sv" id="hdr-part-count">10 pessoas</div></div>
       <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">12</div></div>
+    </div>
+  </div>
+
+  <!-- Topbar de controles — dentro do header, não sobrepõe o nav -->
+  <div id="user-topbar" style="transition:opacity .4s">
+    <div class="utb-sync">
+      <div class="sync-pill idle" id="sync-pill" onclick="manualSync()" title="Sincronizar com Google Sheets">
+        <span id="sync-icon">☁</span><span id="sync-label">Sheets</span>
+      </div>
+      <div class="utb-config" onclick="openGSheetsConfig()" title="Configurar Google Sheets">⚙ Config</div>
+    </div>
+    <div class="utb-sep"></div>
+    <div class="nav-user utb-user" id="nav-user-pill" style="display:none;border:none;padding:0;margin:0">
+      <div class="nav-av" id="nav-av"></div>
+      <span class="nav-uname" id="nav-uname"></span>
+      <button class="nav-logout" onclick="doLogout()" title="Sair">⏻</button>
     </div>
   </div>
 </header>
@@ -1736,7 +1752,8 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
     <button class="nb" data-sec="financeiro" onclick="showSec('financeiro',this)">💰 Financeiro</button>
     <button class="nb" data-sec="tarefas" onclick="showSec('tarefas',this)">✅ Tarefas</button>
     <button class="nb" data-sec="ferias" onclick="showSec('ferias',this)">🏖️ Férias</button>
-    <button class="nb" data-sec="participantes" onclick="showSec('participantes',this)">👥 Participantes</button>
+    <button class="nb" data-sec="participantes" onclick="showSec('participantes',this)">👥 Gestores Contratos</button>
+    <button class="nb" data-sec="gestores-unidade" onclick="showSec('gestores-unidade',this);renderGestoresUnidade()">🏢 Gestores Unidade</button>
     <button class="nb" data-sec="agenda" onclick="showSec('agenda',this);renderAgenda()">✈️ Agenda Viagem</button>
     <button class="nb" data-sec="auditoria" onclick="showSec('auditoria',this);renderAuditoria()">🔍 Aud. Técnica</button>
     <button class="nb" data-sec="gestao" onclick="showSec('gestao',this);renderGestao()">📋 Aud. Gestão</button>
@@ -1756,21 +1773,6 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
   </div>
 </nav>
 
-<!-- ═══════════════════ TOPBAR FLUTUANTE — Controles do Usuário ═══════════════════ -->
-<div id="user-topbar" style="transition:opacity .4s">
-  <div class="utb-sync">
-    <div class="sync-pill idle" id="sync-pill" onclick="manualSync()" title="Sincronizar com Google Sheets">
-      <span id="sync-icon">☁</span><span id="sync-label">Sheets</span>
-    </div>
-    <div class="utb-config" onclick="openGSheetsConfig()" title="Configurar Google Sheets">⚙ Config</div>
-  </div>
-  <div class="utb-sep"></div>
-  <div class="nav-user utb-user" id="nav-user-pill" style="display:none;border:none;padding:0;margin:0">
-    <div class="nav-av" id="nav-av"></div>
-    <span class="nav-uname" id="nav-uname"></span>
-    <button class="nav-logout" onclick="doLogout()" title="Sair">⏻</button>
-  </div>
-</div>
 
 <div class="cont">
 
@@ -2262,16 +2264,33 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
 <div class="sec" id="participantes">
   <div class="sh">
     <div>
-      <div class="sh-t">Participantes da Reunião <span id="part-count"></span></div>
+      <div class="sh-t">Gestores de Contratos <span id="part-count"></span></div>
       <div style="font-size:11px;color:var(--t3);margin-top:3px;font-family:var(--fb)">
-        🔒 Cada participante visualiza e edita apenas o próprio perfil
+        🔒 Cada gestor visualiza e edita apenas o próprio perfil
       </div>
     </div>
     <div class="sh-acts">
-      <button class="btn btn-p" onclick="openParticipantModal()">＋ Novo Participante</button>
+      <button class="btn btn-p" onclick="openParticipantModal()">＋ Novo Gestor</button>
     </div>
   </div>
   <div class="pg" id="participants-grid"></div>
+</div>
+
+
+<!-- ═══════════════════════════════ GESTORES UNIDADE ═══════════════════════════════ -->
+<div class="sec" id="gestores-unidade">
+  <div class="sh">
+    <div>
+      <div class="sh-t">Gestores de Unidade <span id="gu-count"></span></div>
+      <div style="font-size:11px;color:var(--t3);margin-top:3px;font-family:var(--fb)">
+        🏢 Gestores responsáveis pelas unidades — vinculados a contratos, férias e agenda
+      </div>
+    </div>
+    <div class="sh-acts">
+      <button class="btn btn-p" onclick="openGUModal()">＋ Novo Gestor Unidade</button>
+    </div>
+  </div>
+  <div class="pg" id="gu-grid"></div>
 </div>
 
 
@@ -2684,11 +2703,21 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
     <button class="dp-pill active" id="custo-tab-capa"     onclick="custoTab('capa',this)">📋 Capa</button>
     <button class="dp-pill"        id="custo-tab-estudo"   onclick="custoTab('estudo',this)">📈 Estudo (DRE)</button>
     <button class="dp-pill"        id="custo-tab-memoria"  onclick="custoTab('memoria',this)">🧮 Memória</button>
-    <button class="dp-pill"        id="custo-tab-medicao"  onclick="custoTab('medicao',this)">📐 Medição</button>
+    <button class="dp-pill"        id="custo-tab-medicao"  onclick="custoTab('medicao',this)">📐 Linhas Medição</button>
     <button class="dp-pill"        id="custo-tab-funcoes"  onclick="custoTab('funcoes',this)">👷 Funções</button>
     <button class="dp-pill"        id="custo-tab-epi"      onclick="custoTab('epi',this)">🦺 EPI/Uniforme</button>
-    <button class="dp-pill"        id="custo-tab-encargos" onclick="custoTab('encargos',this)">🏛️ Encargos</button>
-    <button class="dp-pill"        id="custo-tab-projetos" onclick="custoTab('projetos',this)">📅 Projeções</button>
+    <button class="dp-pill"        id="custo-tab-encargos"   onclick="custoTab('encargos',this)">🏛️ Encargos</button>
+    <button class="dp-pill"        id="custo-tab-materiais"  onclick="custoTab('materiais',this)">🪵 Materiais</button>
+    <button class="dp-pill"        id="custo-tab-ferramentas" onclick="custoTab('ferramentas',this)">🔧 Ferramentas</button>
+    <button class="dp-pill"        id="custo-tab-informatica" onclick="custoTab('informatica',this)">💻 Informática</button>
+    <button class="dp-pill"        id="custo-tab-veiculos"      onclick="custoTab('veiculos',this)">🚗 Veículos</button>
+    <button class="dp-pill"        id="custo-tab-cursos"        onclick="custoTab('cursos',this)">🎓 Cursos/Treinamentos</button>
+    <button class="dp-pill"        id="custo-tab-exames"        onclick="custoTab('exames',this)">🏥 Exames</button>
+    <button class="dp-pill"        id="custo-tab-seguros"       onclick="custoTab('seguros',this)">🛡️ Seguros/Convênios</button>
+    <button class="dp-pill"        id="custo-tab-equipamentos"  onclick="custoTab('equipamentos',this)">⚙️ Equipamentos</button>
+    <button class="dp-pill"        id="custo-tab-alugueis"      onclick="custoTab('alugueis',this)">🏢 Aluguéis</button>
+    <button class="dp-pill"        id="custo-tab-impostos"      onclick="custoTab('impostos',this)">📋 Impostos</button>
+    <button class="dp-pill"        id="custo-tab-projetos"      onclick="custoTab('projetos',this)">📅 Projeções</button>
     <button class="dp-pill"        id="custo-tab-rentab"   onclick="custoTab('rentab',this)">💹 Rentabilidade</button>
   </div>
 
@@ -2731,6 +2760,8 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
       <button class="epi-pill"        data-cen="precusto" onclick="custoEstudoCen('precusto',this)">💰 Pré-Custo</button>
       <button class="epi-pill"        data-cen="todos"    onclick="custoEstudoCen('todos',this)">⚖️ Comparativo</button>
       <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:var(--gnl);font-size:11px" onclick="custoDreCollapseAll(false)" title="Expandir todos os grupos">⊞ Expandir</button>
+      <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:var(--gnl);font-size:11px" onclick="custoDreCollapseAll(true)" title="Recolher todos os grupos">⊟ Recolher</button>
       <button class="btn btn-s btn-sm" onclick="custoAddContaCusto()">＋ Linha</button>
       <button class="btn btn-s btn-sm" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--ac2)" onclick="custoAddColuna()">＋ Coluna</button>
       <button class="btn btn-s btn-sm" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--gl)" onclick="custoRecalcEstudo()">🔄 Recalc</button>
@@ -2748,19 +2779,19 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
   <!-- ════════════════ MEMÓRIA ════════════════ -->
   <div id="custosec-memoria" style="display:none">
     <div class="custo-toolbar">
-      <select id="custo-mem-grupo" class="dp-ct-sel" onchange="renderCustoMemoria()">
-        <option value="todos">Todos os Grupos</option>
-        <option value="salario">Grupo B – Salário</option>
-        <option value="gratificacoes">Grupo C – Gratificações</option>
-        <option value="encargos">Encargos</option>
-        <option value="gerais">Gerais</option>
-        <option value="veiculos">Veículos</option>
-        <option value="equipamentos">Equipamentos</option>
-        <option value="sistemas">Sistemas</option>
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">Tipo:</div>
+      <select id="custo-mem-grupo" class="dp-ct-sel">
+        <option value="salario">👷 Salário (Funções)</option>
+        <option value="epi">🦺 EPI / Uniforme</option>
+        <option value="encargos">🏛️ Encargos</option>
+        <option value="materiais">🪵 Materiais</option>
+        <option value="ferramentas">🔧 Ferramentas</option>
+        <option value="informatica">💻 Informática</option>
+        <option value="veiculos">🚗 Veículos</option>
+        <option value="generico">📋 Geral / Outros</option>
       </select>
       <div style="flex:1"></div>
-      <button class="btn btn-s btn-sm" onclick="custoAddMemoriaLinha()">＋ Linha</button>
-      <button class="btn btn-s btn-sm" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--ac2)" onclick="custoAddMemoriaColuna()">＋ Coluna</button>
+      <button class="btn btn-p btn-sm" onclick="custoAddMemoriaGrupo()">＋ Grupo</button>
     </div>
     <div id="custo-memoria-wrap"></div>
   </div>
@@ -2808,36 +2839,11 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
     <div class="custo-toolbar">
       <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">Cargos &amp; Salários</div>
       <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--ac2)" onclick="custoAddFuncaoColuna()">＋ Coluna</button>
       <button class="btn btn-s btn-sm" onclick="custoAddFuncao()">＋ Função</button>
     </div>
     <div class="custo-tbl-wrap">
-      <div class="custo-tbl-scroll">
-        <table class="ft custo-tbl" id="custo-funcoes-tbl" style="min-width:800px">
-          <thead>
-            <tr>
-              <th style="min-width:160px">Cargo / Função</th>
-              <th style="min-width:110px">Sal. Orçado</th>
-              <th style="min-width:110px">Sal. Final</th>
-              <th style="width:70px">Ajuste %</th>
-              <th style="width:110px">Periculosidade</th>
-              <th style="width:110px">Insalubridade</th>
-              <th style="width:100px">Adic. Transf.</th>
-              <th style="width:80px">Headcount</th>
-              <th style="min-width:120px">Total Mensal</th>
-              <th style="width:36px"></th>
-            </tr>
-          </thead>
-          <tbody id="custo-funcoes-tbody"></tbody>
-          <tfoot>
-            <tr style="background:rgba(16,185,129,.08)">
-              <td colspan="7" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL FOLHA</td>
-              <td id="custo-fn-hc"    style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
-              <td id="custo-fn-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+      <div class="custo-tbl-scroll" id="custo-funcoes-wrap"></div>
     </div>
     <div class="tbl-wrap" style="margin-top:16px;padding:16px">
       <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);margin-bottom:10px">⚡ Encargos Sociais Calculados</div>
@@ -2898,6 +2904,324 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
         <button class="btn btn-s btn-sm" style="margin-top:10px" onclick="custoAddEncargo()">＋ Encargo</button>
       </div>
     </div>
+  </div>
+
+  <!-- ════════════════ MATERIAIS ════════════════ -->
+  <div id="custosec-materiais" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">🪵 Materiais</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddMaterial()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap">
+      <div class="custo-tbl-scroll">
+        <table class="ft custo-tbl" id="custo-materiais-tbl" style="min-width:640px">
+          <thead>
+            <tr>
+              <th style="min-width:220px">Descrição / Material</th>
+              <th style="min-width:80px">Unidade</th>
+              <th style="width:80px">Qtd</th>
+              <th style="min-width:110px">Valor Unit.</th>
+              <th style="min-width:120px">Total</th>
+              <th style="width:36px"></th>
+            </tr>
+          </thead>
+          <tbody id="custo-materiais-tbody"></tbody>
+          <tfoot>
+            <tr style="background:rgba(16,185,129,.08)">
+              <td colspan="2" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL MATERIAIS</td>
+              <td id="custo-mat-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+              <td></td>
+              <td id="custo-mat-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ FERRAMENTAS ════════════════ -->
+  <div id="custosec-ferramentas" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">🔧 Ferramentas</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddFerramenta()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap">
+      <div class="custo-tbl-scroll">
+        <table class="ft custo-tbl" id="custo-ferramentas-tbl" style="min-width:640px">
+          <thead>
+            <tr>
+              <th style="min-width:220px">Descrição / Ferramenta</th>
+              <th style="min-width:120px">Código / Ref.</th>
+              <th style="width:80px">Qtd</th>
+              <th style="min-width:110px">Valor Unit.</th>
+              <th style="min-width:120px">Total</th>
+              <th style="width:36px"></th>
+            </tr>
+          </thead>
+          <tbody id="custo-ferramentas-tbody"></tbody>
+          <tfoot>
+            <tr style="background:rgba(16,185,129,.08)">
+              <td colspan="2" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL FERRAMENTAS</td>
+              <td id="custo-fer-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+              <td></td>
+              <td id="custo-fer-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ INFORMÁTICA ════════════════ -->
+  <div id="custosec-informatica" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">💻 Informática</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddInformatica()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap">
+      <div class="custo-tbl-scroll">
+        <table class="ft custo-tbl" id="custo-informatica-tbl" style="min-width:640px">
+          <thead>
+            <tr>
+              <th style="min-width:220px">Descrição / Equipamento</th>
+              <th style="min-width:140px">Marca / Modelo</th>
+              <th style="width:80px">Qtd</th>
+              <th style="min-width:110px">Valor Unit.</th>
+              <th style="min-width:120px">Total</th>
+              <th style="width:36px"></th>
+            </tr>
+          </thead>
+          <tbody id="custo-informatica-tbody"></tbody>
+          <tfoot>
+            <tr style="background:rgba(16,185,129,.08)">
+              <td colspan="2" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL INFORMÁTICA</td>
+              <td id="custo-inf-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+              <td></td>
+              <td id="custo-inf-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ VEÍCULOS ════════════════ -->
+  <div id="custosec-veiculos" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">🚗 Veículos</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddVeiculo()">＋ Veículo</button>
+    </div>
+    <div class="custo-tbl-wrap">
+      <div class="custo-tbl-scroll">
+        <table class="ft custo-tbl" id="custo-veiculos-tbl" style="min-width:640px">
+          <thead>
+            <tr>
+              <th style="min-width:200px">Tipo / Descrição</th>
+              <th style="min-width:110px">Placa</th>
+              <th style="width:80px">Qtd</th>
+              <th style="min-width:120px">Valor Mensal</th>
+              <th style="min-width:120px">Total Mensal</th>
+              <th style="width:36px"></th>
+            </tr>
+          </thead>
+          <tbody id="custo-veiculos-tbody"></tbody>
+          <tfoot>
+            <tr style="background:rgba(16,185,129,.08)">
+              <td colspan="2" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL VEÍCULOS</td>
+              <td id="custo-vei-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+              <td></td>
+              <td id="custo-vei-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ CURSOS / TREINAMENTOS ════════════════ -->
+  <div id="custosec-cursos" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">🎓 Cursos / Treinamentos</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddCurso()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap"><div class="custo-tbl-scroll">
+      <table class="ft custo-tbl" style="min-width:760px">
+        <thead><tr>
+          <th style="min-width:220px">Curso / Treinamento</th>
+          <th style="min-width:160px">Cargo Vinculado</th>
+          <th style="width:80px">Qtd Func.</th>
+          <th style="min-width:110px">Valor Unit.</th>
+          <th style="min-width:110px">Periodicidade</th>
+          <th style="min-width:115px">Total</th>
+          <th style="width:36px"></th>
+        </tr></thead>
+        <tbody id="custo-cursos-tbody"></tbody>
+        <tfoot><tr style="background:rgba(16,185,129,.08)">
+          <td colspan="2" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL CURSOS</td>
+          <td id="custo-cur-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+          <td></td><td></td>
+          <td id="custo-cur-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div></div>
+  </div>
+
+  <!-- ════════════════ EXAMES ════════════════ -->
+  <div id="custosec-exames" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">🏥 Exames</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddExame()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap"><div class="custo-tbl-scroll">
+      <table class="ft custo-tbl" style="min-width:760px">
+        <thead><tr>
+          <th style="min-width:220px">Tipo de Exame</th>
+          <th style="min-width:160px">Cargo Vinculado</th>
+          <th style="width:80px">Qtd Func.</th>
+          <th style="min-width:110px">Valor Unit.</th>
+          <th style="min-width:115px">Periodicidade</th>
+          <th style="min-width:115px">Total</th>
+          <th style="width:36px"></th>
+        </tr></thead>
+        <tbody id="custo-exames-tbody"></tbody>
+        <tfoot><tr style="background:rgba(16,185,129,.08)">
+          <td colspan="2" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL EXAMES</td>
+          <td id="custo-exa-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+          <td></td><td></td>
+          <td id="custo-exa-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div></div>
+  </div>
+
+  <!-- ════════════════ SEGUROS / CONVÊNIOS ════════════════ -->
+  <div id="custosec-seguros" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">🛡️ Seguros / Convênios</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddSeguro()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap"><div class="custo-tbl-scroll">
+      <table class="ft custo-tbl" style="min-width:760px">
+        <thead><tr>
+          <th style="min-width:220px">Descrição</th>
+          <th style="min-width:120px">Tipo</th>
+          <th style="min-width:160px">Cargo Vinculado</th>
+          <th style="width:80px">Qtd Func.</th>
+          <th style="min-width:110px">Valor Unit.</th>
+          <th style="min-width:115px">Total</th>
+          <th style="width:36px"></th>
+        </tr></thead>
+        <tbody id="custo-seguros-tbody"></tbody>
+        <tfoot><tr style="background:rgba(16,185,129,.08)">
+          <td colspan="3" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL SEGUROS/CONVÊNIOS</td>
+          <td id="custo-seg-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+          <td></td>
+          <td id="custo-seg-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div></div>
+  </div>
+
+  <!-- ════════════════ EQUIPAMENTOS ════════════════ -->
+  <div id="custosec-equipamentos" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">⚙️ Equipamentos</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddEquipamento()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap"><div class="custo-tbl-scroll">
+      <table class="ft custo-tbl" style="min-width:760px">
+        <thead><tr>
+          <th style="min-width:220px">Descrição / Equipamento</th>
+          <th style="min-width:120px">Marca / Modelo</th>
+          <th style="min-width:110px">Nº Série / Patrimônio</th>
+          <th style="width:80px">Qtd</th>
+          <th style="min-width:110px">Valor Unit.</th>
+          <th style="min-width:115px">Total</th>
+          <th style="width:36px"></th>
+        </tr></thead>
+        <tbody id="custo-equipamentos-tbody"></tbody>
+        <tfoot><tr style="background:rgba(16,185,129,.08)">
+          <td colspan="3" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL EQUIPAMENTOS</td>
+          <td id="custo-eqp-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+          <td></td>
+          <td id="custo-eqp-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div></div>
+  </div>
+
+  <!-- ════════════════ ALUGUÉIS ════════════════ -->
+  <div id="custosec-alugueis" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">🏢 Aluguéis</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddAluguel()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap"><div class="custo-tbl-scroll">
+      <table class="ft custo-tbl" style="min-width:760px">
+        <thead><tr>
+          <th style="min-width:220px">Descrição / Imóvel</th>
+          <th style="min-width:130px">Endereço / Ref.</th>
+          <th style="min-width:100px">Tipo</th>
+          <th style="width:80px">Qtd</th>
+          <th style="min-width:110px">Valor Mensal</th>
+          <th style="min-width:115px">Total Mensal</th>
+          <th style="width:36px"></th>
+        </tr></thead>
+        <tbody id="custo-alugueis-tbody"></tbody>
+        <tfoot><tr style="background:rgba(16,185,129,.08)">
+          <td colspan="3" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL ALUGUÉIS</td>
+          <td id="custo-alg-qtd" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">0</td>
+          <td></td>
+          <td id="custo-alg-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div></div>
+  </div>
+
+  <!-- ════════════════ IMPOSTOS ════════════════ -->
+  <div id="custosec-impostos" style="display:none">
+    <div class="custo-toolbar">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">📋 Impostos</div>
+      <div style="flex:1"></div>
+      <button class="btn btn-s btn-sm" onclick="custoAddImposto()">＋ Item</button>
+    </div>
+    <div class="custo-tbl-wrap"><div class="custo-tbl-scroll">
+      <table class="ft custo-tbl" style="min-width:760px">
+        <thead><tr>
+          <th style="min-width:220px">Descrição / Imposto</th>
+          <th style="min-width:100px">Alíquota (%)</th>
+          <th style="min-width:130px">Base de Cálculo</th>
+          <th style="min-width:130px">Valor Base (R$)</th>
+          <th style="min-width:115px">Total Imposto</th>
+          <th style="width:36px"></th>
+        </tr></thead>
+        <tbody id="custo-impostos-tbody"></tbody>
+        <tfoot><tr style="background:rgba(16,185,129,.08)">
+          <td colspan="3" style="font-weight:800;font-family:var(--fb);color:var(--gnl)">TOTAL IMPOSTOS</td>
+          <td></td>
+          <td id="custo-imp-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div></div>
   </div>
 
   <!-- ════════════════ PROJEÇÕES ════════════════ -->
@@ -4617,19 +4941,27 @@ function openContractModal(id){
         <div style="display:flex;align-items:flex-start;gap:16px">
           <div style="flex-shrink:0">
             <div class="flbl" style="margin-bottom:6px">📷 Foto do Gestor</div>
-            <div class="gestor-foto-zone" id="ci-gtec-foto-zone"
-                 onclick="document.getElementById('ci-gtec-foto-inp').click()"
-                 title="Clique para adicionar foto">
+            <div class="gestor-foto-zone" id="ci-gtec-foto-zone" style="cursor:default;border-color:rgba(16,185,129,.2);pointer-events:none">
               ${c&&c.fotoGestorTec
                 ? `<img src="${c.fotoGestorTec}" alt="foto">`
-                : `<span style="font-size:24px">👤</span><span class="gestor-foto-zone-lbl">Adicionar foto</span>`}
+                : `<span style="font-size:24px">👤</span><span class="gestor-foto-zone-lbl">Foto do cadastro</span>`}
             </div>
-            <input type="file" accept="image/*" id="ci-gtec-foto-inp" style="display:none" onchange="handleGestorFotoChange(event)">
-            ${c&&c.fotoGestorTec ? `<button type="button" onclick="removeGestorFoto()" style="margin-top:4px;background:none;border:none;color:var(--rdl);font-size:10px;font-weight:700;cursor:pointer;padding:0;display:block;width:80px;text-align:center">✕ Remover</button>` : ''}
           </div>
           <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
-            <div class="fgrp"><div class="flbl">Gestor Técnico</div><input class="finp" id="ci-gtec" value="${c?c.gestorTecnico||c.responsible||'':''}" placeholder="Nome do gestor técnico"></div>
-            <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}" placeholder="(31) 9 0000-0000"></div>
+            <div class="fgrp">
+              <div class="flbl">Gestor Técnico</div>
+              <select class="fsel" id="ci-gtec" onchange="onGestorTecChange(this)" style="width:100%">
+                <option value="">— Selecione o Gestor Técnico —</option>
+                ${(()=>{
+                  const cur = c ? c.gestorTecnico||c.responsible||'' : '';
+                  return [
+                    ...(ST.participants||[]).map(p=>({name:p.name,cargo:p.cargo||'',tel:p.phone||p.tel||'',foto:p.foto||'',tipo:'GC'})),
+                    ...(ST.gestoresUnidade||[]).map(p=>({name:p.name,cargo:p.cargo||'',tel:p.phone||'',foto:p.foto||'',tipo:'GU'}))
+                  ].map(p=>`<option value="${p.name}" data-tel="${p.tel}" data-foto="${p.foto}"${cur===p.name?' selected':''}>[${p.tipo}] ${p.name}${p.cargo?' · '+p.cargo:''}</option>`).join('');
+                })()}
+              </select>
+            </div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}"></div>
           </div>
         </div>
       </div>
@@ -4638,20 +4970,27 @@ function openContractModal(id){
         <div style="display:flex;align-items:flex-start;gap:16px">
           <div style="flex-shrink:0">
             <div class="flbl" style="margin-bottom:6px">📷 Foto do Gestor Adm.</div>
-            <div class="gestor-foto-zone" id="ci-gadm-foto-zone"
-                 onclick="document.getElementById('ci-gadm-foto-inp').click()"
-                 title="Clique para adicionar foto"
-                 style="border-color:rgba(217,119,6,.35)">
+            <div class="gestor-foto-zone" id="ci-gadm-foto-zone" style="cursor:default;border-color:rgba(217,119,6,.25);pointer-events:none">
               ${c&&c.fotoGestorAdm
                 ? `<img src="${c.fotoGestorAdm}" alt="foto">`
-                : `<span style="font-size:24px">🗂️</span><span class="gestor-foto-zone-lbl">Adicionar foto</span>`}
+                : `<span style="font-size:24px">🗂️</span><span class="gestor-foto-zone-lbl">Foto do cadastro</span>`}
             </div>
-            <input type="file" accept="image/*" id="ci-gadm-foto-inp" style="display:none" onchange="handleGestorAdmFotoChange(event)">
-            ${c&&c.fotoGestorAdm ? `<button type="button" onclick="removeGestorAdmFoto()" style="margin-top:4px;background:none;border:none;color:var(--rdl);font-size:10px;font-weight:700;cursor:pointer;padding:0;display:block;width:80px;text-align:center">✕ Remover</button>` : ''}
           </div>
           <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
-            <div class="fgrp"><div class="flbl">Gestor Administrativo</div><input class="finp" id="ci-gadm" value="${c?c.gestorAdministrativo||'':''}" placeholder="Nome do gestor administrativo"></div>
-            <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}" placeholder="(31) 9 0000-0000"></div>
+            <div class="fgrp">
+              <div class="flbl">Gestor Administrativo</div>
+              <select class="fsel" id="ci-gadm" onchange="onGestorAdmChange(this)" style="width:100%">
+                <option value="">— Selecione o Gestor Administrativo —</option>
+                ${(()=>{
+                  const cur = c ? c.gestorAdministrativo||'' : '';
+                  return [
+                    ...(ST.participants||[]).map(p=>({name:p.name,cargo:p.cargo||'',tel:p.phone||p.tel||'',foto:p.foto||'',tipo:'GC'})),
+                    ...(ST.gestoresUnidade||[]).map(p=>({name:p.name,cargo:p.cargo||'',tel:p.phone||'',foto:p.foto||'',tipo:'GU'}))
+                  ].map(p=>`<option value="${p.name}" data-tel="${p.tel}" data-foto="${p.foto}"${cur===p.name?' selected':''}>[${p.tipo}] ${p.name}${p.cargo?' · '+p.cargo:''}</option>`).join('');
+                })()}
+              </select>
+            </div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}"></div>
           </div>
         </div>
       </div>
@@ -4771,6 +5110,34 @@ let _pendingLogo = null;
 //  FOTO DO GESTOR TÉCNICO
 // ════════════════════════════════════════════════════════════════════════════
 let _pendingGestorFoto = null;
+
+function onGestorTecChange(sel){
+  const opt = sel.options[sel.selectedIndex];
+  if(!opt || !opt.value) return;
+  const tel  = opt.getAttribute('data-tel') || '';
+  const foto = opt.getAttribute('data-foto') || '';
+  const telInp = document.getElementById('ci-gtec-tel');
+  if(telInp && !telInp.value) telInp.value = tel;
+  else if(telInp) telInp.value = tel;
+  const zone = document.getElementById('ci-gtec-foto-zone');
+  if(zone) zone.innerHTML = foto
+    ? `<img src="${foto}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    : `<span style="font-size:24px">👤</span><span class="gestor-foto-zone-lbl">Sem foto</span>`;
+  window._pendingGestorTecFoto = foto;
+}
+function onGestorAdmChange(sel){
+  const opt = sel.options[sel.selectedIndex];
+  if(!opt || !opt.value) return;
+  const tel  = opt.getAttribute('data-tel') || '';
+  const foto = opt.getAttribute('data-foto') || '';
+  const telInp = document.getElementById('ci-gadm-tel');
+  if(telInp) telInp.value = tel;
+  const zone = document.getElementById('ci-gadm-foto-zone');
+  if(zone) zone.innerHTML = foto
+    ? `<img src="${foto}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    : `<span style="font-size:24px">🗂️</span><span class="gestor-foto-zone-lbl">Sem foto</span>`;
+  window._pendingGestorAdmFoto = foto;
+}
 
 function handleGestorFotoChange(e){
   const file = e.target.files[0];
@@ -5028,8 +5395,8 @@ function saveContract(id){
     responsible:document.getElementById('ci-gtec').value.trim(), // backward-compat
     gestorTecnico:document.getElementById('ci-gtec').value.trim(),
     telGestorTec:(document.getElementById('ci-gtec-tel')||{}).value?.trim()||'',
-    gestorAdministrativo:document.getElementById('ci-gadm').value.trim(),
-    telGestorAdm:document.getElementById('ci-gadm-tel').value.trim(),
+    gestorAdministrativo:(document.getElementById('ci-gadm').value||'').trim(),
+    telGestorAdm:(document.getElementById('ci-gadm-tel')||{}).value?.trim()||'',
     index:document.getElementById('ci-idx').value,
     // ── Campos base (definidos pelo usuário) ──
     saldoGlobal:          parseFloat(document.getElementById('ci-sglobal').value)||0,
@@ -5052,12 +5419,16 @@ function saveContract(id){
     justificativa: id ? (getContract(id)||{}).justificativa||'' : '',
     viradaCvMes:   id ? (getContract(id)||{}).viradaCvMes||null : null,
     logo, logoFit, logoPad,
-    fotoGestorTec: _pendingGestorFoto !== null
-      ? _pendingGestorFoto
-      : (id ? (getContract(id)||{}).fotoGestorTec||'' : ''),
-    fotoGestorAdm: _pendingGestorAdmFoto !== null
-      ? _pendingGestorAdmFoto
-      : (id ? (getContract(id)||{}).fotoGestorAdm||'' : ''),
+    fotoGestorTec: window._pendingGestorTecFoto !== undefined
+      ? window._pendingGestorTecFoto
+      : (_pendingGestorFoto !== null
+        ? _pendingGestorFoto
+        : (id ? (getContract(id)||{}).fotoGestorTec||'' : '')),
+    fotoGestorAdm: window._pendingGestorAdmFoto !== undefined
+      ? window._pendingGestorAdmFoto
+      : (_pendingGestorAdmFoto !== null
+        ? _pendingGestorAdmFoto
+        : (id ? (getContract(id)||{}).fotoGestorAdm||'' : '')),
     nObra: document.getElementById('ci-nobra').value.trim(),
     linkContrato: normalizeUrl(((document.getElementById('ci-link')||{}).value||'').trim()),
   };
@@ -5079,6 +5450,8 @@ function saveContract(id){
   _pendingPad=null;
   _pendingGestorFoto=null;
   _pendingGestorAdmFoto=null;
+  window._pendingGestorTecFoto=undefined;
+  window._pendingGestorAdmFoto=undefined;
   // Recalculate derived financials for this contract
   const _savedCt = id ? getContract(id) : ST.contracts[ST.contracts.length-1];
   recalcContractFinancials(_savedCt);
@@ -6613,8 +6986,9 @@ function openVacModal(vid){
   const partNames = new Set(ST.participants.map(p=>p.name.toLowerCase().trim()));
   const uniqueMgrs = ST.managers.filter(m=>!partNames.has(m.name.toLowerCase().trim()));
   const allPersons = [
-    ...ST.participants.map(p=>({ref:`p:${p.id}`, label:`${p.name}${p.cargo?` · ${p.cargo}`:''}${p.dept&&p.dept!=='—'?` — ${p.dept}`:''}`, foto:p.foto||'', color:p.color})),
-    ...uniqueMgrs.map(m=>({ref:`m:${m.id}`, label:`${m.name}${m.dept?` — ${m.dept}`:''}`, foto:'', color:m.color}))
+    ...ST.participants.map(p=>({ref:`p:${p.id}`, label:`[GC] ${p.name}${p.cargo?` · ${p.cargo}`:''}${p.dept&&p.dept!=='—'?` — ${p.dept}`:''}`, foto:p.foto||'', color:p.color})),
+    ...uniqueMgrs.map(m=>({ref:`m:${m.id}`, label:`${m.name}${m.dept?` — ${m.dept}`:''}`, foto:'', color:m.color})),
+    ...(ST.gestoresUnidade||[]).map(p=>({ref:`gu:${p.id}`, label:`[GU] ${p.name}${p.cargo?` · ${p.cargo}`:''}${p.dept&&p.dept!=='—'?` — ${p.dept}`:''}`, foto:p.foto||'', color:p.color||'#7c3aed'}))
   ];
 
   if(!allPersons.length){alert('Cadastre participantes antes de programar férias.');return;}
@@ -6683,10 +7057,230 @@ function saveVacation(id){
 // ════════════════════════════════════════════════════════════
 //  PARTICIPANTS
 // ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+//  GESTORES DE UNIDADE
+// ════════════════════════════════════════════════════════════
+var _guNextId = 5000;
+
+function _guInit(){
+  if(!ST.gestoresUnidade) ST.gestoresUnidade = [];
+}
+
+function renderGestoresUnidade(){
+  _guInit();
+  const gu = ST.gestoresUnidade;
+  const lbl = document.getElementById('gu-count');
+  if(lbl) lbl.textContent = `— ${gu.length} gestor${gu.length!==1?'es':''}`;
+
+  const grid = document.getElementById('gu-grid');
+  if(!grid) return;
+
+  if(!gu.length){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--t3);font-size:13px">
+      Nenhum Gestor de Unidade cadastrado.<br><br>
+      <button class="btn btn-p" onclick="openGUModal()">＋ Cadastrar Gestor Unidade</button>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = gu.map(p => {
+    const col = p.color || '#7c3aed';
+    return `
+    <div class="pc">
+      <div class="pc-other-tag">${p.name.trim().split(/\s+/)[0]}</div>
+      ${p.foto
+        ? `<div class="pav" style="background:transparent;overflow:hidden;padding:0"><img src="${p.foto}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>`
+        : `<div class="pav" style="background:${col}">${initials(p.name)}</div>`
+      }
+      <div class="pn">${p.name}</div>
+      ${p.cargo ? `<div class="pc-cargo">${p.cargo}</div>` : ''}
+      <div class="pd">${p.dept||'—'}</div>
+      <div class="pc-cred">
+        ${p.email ? `<span class="pc-cred-badge">✉ ${p.email}</span>` : ''}
+        ${p.phone ? `<span class="pc-cred-badge">📱 ${p.phone}</span>` : ''}
+        ${p.unidade ? `<span class="pc-cred-badge">🏢 ${p.unidade}</span>` : ''}
+      </div>
+      <div class="p-acts">
+        <button class="bic" style="padding:5px 10px;font-size:11px" onclick="openGUModal(${p.id})">✎ Editar</button>
+        <button class="bic del" style="padding:5px 8px;font-size:11px" onclick="confirmDeleteGU(${p.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openGUModal(id){
+  _guInit();
+  const p = id ? ST.gestoresUnidade.find(x=>x.id===id) : null;
+  _pendingParticipantFoto = null;
+
+  const initColor = p ? p.color : '#7c3aed';
+  const initName  = p ? p.name  : '';
+  const initInits = p ? initials(p.name) : '?';
+
+  document.getElementById('modal-title').innerHTML = p
+    ? `✎ Editar Gestor Unidade <span style="font-size:12px;color:var(--t3);font-family:var(--fb);font-weight:400">— ${p.name}</span>`
+    : '＋ Novo Gestor Unidade';
+
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- preview ao vivo -->
+      <div style="display:flex;align-items:center;gap:14px;background:rgba(124,58,237,.06);
+                  border:1px solid rgba(124,58,237,.2);border-radius:14px;padding:12px 16px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+          <div id="pi-av-prev"
+            style="width:60px;height:60px;border-radius:50%;background:${initColor};flex-shrink:0;
+                   display:flex;align-items:center;justify-content:center;overflow:hidden;
+                   font-size:18px;font-weight:900;font-family:var(--fh);transition:background .25s;cursor:pointer"
+            onclick="document.getElementById('pi-foto-inp').click()" title="Clique para adicionar foto">
+            ${p&&p.foto ? `<img src="${p.foto}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initInits}
+          </div>
+          <div style="position:relative">
+            <div id="pi-foto-zone"
+              onclick="document.getElementById('pi-foto-inp').click()"
+              style="cursor:pointer;font-size:9px;font-weight:700;color:var(--t3);text-align:center;padding:2px 0;white-space:nowrap">
+              📷 ${p&&p.foto?'Trocar foto':'Adicionar foto'}
+            </div>
+            <button id="pi-foto-rm" type="button" onclick="removeParticipantFoto()"
+              style="display:${p&&p.foto?'block':'none'};background:none;border:none;color:var(--rdl);
+                     font-size:9px;font-weight:700;cursor:pointer;padding:0;text-align:center;width:100%">
+              ✕ Remover
+            </button>
+          </div>
+          <input type="file" accept="image/*" id="pi-foto-inp" style="display:none" onchange="handleParticipantFotoChange(event)">
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#a78bfa;margin-bottom:4px">🏢 Gestor de Unidade</div>
+          <div id="pi-name-prev" style="font-weight:700;font-size:15px">${initName||'Novo Gestor Unidade'}</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">${p?((p.cargo||'')+(p.cargo&&p.unidade?' · ':'')+( p.unidade||'')):''}</div>
+        </div>
+      </div>
+
+      <!-- nome + cargo -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fgrp" style="grid-column:1/-1"><div class="flbl">Nome Completo *</div>
+          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do gestor"
+            oninput="var v=this.value.trim()||'?';
+                     document.getElementById('pi-name-prev').textContent=this.value||'Novo Gestor Unidade';
+                     document.getElementById('pi-av-prev').textContent=
+                       v.split(/\\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');"/>
+        </div>
+        <div class="fgrp"><div class="flbl">Cargo / Função</div>
+          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Gerente de Unidade">
+        </div>
+        <div class="fgrp"><div class="flbl">Unidade / UEN</div>
+          <input class="finp" id="gu-unidade" value="${p?p.unidade||'':''}" placeholder="Ex: UEN-300, Unidade Norte">
+        </div>
+        <div class="fgrp"><div class="flbl">Departamento</div>
+          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: Diretoria Técnica">
+        </div>
+        <div class="fgrp"><div class="flbl">✉ E-mail</div>
+          <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}" placeholder="seu@email.com">
+        </div>
+        <div class="fgrp"><div class="flbl">📱 Telefone</div>
+          <input class="finp" id="gu-phone" value="${p?p.phone||'':''}" placeholder="(31) 99999-9999">
+        </div>
+        <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
+          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off">
+        </div>
+        <div class="fgrp"><div class="flbl">🔒 Senha</div>
+          <div style="position:relative">
+            <input class="finp" type="password" id="pi-pass" value="${p?p.password||'':''}"
+              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px">
+            <button type="button" onclick="togglePassVis('pi-pass',this)"
+              style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
+                     background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- cor do avatar -->
+      <div class="fgrp"><div class="flbl">Cor do Avatar</div>
+        <input type="hidden" id="pi-color" value="${initColor}">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px">
+          ${colorPickerHTML(initColor,'pi-color','pi-av-prev')}
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('modal-footer').innerHTML = `
+    ${p ? `<button class="btn btn-d" onclick="confirmDeleteGU(${p.id});closeModal()">🗑 Excluir</button>` : ''}
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="saveGU(${p?p.id:0})">
+      💾 ${p ? 'Salvar Alterações' : 'Cadastrar Gestor Unidade'}
+    </button>`;
+
+  openModal();
+}
+
+function _guEnsureExtraFields(){
+  if(document.getElementById('gu-unidade-inp')) return;
+  // Injeta campos extras no modal de participante após o campo de dept
+  const deptRow = document.getElementById('part-dept');
+  if(!deptRow) return;
+  const container = deptRow.closest('.modal-body')||deptRow.parentElement;
+  const extra = document.createElement('div');
+  extra.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px';
+  extra.id = 'gu-extra-fields';
+  extra.innerHTML = `
+    <div><label class="fl" style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);display:block;margin-bottom:4px">UNIDADE</label>
+      <input id="gu-unidade-inp" class="fi" placeholder="Ex: Unidade Norte, UEN-300" style="width:100%"></div>
+    <div><label class="fl" style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);display:block;margin-bottom:4px">TELEFONE</label>
+      <input id="gu-phone-inp" class="fi" placeholder="Ex: (31) 99999-9999" style="width:100%"></div>`;
+  container.appendChild(extra);
+}
+
+function saveGU(id){
+  _guInit();
+  const p = id ? ST.gestoresUnidade.find(x=>x.id===id) : null;
+  const name = (document.getElementById('pi-name').value||'').trim();
+  if(!name){ alert('Nome é obrigatório.'); return; }
+
+  const data = {
+    id:       id || (_guNextId++),
+    name,
+    cargo:    (document.getElementById('pi-cargo').value||'').trim(),
+    dept:     (document.getElementById('pi-dept').value||'').trim(),
+    email:    (document.getElementById('pi-email').value||'').trim(),
+    username: (document.getElementById('pi-user').value||'').trim(),
+    password: (document.getElementById('pi-pass').value||'').trim(),
+    unidade:  (document.getElementById('gu-unidade')||{value:''}).value.trim(),
+    phone:    (document.getElementById('gu-phone')||{value:''}).value.trim(),
+    color:    (document.getElementById('pi-color')||{value:'#7c3aed'}).value || '#7c3aed',
+    foto:     _pendingParticipantFoto || (p ? p.foto||'' : '')
+  };
+
+  if(id && p){
+    const idx = ST.gestoresUnidade.findIndex(x=>x.id===id);
+    if(idx>-1) ST.gestoresUnidade[idx] = data;
+  } else {
+    ST.gestoresUnidade.push(data);
+  }
+
+  closeModal();
+  renderGestoresUnidade();
+  scheduleAutoSync();
+}
+
+function confirmDeleteGU(id){
+  if(!confirm('Excluir este Gestor de Unidade?')) return;
+  ST.gestoresUnidade = (ST.gestoresUnidade||[]).filter(x=>x.id!==id);
+  renderGestoresUnidade();
+  scheduleAutoSync();
+}
+
+// ════════════════════════════════════════════════════════════
+//  FIM GESTORES DE UNIDADE
+// ════════════════════════════════════════════════════════════
+
 function renderParticipants(){
+  _guInit();
   const parts = ST.participants;
+  const totalPessoas = parts.length + (ST.gestoresUnidade||[]).length;
   document.getElementById('part-count').textContent =
-    `— ${parts.length} pessoa${parts.length!==1?'s':''}`;
+    `— ${parts.length} gestor${parts.length!==1?'es':''}`;
+  const hdrPart = document.getElementById('hdr-part-count');
+  if(hdrPart) hdrPart.textContent = `${totalPessoas} pessoas`;
 
   document.getElementById('participants-grid').innerHTML = parts.map(p=>{
     const isMe = currentUser && currentUser.id === p.id;
@@ -8264,6 +8858,7 @@ async function pushToSheets(silent){
       vacations:    ST.vacations,
       managers:     ST.managers.map(m=>{ const {foto,...rest}=m; return rest; }),
       participants: ST.participants.map(p=>{ const {foto,...rest}=p; return rest; }),
+      gestoresUnidade: (ST.gestoresUnidade||[]).map(p=>{ const {foto,...rest}=p; return rest; }),
       trips:        ST.trips,
       frota:        (ST.frota||[]).map(v=>{ const {foto,...rest}=v; return rest; }),
       dp:           (ST.dp||[]).map(c=>{ const {foto,...rest}=c; return rest; }),
@@ -8331,7 +8926,8 @@ async function pullFromSheets(silent){
       ST.tasks        = _merge(data.tasks,        ST.tasks);
       ST.vacations    = _merge(data.vacations,    ST.vacations);
       ST.managers     = _merge(data.managers,     ST.managers);
-      ST.participants = _merge(data.participants, ST.participants);
+      ST.participants      = _merge(data.participants,      ST.participants);
+      ST.gestoresUnidade   = _merge(data.gestoresUnidade,   ST.gestoresUnidade||[]);
       ST.trips        = _merge(data.trips,        ST.trips);
       ST.frota        = _merge(data.frota,        ST.frota);
       ST.dp           = _merge(data.dp,           ST.dp);
@@ -8576,6 +9172,7 @@ async function _forcePullNow(){
     ST.vacations    = (data.vacations||[]).length > 0 ? data.vacations  : ST.vacations;
     ST.managers     = (data.managers||[]).length  > 0 ? data.managers   : ST.managers;
     ST.participants = (data.participants||[]).length > 0 ? data.participants : ST.participants;
+    ST.gestoresUnidade = (data.gestoresUnidade||[]).length > 0 ? data.gestoresUnidade : (ST.gestoresUnidade||[]);
     ST.trips        = (data.trips||[]).length  > 0 ? data.trips         : ST.trips;
     ST.frota        = (data.frota||[]).length  > 0 ? data.frota         : ST.frota;
     ST.audits       = (data.audits||[]).length > 0 ? data.audits        : ST.audits;
@@ -17477,6 +18074,7 @@ var _custoTabAtv = 'capa';
 var _custoCen    = 'orcado';
 var _custoMedCen = 'orcado';
 var _custoNextId = 1000;
+var _custoDreCollapsed = {}; // { 'conta': true/false } — persiste durante a sessão
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function _custoAnalise() {
@@ -17485,6 +18083,7 @@ function _custoAnalise() {
 function _fmtBRL(v) {
   return 'R$\u00a0' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
+function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function _custoNewAnalise(contractId) {
   return {
     id: _custoNextId++,
@@ -17497,10 +18096,21 @@ function _custoNewAnalise(contractId) {
     memoria: {grupos:[]},
     medicao: {orcado:[],estudo:[],precusto:[]},
     funcoes: [],
+    funcoesCols: [],
     epiCols: ['Cargo Padrão'],
     epiItens: [],
     aliquotas: CUSTO_ALIQ_DEFAULT.map(function(a){ return Object.assign({},a); }),
     encargosSoc: CUSTO_ENCARGOS_DEFAULT.map(function(e){ return Object.assign({},e); }),
+    cursos: [],
+    exames: [],
+    seguros: [],
+    equipamentos: [],
+    alugueis: [],
+    impostos: [],
+    materiais: [],
+    ferramentas: [],
+    informatica: [],
+    veiculos: [],
     projecaoCols: CUSTO_PROJ_COLS.map(function(c){ return Object.assign({},c); }),
     projecoes: [],
     rentabCols: CUSTO_RENTAB_COLS.map(function(c){ return Object.assign({},c); }),
@@ -17599,11 +18209,25 @@ function _custoRenderTab(tab) {
   if(tab==='estudo')   _custoEstudo();
   if(tab==='memoria')  _custoMemoria();
   if(tab==='medicao')  _custoMedicao();
-  if(tab==='funcoes')  _custoFuncoes();
+  if(tab==='funcoes')  { _custoFuncoes(); _refreshMemoriaIfOpen(); }
   if(tab==='epi')      _custoEPI();
   if(tab==='encargos') _custoEncargos();
+  if(tab==='materiais')   _custoMateriais();
+  if(tab==='ferramentas') _custoFerramentas();
+  if(tab==='informatica') _custoInformatica();
+  if(tab==='veiculos')    _custoVeiculos();
+  if(tab==='cursos')       _custoCursos();
+  if(tab==='exames')       _custoExames();
+  if(tab==='seguros')      _custoSeguros();
+  if(tab==='equipamentos') _custoEquipamentos();
+  if(tab==='alugueis')     _custoAlugueis();
+  if(tab==='impostos')     _custoImpostos();
   if(tab==='projetos') _custoProjecoes();
   if(tab==='rentab')   _custoRentab();
+}
+function _refreshMemoriaIfOpen(){
+  var sec=document.getElementById('custosec-memoria');
+  if(sec&&sec.style.display!=='none') _custoMemoria();
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -17785,13 +18409,17 @@ function _custoEstudo() {
 
   /* ── CABEÇALHO ─────────────────────────────────────────── */
   var GRN = '#1a4731';
+  var isTodos = _custoCen === 'todos';
   var th = '<tr>';
   th += '<th style="width:108px;background:'+GRN+';color:#b6d9c3;font-size:8.5px;letter-spacing:1.2px;padding:8px 10px;border-right:1px solid rgba(255,255,255,.08)">CONTA CUSTO</th>';
-  th += '<th style="min-width:270px;background:'+GRN+';color:#b6d9c3;font-size:8.5px;letter-spacing:1.2px;padding:8px 12px">DISCRIMINAÇÃO</th>';
+  th += '<th style="min-width:260px;background:'+GRN+';color:#b6d9c3;font-size:8.5px;letter-spacing:1.2px;padding:8px 12px">DISCRIMINAÇÃO</th>';
   cens.forEach(function(cn,cni){
     var accent = cn==='orcado'?'#2d6a4f': cn==='estudo'?'#1b4332':'#081c15';
-    th += '<th colspan="3" style="background:'+accent+';color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center;padding:8px;border-left:2px solid rgba(255,255,255,.12);min-width:280px">'+lbl[cn].toUpperCase()+' <button class="col-ctx-btn" data-col-tbl="dre" data-col-cn="'+cn+'" data-col-ci="'+cni+'" onclick="colCtxOpen(event,this)" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;background:rgba(255,255,255,.12);border-radius:3px;cursor:pointer;font-size:10px;padding:0;margin-left:6px;opacity:.7;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">&#8942;</button>'+'</th>';
+    th += '<th style="background:'+accent+';color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center;padding:8px;border-left:2px solid rgba(255,255,255,.12);min-width:200px">'+lbl[cn].toUpperCase()+' <button class="col-ctx-btn" data-col-tbl="dre" data-col-cn="'+cn+'" data-col-ci="'+cni+'" onclick="colCtxOpen(event,this)" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;background:rgba(255,255,255,.12);border-radius:3px;cursor:pointer;font-size:10px;padding:0;margin-left:6px;opacity:.7;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">&#8942;</button></th>';
   });
+  if(isTodos) {
+    th += '<th style="background:#1a1a2e;color:#a78bfa;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center;padding:8px;border-left:2px solid rgba(167,139,250,.3);min-width:160px">Δ VARIAÇÃO</th>';
+  }
   th += '<th style="width:28px;background:'+GRN+'"></th></tr>';
 
   /* sub-header */
@@ -17800,16 +18428,18 @@ function _custoEstudo() {
   th += '<th style="background:#122820"></th>';
   cens.forEach(function(cn){
     var accent = cn==='orcado'?'#1d4635': cn==='estudo'?'#142e24':'#060f0a';
-    th += '<th style="background:'+accent+';color:#8ecfae;font-size:8px;letter-spacing:1px;text-align:right;padding:6px 10px;border-left:2px solid rgba(255,255,255,.10);min-width:120px">VALOR</th>';
-    th += '<th style="background:'+accent+';color:#8ecfae;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 6px;width:62px">%&thinsp;DESP</th>';
-    th += '<th style="background:'+accent+';color:#8ecfae;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 6px;width:62px">%&thinsp;REC</th>';
+    th += '<th style="background:'+accent+';color:#8ecfae;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 10px;border-left:2px solid rgba(255,255,255,.10);min-width:180px">VALOR · % REC · % DESP</th>';
   });
+  if(isTodos) {
+    th += '<th style="background:#13132a;color:#c4b5fd;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 10px;border-left:2px solid rgba(167,139,250,.2)">ORÇADO → PRÉ-CUSTO (Δ)</th>';
+  }
   th += '<th style="background:#122820"></th></tr>';
   thead.innerHTML = th;
 
   /* ── HELPERS ────────────────────────────────────────────── */
-  function pct(v, tot){ return (tot>0 && v!==0) ? (v/tot*100).toFixed(2)+'%' : '0,00%'; }
+  function pct(v, tot){ return (tot>0 && v!==0) ? (v/tot*100).toFixed(1)+'%' : '—'; }
   function fv(v){ return v ? _fmtBRL(v) : '0,00'; }
+  function _pctColor(v, tot){ var p=tot>0?Math.abs(v/tot*100):0; return p>40?'#4ade80':p>15?'#a3e635':p>5?'#facc15':'#94a3b8'; }
 
   /* ── LINHAS ─────────────────────────────────────────────── */
   var tb = '';
@@ -17828,7 +18458,7 @@ function _custoEstudo() {
       desc_style  = 'font-size:12px;font-weight:900;color:var(--tx);text-transform:uppercase;letter-spacing:.3px;padding:10px 12px;border-bottom:2px solid rgba(255,255,255,.1)';
       val_style   = 'font-size:13px;font-weight:900;font-family:var(--fn);color:var(--tx)';
       pct_style   = 'font-size:10px;color:var(--t2)';
-      show_pct    = false;
+      show_pct    = true;   /* nivel 0 mostra % da receita */
       editable    = true;
     } else if(n===1){
       rowBg       = 'rgba(255,255,255,.022)';
@@ -17856,17 +18486,45 @@ function _custoEstudo() {
       editable    = true;
     }
 
-    /* row open */
-    tb += '<tr style="background:'+rowBg+'">';
-    tb += '<td style="'+conta_style+'">' + row.conta + '</td>';
-    tb += '<td style="'+desc_style+'">' + row.desc + '</td>';
+    /* ── visibilidade (collapse) ── */
+    var hidden = _dreIsHidden(row);
+    var isCollapsed = !!_custoDreCollapsed[row.conta];
+    var isCollapsible = n===0||n===1||n===2;
+    var chev = isCollapsible
+      ? '<span onclick="custoDreToggle(\'' + row.conta + '\')\" style="cursor:pointer;user-select:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;margin-right:4px;opacity:.65;font-size:10px;transition:transform .18s;transform:rotate(' + (isCollapsed?'-90':'0') + 'deg)" title="Recolher/Expandir">\u25be</span>'
+      : '<span style="display:inline-block;width:22px"></span>';
 
-    /* value cells */
+    /* row open */
+    tb += '<tr style="background:'+rowBg+';'+(hidden?'display:none':'')+';" data-dre-conta="'+row.conta+'" data-dre-nivel="'+n+'">';
+    tb += '<td style="'+conta_style+'">' + row.conta + '</td>';
+    tb += '<td style="'+desc_style+'"><span style="display:inline-flex;align-items:center">' + chev + row.desc + '</span></td>';
+
+    /* value cells — % inline dentro do mesmo TD */
     cens.forEach(function(cn){
-      var v  = row[cn]||0;
-      var pd = show_pct ? pct(v, totDesp[cn]) : '';
-      var pr = show_pct ? pct(v, totRec[cn])  : '';
-      var bl = 'border-left:2px solid rgba(255,255,255,.07)';
+      var v   = row[cn]||0;
+      var pd  = show_pct ? pct(v, totDesp[cn]) : '';
+      var pr  = show_pct ? pct(v, totRec[cn])  : '';
+      var prc = pd !== '—' && pd ? _pctColor(v, totDesp[cn]) : '#94a3b8';
+      var bl  = 'border-left:2px solid rgba(255,255,255,.07)';
+
+      /* badge de % — lado direito do valor, mesma linha */
+      var _prLabel  = (pr && pr!=='—') ? pr+' rec' : '';
+      var _pdLabel  = (pd && pd!=='—') ? pd+' desp' : '';
+      var _pctInner = '';
+      if(n===0) {
+        /* nivel 0: só % da receita, destaque maior */
+        var _p0 = (totRec[cn]>0 && v!==0) ? (v/totRec[cn]*100).toFixed(1)+'%' : '—';
+        if(_p0 !== '—') {
+          var _c0 = tp==='receita'?'#6ee7b7': tp==='resultado'?(v>=0?'#6ee7b7':'#f87171'):'#fca5a5';
+          _pctInner = '<span style="font-size:11px;font-weight:800;font-family:var(--fn);color:'+_c0+';min-width:52px;text-align:right">'+_p0+'</span>';
+        }
+      } else {
+        /* niveis 1-3: % rec + % desp empilhadas à direita */
+        if(_prLabel) _pctInner += '<div style="font-size:9px;font-family:var(--fn);color:#6ee7b7;white-space:nowrap;text-align:right">'+_prLabel+'</div>';
+        if(_pdLabel) _pctInner += '<div style="font-size:9px;font-family:var(--fn);color:'+prc+';white-space:nowrap;text-align:right;opacity:.8">'+_pdLabel+'</div>';
+        if(_pctInner) _pctInner = '<div style="display:flex;flex-direction:column;gap:1px;min-width:58px;justify-content:center">'+_pctInner+'</div>';
+      }
+      var pctBadge = show_pct && _pctInner ? _pctInner : '';
 
       if(editable){
         var _iH=n===0?'32px':n===1?'30px':'27px';
@@ -17874,22 +18532,43 @@ function _custoEstudo() {
         var _iFw=n<=1?'800':'400';
         var _iBg=n===0?'rgba(255,255,255,.07)':n===1?'rgba(255,255,255,.05)':'rgba(255,255,255,.03)';
         var _iBd=n===0?'rgba(255,255,255,.18)':n===1?'rgba(255,255,255,.12)':'rgba(255,255,255,.07)';
-        tb += '<td style="padding:3px 6px;'+bl+'">' +
-          '<input type="number" class="fi" ' +
-          'style="height:'+_iH+';font-size:'+_iFs+';font-weight:'+_iFw+';padding:3px 10px;min-width:108px;font-family:var(--fn);text-align:right;background:'+_iBg+';border-color:'+_iBd+';color:var(--tx)" ' +
-          'value="'+(v||'')+'" placeholder="0,00" ' +
-          'data-cn="'+cn+'" onchange="custoDRESave('+idx+',this.dataset.cn,this.value)">' +
-          '</td>';
-        tb += '<td style="text-align:center;font-size:10px;color:var(--t3);font-family:var(--fn);padding:0 4px;white-space:nowrap">' + pd + '</td>';
-        tb += '<td style="text-align:center;font-size:10px;color:var(--t3);font-family:var(--fn);padding:0 4px;white-space:nowrap">' + pr + '</td>';
+        tb += '<td style="padding:3px 8px;'+bl+';min-width:220px">'
+          + '<div style="display:flex;align-items:center;gap:8px">'
+          + '<input type="number" class="fi" '
+          + 'style="height:'+_iH+';font-size:'+_iFs+';font-weight:'+_iFw+';padding:3px 10px;flex:1;min-width:100px;font-family:var(--fn);text-align:right;background:'+_iBg+';border-color:'+_iBd+';color:var(--tx)" '
+          + 'value="'+(v||'')+'" placeholder="0,00" '
+          + 'data-cn="'+cn+'" onchange="custoDRESave('+idx+',this.dataset.cn,this.value)">'
+          + pctBadge
+          + '</div>'
+          + '</td>';
       } else {
         var vc = (tp==='receita'||tp==='resultado') ? '#4ade80' : n<=1&&v>0 ? '#f87171' : 'var(--tx)';
-        tb += '<td style="text-align:right;padding:0 10px;font-family:var(--fn);'+val_style.replace(/font-family:var\(--fn\);?/,'')+';color:'+vc+';'+bl+'">' +
-          (v ? _fmtBRL(v) : '<span style=\\"color:rgba(255,255,255,.2)\\">—</span>') + '</td>';
-        tb += '<td style="text-align:center;font-size:10px;font-family:var(--fn);'+pct_style+';padding:0 4px;white-space:nowrap">' + pd + '</td>';
-        tb += '<td style="text-align:center;font-size:10px;font-family:var(--fn);'+pct_style+';padding:0 4px;white-space:nowrap">' + pr + '</td>';
+        tb += '<td style="padding:4px 10px;min-width:220px;'+bl+'">'
+          + '<div style="display:flex;align-items:center;gap:8px">'
+          + '<div style="flex:1;font-family:var(--fn);text-align:right;'+val_style.replace(/font-family:var\(--fn\);?/,'')+';color:'+vc+'">'
+          + (v ? _fmtBRL(v) : '<span style=\"color:rgba(255,255,255,.2)\">—</span>')
+          + '</div>'
+          + pctBadge
+          + '</div>'
+          + '</td>';
       }
     });
+
+    /* coluna Δ variação (só no modo comparativo) */
+    if(isTodos) {
+      var vOrc = row['orcado']||0;
+      var vPre = row['precusto']||0;
+      var delta = vPre - vOrc;
+      var deltaFmt = (delta===0) ? '—' : (delta>0?'+':'')+_fmtBRL(delta);
+      var deltaColor = delta===0?'#94a3b8':
+        (tp==='receita'||tp==='resultado') ? (delta>0?'#4ade80':'#f87171') :
+        (delta<0?'#4ade80':'#f87171');
+      var deltaPerc = vOrc!==0 ? ' ('+((delta/Math.abs(vOrc))*100).toFixed(1)+'%)' : '';
+      tb += '<td style="text-align:center;padding:4px 10px;border-left:2px solid rgba(167,139,250,.2);min-width:150px;background:rgba(167,139,250,.03)">'
+        + '<div style="font-family:var(--fn);font-size:12px;font-weight:700;color:'+deltaColor+'">'+deltaFmt+'</div>'
+        + (delta!==0?'<div style="font-size:9px;color:'+deltaColor+';opacity:.7">'+deltaPerc+'</div>':'')
+        + '</td>';
+    }
 
     /* context menu button */
     tb += '<td style="padding:2px 4px;text-align:center">' +
@@ -17903,6 +18582,31 @@ function _custoEstudo() {
   });
 
   tbody.innerHTML = tb;
+}
+
+// ── Collapse helpers ─────────────────────────────────────────────────
+function _dreIsHidden(row) {
+  var c = row.conta;
+  // pai nivel-0: primeiros 2 chars
+  if(_custoDreCollapsed[c.slice(0,2)] && c.length > 2) return true;
+  // pai nivel-1: primeiros 4 chars
+  if(c.length > 4 && _custoDreCollapsed[c.slice(0,4)]) return true;
+  // pai nivel-2: primeiros 6 chars
+  if(c.length > 6 && _custoDreCollapsed[c.slice(0,6)]) return true;
+  return false;
+}
+function custoDreToggle(conta) {
+  _custoDreCollapsed[conta] = !_custoDreCollapsed[conta];
+  _custoEstudo();
+}
+function custoDreCollapseAll(collapse) {
+  var a = _custoAnalise(); if(!a) return;
+  a.dreContas.forEach(function(row) {
+    if(row.nivel === 0 || row.nivel === 1 || row.nivel === 2) {
+      _custoDreCollapsed[row.conta] = collapse;
+    }
+  });
+  _custoEstudo();
 }
 
 function custoDRESave(idx, cn, v) {
@@ -17964,93 +18668,268 @@ function custoRemoveDRE(idx) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-//  MEMÓRIA
+//  MEMÓRIA — CONFIG POR TIPO DE GRUPO
 // ══════════════════════════════════════════════════════════════════════
+var MEM_CFG = {
+  salario:     {titulo:'Salário',      vlCol:'Valor do Salário', qtdCol:'Quant.',    totCol:'Salário Total',  src:'funcoes',    getLabel:function(it){return it.cargo||'';},
+    getVl:        function(it){return parseFloat(it.salarioFinal||it.salarioOrcado||0);},
+    getVlOrcado:  function(it){return parseFloat(it.salarioOrcado||0);},
+    getVlEstudo:  function(it){return parseFloat(it.salarioEstudo||0);},
+    getVlPrecusto:function(it){return parseFloat(it.salarioFinal||0);}   // salarioPrecusto × reajusteAcum já calculado
+  },
+  epi:         {titulo:'EPI/Uniforme', vlCol:'Preço Unit.',      qtdCol:'Qtd',       totCol:'Total EPI',      src:'epiItens',   getLabel:function(it){return it.desc||'';},                              getVl:function(it){return parseFloat(it.vlUnit||0);}},
+  encargos:    {titulo:'Encargos',     vlCol:'% Encargo',        qtdCol:'Base (R$)', totCol:'Total Encargo',  src:'encargosSoc',getLabel:function(it){return it.modalidade||'';},                       getVl:function(it){return parseFloat(it.perc||0);}},
+  materiais:   {titulo:'Materiais',    vlCol:'Valor Unit.',      qtdCol:'Qtd',       totCol:'Total',          src:'materiais',  getLabel:function(it){return it.desc||'';},                              getVl:function(it){return parseFloat(it.vlUnit||0);}},
+  ferramentas: {titulo:'Ferramentas',  vlCol:'Valor Unit.',      qtdCol:'Qtd',       totCol:'Total',          src:'ferramentas',getLabel:function(it){return it.desc||'';},                              getVl:function(it){return parseFloat(it.vlUnit||0);}},
+  informatica: {titulo:'Informática',  vlCol:'Valor Unit.',      qtdCol:'Qtd',       totCol:'Total',          src:'informatica',getLabel:function(it){return it.desc||'';},                              getVl:function(it){return parseFloat(it.vlUnit||0);}},
+  veiculos:    {titulo:'Veículos',     vlCol:'Valor Mensal',     qtdCol:'Qtd',       totCol:'Total Mensal',   src:'veiculos',   getLabel:function(it){return (it.desc||'')+(it.placa?' ('+it.placa+')':'');}, getVl:function(it){return parseFloat(it.vlMensal||0);}},
+  generico:    {titulo:'Geral',        vlCol:'Valor Unit.',      qtdCol:'Qtd',       totCol:'Total',          src:null,         getLabel:null,                                                           getVl:null}
+};
+function _memCfg(tipo){ return MEM_CFG[tipo]||MEM_CFG.generico; }
+function _memSrcOpts(a,tipo){
+  var cfg=_memCfg(tipo);
+  if(!cfg.src||!cfg.getLabel) return [];
+  return (a[cfg.src]||[]).map(function(it,i){return {idx:i,label:cfg.getLabel(it)||('Item '+(i+1)),vlUnit:cfg.getVl(it)};});
+}
+
+// ── Render principal ──────────────────────────────────────────────────
 function _custoMemoria() {
-  var a = _custoAnalise(); if(!a) return;
-  if(!a.memoria) a.memoria = {grupos:[]};
-  if(!a.memoria.grupos) a.memoria.grupos = [];
-  var wrap = document.getElementById('custo-memoria-wrap'); if(!wrap) return;
-  var filtro = (document.getElementById('custo-mem-grupo')||{}).value||'todos';
-  var grupos = a.memoria.grupos.filter(function(g){ return filtro==='todos'||g.tipo===filtro; });
-  if(!grupos.length) {
-    wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)"><div style="font-size:24px;margin-bottom:8px">🧮</div>' +
-      '<div style="font-size:13px;margin-bottom:12px">Nenhum grupo de memória. Crie o primeiro!</div>' +
-      '<button class="btn btn-p btn-sm" onclick="custoAddMemoriaGrupo()">＋ Criar Grupo</button></div>';
+  var a=_custoAnalise(); if(!a) return;
+  if(!a.memoria) a.memoria={grupos:[]};
+  if(!a.memoria.grupos) a.memoria.grupos=[];
+  var wrap=document.getElementById('custo-memoria-wrap'); if(!wrap) return;
+  var origGrupos=a.memoria.grupos;
+  var grupos=origGrupos; // sempre mostra todos os grupos
+
+  if(!grupos.length){
+    wrap.innerHTML='<div style="text-align:center;padding:48px;color:var(--t3)"><div style="font-size:28px;margin-bottom:10px">🧮</div><div style="font-size:13px;margin-bottom:14px">Selecione um tipo no filtro acima e clique em <strong>＋ Grupo</strong> para criar o primeiro grupo de memória.</div></div>';
     return;
   }
-  var html = '';
-  // We need original indices for save operations
-  var origGrupos = a.memoria.grupos;
-  grupos.forEach(function(g) {
-    var gi = origGrupos.indexOf(g);
-    html += '<div class="tbl-wrap" style="margin-bottom:16px">' +
-      '<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--b1)">' +
-      '<div style="font-family:var(--fh);font-size:14px;font-weight:700;flex:1">' + (g.titulo||'Grupo') + '</div>' +
-      '<button class="btn btn-s btn-sm" onclick="custoAddMemLinha('+gi+')">＋ Linha</button>' +
-      '<button class="btn btn-s btn-sm" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--ac2)" onclick="custoAddMemColuna('+gi+')">＋ Coluna</button>' +
-      '<button class="bic del" onclick="custoRemoveGrupo('+gi+')">🗑</button></div>' +
-      '<div class="tbl-scroll"><table class="ft" style="min-width:600px"><thead><tr>' +
-      '<th>Conta</th><th style="min-width:170px">Descrição</th>';
-    (g.colunas||[]).forEach(function(col,ci) {
-      html += '<th>' + col + ' <button class="col-ctx-btn" data-col-tbl="mem" data-col-ci="'+ci+'" data-col-gi="'+gi+'" onclick="colCtxOpen(event,this)" title="Opcoes" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;background:rgba(255,255,255,.1);border-radius:3px;cursor:pointer;font-size:10px;padding:0;margin-left:5px;opacity:.65;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.65">&#8942;</button>' + '</th>';
+
+  var html='';
+  grupos.forEach(function(g){
+    var gi=origGrupos.indexOf(g);
+    var cfg=_memCfg(g.tipo);
+    var opts=_memSrcOpts(a,g.tipo);
+    var hasSrc=opts.length>0;
+
+    // ── Cabeçalho do grupo ──
+    html+='<div class="tbl-wrap" style="margin-bottom:20px">'+
+      '<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--b1)">'+
+        '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3)">Conta</span>'+
+        '<input class="fi" style="height:28px;font-size:11px;width:100px" value="'+_esc(g.conta||'')+'" onchange="custoMemContaSave('+gi+',this.value)" placeholder="Código">'+
+        '<input class="fi" style="height:28px;font-size:13px;font-weight:700;font-family:var(--fh);flex:1;min-width:200px" value="'+_esc(g.titulo||cfg.titulo)+'" onchange="custoMemTituloSave('+gi+',this.value)" placeholder="Título do grupo">'+
+        '<button class="btn btn-s btn-sm" onclick="custoAddMemLinha('+gi+')">＋ Linha</button>'+
+        '<button class="bic del" onclick="custoRemoveGrupo('+gi+')" title="Excluir grupo">🗑</button>'+
+      '</div>'+
+      // ── Tabela ──
+      '<div class="custo-tbl-scroll">'+
+      '<table class="ft custo-tbl" style="min-width:900px">'+
+      '<thead>'+
+        '<tr>'+
+          '<th rowspan="2" style="min-width:100px;vertical-align:middle;border-bottom:0">Conta</th>'+
+          '<th rowspan="2" style="min-width:200px;vertical-align:middle;border-bottom:0">Descrição</th>'+
+          '<th colspan="3" style="text-align:center;background:rgba(16,185,129,.18);color:#6ee7b7;font-size:10px;font-weight:800;letter-spacing:2px;border-left:2px solid rgba(16,185,129,.35)">ORÇADO</th>'+
+          '<th colspan="3" style="text-align:center;background:rgba(56,189,248,.15);color:#93c5fd;font-size:10px;font-weight:800;letter-spacing:2px;border-left:2px solid rgba(56,189,248,.35)">ESTUDO</th>'+
+          '<th colspan="3" style="text-align:center;background:rgba(245,158,11,.15);color:#fcd34d;font-size:10px;font-weight:800;letter-spacing:2px;border-left:2px solid rgba(245,158,11,.35)">PRÉ-CUSTO</th>'+
+          '<th rowspan="2" style="width:32px;border-bottom:0"></th>'+
+        '</tr>'+
+        '<tr style="background:rgba(0,0,0,.12)">'+
+          '<th style="font-size:10px;min-width:100px;border-left:2px solid rgba(16,185,129,.35)">'+_esc(cfg.vlCol)+'</th>'+
+          '<th style="font-size:10px;width:72px">'+_esc(cfg.qtdCol)+'</th>'+
+          '<th style="font-size:10px;min-width:105px;color:var(--gnl)">'+_esc(cfg.totCol)+'</th>'+
+          '<th style="font-size:10px;min-width:100px;border-left:2px solid rgba(56,189,248,.35)">'+_esc(cfg.vlCol)+'</th>'+
+          '<th style="font-size:10px;width:72px">'+_esc(cfg.qtdCol)+'</th>'+
+          '<th style="font-size:10px;min-width:105px;color:var(--ac2)">'+_esc(cfg.totCol)+'</th>'+
+          '<th style="font-size:10px;min-width:100px;border-left:2px solid rgba(245,158,11,.35)">'+_esc(cfg.vlCol)+'</th>'+
+          '<th style="font-size:10px;width:72px">'+_esc(cfg.qtdCol)+'</th>'+
+          '<th style="font-size:10px;min-width:105px;color:var(--gl)">'+_esc(cfg.totCol)+'</th>'+
+        '</tr>'+
+      '</thead><tbody>';
+
+    // ── Linhas ──
+    var sumOrcQtd=0,sumOrcTot=0,sumEstQtd=0,sumEstTot=0,sumPreQtd=0,sumPreTot=0;
+    (g.linhas||[]).forEach(function(l,li){
+      var orc=l.orcado||{vlUnit:0,qtd:0};
+      var est=l.estudo||{vlUnit:0,qtd:0};
+      var pre=l.precusto||{vlUnit:0,qtd:0};
+
+      // Vínculo vivo com Funções — busca valores atuais por cenário
+      var isLinked = (l.linkedIdx != null && l.linkedIdx >= 0 && cfg.getVlOrcado);
+      if(isLinked){
+        var srcArr=a[cfg.src]||[];
+        var srcItem=srcArr[l.linkedIdx];
+        if(srcItem){
+          orc.vlUnit=cfg.getVlOrcado(srcItem);
+          est.vlUnit=cfg.getVlEstudo(srcItem);
+          pre.vlUnit=cfg.getVlPrecusto(srcItem);
+          // Persiste para cálculos exportados
+          if(!l.orcado)   l.orcado={vlUnit:0,qtd:0};
+          if(!l.estudo)   l.estudo={vlUnit:0,qtd:0};
+          if(!l.precusto) l.precusto={vlUnit:0,qtd:0};
+          l.orcado.vlUnit=orc.vlUnit; l.estudo.vlUnit=est.vlUnit; l.precusto.vlUnit=pre.vlUnit;
+        }
+      }
+
+      var tOrc=(parseFloat(orc.vlUnit)||0)*(parseFloat(orc.qtd)||0);
+      var tEst=(parseFloat(est.vlUnit)||0)*(parseFloat(est.qtd)||0);
+      var tPre=(parseFloat(pre.vlUnit)||0)*(parseFloat(pre.qtd)||0);
+      sumOrcQtd+=(parseFloat(orc.qtd)||0); sumOrcTot+=tOrc;
+      sumEstQtd+=(parseFloat(est.qtd)||0); sumEstTot+=tEst;
+      sumPreQtd+=(parseFloat(pre.qtd)||0); sumPreTot+=tPre;
+
+      // Helper: célula de valor — leitura automática se vinculado, editável se manual
+      function vlCell(cen, val, borderStyle){
+        if(isLinked){
+          return '<td style="'+borderStyle+';font-family:var(--fn);font-size:12px;font-weight:600;color:var(--t2);padding:0 8px" title="Valor vindo de Funções — edite na aba Funções">'+_fmtBRL(val)+'</td>';
+        }
+        return '<td style="'+borderStyle+'"><input type="number" class="fi" style="height:26px;font-size:11px;min-width:88px;font-family:var(--fn)" value="'+(val||'')+'" placeholder="0" onchange="custoMemScenSave('+gi+','+li+',\''+cen+'\',\'vlUnit\',this.value)"></td>';
+      }
+
+      // Conta
+      html+='<tr>'+
+        '<td><input class="fi" style="height:26px;font-size:10px;width:92px" value="'+_esc(l.conta||'')+'" placeholder="—" onchange="custoMemSave('+gi+','+li+',\'conta\',this.value)"></td>';
+
+      // Descrição — dropdown vinculado ou texto livre
+      if(hasSrc){
+        var selOpts='<option value="">— selecionar —</option>'+
+          opts.map(function(o){return '<option value="'+o.idx+'"'+(l.linkedIdx===o.idx?' selected':'')+'>'+_esc(o.label)+'</option>';}).join('')+
+          '<option value="-1"'+(l.linkedIdx===-1?' selected':'')+'>✍ Digitar manualmente</option>';
+        html+='<td style="padding:4px 6px">'+
+          '<select class="dp-ct-sel" style="height:26px;font-size:11px;min-width:195px" onchange="custoMemLinkSelect('+gi+','+li+',this.value)">'+selOpts+'</select>'+
+          (l.linkedIdx===-1?'<br><input class="fi" style="height:24px;font-size:11px;min-width:195px;margin-top:3px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)">':'')+
+        '</td>';
+      } else {
+        html+='<td><input class="fi" style="height:26px;font-size:11px;min-width:195px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)"></td>';
+      }
+
+      // ORÇADO
+      html+=
+        vlCell('orcado', orc.vlUnit, 'border-left:2px solid rgba(16,185,129,.25)')+
+        '<td><input type="number" class="fi" style="height:26px;font-size:11px;width:65px;font-family:var(--fn)" value="'+(orc.qtd||'')+'" placeholder="0" onchange="custoMemScenSave('+gi+','+li+',\'orcado\',\'qtd\',this.value)"></td>'+
+        '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tOrc)+'</td>';
+      // ESTUDO
+      html+=
+        vlCell('estudo', est.vlUnit, 'border-left:2px solid rgba(56,189,248,.25)')+
+        '<td><input type="number" class="fi" style="height:26px;font-size:11px;width:65px;font-family:var(--fn)" value="'+(est.qtd||'')+'" placeholder="0" onchange="custoMemScenSave('+gi+','+li+',\'estudo\',\'qtd\',this.value)"></td>'+
+        '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--ac2)">'+_fmtBRL(tEst)+'</td>';
+      // PRÉ-CUSTO
+      html+=
+        vlCell('precusto', pre.vlUnit, 'border-left:2px solid rgba(245,158,11,.25)')+
+        '<td><input type="number" class="fi" style="height:26px;font-size:11px;width:65px;font-family:var(--fn)" value="'+(pre.qtd||'')+'" placeholder="0" onchange="custoMemScenSave('+gi+','+li+',\'precusto\',\'qtd\',this.value)"></td>'+
+        '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gl)">'+_fmtBRL(tPre)+'</td>'+
+        '<td><button class="bic ctx-btn" data-ctx-table="mem_linha" data-ctx-row="'+gi+','+li+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
     });
-    html += '<th style="width:32px"></th></tr></thead><tbody>';
-    (g.linhas||[]).forEach(function(l, li) {
-      html += '<tr><td style="font-size:10px;color:var(--t3)">' + (l.conta||'') + '</td>' +
-        '<td><input class="fi" style="height:26px;font-size:11px" value="' + (l.desc||'') + '" data-key=\"desc\" onchange=\"custoMemLinhaSave('+gi+','+li+',this.dataset.key,this.value)\"></td>';
-      (g.colunas||[]).forEach(function(col, ci) {
-        html += '<td><input type="number" class="fi" style="height:26px;font-size:11px;min-width:80px;font-family:var(--fn)" value="' + ((l.vals&&l.vals[ci])||'') + '" placeholder="0" onchange="custoMemValSave('+gi+','+li+','+ci+',this.value)"></td>';
-      });
-      html += '<td><button class="bic ctx-btn" data-ctx-table="mem_linha" data-ctx-row="'+gi+','+li+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
-    });
-    // Totals row
-    html += '<tr style="background:rgba(16,185,129,.05)"><td></td><td style="font-weight:800;color:var(--gnl);font-size:11px">TOTAL</td>';
-    (g.colunas||[]).forEach(function(col, ci) {
-      var tot = (g.linhas||[]).reduce(function(s,l){ return s+((l.vals&&l.vals[ci])||0); },0);
-      html += '<td style="font-weight:800;font-family:var(--fn);color:var(--gnl)">' + _fmtBRL(tot) + '</td>';
-    });
-    html += '<td></td></tr></tbody></table></div></div>';
+
+    // ── Linha de totais ──
+    html+='<tr style="background:rgba(16,185,129,.07)">'+
+      '<td></td><td style="font-weight:800;color:var(--gnl);font-size:11px">TOTAL</td>'+
+      '<td style="border-left:2px solid rgba(16,185,129,.25)"></td>'+
+      '<td style="font-weight:800;font-family:var(--fn);color:var(--gnl)">'+sumOrcQtd.toFixed(2)+'</td>'+
+      '<td style="font-weight:800;font-family:var(--fn);color:var(--gnl)">'+_fmtBRL(sumOrcTot)+'</td>'+
+      '<td style="border-left:2px solid rgba(56,189,248,.25)"></td>'+
+      '<td style="font-weight:800;font-family:var(--fn);color:var(--ac2)">'+sumEstQtd.toFixed(2)+'</td>'+
+      '<td style="font-weight:800;font-family:var(--fn);color:var(--ac2)">'+_fmtBRL(sumEstTot)+'</td>'+
+      '<td style="border-left:2px solid rgba(245,158,11,.25)"></td>'+
+      '<td style="font-weight:800;font-family:var(--fn);color:var(--gl)">'+sumPreQtd.toFixed(2)+'</td>'+
+      '<td style="font-weight:800;font-family:var(--fn);color:var(--gl)">'+_fmtBRL(sumPreTot)+'</td>'+
+      '<td></td></tr>'+
+    '</tbody></table></div></div>';
   });
-  wrap.innerHTML = html;
+  wrap.innerHTML=html;
 }
-function renderCustoMemoria() { _custoMemoria(); }
-function custoMemLinhaSave(gi,li,k,v) {
-  var a=_custoAnalise(); if(a&&a.memoria.grupos[gi]&&a.memoria.grupos[gi].linhas[li]){a.memoria.grupos[gi].linhas[li][k]=v;scheduleAutoSync();}
-}
-function custoMemValSave(gi,li,ci,v) {
+
+function renderCustoMemoria(){ _custoMemoria(); }
+
+// ── Save helpers ──────────────────────────────────────────────────────
+function custoMemSave(gi,li,k,v){
   var a=_custoAnalise(); if(!a)return;
-  var l=a.memoria.grupos[gi].linhas[li];
-  if(!l.vals)l.vals=[];
-  l.vals[ci]=parseFloat(v)||0; _custoMemoria(); scheduleAutoSync();
+  var g=a.memoria.grupos[gi]; if(!g)return;
+  var l=g.linhas[li]; if(!l)return;
+  l[k]=v; scheduleAutoSync();
 }
-function custoAddMemoriaGrupo() {
+function custoMemScenSave(gi,li,cen,field,v){
   var a=_custoAnalise(); if(!a)return;
-  var titulo=prompt('Título do grupo:',''); if(!titulo)return;
-  var tipo=(document.getElementById('custo-mem-grupo')||{}).value||'salario';
-  a.memoria.grupos.push({titulo:titulo,tipo:tipo,colunas:['Orçado (Qtd)','Orçado (Vl)','Estudo (Qtd)','Estudo (Vl)','Pré-Custo (Qtd)','Pré-Custo (Vl)'],linhas:[]});
+  var g=a.memoria.grupos[gi]; if(!g)return;
+  var l=g.linhas[li]; if(!l)return;
+  if(!l[cen]) l[cen]={vlUnit:0,qtd:0};
+  l[cen][field]=parseFloat(v)||0;
   _custoMemoria(); scheduleAutoSync();
 }
-function custoAddMemoriaLinha(gi) { if(gi===undefined){custoAddMemoriaGrupo();return;} custoAddMemLinha(gi); }
-function custoAddMemLinha(gi) {
+function custoMemTituloSave(gi,v){
   var a=_custoAnalise(); if(!a)return;
-  var conta=prompt('Conta (opcional):','');
-  var desc=prompt('Descrição:','');
-  a.memoria.grupos[gi].linhas.push({conta:conta||'',desc:desc||'',vals:[]});
+  if(a.memoria.grupos[gi]) a.memoria.grupos[gi].titulo=v; scheduleAutoSync();
+}
+function custoMemContaSave(gi,v){
+  var a=_custoAnalise(); if(!a)return;
+  if(a.memoria.grupos[gi]) a.memoria.grupos[gi].conta=v; scheduleAutoSync();
+}
+function custoMemLinkSelect(gi,li,val){
+  var a=_custoAnalise(); if(!a)return;
+  var g=a.memoria.grupos[gi]; if(!g)return;
+  var l=g.linhas[li]; if(!l)return;
+  var idx=val===''?undefined:parseInt(val);
+  l.linkedIdx=isNaN(idx)?undefined:idx;
+  if(idx>=0){
+    var cfg=_memCfg(g.tipo);
+    var arr=a[cfg.src]||[];
+    var item=arr[idx];
+    if(item){
+      l.desc=cfg.getLabel(item);
+      if(!l.orcado)   l.orcado={vlUnit:0,qtd:0};
+      if(!l.estudo)   l.estudo={vlUnit:0,qtd:0};
+      if(!l.precusto) l.precusto={vlUnit:0,qtd:0};
+      // Popula cada cenário com o valor específico de cada coluna de Funções
+      l.orcado.vlUnit   = cfg.getVlOrcado   ? cfg.getVlOrcado(item)   : cfg.getVl(item);
+      l.estudo.vlUnit   = cfg.getVlEstudo   ? cfg.getVlEstudo(item)   : cfg.getVl(item);
+      l.precusto.vlUnit = cfg.getVlPrecusto ? cfg.getVlPrecusto(item) : cfg.getVl(item);
+    }
+  } else if(idx===-1){
+    l.linkedIdx=-1;
+    l.desc='';
+  }
   _custoMemoria(); scheduleAutoSync();
 }
-function custoAddMemoriaColuna(gi) { if(gi===undefined){showToast('Selecione um grupo primeiro.','go',2000);return;} custoAddMemColuna(gi); }
-function custoAddMemColuna(gi) {
+
+// ── Add / Remove ──────────────────────────────────────────────────────
+function custoAddMemoriaGrupo(){
   var a=_custoAnalise(); if(!a)return;
-  var col=prompt('Nome da coluna:',''); if(!col)return;
-  a.memoria.grupos[gi].colunas.push(col); _custoMemoria(); scheduleAutoSync();
+  var tipo=(document.getElementById('custo-mem-grupo')||{}).value||'generico';
+  var cfg=_memCfg(tipo);
+  var titulo=cfg.titulo?'GRUPO — '+cfg.titulo.toUpperCase():'NOVO GRUPO';
+  a.memoria.grupos.push({titulo:titulo,tipo:tipo,conta:'',linhas:[]});
+  _custoMemoria(); scheduleAutoSync();
+  showToast('Grupo "'+titulo+'" adicionado!','gn',2000);
+  // Scroll to new group
+  setTimeout(function(){
+    var wrap=document.getElementById('custo-memoria-wrap');
+    if(wrap){var last=wrap.lastElementChild;if(last)last.scrollIntoView({behavior:'smooth',block:'start'});}
+  },80);
 }
-function custoRemoveGrupo(gi) {
-  var a=_custoAnalise(); if(!a)return; a.memoria.grupos.splice(gi,1); _custoMemoria(); scheduleAutoSync();
+function custoAddMemoriaLinha(gi){ if(gi===undefined){custoAddMemoriaGrupo();return;} custoAddMemLinha(gi); }
+function custoAddMemLinha(gi){
+  var a=_custoAnalise(); if(!a)return;
+  var g=a.memoria.grupos[gi]; if(!g)return;
+  g.linhas.push({conta:'',desc:'',linkedIdx:undefined,orcado:{vlUnit:0,qtd:0},estudo:{vlUnit:0,qtd:0},precusto:{vlUnit:0,qtd:0}});
+  _custoMemoria(); scheduleAutoSync();
+  setTimeout(function(){
+    var wrap=document.getElementById('custo-memoria-wrap');
+    if(wrap){var tbls=wrap.querySelectorAll('table');var tbl=tbls[gi];if(tbl){var rows=tbl.querySelectorAll('tbody tr');var last=rows[rows.length-2];if(last)last.scrollIntoView({behavior:'smooth',block:'nearest'});}}
+  },80);
 }
-function custoRemoveMemLinha(gi,li) {
+function custoAddMemoriaColuna(gi){ /* não utilizado na nova versão */ }
+function custoAddMemColuna(gi){ /* não utilizado na nova versão */ }
+function custoRemoveGrupo(gi){
+  var a=_custoAnalise(); if(!a)return;
+  if(!confirm('Excluir este grupo e todas as linhas?'))return;
+  a.memoria.grupos.splice(gi,1); _custoMemoria(); scheduleAutoSync();
+}
+function custoRemoveMemLinha(gi,li){
   var a=_custoAnalise(); if(!a)return; a.memoria.grupos[gi].linhas.splice(li,1); _custoMemoria(); scheduleAutoSync();
 }
+// Manter compat com ctx antigo
+function custoMemLinhaSave(gi,li,k,v){ custoMemSave(gi,li,k,v); }
+function custoMemValSave(gi,li,ci,v){ /* legado — não utilizado */ }
 
 // ══════════════════════════════════════════════════════════════════════
 //  MEDIÇÃO
@@ -18102,68 +18981,243 @@ function custoSaveMedicao() { scheduleAutoSync(); showToast('Medição salva!','
 // ══════════════════════════════════════════════════════════════════════
 //  FUNÇÕES
 // ══════════════════════════════════════════════════════════════════════
+// ── Color helpers ─────────────────────────────────────────────────────
+function _fnLocalBg(v){ return v==='alojado'?'rgba(220,38,38,0.32)':v==='local'?'rgba(16,185,129,0.22)':''; }
+function _fnMoBg(v){ return v==='direta'?'rgba(109,40,217,0.38)':v==='indireta'?'rgba(139,92,246,0.26)':''; }
+function _fnRegimeBg(v){
+  if(v==='turno4x4'||v==='turno12x36'||v==='turno6x2') return 'rgba(16,185,129,0.26)';
+  if(v==='adm') return 'rgba(56,189,248,0.16)';
+  return '';
+}
+function _fnColBtn(tbl,ci){ return ' <button class="col-ctx-btn" data-col-tbl="'+tbl+'" data-col-ci="'+ci+'" onclick="colCtxOpen(event,this)" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;background:rgba(255,255,255,.1);border-radius:3px;cursor:pointer;font-size:10px;padding:0;margin-left:5px;opacity:.6;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.6">&#8942;</button>'; }
+
 function _custoFuncoes() {
-  var a = _custoAnalise(); if(!a) return;
-  if(!a.funcoes) a.funcoes = [];
-  var tbody = document.getElementById('custo-funcoes-tbody'); if(!tbody) return;
-  var tb = '';
-  a.funcoes.forEach(function(fn,i) {
-    var ajuste = (fn.salarioOrcado&&fn.salarioFinal) ? ((fn.salarioFinal/fn.salarioOrcado-1)*100).toFixed(1) : '—';
-    var totalMens = parseFloat(fn.salarioFinal||0)*parseInt(fn.headcount||0);
-    var ajColor = ajuste==='—'?'var(--t3)':parseFloat(ajuste)>=0?'var(--gnl)':'var(--rdl)';
-    tb += '<tr>' +
-      '<td><input class="fi" style="height:28px;font-size:12px" value="' + (fn.cargo||'') + '" data-key=\"cargo\" onchange=\"custoFnSave('+i+',this.dataset.key,this.value)\"></td>' +
-      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:85px;font-family:var(--fn)" value="' + (fn.salarioOrcado||'') + '" placeholder="0,00" data-key=\"salarioOrcado\" onchange=\"custoFnSave('+i+',this.dataset.key,this.value)\"></td>' +
-      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:85px;font-family:var(--fn)" value="' + (fn.salarioFinal||'') + '" placeholder="0,00" data-key=\"salarioFinal\" onchange=\"custoFnSave('+i+',this.dataset.key,this.value)\"></td>' +
-      '<td style="font-size:11px;font-weight:700;color:' + ajColor + '">' + ajuste + '%</td>' +
-      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px" data-key=\"periculosidade\" onchange=\"custoFnSave('+i+',this.dataset.key,this.value)\">' +
-        '<option value="N"' + (fn.periculosidade==='N'?' selected':'') + '>Não</option>' +
-        '<option value="S"' + (fn.periculosidade==='S'?' selected':'') + '>Sim (30%)</option></select></td>' +
-      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px" data-key=\"insalubridade\" onchange=\"custoFnSave('+i+',this.dataset.key,this.value)\">' +
-        '<option value="N"' + (fn.insalubridade==='N'?' selected':'') + '>Não</option>' +
-        '<option value="M"' + (fn.insalubridade==='M'?' selected':'') + '>Média 20%</option>' +
-        '<option value="A"' + (fn.insalubridade==='A'?' selected':'') + '>Alta 40%</option></select></td>' +
-      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px" data-key=\"adicTransf\" onchange=\"custoFnSave('+i+',this.dataset.key,this.value)\">' +
-        '<option value="N"' + (fn.adicTransf==='N'?' selected':'') + '>Não</option>' +
-        '<option value="S"' + (fn.adicTransf==='S'?' selected':'') + '>Sim (25%)</option></select></td>' +
-      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:55px;font-family:var(--fn)" value="' + (fn.headcount||1) + '" min="0" data-key=\"headcount\" onchange=\"custoFnSave('+i+',this.dataset.key,this.value)\"></td>' +
-      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">' + _fmtBRL(totalMens) + '</td>' +
+  var a=_custoAnalise(); if(!a) return;
+  if(!a.funcoes) a.funcoes=[];
+  if(!a.funcoesCols) a.funcoesCols=[];
+  var wrap=document.getElementById('custo-funcoes-wrap'); if(!wrap) return;
+  var cols=a.funcoesCols;
+
+  // Botão ⋮ para adicionar colunas — fica no header de Sal. Final Reajustado
+  var addColBtn=' <button onclick="custoAddFuncaoColuna()" title="Adicionar coluna" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid rgba(56,189,248,.4);background:rgba(56,189,248,.14);border-radius:4px;cursor:pointer;font-size:12px;color:var(--ac2);padding:0;margin-left:6px;vertical-align:middle;line-height:1" onmouseover="this.style.background=\'rgba(56,189,248,.28)\'" onmouseout="this.style.background=\'rgba(56,189,248,.14)\'">&#8942;</button>';
+
+  // ── THEAD ──
+  var th='<thead><tr>'+
+    '<th style="width:62px">CÓD.</th>'+
+    '<th style="min-width:220px">Cargo / Função</th>'+
+    '<th style="width:92px">Local/Alojado</th>'+
+    '<th style="width:105px">Mão de Obra</th>'+
+    '<th style="width:112px">Regime de Trabalho</th>'+
+    '<th style="min-width:98px">Sal. Orçamento</th>'+
+    '<th style="min-width:98px">Sal. Estudo</th>'+
+    '<th style="min-width:98px">Sal. Pré-custo</th>'+
+    '<th style="width:88px">Reajuste Acum.</th>'+
+    '<th style="min-width:105px">Sal. Final Reajustado'+addColBtn+'</th>';
+
+  // Colunas customizadas (após Sal. Final Reajustado)
+  cols.forEach(function(c,ci){
+    th+='<th style="min-width:110px">'+_esc(c.label)+_fnColBtn('funcoes',ci)+'</th>';
+  });
+
+  th+=
+    '<th style="width:100px">Periculosidade S/N</th>'+
+    '<th style="width:100px">Insalubridade S/N</th>'+
+    '<th style="width:96px">Adic. Transf. S/N</th>'+
+    '<th style="min-width:120px;background:rgba(16,185,129,.12);color:var(--gnl)">Total Orçado</th>'+
+    '<th style="min-width:120px;background:rgba(56,189,248,.10);color:var(--ac2)">Total Estudo</th>'+
+    '<th style="min-width:120px;background:rgba(245,158,11,.10);color:var(--gl)">Total Pré-custo</th>'+
+    '<th style="width:32px"></th>'+
+  '</tr></thead>';
+
+  // ── TBODY ──
+  var tb='<tbody>';
+  a.funcoes.forEach(function(fn,i){
+    var salOrc  = parseFloat(fn.salarioOrcado||0);
+    var salEst  = parseFloat(fn.salarioEstudo||0);
+    var salPre  = parseFloat(fn.salarioPrecusto||0);
+    var reaj    = parseFloat(fn.reajusteAcum||1);
+    var salFin  = salPre * reaj;                              // calculado
+    // Benefícios computados no total
+    var pericPerc    = fn.periculosidade==='S' ? 0.30 : 0;
+    var insalubPerc  = fn.insalubridade==='A' ? 0.40 : fn.insalubridade==='M' ? 0.20 : 0;
+    var adicTrPerc   = fn.adicTransf==='S' ? 0.25 : 0;
+    var benefMult    = 1 + pericPerc + insalubPerc + adicTrPerc;
+    // Custom cols sum
+    var customSum = cols.reduce(function(s,c,ci){ return s+(parseFloat((fn.customVals&&fn.customVals[ci])||0)||0); },0);
+    // Totais por cenário (sem headcount — cada linha = 1 pessoa)
+    var totalOrc  = salOrc  * benefMult + customSum;
+    var totalEst  = salEst  * benefMult + customSum;
+    var totalPre  = salFin  * benefMult + customSum;
+
+    var laBg  = _fnLocalBg(fn.localAlojado||'local');
+    var moBg  = _fnMoBg(fn.maoDeObra||'indireta');
+    var regBg = _fnRegimeBg(fn.regimeTrabalho||'adm');
+
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;width:54px;text-align:center" value="'+_esc(fn.cod||'')+'" placeholder="XXX" onchange="custoFnSave('+i+',\'cod\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:210px" value="'+_esc(fn.cargo||'')+'" placeholder="Cargo/Função" onchange="custoFnSave('+i+',\'cargo\',this.value)"></td>'+
+      // Local/Alojado
+      '<td style="background:'+laBg+';padding:3px 4px">'+
+        '<select class="dp-ct-sel" style="height:28px;font-size:11px;width:84px;background:transparent" onchange="custoFnSave('+i+',\'localAlojado\',this.value)">'+
+          '<option value="local"'+((!fn.localAlojado||fn.localAlojado==='local')?' selected':'')+'>Local</option>'+
+          '<option value="alojado"'+(fn.localAlojado==='alojado'?' selected':'')+'>Alojado</option>'+
+        '</select>'+
+      '</td>'+
+      // Mão de Obra
+      '<td style="background:'+moBg+';padding:3px 4px">'+
+        '<select class="dp-ct-sel" style="height:28px;font-size:11px;width:97px;background:transparent" onchange="custoFnSave('+i+',\'maoDeObra\',this.value)">'+
+          '<option value="indireta"'+((!fn.maoDeObra||fn.maoDeObra==='indireta')?' selected':'')+'>M.O. Indireta</option>'+
+          '<option value="direta"'+(fn.maoDeObra==='direta'?' selected':'')+'>M.O. Direta</option>'+
+        '</select>'+
+      '</td>'+
+      // Regime de Trabalho (labels curtos)
+      '<td style="background:'+regBg+';padding:3px 4px">'+
+        '<select class="dp-ct-sel" style="height:28px;font-size:11px;width:104px;background:transparent" onchange="custoFnSave('+i+',\'regimeTrabalho\',this.value)">'+
+          '<option value="adm"'+((!fn.regimeTrabalho||fn.regimeTrabalho==='adm')?' selected':'')+'>ADM</option>'+
+          '<option value="turno4x4"'+(fn.regimeTrabalho==='turno4x4'?' selected':'')+'>Turno 4x4</option>'+
+          '<option value="turno12x36"'+(fn.regimeTrabalho==='turno12x36'?' selected':'')+'>Turno 12x36</option>'+
+          '<option value="turno6x2"'+(fn.regimeTrabalho==='turno6x2'?' selected':'')+'>Turno 6x2</option>'+
+          '<option value="outro"'+(fn.regimeTrabalho==='outro'?' selected':'')+'>Outro</option>'+
+        '</select>'+
+      '</td>'+
+      // Sal. Orçamento
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:86px;font-family:var(--fn)" value="'+(fn.salarioOrcado||'')+'" placeholder="0,00" onchange="custoFnSave('+i+',\'salarioOrcado\',this.value)"></td>'+
+      // Sal. Estudo
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:86px;font-family:var(--fn)" value="'+(fn.salarioEstudo||'')+'" placeholder="0,00" onchange="custoFnSave('+i+',\'salarioEstudo\',this.value)"></td>'+
+      // Sal. Pré-custo (sem botão ＋)
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:86px;font-family:var(--fn)" value="'+(fn.salarioPrecusto||'')+'" placeholder="0,00" onchange="custoFnSave('+i+',\'salarioPrecusto\',this.value)"></td>'+
+      // Reajuste Acumulado
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:76px;font-family:var(--fn)" value="'+(fn.reajusteAcum!=null?fn.reajusteAcum:1)+'" step="0.001" min="0" placeholder="1.000" onchange="custoFnSave('+i+',\'reajusteAcum\',this.value)"></td>'+
+      // Sal. Final Reajustado (calculado: Pre × Reajuste) — somente leitura
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--ac2)">'+_fmtBRL(salFin)+'</td>';
+
+    // Colunas customizadas (após Sal. Final, antes de Periculosidade)
+    cols.forEach(function(c,ci){
+      var cv=(fn.customVals&&fn.customVals[ci])||'';
+      tb+='<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:98px;font-family:var(--fn)" value="'+_esc(String(cv===''||cv===undefined?'':cv))+'" placeholder="0" onchange="custoFnCustomSave('+i+','+ci+',this.value)"></td>';
+    });
+
+    tb+=
+      // Periculosidade
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;width:90px" onchange="custoFnSave('+i+',\'periculosidade\',this.value)">'+
+        '<option value="N"'+((!fn.periculosidade||fn.periculosidade==='N')?' selected':'')+'>N</option>'+
+        '<option value="S"'+(fn.periculosidade==='S'?' selected':'')+'>S (30%)</option>'+
+      '</select></td>'+
+      // Insalubridade
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;width:90px" onchange="custoFnSave('+i+',\'insalubridade\',this.value)">'+
+        '<option value="N"'+((!fn.insalubridade||fn.insalubridade==='N')?' selected':'')+'>N</option>'+
+        '<option value="M"'+(fn.insalubridade==='M'?' selected':'')+'>Média 20%</option>'+
+        '<option value="A"'+(fn.insalubridade==='A'?' selected':'')+'>Alta 40%</option>'+
+      '</select></td>'+
+      // Adic. Transf.
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;width:82px" onchange="custoFnSave('+i+',\'adicTransf\',this.value)">'+
+        '<option value="N"'+((!fn.adicTransf||fn.adicTransf==='N')?' selected':'')+'>N</option>'+
+        '<option value="S"'+(fn.adicTransf==='S'?' selected':'')+'>S (25%)</option>'+
+      '</select></td>'+
+      // Total Orçado | Total Estudo | Total Pré-custo
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(totalOrc)+'</td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--ac2)">'+_fmtBRL(totalEst)+'</td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gl)">'+_fmtBRL(totalPre)+'</td>'+
       '<td><button class="bic ctx-btn" data-ctx-table="funcoes" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
   });
-  tbody.innerHTML = tb;
-  var totalHC = a.funcoes.reduce(function(s,f){ return s+parseInt(f.headcount||0); },0);
-  var totalFolha = a.funcoes.reduce(function(s,f){ return s+parseFloat(f.salarioFinal||0)*parseInt(f.headcount||0); },0);
-  var hcEl = document.getElementById('custo-fn-hc');
-  var totEl = document.getElementById('custo-fn-total');
-  if(hcEl) hcEl.textContent = totalHC;
-  if(totEl) totEl.textContent = _fmtBRL(totalFolha);
-  // Encargos
-  var ec = document.getElementById('custo-encargos-calc');
-  if(ec) {
-    var encs = a.encargosSoc||CUSTO_ENCARGOS_DEFAULT;
-    var ehtml = '';
-    encs.forEach(function(e) {
-      ehtml += '<div class="tbl-wrap" style="padding:12px">' +
-        '<div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">' + e.modalidade + '</div>' +
-        '<div style="font-family:var(--fn);font-size:13px;font-weight:700;color:var(--gnl)">' + _fmtBRL(totalFolha*e.perc) + '</div>' +
-        '<div style="font-size:10px;color:var(--t2);margin-top:2px">' + (e.perc*100).toFixed(2) + '% s/ folha</div></div>';
+
+  var totalCols=17+cols.length; // 14 fixas + 3 totais + custom + delete
+  if(!a.funcoes.length){
+    tb+='<tr><td colspan="'+totalCols+'" style="text-align:center;padding:28px;color:var(--t3);font-size:12px">Nenhuma função. Clique em <strong>＋ Função</strong> para adicionar.</td></tr>';
+  }
+
+  // ── TFOOT — somas apenas nas 3 últimas colunas de total ──
+  var sumOrc=0, sumEst=0, sumPre=0;
+  a.funcoes.forEach(function(f){
+    var sOrc = parseFloat(f.salarioOrcado||0);
+    var sEst = parseFloat(f.salarioEstudo||0);
+    var sPre = parseFloat(f.salarioPrecusto||0)*parseFloat(f.reajusteAcum||1);
+    var pp   = f.periculosidade==='S'?0.30:0;
+    var ip   = f.insalubridade==='A'?0.40:f.insalubridade==='M'?0.20:0;
+    var ap   = f.adicTransf==='S'?0.25:0;
+    var bm   = 1+pp+ip+ap;
+    var cust = (a.funcoesCols||[]).reduce(function(cs,c,ci){return cs+(parseFloat((f.customVals&&f.customVals[ci])||0)||0);},0);
+    sumOrc += sOrc*bm + cust;
+    sumEst += sEst*bm + cust;
+    sumPre += sPre*bm + cust;
+  });
+
+  // Colunas vazias antes dos totais: 14 fixas + cols customizadas
+  var emptyBefore = 13 + cols.length; // CÓD+Cargo+Local+MO+Regime+Orc+Est+Pre+Reaj+Final+custom+Peric+Insalub+AdicTransf = 13+custom
+  var tf='<tfoot><tr style="background:rgba(16,185,129,.06)">';
+  for(var ei=0;ei<emptyBefore;ei++) tf+='<td></td>';
+  tf+=
+    '<td style="font-weight:800;font-family:var(--fn);color:var(--gnl)">'+_fmtBRL(sumOrc)+'</td>'+
+    '<td style="font-weight:800;font-family:var(--fn);color:var(--ac2)">'+_fmtBRL(sumEst)+'</td>'+
+    '<td style="font-weight:800;font-family:var(--fn);color:var(--gl)">'+_fmtBRL(sumPre)+'</td>'+
+    '<td></td>'+
+  '</tr></tfoot>';
+
+  wrap.innerHTML='<table class="ft custo-tbl" style="min-width:1400px">'+th+tb+tf+'</table>';
+
+  // Encargos calculados (base = soma dos Totais Pré-custo)
+  var ec=document.getElementById('custo-encargos-calc');
+  if(ec){
+    var encs=a.encargosSoc||CUSTO_ENCARGOS_DEFAULT;
+    var ehtml='';
+    encs.forEach(function(e){
+      ehtml+='<div class="tbl-wrap" style="padding:12px">'+
+        '<div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">'+e.modalidade+'</div>'+
+        '<div style="font-family:var(--fn);font-size:13px;font-weight:700;color:var(--gnl)">'+_fmtBRL(sumPre*e.perc)+'</div>'+
+        '<div style="font-size:10px;color:var(--t2);margin-top:2px">'+(e.perc*100).toFixed(2)+'% s/ Total Pré-custo</div></div>';
     });
-    ec.innerHTML = ehtml;
+    ec.innerHTML=ehtml;
   }
   _custoRenderKPIs();
 }
-function custoFnSave(i,k,v) {
+
+function custoFnSave(i,k,v){
   var a=_custoAnalise(); if(!a||!a.funcoes[i])return;
-  a.funcoes[i][k]=(k==='salarioOrcado'||k==='salarioFinal')?parseFloat(v)||0:(k==='headcount')?parseInt(v)||0:v;
+  var numKeys=['salarioOrcado','salarioEstudo','salarioPrecusto','reajusteAcum'];
+  if(numKeys.indexOf(k)>-1) a.funcoes[i][k]=parseFloat(v)||0;
+  else if(k==='headcount') a.funcoes[i][k]=parseInt(v)||0;
+  else a.funcoes[i][k]=v;
+  // Atualiza salarioFinal calculado (somente referência para memória)
+  a.funcoes[i].salarioFinal=parseFloat(a.funcoes[i].salarioPrecusto||0)*parseFloat(a.funcoes[i].reajusteAcum||1);
   _custoFuncoes(); scheduleAutoSync();
 }
-function custoAddFuncao() {
+function custoFnCustomSave(i,ci,v){
+  var a=_custoAnalise(); if(!a||!a.funcoes[i])return;
+  if(!a.funcoes[i].customVals) a.funcoes[i].customVals=[];
+  a.funcoes[i].customVals[ci]=parseFloat(v)||0;
+  _custoFuncoes(); scheduleAutoSync();
+}
+function custoAddFuncao(){
   var a=_custoAnalise(); if(!a)return;
-  a.funcoes.push({cargo:'',salarioOrcado:0,salarioFinal:0,periculosidade:'N',insalubridade:'N',adicTransf:'N',headcount:1});
+  if(!a.funcoesCols) a.funcoesCols=[];
+  a.funcoes.push({cod:'XXX',cargo:'',localAlojado:'local',maoDeObra:'indireta',regimeTrabalho:'adm',salarioOrcado:0,salarioEstudo:0,salarioPrecusto:0,reajusteAcum:1,salarioFinal:0,periculosidade:'N',insalubridade:'N',adicTransf:'N',headcount:1,customVals:[]});
   _custoFuncoes(); scheduleAutoSync();
 }
-function custoRemoveFuncao(i) {
+function custoRemoveFuncao(i){
   var a=_custoAnalise(); if(!a)return; a.funcoes.splice(i,1); _custoFuncoes(); scheduleAutoSync();
+}
+function custoAddFuncaoColuna(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.funcoesCols) a.funcoesCols=[];
+  var nome=prompt('Nome da coluna:',''); if(!nome)return;
+  a.funcoesCols.push({label:nome});
+  a.funcoes.forEach(function(fn){if(!fn.customVals)fn.customVals=[];fn.customVals.push(0);});
+  _custoFuncoes(); scheduleAutoSync();
+}
+function custoRemoveFuncaoCol(ci){
+  var a=_custoAnalise(); if(!a)return;
+  a.funcoesCols.splice(ci,1);
+  a.funcoes.forEach(function(fn){if(fn.customVals)fn.customVals.splice(ci,1);});
+  _custoFuncoes(); scheduleAutoSync();
+}
+function _colInsertFuncao(ci,dir){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.funcoesCols) a.funcoesCols=[];
+  var nome=prompt('Nome da coluna:',''); if(!nome)return;
+  var at=dir==='left'?Math.max(0,ci):ci+1;
+  a.funcoesCols.splice(at,0,{label:nome});
+  a.funcoes.forEach(function(fn){if(!fn.customVals)fn.customVals=[];fn.customVals.splice(at,0,0);});
+  _custoFuncoes(); scheduleAutoSync();
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -18264,6 +19318,378 @@ function custoAddAliquota(){ var a=_custoAnalise(); if(!a)return; a.aliquotas.pu
 function custoRemoveAliq(i){ var a=_custoAnalise(); if(!a)return; a.aliquotas.splice(i,1); _custoEncargos(); scheduleAutoSync(); }
 function custoAddEncargo(){ var a=_custoAnalise(); if(!a)return; a.encargosSoc.push({modalidade:'',perc:0}); _custoEncargos(); scheduleAutoSync(); }
 function custoRemoveEnc(i){ var a=_custoAnalise(); if(!a)return; a.encargosSoc.splice(i,1); _custoEncargos(); _custoFuncoes(); scheduleAutoSync(); }
+
+// ══════════════════════════════════════════════════════════════════════
+//  MATERIAIS
+// ══════════════════════════════════════════════════════════════════════
+function _custoMateriais() {
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.materiais) a.materiais=[];
+  var tbody=document.getElementById('custo-materiais-tbody'); if(!tbody)return;
+  var tb='';
+  a.materiais.forEach(function(it,i){
+    var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:70px" value="'+(it.unidade||'')+'" placeholder="un, m, kg…" data-key="unidade" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="materiais" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td>'+
+    '</tr>';
+  });
+  tbody.innerHTML=tb;
+  var totalQtd=a.materiais.reduce(function(s,it){return s+(parseFloat(it.qtd)||0);},0);
+  var totalVal=a.materiais.reduce(function(s,it){return s+(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);},0);
+  var qEl=document.getElementById('custo-mat-qtd'); if(qEl) qEl.textContent=totalQtd;
+  var tEl=document.getElementById('custo-mat-total'); if(tEl) tEl.textContent=_fmtBRL(totalVal);
+}
+function custoMatSave(i,k,v){
+  var a=_custoAnalise(); if(!a||!a.materiais[i])return;
+  a.materiais[i][k]=(k==='vlUnit'||k==='qtd')?parseFloat(v)||0:v;
+  _custoMateriais(); scheduleAutoSync();
+}
+function custoAddMaterial(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.materiais) a.materiais=[];
+  a.materiais.push({desc:'',unidade:'',qtd:0,vlUnit:0});
+  _custoMateriais(); scheduleAutoSync();
+}
+function custoRemoveMaterial(i){
+  var a=_custoAnalise(); if(!a)return; a.materiais.splice(i,1); _custoMateriais(); scheduleAutoSync();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  FERRAMENTAS
+// ══════════════════════════════════════════════════════════════════════
+function _custoFerramentas() {
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.ferramentas) a.ferramentas=[];
+  var tbody=document.getElementById('custo-ferramentas-tbody'); if(!tbody)return;
+  var tb='';
+  a.ferramentas.forEach(function(it,i){
+    var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+(it.codigo||'')+'" placeholder="REF-001" data-key="codigo" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="ferramentas" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td>'+
+    '</tr>';
+  });
+  tbody.innerHTML=tb;
+  var totalQtd=a.ferramentas.reduce(function(s,it){return s+(parseFloat(it.qtd)||0);},0);
+  var totalVal=a.ferramentas.reduce(function(s,it){return s+(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);},0);
+  var qEl=document.getElementById('custo-fer-qtd'); if(qEl) qEl.textContent=totalQtd;
+  var tEl=document.getElementById('custo-fer-total'); if(tEl) tEl.textContent=_fmtBRL(totalVal);
+}
+function custoFerSave(i,k,v){
+  var a=_custoAnalise(); if(!a||!a.ferramentas[i])return;
+  a.ferramentas[i][k]=(k==='vlUnit'||k==='qtd')?parseFloat(v)||0:v;
+  _custoFerramentas(); scheduleAutoSync();
+}
+function custoAddFerramenta(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.ferramentas) a.ferramentas=[];
+  a.ferramentas.push({desc:'',codigo:'',qtd:0,vlUnit:0});
+  _custoFerramentas(); scheduleAutoSync();
+}
+function custoRemoveFerramenta(i){
+  var a=_custoAnalise(); if(!a)return; a.ferramentas.splice(i,1); _custoFerramentas(); scheduleAutoSync();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  INFORMÁTICA
+// ══════════════════════════════════════════════════════════════════════
+function _custoInformatica() {
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.informatica) a.informatica=[];
+  var tbody=document.getElementById('custo-informatica-tbody'); if(!tbody)return;
+  var tb='';
+  a.informatica.forEach(function(it,i){
+    var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:120px" value="'+(it.marca||'')+'" placeholder="Dell XPS 15…" data-key="marca" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="informatica" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td>'+
+    '</tr>';
+  });
+  tbody.innerHTML=tb;
+  var totalQtd=a.informatica.reduce(function(s,it){return s+(parseFloat(it.qtd)||0);},0);
+  var totalVal=a.informatica.reduce(function(s,it){return s+(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);},0);
+  var qEl=document.getElementById('custo-inf-qtd'); if(qEl) qEl.textContent=totalQtd;
+  var tEl=document.getElementById('custo-inf-total'); if(tEl) tEl.textContent=_fmtBRL(totalVal);
+}
+function custoInfSave(i,k,v){
+  var a=_custoAnalise(); if(!a||!a.informatica[i])return;
+  a.informatica[i][k]=(k==='vlUnit'||k==='qtd')?parseFloat(v)||0:v;
+  _custoInformatica(); scheduleAutoSync();
+}
+function custoAddInformatica(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.informatica) a.informatica=[];
+  a.informatica.push({desc:'',marca:'',qtd:0,vlUnit:0});
+  _custoInformatica(); scheduleAutoSync();
+}
+function custoRemoveInformatica(i){
+  var a=_custoAnalise(); if(!a)return; a.informatica.splice(i,1); _custoInformatica(); scheduleAutoSync();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  VEÍCULOS
+// ══════════════════════════════════════════════════════════════════════
+function _custoVeiculos() {
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.veiculos) a.veiculos=[];
+  var tbody=document.getElementById('custo-veiculos-tbody'); if(!tbody)return;
+  var tb='';
+  a.veiculos.forEach(function(it,i){
+    var tot=(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:180px" value="'+(it.desc||'')+'" placeholder="Tipo/Descrição" data-key="desc" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:90px" value="'+(it.placa||'')+'" placeholder="ABC-1234" data-key="placa" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:100px;font-family:var(--fn)" value="'+(it.vlMensal||'')+'" placeholder="0,00" data-key="vlMensal" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="veiculos" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td>'+
+    '</tr>';
+  });
+  tbody.innerHTML=tb;
+  var totalQtd=a.veiculos.reduce(function(s,it){return s+(parseFloat(it.qtd)||0);},0);
+  var totalVal=a.veiculos.reduce(function(s,it){return s+(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);},0);
+  var qEl=document.getElementById('custo-vei-qtd'); if(qEl) qEl.textContent=totalQtd;
+  var tEl=document.getElementById('custo-vei-total'); if(tEl) tEl.textContent=_fmtBRL(totalVal);
+}
+function custoVeiSave(i,k,v){
+  var a=_custoAnalise(); if(!a||!a.veiculos[i])return;
+  a.veiculos[i][k]=(k==='vlMensal'||k==='qtd')?parseFloat(v)||0:v;
+  _custoVeiculos(); scheduleAutoSync();
+}
+function custoAddVeiculo(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.veiculos) a.veiculos=[];
+  a.veiculos.push({desc:'',placa:'',qtd:0,vlMensal:0});
+  _custoVeiculos(); scheduleAutoSync();
+}
+function custoRemoveVeiculo(i){
+  var a=_custoAnalise(); if(!a)return; a.veiculos.splice(i,1); _custoVeiculos(); scheduleAutoSync();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  CURSOS / TREINAMENTOS
+// ══════════════════════════════════════════════════════════════════════
+function _custoCursos(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.cursos) a.cursos=[];
+  var tbody=document.getElementById('custo-cursos-tbody'); if(!tbody)return;
+  var per=['Mensal','Bimestral','Trimestral','Semestral','Anual','Único'];
+  var perOpts=per.map(function(p){return '<option value="'+p+'">'+p+'</option>';}).join('');
+  var tb='';
+  a.cursos.forEach(function(it,i){
+    var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;
+    var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
+    var tot=(parseFloat(it.vlUnit)||0)*qtd;
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoCurSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoCurSave('+i+',\'funcaoIdx\',this.value)">'+
+        '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
+        (a.funcoes||[]).map(function(f,fi){return '<option value="'+fi+'"'+(it.funcaoIdx===fi?' selected':'')+'>'+_esc(f.cargo||'Função '+(fi+1))+'</option>';}).join('')+
+      '</select></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;text-align:center;color:var(--t2)">'+qtd+'</td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" onchange="custoCurSave('+i+',\'vlUnit\',this.value)"></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:100px" onchange="custoCurSave('+i+',\'periodicidade\',this.value)">'+per.map(function(p){return '<option value="'+p+'"'+(it.periodicidade===p?' selected':'')+'>'+p+'</option>';}).join('')+'</select></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="cursos" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
+  });
+  tbody.innerHTML=tb;
+  var tQtd=a.cursos.reduce(function(s,it){var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;return s+(fn?parseInt(fn.headcount||1):parseInt(it.qtd||0));},0);
+  var tVal=a.cursos.reduce(function(s,it){var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;var q=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);return s+(parseFloat(it.vlUnit)||0)*q;},0);
+  var qEl=document.getElementById('custo-cur-qtd');if(qEl)qEl.textContent=tQtd;
+  var tEl=document.getElementById('custo-cur-total');if(tEl)tEl.textContent=_fmtBRL(tVal);
+}
+function custoCurSave(i,k,v){var a=_custoAnalise();if(!a||!a.cursos[i])return;a.cursos[i][k]=(k==='vlUnit')?parseFloat(v)||0:(k==='funcaoIdx'&&v!=='')?parseInt(v):v;_custoCursos();scheduleAutoSync();}
+function custoAddCurso(){var a=_custoAnalise();if(!a)return;if(!a.cursos)a.cursos=[];a.cursos.push({desc:'',funcaoIdx:null,qtd:0,vlUnit:0,periodicidade:'Anual'});_custoCursos();scheduleAutoSync();}
+function custoRemoveCurso(i){var a=_custoAnalise();if(!a)return;a.cursos.splice(i,1);_custoCursos();scheduleAutoSync();}
+
+// ══════════════════════════════════════════════════════════════════════
+//  EXAMES
+// ══════════════════════════════════════════════════════════════════════
+function _custoExames(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.exames) a.exames=[];
+  var tbody=document.getElementById('custo-exames-tbody'); if(!tbody)return;
+  var per=['Admissional','Periódico Anual','Periódico 2 Anos','Demissional','Retorno Afastamento','Mudança Função'];
+  var tb='';
+  a.exames.forEach(function(it,i){
+    var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;
+    var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
+    var tot=(parseFloat(it.vlUnit)||0)*qtd;
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoExaSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoExaSave('+i+',\'funcaoIdx\',this.value)">'+
+        '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
+        (a.funcoes||[]).map(function(f,fi){return '<option value="'+fi+'"'+(it.funcaoIdx===fi?' selected':'')+'>'+_esc(f.cargo||'Função '+(fi+1))+'</option>';}).join('')+
+      '</select></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;text-align:center;color:var(--t2)">'+qtd+'</td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" onchange="custoExaSave('+i+',\'vlUnit\',this.value)"></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:140px" onchange="custoExaSave('+i+',\'periodicidade\',this.value)">'+per.map(function(p){return '<option value="'+p+'"'+(it.periodicidade===p?' selected':'')+'>'+p+'</option>';}).join('')+'</select></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="exames" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
+  });
+  tbody.innerHTML=tb;
+  var tQtd=a.exames.reduce(function(s,it){var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;return s+(fn?parseInt(fn.headcount||1):parseInt(it.qtd||0));},0);
+  var tVal=a.exames.reduce(function(s,it){var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;var q=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);return s+(parseFloat(it.vlUnit)||0)*q;},0);
+  var qEl=document.getElementById('custo-exa-qtd');if(qEl)qEl.textContent=tQtd;
+  var tEl=document.getElementById('custo-exa-total');if(tEl)tEl.textContent=_fmtBRL(tVal);
+}
+function custoExaSave(i,k,v){var a=_custoAnalise();if(!a||!a.exames[i])return;a.exames[i][k]=(k==='vlUnit')?parseFloat(v)||0:(k==='funcaoIdx'&&v!=='')?parseInt(v):v;_custoExames();scheduleAutoSync();}
+function custoAddExame(){var a=_custoAnalise();if(!a)return;if(!a.exames)a.exames=[];a.exames.push({desc:'',funcaoIdx:null,qtd:0,vlUnit:0,periodicidade:'Periódico Anual'});_custoExames();scheduleAutoSync();}
+function custoRemoveExame(i){var a=_custoAnalise();if(!a)return;a.exames.splice(i,1);_custoExames();scheduleAutoSync();}
+
+// ══════════════════════════════════════════════════════════════════════
+//  SEGUROS / CONVÊNIOS
+// ══════════════════════════════════════════════════════════════════════
+function _custoSeguros(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.seguros) a.seguros=[];
+  var tbody=document.getElementById('custo-seguros-tbody'); if(!tbody)return;
+  var tipos=['Seguro de Vida','Plano de Saúde','Plano Odontológico','Vale Refeição','Vale Alimentação','Vale Transporte','Outros'];
+  var tb='';
+  a.seguros.forEach(function(it,i){
+    var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;
+    var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
+    var tot=(parseFloat(it.vlUnit)||0)*qtd;
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoSegSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:110px" onchange="custoSegSave('+i+',\'tipo\',this.value)">'+tipos.map(function(t){return '<option value="'+t+'"'+(it.tipo===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoSegSave('+i+',\'funcaoIdx\',this.value)">'+
+        '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
+        (a.funcoes||[]).map(function(f,fi){return '<option value="'+fi+'"'+(it.funcaoIdx===fi?' selected':'')+'>'+_esc(f.cargo||'Função '+(fi+1))+'</option>';}).join('')+
+      '</select></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;text-align:center;color:var(--t2)">'+qtd+'</td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" onchange="custoSegSave('+i+',\'vlUnit\',this.value)"></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="seguros" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
+  });
+  tbody.innerHTML=tb;
+  var tQtd=a.seguros.reduce(function(s,it){var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;return s+(fn?parseInt(fn.headcount||1):parseInt(it.qtd||0));},0);
+  var tVal=a.seguros.reduce(function(s,it){var fn=it.funcaoIdx!=null?(a.funcoes||[])[it.funcaoIdx]:null;var q=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);return s+(parseFloat(it.vlUnit)||0)*q;},0);
+  var qEl=document.getElementById('custo-seg-qtd');if(qEl)qEl.textContent=tQtd;
+  var tEl=document.getElementById('custo-seg-total');if(tEl)tEl.textContent=_fmtBRL(tVal);
+}
+function custoSegSave(i,k,v){var a=_custoAnalise();if(!a||!a.seguros[i])return;a.seguros[i][k]=(k==='vlUnit')?parseFloat(v)||0:(k==='funcaoIdx'&&v!=='')?parseInt(v):v;_custoSeguros();scheduleAutoSync();}
+function custoAddSeguro(){var a=_custoAnalise();if(!a)return;if(!a.seguros)a.seguros=[];a.seguros.push({desc:'',tipo:'Seguro de Vida',funcaoIdx:null,qtd:0,vlUnit:0});_custoSeguros();scheduleAutoSync();}
+function custoRemoveSeguro(i){var a=_custoAnalise();if(!a)return;a.seguros.splice(i,1);_custoSeguros();scheduleAutoSync();}
+
+// ══════════════════════════════════════════════════════════════════════
+//  EQUIPAMENTOS
+// ══════════════════════════════════════════════════════════════════════
+function _custoEquipamentos(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.equipamentos) a.equipamentos=[];
+  var tbody=document.getElementById('custo-equipamentos-tbody'); if(!tbody)return;
+  var tb='';
+  a.equipamentos.forEach(function(it,i){
+    var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoEqpSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:105px" value="'+_esc(it.marca||'')+'" placeholder="Marca/Modelo" onchange="custoEqpSave('+i+',\'marca\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+_esc(it.serie||'')+'" placeholder="Nº Série" onchange="custoEqpSave('+i+',\'serie\',this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;width:65px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" onchange="custoEqpSave('+i+',\'qtd\',this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" onchange="custoEqpSave('+i+',\'vlUnit\',this.value)"></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="equipamentos" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
+  });
+  tbody.innerHTML=tb;
+  var tQtd=a.equipamentos.reduce(function(s,it){return s+(parseFloat(it.qtd)||0);},0);
+  var tVal=a.equipamentos.reduce(function(s,it){return s+(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);},0);
+  var qEl=document.getElementById('custo-eqp-qtd');if(qEl)qEl.textContent=tQtd;
+  var tEl=document.getElementById('custo-eqp-total');if(tEl)tEl.textContent=_fmtBRL(tVal);
+}
+function custoEqpSave(i,k,v){var a=_custoAnalise();if(!a||!a.equipamentos[i])return;a.equipamentos[i][k]=(k==='vlUnit'||k==='qtd')?parseFloat(v)||0:v;_custoEquipamentos();scheduleAutoSync();}
+function custoAddEquipamento(){var a=_custoAnalise();if(!a)return;if(!a.equipamentos)a.equipamentos=[];a.equipamentos.push({desc:'',marca:'',serie:'',qtd:0,vlUnit:0});_custoEquipamentos();scheduleAutoSync();}
+function custoRemoveEquipamento(i){var a=_custoAnalise();if(!a)return;a.equipamentos.splice(i,1);_custoEquipamentos();scheduleAutoSync();}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ALUGUÉIS
+// ══════════════════════════════════════════════════════════════════════
+function _custoAlugueis(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.alugueis) a.alugueis=[];
+  var tbody=document.getElementById('custo-alugueis-tbody'); if(!tbody)return;
+  var tipos=['Escritório','Galpão','Sala Operacional','Alojamento','Estacionamento','Equipamento','Outros'];
+  var tb='';
+  a.alugueis.forEach(function(it,i){
+    var tot=(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoAlgSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:115px" value="'+_esc(it.ref||'')+'" placeholder="Endereço/Ref." onchange="custoAlgSave('+i+',\'ref\',this.value)"></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:90px" onchange="custoAlgSave('+i+',\'tipo\',this.value)">'+tipos.map(function(t){return '<option value="'+t+'"'+(it.tipo===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;width:65px;font-family:var(--fn)" value="'+(it.qtd||1)+'" min="0" onchange="custoAlgSave('+i+',\'qtd\',this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlMensal||'')+'" placeholder="0,00" onchange="custoAlgSave('+i+',\'vlMensal\',this.value)"></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="alugueis" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
+  });
+  tbody.innerHTML=tb;
+  var tQtd=a.alugueis.reduce(function(s,it){return s+(parseFloat(it.qtd)||0);},0);
+  var tVal=a.alugueis.reduce(function(s,it){return s+(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);},0);
+  var qEl=document.getElementById('custo-alg-qtd');if(qEl)qEl.textContent=tQtd;
+  var tEl=document.getElementById('custo-alg-total');if(tEl)tEl.textContent=_fmtBRL(tVal);
+}
+function custoAlgSave(i,k,v){var a=_custoAnalise();if(!a||!a.alugueis[i])return;a.alugueis[i][k]=(k==='vlMensal'||k==='qtd')?parseFloat(v)||0:v;_custoAlugueis();scheduleAutoSync();}
+function custoAddAluguel(){var a=_custoAnalise();if(!a)return;if(!a.alugueis)a.alugueis=[];a.alugueis.push({desc:'',ref:'',tipo:'Escritório',qtd:1,vlMensal:0});_custoAlugueis();scheduleAutoSync();}
+function custoRemoveAluguel(i){var a=_custoAnalise();if(!a)return;a.alugueis.splice(i,1);_custoAlugueis();scheduleAutoSync();}
+
+// ══════════════════════════════════════════════════════════════════════
+//  IMPOSTOS
+// ══════════════════════════════════════════════════════════════════════
+function _custoImpostos(){
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.impostos) a.impostos=[];
+  var tbody=document.getElementById('custo-impostos-tbody'); if(!tbody)return;
+  var bases=['Faturamento (Medição)','Folha de Pagamento','Valor do Contrato','Base Personalizada'];
+  var tb='';
+  a.impostos.forEach(function(it,i){
+    // Vinculo automático com Medição (faturamento) ou Funções (folha)
+    var baseVl=parseFloat(it.baseVl||0);
+    if(it.base==='Faturamento (Medição)'){
+      // Tenta puxar o valor da medição vigente
+      var med=(a.medicoes||[]);
+      if(med.length) baseVl=med.reduce(function(s,m){return s+(parseFloat(m.vlMedicao||m.vlPrevisto||0));},0);
+    } else if(it.base==='Folha de Pagamento'){
+      // Pega o total pré-custo de Funções
+      baseVl=(a.funcoes||[]).reduce(function(s,f){
+        var pre=parseFloat(f.salarioPrecusto||0)*parseFloat(f.reajusteAcum||1);
+        var pp=f.periculosidade==='S'?0.30:0;
+        var ip=f.insalubridade==='A'?0.40:f.insalubridade==='M'?0.20:0;
+        var ap=f.adicTransf==='S'?0.25:0;
+        return s+pre*(1+pp+ip+ap);
+      },0);
+    }
+    var tot=baseVl*(parseFloat(it.aliquota)||0)/100;
+    tb+='<tr>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoImpSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:88px;font-family:var(--fn)" value="'+(it.aliquota||'')+'" placeholder="0,00 %" step="0.01" onchange="custoImpSave('+i+',\'aliquota\',this.value)"></td>'+
+      '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:120px" onchange="custoImpSave('+i+',\'base\',this.value)">'+bases.map(function(b){return '<option value="'+b+'"'+(it.base===b?' selected':'')+'>'+b+'</option>';}).join('')+'</select></td>'+
+      '<td style="font-family:var(--fn);font-size:12px;color:'+(it.base==='Base Personalizada'?'inherit':'var(--t3)')+'">'+(it.base==='Base Personalizada'?'<input type="number" class="fi" style="height:28px;font-size:12px;min-width:110px;font-family:var(--fn)" value="'+(it.baseVl||'')+'" placeholder="0,00" onchange="custoImpSave('+i+',\'baseVl\',this.value)">':_fmtBRL(baseVl)+' <span style="font-size:9px;opacity:.6">auto</span>')+'</td>'+
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
+      '<td><button class="bic ctx-btn" data-ctx-table="impostos" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
+  });
+  tbody.innerHTML=tb;
+  var tVal=a.impostos.reduce(function(s,it){
+    var baseVl=parseFloat(it.baseVl||0);
+    if(it.base==='Folha de Pagamento') baseVl=(a.funcoes||[]).reduce(function(fs,f){return fs+parseFloat(f.salarioPrecusto||0)*parseFloat(f.reajusteAcum||1);},0);
+    return s+baseVl*(parseFloat(it.aliquota)||0)/100;
+  },0);
+  var tEl=document.getElementById('custo-imp-total');if(tEl)tEl.textContent=_fmtBRL(tVal);
+}
+function custoImpSave(i,k,v){var a=_custoAnalise();if(!a||!a.impostos[i])return;a.impostos[i][k]=(k==='aliquota'||k==='baseVl')?parseFloat(v)||0:v;_custoImpostos();scheduleAutoSync();}
+function custoAddImposto(){var a=_custoAnalise();if(!a)return;if(!a.impostos)a.impostos=[];a.impostos.push({desc:'',aliquota:0,base:'Faturamento (Medição)',baseVl:0});_custoImpostos();scheduleAutoSync();}
+function custoRemoveImposto(i){var a=_custoAnalise();if(!a)return;a.impostos.splice(i,1);_custoImpostos();scheduleAutoSync();}
 
 // ══════════════════════════════════════════════════════════════════════
 //  PROJEÇÕES
@@ -18670,15 +20096,25 @@ function dreCtxDelete() {
 //  MENU DE CONTEXTO UNIVERSAL — todas as abas
 // ══════════════════════════════════════════════════════════════════════
 var _CTX_CFG = {
-  dre:       {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Conta DRE'},
-  medicao:   {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Item'},
-  funcoes:   {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Função'},
-  epi:       {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Item EPI'},
-  aliquota:  {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Alíquota'},
-  encargo:   {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Encargo'},
-  projecao:  {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Mês'},
-  rentab:    {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Colaborador'},
-  mem_linha: {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Linha Memória'},
+  dre:          {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Conta DRE'},
+  medicao:      {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Item'},
+  funcoes:      {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Função'},
+  epi:          {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Item EPI'},
+  aliquota:     {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Alíquota'},
+  encargo:      {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Encargo'},
+  projecao:     {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Mês'},
+  rentab:       {rowAbove:true,rowBelow:true,colLeft:true, colRight:true, delRow:true, label:'Colaborador'},
+  mem_linha:    {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Linha Memória'},
+  materiais:    {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Material'},
+  ferramentas:  {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Ferramenta'},
+  informatica:  {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Equipamento TI'},
+  veiculos:     {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Veículo'},
+  cursos:       {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Curso/Treinamento'},
+  exames:       {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Exame'},
+  seguros:      {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Seguro/Convênio'},
+  equipamentos: {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Equipamento'},
+  alugueis:     {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Aluguel'},
+  impostos:     {rowAbove:true,rowBelow:true,colLeft:false,colRight:false,delRow:true, label:'Imposto'},
 };
 var _ctxTable='', _ctxRow=-1, _ctxCol=-1;
 
@@ -18711,15 +20147,34 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')ctxClose();}
 function ctxInsertRow(dir){
   ctxClose();
   var tbl=_ctxTable, row=parseInt(_ctxRow);
-  if(tbl==='dre')      {_dreCtxIdx=row;dreCtxInsertRow(dir);return;}
-  if(tbl==='medicao')  {_ctxInsertMedicao(row,dir);return;}
-  if(tbl==='funcoes')  {_ctxInsertFuncao(row,dir);return;}
-  if(tbl==='epi')      {_ctxInsertEPI(row,dir);return;}
-  if(tbl==='aliquota') {_ctxInsertAliq(row,dir);return;}
-  if(tbl==='encargo')  {_ctxInsertEnc(row,dir);return;}
-  if(tbl==='projecao') {_ctxInsertProj(row,dir);return;}
-  if(tbl==='rentab')   {_ctxInsertRentab(row,dir);return;}
-  if(tbl==='mem_linha'){_ctxInsertMemLinha(_ctxRow,dir);return;}
+  if(tbl==='dre')         {_dreCtxIdx=row;dreCtxInsertRow(dir);return;}
+  if(tbl==='medicao')     {_ctxInsertMedicao(row,dir);return;}
+  if(tbl==='funcoes')     {_ctxInsertFuncao(row,dir);return;}
+  if(tbl==='epi')         {_ctxInsertEPI(row,dir);return;}
+  if(tbl==='aliquota')    {_ctxInsertAliq(row,dir);return;}
+  if(tbl==='encargo')     {_ctxInsertEnc(row,dir);return;}
+  if(tbl==='projecao')    {_ctxInsertProj(row,dir);return;}
+  if(tbl==='rentab')      {_ctxInsertRentab(row,dir);return;}
+  if(tbl==='mem_linha')   {_ctxInsertMemLinha(_ctxRow,dir);return;}
+  if(tbl==='materiais')   {_ctxInsertGenerico(row,dir,'materiais',  {desc:'',unidade:'',qtd:0,vlUnit:0},         _custoMateriais);return;}
+  if(tbl==='ferramentas') {_ctxInsertGenerico(row,dir,'ferramentas',{desc:'',codigo:'',qtd:0,vlUnit:0},          _custoFerramentas);return;}
+  if(tbl==='informatica') {_ctxInsertGenerico(row,dir,'informatica',{desc:'',marca:'',qtd:0,vlUnit:0},           _custoInformatica);return;}
+  if(tbl==='veiculos')    {_ctxInsertGenerico(row,dir,'veiculos',   {desc:'',placa:'',qtd:0,vlMensal:0},         _custoVeiculos);return;}
+  if(tbl==='cursos')      {_ctxInsertGenerico(row,dir,'cursos',     {desc:'',funcaoIdx:null,qtd:0,vlUnit:0,periodicidade:'Anual'}, _custoCursos);return;}
+  if(tbl==='exames')      {_ctxInsertGenerico(row,dir,'exames',     {desc:'',funcaoIdx:null,qtd:0,vlUnit:0,periodicidade:'Periódico Anual'}, _custoExames);return;}
+  if(tbl==='seguros')     {_ctxInsertGenerico(row,dir,'seguros',    {desc:'',tipo:'Seguro de Vida',funcaoIdx:null,qtd:0,vlUnit:0}, _custoSeguros);return;}
+  if(tbl==='equipamentos'){_ctxInsertGenerico(row,dir,'equipamentos',{desc:'',marca:'',serie:'',qtd:0,vlUnit:0}, _custoEquipamentos);return;}
+  if(tbl==='alugueis')    {_ctxInsertGenerico(row,dir,'alugueis',   {desc:'',ref:'',tipo:'Escritório',qtd:1,vlMensal:0}, _custoAlugueis);return;}
+  if(tbl==='impostos')    {_ctxInsertGenerico(row,dir,'impostos',   {desc:'',aliquota:0,base:'Faturamento (Medição)',baseVl:0}, _custoImpostos);return;}
+}
+
+// Helper genérico de insert above/below para arrays simples
+function _ctxInsertGenerico(ref,dir,arrKey,emptyObj,renderFn){
+  var a=_custoAnalise(); if(!a||!a[arrKey])return;
+  var at=dir==='above'?ref:ref+1;
+  a[arrKey].splice(at,0,Object.assign({},emptyObj));
+  renderFn(); scheduleAutoSync();
+  showToast('Linha inserida '+(dir==='above'?'acima':'abaixo')+'!','gn',1800);
 }
 function ctxInsertCol(dir){
   ctxClose();
@@ -18741,6 +20196,16 @@ function ctxDelete(){
   if(tbl==='encargo')  {custoRemoveEnc(parseInt(row));return;}
   if(tbl==='projecao') {custoRemoveProjecao(parseInt(row));return;}
   if(tbl==='rentab')   {custoRemoveRentab(parseInt(row));return;}
+  if(tbl==='materiais')   {custoRemoveMaterial(parseInt(row));return;}
+  if(tbl==='ferramentas') {custoRemoveFerramenta(parseInt(row));return;}
+  if(tbl==='informatica') {custoRemoveInformatica(parseInt(row));return;}
+  if(tbl==='veiculos')    {custoRemoveVeiculo(parseInt(row));return;}
+  if(tbl==='cursos')       {custoRemoveCurso(parseInt(row));return;}
+  if(tbl==='exames')       {custoRemoveExame(parseInt(row));return;}
+  if(tbl==='seguros')      {custoRemoveSeguro(parseInt(row));return;}
+  if(tbl==='equipamentos') {custoRemoveEquipamento(parseInt(row));return;}
+  if(tbl==='alugueis')     {custoRemoveAluguel(parseInt(row));return;}
+  if(tbl==='impostos')     {custoRemoveImposto(parseInt(row));return;}
   if(tbl==='mem_linha'){var p=row.toString().split(',');custoRemoveMemLinha(parseInt(p[0]),parseInt(p[1]));return;}
 }
 
@@ -18757,7 +20222,7 @@ function _ctxInsertFuncao(ref,dir){
   var a=_custoAnalise();if(!a)return;
   var at=dir==='above'?ref:ref+1;
   var r=a.funcoes[ref]||{};
-  a.funcoes.splice(at,0,{cargo:'',salarioOrcado:r.salarioOrcado||0,salarioFinal:r.salarioFinal||0,periculosidade:'N',insalubridade:'N',adicTransf:'N',headcount:1});
+  a.funcoes.splice(at,0,{cod:'XXX',cargo:'',localAlojado:r.localAlojado||'local',maoDeObra:r.maoDeObra||'indireta',regimeTrabalho:r.regimeTrabalho||'adm',salarioOrcado:r.salarioOrcado||0,salarioEstudo:r.salarioEstudo||0,salarioPrecusto:r.salarioPrecusto||0,salarioFinal:r.salarioFinal||0,periculosidade:'N',insalubridade:'N',adicTransf:'N',headcount:1,customVals:[]});
   _custoFuncoes();scheduleAutoSync();
   showToast('Função inserida!','gn',1800);
 }
@@ -18841,9 +20306,7 @@ function _ctxInsertMemLinha(rowStr,dir){
   var gi=parseInt(parts[0]),li=parseInt(parts[1]);
   var at=dir==='above'?li:li+1;
   var g=a.memoria.grupos[gi];if(!g)return;
-  var conta=prompt('Conta (opcional):','');
-  var desc=prompt('Descrição:','');
-  g.linhas.splice(at,0,{conta:conta||'',desc:desc||'',vals:[]});
+  g.linhas.splice(at,0,{conta:'',desc:'',linkedIdx:undefined,orcado:{vlUnit:0,qtd:0},estudo:{vlUnit:0,qtd:0},precusto:{vlUnit:0,qtd:0}});
   _custoMemoria();scheduleAutoSync();
   showToast('Linha inserida!','gn',1800);
 }
@@ -18893,6 +20356,7 @@ function colCtxInsert(dir) {
   if(tbl==='rentab')  {_colInsertRentab(ci,dir);return;}
   if(tbl==='projecao'){_colInsertProj(ci,dir);return;}
   if(tbl==='epi')     {_colInsertEPI(ci,dir);return;}
+  if(tbl==='funcoes') {_colInsertFuncao(ci,dir);return;}
   if(tbl==='mem')     {_colInsertMem(gi,ci,dir);return;}
   if(tbl==='dre')     {_colInsertDRE(ci,dir);return;}
 }
@@ -18906,6 +20370,7 @@ function colCtxDelete() {
   if(tbl==='rentab')  {custoRemoveRentabCol(ci);return;}
   if(tbl==='projecao'){custoRemoveProjCol(ci);return;}
   if(tbl==='epi')     {custoRemoveEPICol(ci);return;}
+  if(tbl==='funcoes') {custoRemoveFuncaoCol(ci);return;}
   if(tbl==='mem')     {_colRemoveMem(gi,ci);return;}
   if(tbl==='dre')     {
     var cn=_colCtxBtn.dataset.colCn||'';
