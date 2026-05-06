@@ -96,7 +96,7 @@ body{
 .hdr-date-inp:hover{color:var(--gnl)}
 
 /* NAV */
-.nav{position:sticky;top:0;z-index:200;background:linear-gradient(180deg,rgba(4,16,10,0.97) 0%,rgba(7,24,15,0.95) 100%);backdrop-filter:blur(32px) saturate(220%);-webkit-backdrop-filter:blur(32px) saturate(220%);border-bottom:1px solid rgba(16,185,129,0.22);padding:0;display:flex;align-items:center;box-shadow:0 6px 32px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.04) inset}
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;background:linear-gradient(180deg,rgba(4,16,10,0.97) 0%,rgba(7,24,15,0.95) 100%);backdrop-filter:blur(32px) saturate(220%);-webkit-backdrop-filter:blur(32px) saturate(220%);border-bottom:1px solid rgba(16,185,129,0.22);padding:0;display:flex;align-items:center;box-shadow:0 6px 32px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.04) inset}
 .nav-arr{flex-shrink:0;width:42px;height:100%;min-height:56px;border:none;background:none;color:rgba(16,185,129,.5);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:0;pointer-events:none}
 .nav-arr.show{opacity:1;pointer-events:auto;color:rgba(16,185,129,.7)}
 .nav-arr:hover{background:rgba(16,185,129,.07);color:var(--gnl)}
@@ -122,7 +122,7 @@ body{
 
 
 /* CONTENT */
-.cont{max-width:1600px;margin:0 auto;padding:clamp(24px,3vw,40px) clamp(24px,4vw,60px) 100px}
+.cont{max-width:1700px;margin:0 auto;padding:clamp(24px,3vw,40px) clamp(24px,4vw,60px) 100px}
 .sec{display:none;animation:fu .3s ease}.sec.active{display:block}
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
@@ -512,6 +512,15 @@ body{
   max-width: 340px;
   word-break: break-word;
 }
+/* Exception: obs column (last editable col) should wrap and grow */
+.custo-tbl td:has(.mapa-obs-ta),
+.custo-tbl td:has(.custo-obs-ta) {
+  white-space: normal;
+  min-width: 200px;
+  max-width: 400px;
+  vertical-align: top;
+  padding: 4px 6px !important;
+}
 
 /* 2-col grid → 1-col on small screens */
 .custo-grid-2 {
@@ -872,7 +881,7 @@ html.lp .utb-config:hover{color:var(--ac1);border-color:var(--ac1)}
 }
 
 /* ── RESPONSIVE ─────────────────────────────────────────────────── */
-@media(max-width:1440px){.cont{padding:36px 42px 80px}.hdr-inner{padding:28px 42px;gap:28px}.nav{padding:0 42px}}
+@media(max-width:1440px){.cont{padding:36 42px 80px}.hdr-inner{padding:28px 42px;gap:28px}.nav{padding:0 42px}}
 @media(max-width:1280px){
   .hdr-inner{grid-template-columns:130px 1fr auto;padding:28px 36px;gap:28px}
   .cont{padding:32px 36px 80px}
@@ -933,7 +942,9 @@ html.lp .utb-config:hover{color:var(--ac1);border-color:var(--ac1)}
   .urg{grid-template-columns:1fr}
 }
 @media(max-width:480px){
-  .hdr-inner{grid-template-columns:60px 1fr;gap:10px;padding:12px.modal{border-radius:14px;padding:20px 16px}.modal h2{font-size:18px}}
+  .hdr-inner{grid-template-columns:60px 1fr;gap:10px;padding:12px 10px}
+  .modal{border-radius:14px;padding:20px 16px}
+  .modal h2{font-size:18px}
   .hdr h1{font-size:18px;line-height:1.2}
   .hdr-tag{font-size:8px;padding:4px 10px}
   .hdr-logo{width:60px;height:50px}
@@ -1050,7 +1061,7 @@ select.finp option,select.fsel option,select.fi option,.frota-tipo-sel option{ba
 
 /* Body + Header */
 html.lp body{color:var(--tx)}
-html.lp .hdr{background:linear-gradient(172deg,rgba(252,255,253,0.99) 0%,rgba(245,252,248,0.98) 50%,rgba(248,255,251,0.99) 100%)!important;border-top:1px solid rgba(255,255,255,0.95)!important;border-bottom:none!important;box-shadow:0 2px 0 rgba(0,0,0,0.20),0 4px 0 rgba(0,0,0,0.14),0 6px 0 rgba(0,0,0,0.09),0 10px 28px rgba(0,0,0,0.16),0 1px 0 rgba(255,255,255,0.90) inset!important}
+html.lp .hdr{display:flex;justify-content:center;background:linear-gradient(172deg,rgba(252,255,253,0.99) 0%,rgba(245,252,248,0.98) 50%,rgba(248,255,251,0.99) 100%)!important;border-top:1px solid rgba(255,255,255,0.95)!important;border-bottom:none!important;box-shadow:0 2px 0 rgba(0,0,0,0.20),0 4px 0 rgba(0,0,0,0.14),0 6px 0 rgba(0,0,0,0.09),0 10px 28px rgba(0,0,0,0.16),0 1px 0 rgba(255,255,255,0.90) inset!important}
 html.lp .hdr-grid{opacity:0.30!important}
 html.lp .hdr-spot{opacity:0!important}
 html.lp .hdr-sweep{opacity:0.4!important}
@@ -1566,6 +1577,395 @@ html.lp .epi-alerta.al-warn{background:rgba(245,158,11,.06)}
 html.lp .epi-alerta.al-danger{background:rgba(239,68,68,.06)}
 html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
 
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVIDADE GLOBAL — CORREÇÕES COMPLETAS
+   Breakpoints: 1600 → 1400 → 1280 → 1024 → 900 → 768 → 600 → 480 → 360px
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Bases globais ── */
+/* NÃO colocar overflow-x:hidden no body — quebra position:sticky da nav */
+html { max-width:100%; }
+.cont      { box-sizing:border-box; width:100%; }
+.sec       { width:100%; }
+/* Wrapper interno que absorve overflow sem afetar sticky */
+.cont > * { max-width:100%; }
+
+/* ── Grids dinâmicos com inline style → auto-fit ── */
+#fin-kpi-all        { grid-template-columns:repeat(auto-fit,minmax(155px,1fr)) !important; }
+#fin-kpi            { grid-template-columns:repeat(auto-fit,minmax(155px,1fr)) !important; }
+#fin-period-row     { grid-template-columns:1fr 1fr 2fr; gap:16px; }
+#dash-intg-kpis     { grid-template-columns:repeat(auto-fit,minmax(135px,1fr)) !important; }
+#dash-intg-insights { grid-template-columns:repeat(auto-fit,minmax(155px,1fr)) !important; }
+#virada-kpis        { grid-template-columns:repeat(auto-fit,minmax(135px,1fr)) !important; }
+.custo-kpi-grid     { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); }
+
+/* ── Scroll horizontal em tabelas e wraps ── */
+.tbl-scroll, .custo-tbl-scroll, .ftw { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+
+/* ── Section header wrap ── */
+.sh       { flex-wrap:wrap; gap:12px; align-items:flex-start; }
+.sh-acts  { flex-wrap:wrap; gap:8px; }
+.nav-inner{ min-height:44px; }
+.nb       { white-space:nowrap; flex-shrink:0; }
+
+/* footer flex */
+.ftr { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+
+/* ══ 1600px ══════════════════════════════════════════════════ */
+@media(max-width:1600px){
+  .hdr-inner   { padding:30px 48px; gap:32px; }
+  .cont        { padding:clamp(20px,3vw,40px) clamp(24px,4vw,56px) 90px; }
+  #fin-period-row { grid-template-columns:1fr 1fr !important; }
+}
+
+/* ══ 1400px ══════════════════════════════════════════════════ */
+@media(max-width:1400px){
+  .hdr-inner   { grid-template-columns:140px 1fr auto; padding:26px 36px; gap:24px; }
+  .cont        { padding:28px 36px 80px; }
+  .nav         { padding:0 28px; }
+  .sp          { min-width:160px; padding:11px 16px; }
+  .sp .sv,.hdr-date-inp { font-size:17px; }
+  .kpi-g       { grid-template-columns:repeat(auto-fit,minmax(150px,1fr)) !important; }
+  #fin-period-row { grid-template-columns:1fr 1fr !important; }
+}
+
+/* ══ 1280px ══════════════════════════════════════════════════ */
+@media(max-width:1280px){
+  .hdr-inner  { grid-template-columns:120px 1fr auto; padding:22px 28px; gap:20px; }
+  .sp         { min-width:148px; padding:10px 14px; }
+  .sp .sv,.hdr-date-inp { font-size:16px; }
+  .cont       { padding:24px 28px 80px; }
+  .nav        { padding:0 20px; }
+  .custo-grid-3 { grid-template-columns:repeat(2,1fr) !important; }
+  .cc-g3      { grid-template-columns:repeat(2,1fr) !important; }
+  .cc-g5      { grid-template-columns:repeat(3,1fr) !important; }
+  #fin-period-row { grid-template-columns:1fr 1fr !important; }
+  .pg         { grid-template-columns:repeat(3,1fr); }
+}
+
+/* ══ 1024px ══════════════════════════════════════════════════ */
+@media(max-width:1024px){
+  .hdr-inner  { grid-template-columns:100px 1fr; padding:18px 20px; gap:16px; }
+  .hdr-stats  { display:none !important; }
+  .hdr-inner::before { display:none; }
+  .hdr h1     { font-size:clamp(18px,3vw,30px); }
+  .hdr-sub    { flex-wrap:wrap; gap:4px; }
+  .hdr-logo   { width:100px; height:82px; }
+  .nav        { padding:0 12px; }
+  .nb         { padding:6px 10px; font-size:11.5px; margin:5px 2px; }
+  .cont       { padding:18px 16px 80px; }
+  .kpi-g      { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)) !important; }
+  #fin-kpi-all{ grid-template-columns:repeat(auto-fit,minmax(140px,1fr)) !important; }
+  #fin-kpi    { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)) !important; }
+  #fin-period-row { grid-template-columns:1fr !important; }
+  .cg,.cg.view-3col,.cg.view-compact { grid-template-columns:1fr !important; }
+  .custo-grid-2 { grid-template-columns:1fr !important; }
+  .custo-grid-3 { grid-template-columns:repeat(2,1fr) !important; }
+  .cc-g3      { grid-template-columns:repeat(2,1fr) !important; }
+  .cc-g5      { grid-template-columns:repeat(2,1fr) !important; }
+  .dg,.urg    { grid-template-columns:1fr !important; }
+  .fg         { grid-template-columns:1fr !important; }
+  .fg.fg3     { grid-template-columns:repeat(2,1fr) !important; }
+  .pg         { grid-template-columns:repeat(3,1fr); }
+  .vtg        { flex-wrap:wrap; }
+  #dash-intg-kpis    { grid-template-columns:repeat(3,1fr) !important; }
+  #dash-intg-insights{ grid-template-columns:repeat(2,1fr) !important; }
+  #virada-kpis       { grid-template-columns:repeat(3,1fr) !important; }
+  .sh   { flex-wrap:wrap; gap:10px; }
+  .sh-acts { flex-wrap:wrap; gap:6px; }
+  #kanban-board.active { grid-template-columns:1fr !important; }
+  .cg.view-lista { max-height:none; }
+  .ft  { min-width:640px; }
+  .ftw { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .custo-toolbar   { flex-wrap:wrap; }
+  .custo-tabs-wrap { flex-wrap:wrap; gap:4px; }
+}
+
+/* ══ 900px ═══════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .custo-grid-3   { grid-template-columns:1fr 1fr !important; }
+  #fin-charts-row { grid-template-columns:1fr 1fr !important; }
+  .pg             { grid-template-columns:repeat(2,1fr); }
+  #dash-intg-kpis    { grid-template-columns:repeat(2,1fr) !important; }
+  #dash-intg-insights{ grid-template-columns:1fr !important; }
+  #virada-kpis       { grid-template-columns:repeat(2,1fr) !important; }
+}
+
+/* ══ 768px ═══════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .hdr-inner  { grid-template-columns:72px 1fr; padding:14px 14px; gap:12px; }
+  .hdr-logo   { width:72px; height:60px; }
+  .hdr h1     { font-size:20px; line-height:1.2; }
+  .hdr-sub    { font-size:11px; gap:3px; }
+  .hdr-tag    { font-size:8.5px; padding:4px 10px; letter-spacing:1.8px; }
+  .hdr-stats  { display:none !important; }
+  .nav        { padding:0 4px; }
+  .nb         { padding:6px 9px; font-size:11px; margin:5px 1px; }
+  .cont       { padding:14px 12px 80px; }
+  .kpi-g      { grid-template-columns:repeat(2,1fr) !important; }
+  #fin-kpi-all{ grid-template-columns:repeat(2,1fr) !important; }
+  #fin-kpi    { grid-template-columns:repeat(2,1fr) !important; }
+  #fin-period-row { grid-template-columns:1fr !important; }
+  .cg,.cg.view-3col,.cg.view-compact { grid-template-columns:1fr !important; }
+  .cg.view-lista { max-height:none; }
+  .cc-g3      { grid-template-columns:1fr !important; }
+  .cc-g5      { grid-template-columns:repeat(2,1fr) !important; }
+  .cm         { grid-template-columns:repeat(2,1fr) !important; }
+  .fm         { grid-template-columns:repeat(2,1fr) !important; }
+  .fg,.fg.fg3 { grid-template-columns:1fr !important; }
+  .custo-grid-2 { grid-template-columns:1fr !important; }
+  .custo-grid-3 { grid-template-columns:1fr !important; }
+  .dg,.urg    { grid-template-columns:1fr !important; }
+  .pg         { grid-template-columns:repeat(2,1fr); }
+  #fin-charts-row    { grid-template-columns:1fr !important; }
+  #dash-intg-kpis    { grid-template-columns:repeat(2,1fr) !important; }
+  #dash-intg-insights{ grid-template-columns:1fr !important; }
+  #virada-kpis       { grid-template-columns:repeat(2,1fr) !important; }
+  .sh         { flex-direction:column; align-items:flex-start; gap:8px; }
+  .sh-acts    { width:100%; justify-content:flex-start; }
+  #kanban-board.active { grid-template-columns:1fr !important; }
+  .mo .md     { padding:18px 14px !important; }
+  .custo-kpi-grid { grid-template-columns:repeat(2,1fr) !important; }
+  .custo-tabs-wrap {
+    overflow-x:auto; flex-wrap:nowrap !important;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:4px;
+  }
+  .custo-tabs-wrap::-webkit-scrollbar { display:none; }
+  .custo-toolbar { flex-wrap:wrap; gap:6px; }
+  .ft  { min-width:580px; }
+  .ftw { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  #user-topbar { flex-wrap:wrap; gap:4px; padding:4px 8px; }
+  .utb-sep    { display:none; }
+  .ftr { flex-direction:column; text-align:center; gap:4px; padding:14px 12px; }
+}
+
+/* ══ 600px ═══════════════════════════════════════════════════ */
+@media(max-width:600px){
+  .hdr-inner  { grid-template-columns:60px 1fr; gap:10px; padding:12px 10px; }
+  .hdr-logo   { width:60px; height:50px; }
+  .hdr h1     { font-size:17px; }
+  .hdr-tag    { display:none; }
+  .cont       { padding:12px 10px 80px; }
+  .nb         { padding:5px 8px; font-size:10.5px; margin:4px 1px; }
+  .kpi-g      { grid-template-columns:repeat(2,1fr) !important; }
+  #fin-kpi-all{ grid-template-columns:repeat(2,1fr) !important; }
+  #fin-kpi    { grid-template-columns:repeat(2,1fr) !important; }
+  .custo-kpi-grid { grid-template-columns:repeat(2,1fr) !important; }
+  #dash-intg-kpis { grid-template-columns:repeat(2,1fr) !important; }
+  #virada-kpis    { grid-template-columns:repeat(2,1fr) !important; }
+  .cc-g5      { grid-template-columns:1fr !important; }
+  .pg         { grid-template-columns:1fr 1fr; }
+  .sh-acts .btn   { font-size:11px; padding:7px 10px; }
+  .btn-sm         { padding:6px 10px; font-size:11px; }
+  .custo-sh-acts .btn { font-size:11px; padding:6px 9px; }
+  .custo-tabs-wrap .dp-pill { font-size:10px; padding:5px 10px; }
+  .ftr { font-size:11px; padding:12px; }
+}
+
+/* ══ 480px ═══════════════════════════════════════════════════ */
+@media(max-width:480px){
+  .hdr-inner  { grid-template-columns:52px 1fr; gap:8px; padding:10px 8px; }
+  .hdr-logo   { width:52px; height:43px; }
+  .hdr h1     { font-size:15px; }
+  .hdr-sub    { font-size:10px; }
+  .cont       { padding:10px 8px 80px; }
+  .nb         { padding:5px 7px; font-size:10px; }
+  .kpi-g,.custo-kpi-grid,#fin-kpi-all,#fin-kpi { grid-template-columns:1fr !important; }
+  .cc-g3,.cc-g5 { grid-template-columns:1fr !important; }
+  .cm,.fm     { grid-template-columns:1fr !important; }
+  .pg         { grid-template-columns:1fr; }
+  .kv         { font-size:20px !important; }
+  .btn        { padding:8px 12px; font-size:11px; }
+  .sh-t       { font-size:18px; }
+  .mo         { padding:0 !important; align-items:flex-end !important; }
+  .mo .md     { border-radius:14px 14px 0 0 !important; padding:16px 12px !important;
+                width:100% !important; max-width:100% !important; }
+  #user-topbar { font-size:10px; padding:3px 6px; }
+  .sync-pill  { font-size:10px; padding:3px 8px; }
+}
+
+/* ══ 360px ═══════════════════════════════════════════════════ */
+@media(max-width:360px){
+  .hdr-inner  { grid-template-columns:44px 1fr; gap:6px; padding:8px 6px; }
+  .hdr-logo   { width:44px; height:36px; }
+  .hdr h1     { font-size:13px; }
+  .cont       { padding:8px 6px 72px; }
+  .nb         { padding:4px 6px; font-size:9.5px; }
+  .kpi-g,.custo-kpi-grid,#fin-kpi-all,#fin-kpi { grid-template-columns:1fr !important; }
+}
+
+/* ══ Paisagem em telas curtas ════════════════════════════════ */
+@media(orientation:landscape)and(max-height:500px){
+  .hdr-inner  { padding:8px 16px !important; }
+  .hdr-logo   { width:50px !important; height:42px !important; }
+  .hdr h1     { font-size:14px !important; }
+  .hdr-sub,.hdr-stats { display:none !important; }
+}
+
+/* ══ Modais em mobile ════════════════════════════════════════ */
+@media(max-width:640px){
+  .mo .md table { display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .mo .md .fg   { grid-template-columns:1fr !important; }
+  .mo .md .fgrp.full { grid-column:1 !important; }
+}
+
+/* ── Mapa Medições — inputs padronizados, mesmo tamanho e texto visível ── */
+.mapa-num-inp {
+  width: 100% !important;
+  height: 30px !important;
+  box-sizing: border-box;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  opacity: 1 !important;
+  caret-color: #10b981;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 4px 6px !important;
+  border-radius: 6px !important;
+  display: block;
+}
+.mapa-num-inp::placeholder {
+  color: rgba(148,163,184,.4) !important;
+  -webkit-text-fill-color: rgba(148,163,184,.4) !important;
+  font-weight: 400 !important;
+}
+.mapa-num-inp:focus {
+  background: rgba(255,255,255,.11) !important;
+  border-color: rgba(16,185,129,.6) !important;
+  box-shadow: 0 0 0 2px rgba(16,185,129,.18);
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+/* Remove spinner nativo */
+.mapa-num-inp::-webkit-outer-spin-button,
+.mapa-num-inp::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.mapa-num-inp[type=number] { -moz-appearance:textfield; }
+
+/* ── Barra de rolagem — custo-medicao-tbl ─────────────────────────── */
+#custo-med-scroll-main {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16,185,129,.45) rgba(0,0,0,.18);
+}
+#custo-med-scroll-main::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+#custo-med-scroll-main::-webkit-scrollbar-track {
+  background: rgba(0,0,0,.18);
+  border-radius: 4px;
+}
+#custo-med-scroll-main::-webkit-scrollbar-thumb {
+  background: rgba(16,185,129,.45);
+  border-radius: 4px;
+}
+#custo-med-scroll-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(16,185,129,.75);
+}
+#custo-med-scroll-main::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Barra de rolagem espelho (topo) ──────────────────────────────── */
+#custo-med-scroll-top {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16,185,129,.35) rgba(0,0,0,.12);
+}
+#custo-med-scroll-top::-webkit-scrollbar { height: 7px; }
+#custo-med-scroll-top::-webkit-scrollbar-track { background: rgba(0,0,0,.18); }
+#custo-med-scroll-top::-webkit-scrollbar-thumb {
+  background: rgba(16,185,129,.4);
+  border-radius: 4px;
+}
+#custo-med-scroll-top::-webkit-scrollbar-thumb:hover {
+  background: rgba(16,185,129,.7);
+}
+
+/* ── Nav fixa — compensar no conteúdo ─────────────────────────── */
+/* A .nav agora é position:fixed, então .cont precisa de padding-top */
+.cont { padding-top: calc(56px + 28px) !important; }
+@media(max-width:1440px){ .cont { padding-top: calc(56px + 24px) !important; } }
+@media(max-width:1024px){ .cont { padding-top: calc(52px + 18px) !important; } }
+@media(max-width:768px) { .cont { padding-top: calc(50px + 14px) !important; } }
+@media(max-width:480px) { .cont { padding-top: calc(48px + 10px) !important; } }
+
+/* ── Textarea de observação — Mapa de Medições ──────────────────── */
+.mapa-obs-ta {
+  width: 100%;
+  min-width: 200px;
+  min-height: 28px;
+  height: 28px;
+  max-height: 300px;
+  resize: none;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: var(--tx) !important;
+  -webkit-text-fill-color: var(--tx) !important;
+  font-family: var(--fb);
+  font-size: 11px;
+  line-height: 1.45;
+  outline: none;
+  display: block;
+  transition: border-color .15s, background .15s;
+  scrollbar-width: none;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.mapa-obs-ta::-webkit-scrollbar { display: none; }
+.mapa-obs-ta::placeholder { color: rgba(148,163,184,.4); -webkit-text-fill-color: rgba(148,163,184,.4); }
+.mapa-obs-ta:focus {
+  border-color: rgba(16,185,129,.5);
+  background: rgba(255,255,255,.08);
+  box-shadow: 0 0 0 2px rgba(16,185,129,.12);
+  overflow: auto;
+  max-height: 200px;
+}
+
+/* ── Textarea de observação — Linhas de Medição (custo) ─────────── */
+.custo-obs-ta {
+  width: 100%;
+  min-width: 200px;
+  min-height: 28px;
+  height: 28px;
+  max-height: 300px;
+  resize: none;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 5px;
+  padding: 5px 8px;
+  color: var(--tx) !important;
+  -webkit-text-fill-color: var(--tx) !important;
+  font-family: var(--fb);
+  font-size: 11px;
+  line-height: 1.45;
+  outline: none;
+  display: block;
+  transition: border-color .15s, background .15s;
+  scrollbar-width: none;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.custo-obs-ta::-webkit-scrollbar { display: none; }
+.custo-obs-ta::placeholder { color: rgba(148,163,184,.4); -webkit-text-fill-color: rgba(148,163,184,.4); }
+.custo-obs-ta:focus {
+  border-color: rgba(16,185,129,.45);
+  background: rgba(255,255,255,.07);
+  box-shadow: 0 0 0 2px rgba(16,185,129,.1);
+  overflow: auto;
+  max-height: 200px;
+}
+.custo-obs-ta[readonly] {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+}
+
 </style>
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -1760,7 +2160,7 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
     <button class="nb" data-sec="entregaveis" onclick="showSec('entregaveis',this);renderEntregaveis()">📦 Entregáveis</button>
     <button class="nb" data-sec="frota" onclick="showSec('frota',this);renderFrota()">🚛 Frota</button>
     <button class="nb" data-sec="dp" onclick="showSec('dp',this);renderDP()">👔 Dep. Pessoal</button>
-    <button class="nb" data-sec="medicoes" onclick="showSec('medicoes',this);renderMedicoes()">📐 Mapa Medições</button>
+    <button class="nb" data-sec="medicoes" onclick="showSec('medicoes',this);_initMapaMedicoes()">📐 Mapa Medições</button>
     <button class="nb" data-sec="epi" onclick="showSec('epi',this);renderEPI()">🦺 EPI/Uniforme</button>
     <button class="nb" data-sec="custo" onclick="showSec('custo',this);renderCusto()">📊 Análise de Custo</button>
     <button class="nb" data-sec="calibracao" onclick="showSec('calibracao',this);renderCalib()">🔬 Calibração</button>
@@ -2457,31 +2857,96 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
 
 
 <!-- ══════════════════════════════ MAPA DE MEDIÇÕES ══════════════════════════════ -->
-<div class="sec" id="medicoes">
-  <div class="sh">
-    <div>
-      <div class="sh-t">Mapa de Medições</div>
-      <div style="font-size:11px;color:var(--t3);margin-top:3px;font-family:var(--fb)">
-        📐 Valor Previsto × Valor Realizado por obra / competência
+<div class="sec" id="medicoes" style="margin-left:calc(-1*clamp(24px,4vw,60px));margin-right:calc(-1*clamp(24px,4vw,60px));padding-left:clamp(24px,4vw,60px);padding-right:clamp(24px,4vw,60px)">
+
+  <!-- Toolbar: título + nav contratos + mês + salvar -->
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+    <div class="sh-t" style="font-size:16px;font-weight:700;white-space:nowrap">📐 Mapa de Medições</div>
+    <div style="flex:1;min-width:0">
+      <div class="fin-sec-nav" id="mapa-sec-nav" style="margin:0">
+        <button class="fin-nav-arr" id="mapa-nav-prev" onclick="mapaCtShift(-1)">&#9664;</button>
+        <div class="fin-nav-scroll" id="mapa-nav-scroll"></div>
+        <button class="fin-nav-arr" id="mapa-nav-next" onclick="mapaCtShift(1)">&#9654;</button>
       </div>
     </div>
-    <div class="sh-acts" style="display:flex;align-items:center;gap:10px">
-      <div style="display:flex;align-items:center;gap:6px">
-        <button class="bic" onclick="medicoesShift(-1)" title="Meses anteriores" style="font-size:14px;padding:5px 9px">◀</button>
-        <span id="med-range-label" style="font-size:11px;font-weight:700;color:var(--t2);white-space:nowrap;min-width:130px;text-align:center"></span>
-        <button class="bic" onclick="medicoesShift(1)" title="Próximos meses" style="font-size:14px;padding:5px 9px">▶</button>
+    <div style="position:relative;display:flex;align-items:center;gap:4px;flex-shrink:0">
+      <button class="bic" onclick="mapaMesShift(-1)" style="font-size:13px;padding:4px 8px">&#9664;</button>
+      <div id="mapa-mes-badge" onclick="mapaPickerToggle(event)"
+           style="font-family:var(--fn);font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px;
+                  background:rgba(56,189,248,.12);color:var(--ac2);border:1px solid rgba(56,189,248,.3);
+                  white-space:nowrap;cursor:pointer;user-select:none;min-width:90px;text-align:center">Mai/2026</div>
+      <button class="bic" onclick="mapaMesShift(1)" style="font-size:13px;padding:4px 8px">&#9654;</button>
+      <div id="mapa-mes-picker" style="display:none;position:absolute;top:calc(100% + 8px);right:0;
+           background:linear-gradient(160deg,#0e2818,#0a1e12);border:1px solid rgba(16,185,129,.3);
+           border-radius:16px;padding:14px;min-width:240px;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.7);backdrop-filter:blur(20px)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <button class="bic" onclick="mapaPickerYear(-1,event)" style="font-size:12px;padding:3px 7px">&#9664;</button>
+          <span id="mapa-picker-year" style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx)">2026</span>
+          <button class="bic" onclick="mapaPickerYear(1,event)" style="font-size:12px;padding:3px 7px">&#9654;</button>
+        </div>
+        <div id="mapa-picker-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"></div>
       </div>
-      <button class="btn btn-p" onclick="openMedNovaModal()">＋ Nova Medição</button>
+    </div>
+    <button class="btn btn-p btn-sm" onclick="mapaSave()" id="mapa-save-btn">&#128190; Salvar</button>
+  </div>
+
+  <div id="mapa-ct-info" style="margin-bottom:8px"></div>
+  <div id="mapa-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:8px"></div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+    <div id="mapa-status" style="font-size:11px;color:var(--t3);flex:1;min-width:0"></div>
+    <button id="mapa-toggle-zeros" onclick="mapaToggleZeros()"
+            style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:10px;
+                   border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);
+                   color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0">
+      &#128585; Ocultar zeros
+    </button>
+  </div>
+
+  <!-- Tabela: scrollbar topo + nativa embaixo -->
+  <div class="custo-tbl-wrap" id="mapa-tbl-outer">
+    <div id="mapa-scroll-top" onscroll="mapaScrollSync('top')"
+         style="overflow-x:auto;overflow-y:hidden;height:10px;background:rgba(0,0,0,.28);border-bottom:1px solid rgba(255,255,255,.05)">
+      <div id="mapa-scroll-top-inner" style="height:1px"></div>
+    </div>
+    <div id="mapa-scroll-main" onscroll="mapaScrollSync('main')"
+         class="custo-tbl-scroll"
+         style="overflow-y:auto;max-height:calc(100vh - 310px)">
+      <table id="mapa-tbl" class="custo-tbl" style="border-collapse:separate;border-spacing:0;min-width:1600px;width:100%"></table>
     </div>
   </div>
-  <!-- KPI Totais -->
-  <div id="med-totais" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:20px"></div>
-  <div class="tbl-wrap" id="med-wrap">
-    <div class="tbl-scroll" id="med-scroll">
-      <table id="med-table" style="width:100%;border-collapse:collapse;min-width:1400px"></table>
+
+  <!-- Histórico -->
+  <div style="margin-top:14px">
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(0,0,0,.22);
+                border-radius:12px;border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:background .15s"
+         onclick="mapaHistToggle()"
+         onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='rgba(0,0,0,.22)'">
+      <span style="font-size:13px">&#128197;</span>
+      <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3)">Hist&#243;rico de Medi&#231;&#245;es</div>
+      <span id="mapa-hist-count" style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:8px;background:rgba(56,189,248,.1);color:var(--ac2);border:1px solid rgba(56,189,248,.2)">0 medi&#231;&#245;es</span>
+      <span id="mapa-hist-total" style="font-size:11px;color:var(--t2);font-family:var(--fn)"></span>
+      <div style="flex:1"></div>
+      <span id="mapa-hist-icon" style="font-size:12px;color:var(--t3);transition:transform .25s">&#9660;</span>
     </div>
-    <div class="tbl-arrows" id="med-arrows"></div>
+    <div id="mapa-hist-panel" style="display:none;margin-top:2px;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.15)">
+      <div style="padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.1)">
+        <span style="font-size:13px;color:var(--t3)">&#128269;</span>
+        <input id="mapa-hist-search" type="text" placeholder="Buscar por m&#234;s ou ano..."
+               oninput="_mapaRenderHist()"
+               style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)">
+        <button onclick="document.getElementById('mapa-hist-search').value='';_mapaRenderHist()"
+                style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px">&#x2715;</button>
+      </div>
+      <div id="mapa-hist-list" style="max-height:300px;overflow-y:auto"></div>
+      <div id="mapa-hist-footer" style="padding:7px 16px;border-top:1px solid rgba(255,255,255,.05);font-size:10px;color:var(--t3);display:flex;align-items:center">
+        <span id="mapa-hist-footer-txt"></span>
+        <div style="flex:1"></div>
+        <button onclick="mapaHistToggle()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px">Fechar &#9650;</button>
+      </div>
+    </div>
   </div>
+
 </div>
 <!-- ══════════════════════════════ USUÁRIOS ══════════════════════════════ -->
 <div class="sec" id="usuarios">
@@ -2798,40 +3263,206 @@ html.lp .epi-alerta.al-info{background:rgba(56,189,248,.06)}
 
   <!-- ════════════════ MEDIÇÃO ════════════════ -->
   <div id="custosec-medicao" style="display:none">
-    <div class="custo-toolbar">
-      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">Cenário:</div>
-      <button class="epi-pill active" data-mcen="orcado"   onclick="custoMedicaoCen('orcado',this)">📋 Orçado</button>
-      <button class="epi-pill"        data-mcen="estudo"   onclick="custoMedicaoCen('estudo',this)">🔬 Estudo</button>
-      <button class="epi-pill"        data-mcen="precusto" onclick="custoMedicaoCen('precusto',this)">💰 Pré-Custo</button>
+
+    <!-- ── Painel de informações do contrato ── -->
+    <div id="custo-med-ct-info" style="margin-bottom:14px"></div>
+
+    <!-- ── Toolbar ── -->
+    <div class="custo-toolbar" style="flex-wrap:wrap;row-gap:8px">
+
+      <!-- Navegação mensal com picker -->
+      <div style="position:relative;display:flex;align-items:center;gap:4px">
+        <button class="bic" onclick="custoMedMesShift(-1)" title="Mês anterior" style="font-size:14px;padding:5px 9px">◀</button>
+        <div id="custo-med-mes-badge"
+             onclick="custoMedPickerToggle(event)"
+             title="Clique para escolher qualquer mês"
+             style="font-family:var(--fn);font-size:13px;font-weight:800;padding:6px 18px;border-radius:20px;letter-spacing:.5px;background:rgba(56,189,248,.12);color:var(--ac2);border:1px solid rgba(56,189,248,.3);white-space:nowrap;cursor:pointer;user-select:none;transition:all .15s">Mai/2026</div>
+        <button class="bic" onclick="custoMedMesShift(1)" title="Próximo mês" style="font-size:14px;padding:5px 9px">▶</button>
+
+        <!-- Month/Year Picker Popup -->
+        <div id="custo-med-picker"
+             style="display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
+                    background:linear-gradient(160deg,#0e2818,#0a1e12);border:1px solid rgba(16,185,129,.3);
+                    border-radius:16px;padding:16px;min-width:260px;z-index:9999;
+                    box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 0 1px rgba(16,185,129,.1);
+                    backdrop-filter:blur(20px)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <button class="bic" onclick="custoMedPickerYear(-1,event)" style="font-size:13px;padding:4px 8px">◀</button>
+            <span id="custo-med-picker-year" style="font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx)">2026</span>
+            <button class="bic" onclick="custoMedPickerYear(1,event)" style="font-size:13px;padding:4px 8px">▶</button>
+          </div>
+          <div id="custo-med-picker-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div>
+        </div>
+      </div>
+
+      <!-- Separador -->
+      <div style="width:1px;height:22px;background:rgba(255,255,255,.1);margin:0 4px;align-self:center"></div>
+
+      <!-- Reajuste -->
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);white-space:nowrap;align-self:center">📈 Reajuste</div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <input id="custo-med-reaj-inp" type="number" class="fi" step="0.0001" placeholder="ex: 5,50"
+               style="height:30px;width:160px;font-size:13px;font-family:var(--fn);text-align:right;border-radius:8px;font-weight:700" disabled>
+        <span style="font-size:13px;color:var(--t2);font-weight:800">%</span>
+        <button id="custo-med-reaj-btn" class="btn btn-s btn-sm"
+                style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--gl);white-space:nowrap;font-weight:800"
+                onclick="custoMedAplicarReajuste()" disabled>Aplicar</button>
+      </div>
+
       <div style="flex:1"></div>
-      <button class="btn btn-s btn-sm" onclick="custoAddMedicaoItem()">＋ Item</button>
-      <button class="btn btn-p btn-sm" onclick="custoSaveMedicao()">💾 Salvar</button>
+
+      <!-- Ações (visíveis apenas no modo edição) -->
+      <button id="custo-med-add-btn" class="btn btn-s btn-sm" onclick="custoAddMedicaoItem()">＋ Item</button>
+      <button id="custo-med-save-btn" class="btn btn-p btn-sm" onclick="custoSaveMedicao()">💾 Salvar</button>
     </div>
-    <div class="custo-tbl-wrap">
-      <div class="custo-tbl-scroll">
-        <table class="ft custo-tbl" id="custo-medicao-tbl" style="min-width:600px">
-          <thead>
-            <tr>
-              <th style="width:36px">#</th>
-              <th style="min-width:260px">Descrição do Serviço</th>
-              <th style="width:80px">Qtd</th>
-              <th style="width:60px">Un</th>
-              <th style="min-width:110px">Vl Unitário</th>
-              <th style="min-width:120px">Total</th>
-              <th style="width:36px"></th>
+
+    <!-- ── Banner de modo leitura ── -->
+    <div id="custo-med-readonly-banner" style="display:none;margin-bottom:14px;
+         padding:12px 18px;border-radius:12px;
+         background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(124,58,237,.06));
+         border:1px solid rgba(124,58,237,.3);
+         display:none;align-items:center;gap:12px">
+      <span style="font-size:16px">🔒</span>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:800;color:#a78bfa;letter-spacing:.5px">Modo Visualização</div>
+        <div id="custo-med-readonly-lbl" style="font-size:11px;color:var(--t2);margin-top:2px">Este mês está bloqueado para edição.</div>
+      </div>
+      <button onclick="custoMedUnlockEdit()"
+              style="padding:7px 16px;border-radius:10px;border:1px solid rgba(124,58,237,.4);
+                     background:rgba(124,58,237,.15);color:#a78bfa;font-size:11px;font-weight:800;
+                     cursor:pointer;white-space:nowrap;transition:all .15s"
+              onmouseover="this.style.background='rgba(124,58,237,.28)'" onmouseout="this.style.background='rgba(124,58,237,.15)'">
+        🔓 Solicitar Edição
+      </button>
+    </div>
+
+    <!-- ── Modal de senha para edição ── -->
+    <div id="custo-med-pass-modal" style="display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+      <div style="background:linear-gradient(160deg,#0e2818,#091a10);border:1px solid rgba(16,185,129,.3);
+                  border-radius:20px;padding:28px 32px;min-width:320px;max-width:420px;
+                  box-shadow:0 30px 80px rgba(0,0,0,.8)">
+        <div data-pass-title style="font-family:var(--fh);font-size:17px;font-weight:700;color:var(--tx);margin-bottom:6px">🔐 Autenticação</div>
+        <div data-pass-sub style="font-size:12px;color:var(--t2);margin-bottom:20px">Digite sua senha para liberar a edição de <strong id="custo-med-pass-mes-lbl" style="color:var(--ac2)"></strong></div>
+        <div style="margin-bottom:6px">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:6px">Usuário</div>
+          <div style="font-size:13px;font-weight:700;color:var(--tx);padding:8px 12px;background:rgba(255,255,255,.05);border-radius:8px;border:1px solid rgba(255,255,255,.08)"
+               id="custo-med-pass-user-lbl">—</div>
+        </div>
+        <div style="margin-bottom:16px;margin-top:14px">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:6px">Senha</div>
+          <input id="custo-med-pass-inp" type="password" class="finp"
+                 placeholder="••••••••" autocomplete="current-password"
+                 style="width:100%"
+                 onkeydown="if(event.key==='Enter')custoMedConfirmPass()">
+        </div>
+        <div id="custo-med-pass-err" style="font-size:11px;color:#ef4444;min-height:16px;margin-bottom:12px;text-align:center"></div>
+        <div style="display:flex;gap:10px">
+          <button onclick="custoMedClosePassModal()"
+                  style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);
+                         background:rgba(255,255,255,.05);color:var(--t2);font-size:12px;cursor:pointer">
+            Cancelar
+          </button>
+          <button data-pass-confirm onclick="custoMedConfirmPass()"
+                  style="flex:2;padding:10px;border-radius:10px;border:1px solid rgba(16,185,129,.4);
+                         background:rgba(16,185,129,.15);color:var(--gnl);font-size:12px;font-weight:800;cursor:pointer">
+            🔓 Confirmar Acesso
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Saldo do Contrato ── -->
+    <div id="custo-med-saldo-bar" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px;padding:0 2px"></div>
+
+    <!-- ── Controles da tabela ── -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <div id="custo-med-line-count" style="font-size:11px;color:var(--t3);flex:1"></div>
+      <button id="custo-med-hide-zeros" onclick="custoMedToggleZeros()"
+              style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:10px;
+                     border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);
+                     color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .15s">
+        🙈 Ocultar Qtd. zero
+      </button>
+    </div>
+
+    <!-- ── Tabela de linhas com scrollbar dupla ── -->
+    <div id="custo-med-tbl-outer" style="border-radius:12px;border:1px solid rgba(255,255,255,.07);overflow:visible;margin-left:calc(-1*clamp(24px,4vw,60px));margin-right:calc(-1*clamp(24px,4vw,60px))">
+      <!-- Scrollbar espelho (topo) -->
+      <div id="custo-med-scroll-top" onscroll="custoMedScrollSync('top')"
+           style="overflow-x:auto;overflow-y:hidden;height:10px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.06)">
+        <div id="custo-med-scroll-top-inner" style="height:1px"></div>
+      </div>
+      <!-- Container principal — scrollbar nativa é a única inferior -->
+      <div id="custo-med-scroll-main" onscroll="custoMedScrollSync('main')"
+           style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 380px)">
+        <table class="ft custo-tbl" id="custo-medicao-tbl" style="min-width:900px;border-collapse:separate;border-spacing:0">
+          <thead id="custo-med-thead">
+            <tr id="custo-med-thead-r1">
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;width:36px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1)">#</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;width:110px;border-bottom:1px solid rgba(255,255,255,.1)">Código do Sub-Item</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;min-width:260px;border-bottom:1px solid rgba(255,255,255,.1)">Nome Reduzido do Subitem</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;width:75px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1)">Un. Medida</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;width:90px;text-align:right;border-bottom:1px solid rgba(255,255,255,.1)">Quantidade</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;min-width:130px;text-align:right;border-bottom:1px solid rgba(255,255,255,.1)">Preço Unitário (R$)</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;min-width:130px;text-align:right;border-bottom:1px solid rgba(255,255,255,.1)">Preço Total (R$)</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;min-width:220px;border-bottom:1px solid rgba(255,255,255,.1)">Observações</th>
+              <th style="position:sticky;top:0;z-index:11;background:#070e09;width:36px;border-bottom:1px solid rgba(255,255,255,.1)"></th>
             </tr>
           </thead>
           <tbody id="custo-medicao-tbody"></tbody>
           <tfoot>
             <tr style="background:rgba(16,185,129,.08)">
-              <td colspan="5" style="font-weight:800;font-family:var(--fb);font-size:12px;color:var(--gnl)">TOTAL GERAL</td>
-              <td id="custo-med-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl)">R$ 0,00</td>
-              <td></td>
+              <td colspan="6" style="font-weight:800;font-family:var(--fb);font-size:12px;color:var(--gnl);padding:8px 10px">TOTAL GERAL DAS LINHAS</td>
+              <td id="custo-med-total" style="font-weight:800;font-family:var(--fn);color:var(--gnl);text-align:right;padding:8px 10px">R$ 0,00</td>
+              <td colspan="2"></td>
             </tr>
           </tfoot>
         </table>
       </div>
     </div>
+
+    <!-- ── Histórico mensal — painel colapsável com busca ── -->
+    <div style="margin-top:20px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;
+                  background:rgba(0,0,0,.22);border-radius:12px;border:1px solid rgba(255,255,255,.06);
+                  cursor:pointer;transition:background .15s"
+           onclick="custoMedHistToggle()"
+           onmouseover="this.style.background='rgba(255,255,255,.03)'"
+           onmouseout="this.style.background='rgba(0,0,0,.22)'">
+        <span style="font-size:14px">📅</span>
+        <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3)">Histórico Mensal das Linhas de Medição</div>
+        <span id="custo-med-hist-count" style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:8px;background:rgba(16,185,129,.12);color:var(--gnl);border:1px solid rgba(16,185,129,.2)">0 meses</span>
+        <span id="custo-med-hist-total-lbl" style="font-size:11px;color:var(--t2);font-family:var(--fn)"></span>
+        <div style="flex:1"></div>
+        <span style="font-size:10px;color:var(--t3);font-weight:600;margin-right:4px" id="custo-med-hist-hint">clique para expandir</span>
+        <span id="custo-med-hist-toggle-icon" style="font-size:12px;color:var(--t3);font-weight:800;transition:transform .25s">▼</span>
+      </div>
+
+      <!-- Painel expansível -->
+      <div id="custo-med-hist-panel" style="display:none;margin-top:2px;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.15)">
+        <!-- Barra de busca -->
+        <div style="padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.12)">
+          <span style="font-size:14px;color:var(--t3)">🔍</span>
+          <input id="custo-med-hist-search"
+                 type="text"
+                 placeholder="Buscar por mês ou ano... (ex: mai, 2026, jan, set)"
+                 oninput="_custoMedHistTimeline()"
+                 style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)">
+          <button onclick="document.getElementById('custo-med-hist-search').value='';_custoMedHistTimeline()"
+                  style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:2px 8px;border-radius:6px"
+                  title="Limpar busca">✕</button>
+        </div>
+        <!-- Lista de meses (scrollável) -->
+        <div id="custo-med-hist-timeline" style="max-height:340px;overflow-y:auto;padding:4px 0"></div>
+        <!-- Rodapé -->
+        <div id="custo-med-hist-footer" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,.05);font-size:10px;color:var(--t3);display:flex;align-items:center;gap:8px">
+          <span id="custo-med-hist-footer-txt"></span>
+          <div style="flex:1"></div>
+          <button onclick="custoMedHistToggle()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px;padding:2px 6px">Fechar ▲</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ════════════════ FUNÇÕES ════════════════ -->
@@ -3356,6 +3987,10 @@ let ST = {
 let currentFilter = 'todos';
 let currentSearch = '';
 let currentView = '2col';
+
+// Cópia imutável dos participantes padrão — usada como fallback de autenticação
+// mesmo que ST.participants seja sobrescrito pelo servidor (que pode omitir senhas)
+const _DEFAULT_PARTICIPANTS = ST.participants.map(p => Object.assign({}, p));
 // Estado de período por card de contrato { [contractId]: 'YYYY-MM' }
 const _ctCardPeriod = {};
 let deleteCallback = null;
@@ -8421,7 +9056,6 @@ async function doLogin(){
     screen.style.transition = 'opacity .5s';
     screen.style.opacity = '0';
     setTimeout(()=>screen.classList.add('hidden'), 500);
-    // Mostra topbar do usuário
     // Mostra botão Usuários apenas para admin
     if(userData.role === 'admin'){
       const btnU = document.getElementById('nav-btn-usuarios');
@@ -9171,7 +9805,15 @@ async function _forcePullNow(){
     ST.tasks        = (data.tasks||[]).length    > 0 ? data.tasks       : ST.tasks;
     ST.vacations    = (data.vacations||[]).length > 0 ? data.vacations  : ST.vacations;
     ST.managers     = (data.managers||[]).length  > 0 ? data.managers   : ST.managers;
-    ST.participants = (data.participants||[]).length > 0 ? data.participants : ST.participants;
+    ST.participants = (data.participants||[]).length > 0
+      ? data.participants.map(srv => {
+          // Preserva a senha do cadastro local caso o servidor não a retorne
+          const local = ST.participants.find(l => l.id === srv.id || l.username === srv.username);
+          return (local && !srv.password && local.password)
+            ? Object.assign({}, srv, { password: local.password })
+            : srv;
+        })
+      : ST.participants;
     ST.gestoresUnidade = (data.gestoresUnidade||[]).length > 0 ? data.gestoresUnidade : (ST.gestoresUnidade||[]);
     ST.trips        = (data.trips||[]).length  > 0 ? data.trips         : ST.trips;
     ST.frota        = (data.frota||[]).length  > 0 ? data.frota         : ST.frota;
@@ -10311,6 +10953,818 @@ function finChartShift(dir){
 //  EVOLUÇÃO FATURAMENTO × CUSTOS — Dashboard line chart
 // ════════════════════════════════════════════════════════════════
 // ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  MAPA DE MEDIÇÕES DETALHADO — Medição por linha de serviço
+// ════════════════════════════════════════════════════════════════
+var _mapaCtId = null;
+var _mapaMesKey = '';
+var _mapaPickerYear = new Date().getFullYear();
+var _mapaHistOpen = false;
+var _mapaOvOpen = false;
+
+var _MES_NOMES_MAPA = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function _mapaYM(){
+  var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function _mapaMesLbl(ym){
+  if(!ym) return '—';
+  var p=ym.split('-');
+  return _MES_NOMES_MAPA[parseInt(p[1],10)-1]+'/'+p[0];
+}
+function _mapaGetAnalise(){
+  return (ST.custoAnalises||[]).find(function(a){ return a.contractId===_mapaCtId; })||null;
+}
+function _mapaGetLinhas(mesKey){
+  var a=_mapaGetAnalise(); if(!a) return [];
+  return a.medicao&&a.medicao.history&&a.medicao.history[mesKey]&&a.medicao.history[mesKey].items
+    ? a.medicao.history[mesKey].items : [];
+}
+function _mapaGetRec(ctId, key){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===ctId;}); if(!ct) return null;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  return ct.mapaMedicoes[key]||null;
+}
+function _mapaFmt(v){ return 'R$ '+(parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ── Render principal ───────────────────────────────────────────────────
+function renderMapaMedicoes(){
+  // Init
+  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
+  if(!_mapaMesKey) _mapaMesKey=_mapaYM();
+
+  _mapaRenderNav();
+  _mapaRenderCtInfo();
+  _mapaRenderTable();
+  _mapaRenderKPIs();
+  _mapaRenderHist();
+  _mapaUpdateStatus();
+
+  // Picker year
+  var py=document.getElementById('mapa-picker-year');
+  if(py){ var p=_mapaMesKey.split('-'); _mapaPickerYear=parseInt(p[0],10); py.textContent=_mapaPickerYear; }
+}
+
+// ── Nav de contratos ───────────────────────────────────────────────────
+function _mapaRenderNav(){
+  var scroll=document.getElementById('mapa-nav-scroll'); if(!scroll) return;
+  var cts=ST.contracts||[];
+  scroll.innerHTML=cts.map(function(c){
+    return '<button class="fin-pill'+(c.id===_mapaCtId?' active':'')+'" onclick="mapaSelectCt('+c.id+')">'+
+      '<span class="fp-obra">'+(c.nObra||c.code||'—')+'</span>'+
+      c.name+'</button>';
+  }).join('');
+  // Scroll ao ativo
+  var act=scroll.querySelector('.active');
+  if(act) setTimeout(function(){act.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});},50);
+}
+function mapaSelectCt(id){
+  _mapaCtId=id;
+  renderMapaMedicoes();
+}
+function mapaCtShift(dir){
+  var cts=ST.contracts||[];
+  var idx=cts.findIndex(function(c){return c.id===_mapaCtId;});
+  var n=Math.max(0,Math.min(cts.length-1,idx+dir));
+  if(cts[n]) mapaSelectCt(cts[n].id);
+}
+
+// ── Navegação de mês ───────────────────────────────────────────────────
+function mapaMesShift(dir){
+  var ym=_mapaMesKey||_mapaYM();
+  var p=ym.split('-'); var y=parseInt(p[0],10),m=parseInt(p[1],10);
+  m+=dir; if(m<1){m=12;y--;} if(m>12){m=1;y++;}
+  _mapaMesKey=y+'-'+String(m).padStart(2,'0');
+  renderMapaMedicoes();
+}
+function mapaPickerToggle(e){
+  if(e) e.stopPropagation();
+  var pk=document.getElementById('mapa-mes-picker'); if(!pk) return;
+  if(pk.style.display!=='none'){ pk.style.display='none'; return; }
+  var p=_mapaMesKey.split('-'); _mapaPickerYear=parseInt(p[0],10);
+  _mapaPickerRender(); pk.style.display='block';
+  setTimeout(function(){ document.addEventListener('click',_mapaPickerOutside,{once:true}); },10);
+}
+function _mapaPickerOutside(e){
+  var pk=document.getElementById('mapa-mes-picker');
+  if(pk&&!pk.contains(e.target)) pk.style.display='none';
+}
+function mapaPickerYear(dir,e){
+  if(e) e.stopPropagation();
+  _mapaPickerYear+=dir; _mapaPickerRender();
+}
+function _mapaPickerRender(){
+  var yr=document.getElementById('mapa-picker-year'); if(yr) yr.textContent=_mapaPickerYear;
+  var grid=document.getElementById('mapa-picker-grid'); if(!grid) return;
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var hasMed=ct.mapaMedicoes||{};
+  var html='';
+  _MES_NOMES_MAPA.forEach(function(mn,idx){
+    var ym=_mapaPickerYear+'-'+String(idx+1).padStart(2,'0');
+    var isActive=ym===_mapaMesKey;
+    var hasSaved=!!hasMed[ym];
+    var isNow=ym===_mapaYM();
+    html+='<button onclick="mapaPickerSelect(\''+ym+'\',event)" style="padding:7px 4px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;'+
+      (isActive?'background:rgba(56,189,248,.25);border:1.5px solid rgba(56,189,248,.6);color:var(--ac2)':
+       hasSaved?'background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.3);color:var(--gnl)':
+       isNow?'background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:var(--tx)':
+       'background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--t2)')+
+      '">'+mn+(hasSaved?'<div style="font-size:7px;margin-top:1px;opacity:.7">●</div>':'')+'</button>';
+  });
+  grid.innerHTML=html;
+}
+function mapaPickerSelect(ym,e){
+  if(e) e.stopPropagation();
+  _mapaMesKey=ym;
+  var pk=document.getElementById('mapa-mes-picker'); if(pk) pk.style.display='none';
+  renderMapaMedicoes();
+}
+
+// ── Status bar ─────────────────────────────────────────────────────────
+function _mapaUpdateStatus(){
+  var badge=document.getElementById('mapa-mes-badge');
+  if(badge){ badge.textContent=_mapaMesLbl(_mapaMesKey); }
+  var st=document.getElementById('mapa-status'); if(!st) return;
+  var linhas=_mapaGetLinhas(_mapaMesKey);
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
+  if(linhas.length===0){
+    st.innerHTML='⚠ Sem linhas de medição para <strong>'+_mapaMesLbl(_mapaMesKey)+'</strong>. Cadastre na aba 📐 Linhas Medição e salve o mês.';
+    st.style.color='var(--gl)';
+  } else {
+    st.innerHTML='✅ '+linhas.length+' linha(s) vinculadas de <strong>'+_mapaMesLbl(_mapaMesKey)+'</strong>'+(rec&&rec.savedAt?' · Salvo em '+_mapaSavedStr(rec.savedAt):'');
+    st.style.color='var(--t3)';
+  }
+}
+
+function _mapaSavedStr(iso){
+  try{ var dt=new Date(iso); return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }catch(e){return '';}
+}
+
+// ── Render info do contrato ────────────────────────────────────────────
+function _mapaRenderCtInfo(){
+  var el=document.getElementById('mapa-ct-info'); if(!el) return;
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;});
+  if(!ct){ el.innerHTML='<div style="color:var(--t3);font-size:12px">Nenhum contrato selecionado.</div>'; return; }
+  var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||0;
+  var execPct=vg>0?Math.min(100,(ct._totalFaturado||0)/vg*100).toFixed(1):'0.0';
+  var daysLeft=ct.end?Math.round((new Date(ct.end+'T00:00:00')-new Date())/86400000):null;
+  var daysColor=daysLeft===null?'var(--t2)':daysLeft<0?'#ef4444':daysLeft<90?'#fbbf24':'#10b981';
+  var daysStr=daysLeft===null?'':daysLeft>=0?daysLeft+' dias restantes':Math.abs(daysLeft)+' dias vencido';
+  var idxBadge=ct.index?'<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.3);letter-spacing:.5px">📈 '+ct.index+'</span>':'';
+  el.innerHTML='<div style="background:linear-gradient(145deg,rgba(0,0,0,.35),rgba(0,0,0,.18));border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:13px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:14px">'+
+    '<div style="flex:1;min-width:180px"><div style="font-size:8px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:800;margin-bottom:3px">Contrato</div><div style="font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);line-height:1.2">'+(ct.name||'—')+'</div>'+(ct.code?'<div style="font-size:11px;color:var(--t2);margin-top:2px">CC: <strong>'+ct.code+'</strong>'+(ct.nObra?' · Obra: <strong>'+ct.nObra+'</strong>':'')+'</div>':'')+'</div>'+
+    statusBadge(ct.status||'ativo')+idxBadge+
+    '<div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(255,255,255,.06)"><div style="font-size:8px;color:var(--t3);font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Vigência</div><div style="font-size:11px;color:var(--tx)">'+fmtDate(ct.start)+' → '+fmtDate(ct.end)+'</div>'+(daysStr?'<div style="font-size:10px;font-weight:700;color:'+daysColor+'">'+daysStr+'</div>':'')+'</div>'+
+    '<div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(255,255,255,.06)"><div style="font-size:8px;color:var(--t3);font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Valor Global</div><div style="font-family:var(--fn);font-size:15px;font-weight:800;color:var(--gnl)">'+fmtBRL(vg)+'</div><div style="font-size:10px;color:var(--t2)">'+execPct+'% exec.</div></div>'+
+    (ct.gestorTecnico||ct.responsible?'<div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid rgba(255,255,255,.06)"><div style="font-size:8px;color:var(--t3);font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Gestor Técnico</div><div style="font-size:11px;color:var(--tx)">👷 '+(ct.gestorTecnico||ct.responsible||'—')+'</div></div>':'')+
+    '</div>';
+}
+
+// ── KPIs ───────────────────────────────────────────────────────────────
+function _mapaRenderKPIs(){
+  var el=document.getElementById('mapa-kpis'); if(!el) return;
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
+  var linhas=_mapaGetLinhas(_mapaMesKey);
+  // Compute totals from measurement record
+  var totalPrev=0, totalMed=0;
+  if(rec&&rec.linhas){
+    rec.linhas.forEach(function(rl,i){
+      var it=linhas[i]; if(!it) return;
+      var vlTot=(parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0);
+      totalPrev+=parseFloat(rl.previsto||0)*parseFloat(it.vlUnit||0);
+      totalMed +=parseFloat(rl.medido||0)*parseFloat(it.vlUnit||0);
+    });
+  } else if(linhas.length>0){
+    linhas.forEach(function(it){
+      totalPrev+=(parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0);
+    });
+  }
+  var difVal=totalPrev-totalMed;
+  var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'—';
+  var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||0;
+  var histKeys=Object.keys(ct.mapaMedicoes||{});
+  var totalAcum=histKeys.reduce(function(s,k){ var r=ct.mapaMedicoes[k]; return s+(r?r.totalMedido||0:0); },0);
+  var saldo=vg-totalAcum;
+
+  function kpi(icon,lbl,val,cor,sub){
+    return '<div style="background:linear-gradient(145deg,rgba(0,0,0,.42),rgba(0,0,0,.22));border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 16px">'+
+      '<div style="font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:800;margin-bottom:4px">'+icon+' '+lbl+'</div>'+
+      '<div style="font-family:var(--fn);font-size:16px;font-weight:800;color:'+cor+';letter-spacing:-.3px">'+val+'</div>'+
+      (sub?'<div style="font-size:10px;color:var(--t2);margin-top:2px">'+sub+'</div>':'')+
+      '</div>';
+  }
+  el.innerHTML=
+    kpi('📋','Previsto '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalPrev), 'var(--gl)', linhas.length+' linhas')  +
+    kpi('✅','Medido '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalMed), 'var(--gnl)', pctEx+'% do previsto') +
+    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0?'#f87171':'#10b981', difVal>0?'A medir / justificar':'Sem diferença') +
+    kpi('📊','Total Acumulado Medido', fmtBRL(totalAcum), 'var(--ac2)', histKeys.length+' meses registrados') +
+    kpi('💵','Saldo do Contrato', fmtBRL(saldo), saldo>=0?'#10b981':'#ef4444', vg?'':'Valor global não informado');
+}
+
+// ── Render da tabela principal ─────────────────────────────────────────
+window.addEventListener('resize', function(){ _mapaSyncScrollBars(); });
+
+// ── Estado de UI da tabela ─────────────────────────────────────────────
+var _mapaHideZeros = false;
+var _mapaExtraCols = [];  // [{key, label}]
+
+// ── Render da tabela principal ─────────────────────────────────────────
+function _mapaRenderTable(){
+  var tbl=document.getElementById('mapa-tbl'); if(!tbl) return;
+  var linhas=_mapaGetLinhas(_mapaMesKey);
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  var rec=ct.mapaMedicoes[_mapaMesKey];
+
+  // Sync / init record
+  if(!rec){
+    rec={linhas:linhas.map(function(it){return{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};}),extraCols:_mapaExtraCols.slice()};
+  } else {
+    if(!rec.linhas||rec.linhas.length!==linhas.length){
+      var old=rec.linhas||[];
+      rec.linhas=linhas.map(function(it,i){
+        return old[i]||{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};
+      });
+    }
+    // Sync extra cols from record
+    if(rec.extraCols) _mapaExtraCols=rec.extraCols;
+  }
+  ct.mapaMedicoes['__draft__'+_mapaMesKey]=rec;
+
+  var G1='#0c2e1e',G2='#261c04',G3='#180c2c';
+  var H1='#081f14',H2='#1c1303',H3='#110822';
+  var brdH='border:1px solid rgba(255,255,255,.07)';
+  var extraSpan=_mapaExtraCols.length;
+  var g3Span=6+extraSpan;
+
+  // ── THEAD: row 1 sticky top:0, row 2 sticky top measured after render ─
+  var BG0='background:#060e08;';
+  var TH_R1 = 'position:sticky;top:0;z-index:12;vertical-align:middle;text-align:center;white-space:nowrap;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:9px 8px;';
+  var TH_R2 = 'position:sticky;top:0;z-index:11;vertical-align:middle;text-align:center;white-space:nowrap;font-size:9px;text-transform:uppercase;letter-spacing:.8px;padding:7px 6px;';
+
+  function colBtn(tbl, ci){
+    return ' <button class="col-ctx-btn" data-col-tbl="'+tbl+'" data-col-ci="'+ci+'" onclick="colCtxOpen(event,this)" '+
+      'style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:none;'+
+      'background:rgba(255,255,255,.1);border-radius:3px;cursor:pointer;font-size:9px;padding:0;margin-left:3px;'+
+      'opacity:.5;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">&#8942;</button>';
+  }
+
+  var thead='<thead id="mapa-thead">'+
+    // ── Row 1: group labels ───────────────────────────────────────────
+    '<tr id="mapa-thead-r1">'+
+      '<th rowspan="2" style="'+TH_R1+BG0+'border:1px solid rgba(255,255,255,.08);width:36px">＃</th>'+
+      '<th colspan="5"  style="'+TH_R1+'background:'+G1+';color:#10b981;border:1px solid rgba(16,185,129,.2)">Linhas de Medição</th>'+
+      '<th colspan="6"  style="'+TH_R1+'background:'+G2+';color:#f59e0b;border:1px solid rgba(245,158,11,.2)">Medição do Período</th>'+
+      '<th colspan="'+g3Span+'" style="'+TH_R1+'background:'+G3+';color:#a78bfa;border:1px solid rgba(124,58,237,.2)">Justificativas da Diferença de Medição</th>'+
+      '<th rowspan="2" style="'+TH_R1+BG0+'border:1px solid rgba(255,255,255,.08);width:32px">⋮</th>'+
+    '</tr>'+
+    // ── Row 2: column names ───────────────────────────────────────────
+    '<tr id="mapa-thead-r2">'+
+      // G1
+      '<th style="'+TH_R2+'background:'+H1+';color:#34d399;border:1px solid rgba(16,185,129,.12);min-width:200px">Nome Reduzido do Subitem</th>'+
+      '<th style="'+TH_R2+'background:'+H1+';color:#34d399;border:1px solid rgba(16,185,129,.12);width:60px">Un.</th>'+
+      '<th style="'+TH_R2+'background:'+H1+';color:#34d399;border:1px solid rgba(16,185,129,.12);width:70px">Qtd.</th>'+
+      '<th style="'+TH_R2+'background:'+H1+';color:#34d399;border:1px solid rgba(16,185,129,.12);width:110px">Preço Unit.<br>(R$)</th>'+
+      '<th style="'+TH_R2+'background:'+H1+';color:#34d399;border:1px solid rgba(16,185,129,.12);width:120px">Preço Total<br>(R$)</th>'+
+      // G2
+      '<th style="'+TH_R2+'background:'+H2+';color:#fbbf24;border:1px solid rgba(245,158,11,.12);width:84px">Previsto<br><span style="font-size:9px;font-weight:800;color:#f59e0b">%</span></th>'+
+      '<th style="'+TH_R2+'background:'+H2+';color:#fbbf24;border:1px solid rgba(245,158,11,.12);width:84px">Medido<br><span style="font-size:9px;font-weight:800;color:#f59e0b">%</span></th>'+
+      '<th style="'+TH_R2+'background:'+H2+';color:#fbbf24;border:1px solid rgba(245,158,11,.12);width:120px">Previsto<br>(R$)</th>'+
+      '<th style="'+TH_R2+'background:'+H2+';color:#10b981;border:1px solid rgba(245,158,11,.12);width:120px">Medido<br>(R$)</th>'+
+      '<th style="'+TH_R2+'background:'+H2+';color:#f87171;border:1px solid rgba(245,158,11,.12);width:84px">Diferença<br><span style="font-size:9px;font-weight:800;color:#f87171">%</span></th>'+
+      '<th style="'+TH_R2+'background:'+H2+';color:#f87171;border:1px solid rgba(245,158,11,.12);width:120px">Diferença<br>(R$)</th>'+
+      // G3 — todas com ⋮ (ci negativo = inserir no início das extra cols)
+      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:106px">Atestados<br>(R$)'+colBtn('mapa',-5)+'</th>'+
+      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:106px">Faltas<br>(R$)'+colBtn('mapa',-4)+'</th>'+
+      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:106px">Férias<br>(R$)'+colBtn('mapa',-3)+'</th>'+
+      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:110px">Mob./<br>Desmob. (R$)'+colBtn('mapa',-2)+'</th>'+
+      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:116px">Diverg.<br>Pré-Custo (R$)'+colBtn('mapa',-1)+'</th>'+
+      // Observações — ⋮ para adicionar no final das extra cols
+      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);min-width:160px">Observações'+colBtn('mapa',_mapaExtraCols.length)+'</th>'+
+      // Extra cols dinâmicas — cada uma com ⋮
+      _mapaExtraCols.map(function(ec,ci){
+        return '<th style="'+TH_R2+'background:'+H3+';color:#e9d5ff;border:1px solid rgba(124,58,237,.12);width:116px">'+ec.label+colBtn('mapa',ci)+'</th>';
+      }).join('')+
+    '</tr>'+
+  '</thead>';
+
+  if(linhas.length===0){
+    tbl.innerHTML=thead+'<tbody><tr><td colspan="'+(19+extraSpan)+'" style="text-align:center;padding:40px;color:var(--t3);font-size:12px">'+
+      '⚠ Nenhuma linha cadastrada para <strong>'+_mapaMesLbl(_mapaMesKey)+'</strong>.<br>'+
+      '<span style="font-size:11px;margin-top:8px;display:inline-block">Acesse <strong>📐 Linhas Medição</strong>, cadastre e salve o mês.</span>'+
+      '</td></tr></tbody>';
+    return;
+  }
+
+  // ── ROWS ─────────────────────────────────────────────────────────────
+  var totalVlTot=0,totalPrev=0,totalMed=0,totalDif=0;
+  var totalAtest=0,totalFalt=0,totalFer=0,totalMob=0,totalDiv=0;
+  var totalExtra={};
+  _mapaExtraCols.forEach(function(ec){ totalExtra[ec.key]=0; });
+
+  var rows='';
+  linhas.forEach(function(it,i){
+    var rl=rec.linhas[i]||{previsto:parseFloat(it.qtd)||0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};
+    if(!rl.extra) rl.extra={};
+    var vlUnit=parseFloat(it.vlUnit)||0;
+    var qtd=parseFloat(it.qtd)||0;
+    var vlTot=qtd*vlUnit;
+
+    // Medição: previsto/medido são índices multiplicados por vlUnit
+    var prev=parseFloat(rl.previsto)||0;
+    var med=parseFloat(rl.medido)||0;
+    var prevR=prev*vlUnit;
+    var medR=med*vlUnit;
+    var difIdx=prev-med;
+    var difR=prevR-medR;
+
+    totalVlTot+=vlTot;
+    totalPrev+=prevR; totalMed+=medR; totalDif+=difR;
+    var at=parseFloat(rl.atestados)||0,fa=parseFloat(rl.faltas)||0,fe=parseFloat(rl.ferias)||0;
+    var mo=parseFloat(rl.mobDesmob)||0,di=parseFloat(rl.divergPreCusto)||0;
+    totalAtest+=at; totalFalt+=fa; totalFer+=fe; totalMob+=mo; totalDiv+=di;
+    _mapaExtraCols.forEach(function(ec){ totalExtra[ec.key]+=(parseFloat((rl.extra||{})[ec.key])||0); });
+
+    var hasDif=Math.abs(difR)>0.009;
+    var isZero=med===0&&prev===0&&vlTot===0;
+    var hide=_mapaHideZeros&&isZero?'display:none;':'';
+    var rowBg=hasDif?'rgba(245,158,11,.05)':'transparent';
+    var brd='border-bottom:1px solid rgba(255,255,255,.05);';
+
+    function td(c,ex){ return '<td style="padding:5px 7px;'+brd+(ex||'')+'">'+(c||'')+'</td>'; }
+    function numInp(val,field,hint,extraStyle){
+      return '<input type="number" id="mapa-inp-'+i+'-'+field+'" value="'+(val===0?'':val)+'" placeholder="'+(hint||'0')+'" step="any"'+
+        ' oninput="mapaLinhaChange('+i+',\''+field+'\',this.value)"'+
+        ' class="mapa-num-inp"'+
+        ' style="width:100%;height:30px;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:4px 6px;color:#e2e8f0 !important;font-family:var(--fn);font-size:12px;font-weight:600;text-align:center;outline:none;transition:border-color .15s,background .15s;-webkit-text-fill-color:#e2e8f0;'+(extraStyle||'')+'\">';
+    }
+    function txtInp(val,field){
+      var _v=(val||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return '<textarea'+
+        ' oninput="mapaLinhaChange('+i+',\''+field+'\',this.value);this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'"'+
+        ' class="mapa-obs-ta"'+
+        ' placeholder="observação...">'+_v+'</textarea>';
+    }
+    function calcCell(id,val,color,size){
+      return '<td style="padding:5px 7px;text-align:right;'+brd+'">'+
+        '<span id="'+id+'" style="font-family:var(--fn);font-size:'+(size||'11px')+';font-weight:'+(size==='12px'?'700':'500')+';color:'+(color||'var(--t2)')+'">'+fmtBRL(val)+'</span>'+
+      '</td>';
+    }
+
+    rows+='<tr id="mapa-row-'+i+'" style="background:'+rowBg+';'+hide+'">';
+    // #
+    rows+='<td style="text-align:center;font-weight:700;color:var(--t3);padding:5px 3px;'+brd+'font-size:11px">'+(i+1)+'</td>';
+    // G1 — readonly
+    rows+=td('<div style="font-size:9.5px;color:var(--t3);letter-spacing:.4px;margin-bottom:1px">'+(it.cod||'')+'</div>'+
+             '<div style="font-size:11px;color:var(--tx);line-height:1.3">'+(it.desc||'—')+'</div>','min-width:200px');
+    rows+=td('<span style="font-size:11px;color:var(--t2)">'+(it.un||'vb')+'</span>','text-align:center;width:60px');
+    rows+=td('<span style="font-size:12px;font-family:var(--fn);font-weight:700;color:var(--tx)">'+qtd.toFixed(3).replace(/\.?0+$/,'')+'</span>','text-align:right;width:75px');
+    rows+=td('<span style="font-size:11px;font-family:var(--fn);color:var(--t2)">'+fmtBRL(vlUnit)+'</span>','text-align:right;width:110px');
+    rows+=td('<span id="mapa-vtot-'+i+'" style="font-size:12px;font-family:var(--fn);font-weight:700;color:var(--gnl)">'+fmtBRL(vlTot)+'</span>','text-align:right;width:120px');
+    // G2 — editável + calculado em tempo real
+    rows+=td(numInp(prev,'previsto','0','border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.06);'),'width:72px;text-align:center');
+    rows+=td(numInp(med,'medido','0','border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.06);'),'width:72px;text-align:center');
+    rows+=calcCell('mapa-prevR-'+i, prevR, 'var(--gl)','11px');
+    rows+=calcCell('mapa-medR-'+i,  medR,  '#10b981','12px');
+    // Diferença índice
+    rows+='<td style="padding:5px 7px;text-align:right;'+brd+'">';
+    rows+='<span id="mapa-difIdx-'+i+'" style="font-family:var(--fn);font-size:11px;font-weight:700;color:'+(hasDif?'#f87171':'var(--t3)')+'">'+
+      (difIdx!==0?(difIdx>0?'+':'')+difIdx.toFixed(3).replace(/\.?0+$/, ''):'—')+'</span></td>';
+    rows+=calcCell('mapa-difR-'+i,  difR,  hasDif?'#f87171':'var(--t3)','11px');
+    // G3 — justificativas (editável)
+    rows+=td(numInp(at||'','atestados','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
+    rows+=td(numInp(fa||'','faltas','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
+    rows+=td(numInp(fe||'','ferias','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
+    rows+=td(numInp(mo||'','mobDesmob','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
+    rows+=td(numInp(di||'','divergPreCusto','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
+    rows+=td(txtInp(rl.obs||'','obs'),'min-width:160px');
+    // Extra colunas
+    _mapaExtraCols.forEach(function(ec){
+      rows+=td(numInp(parseFloat((rl.extra||{})[ec.key])||'','extra_'+ec.key,'0','border-color:rgba(124,58,237,.3);'),'width:72px;text-align:center');
+    });
+    // Botão ⋮
+    rows+='<td style="text-align:center;padding:4px 2px;'+brd+'">'+
+      '<button onclick="mapaRowCtx(event,'+i+')" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:5px;color:var(--t2);font-size:12px;cursor:pointer;padding:2px 6px;transition:all .15s" '+
+      'onmouseover="this.style.background=\'rgba(255,255,255,.12)\'" onmouseout="this.style.background=\'rgba(255,255,255,.05)\'">⋮</button></td>';
+    rows+='</tr>';
+  });
+
+  // ── TFOOT ─────────────────────────────────────────────────────────────
+  var fs='font-family:var(--fn);font-size:11px;font-weight:800;border-top:2px solid rgba(255,255,255,.12);padding:8px 7px;';
+  var foot='<tfoot><tr style="background:rgba(0,0,0,.32)">'+
+    '<td style="text-align:center;'+fs+'color:var(--t3)">∑</td>'+
+    '<td colspan="4" style="'+fs+'color:var(--gnl)">TOTAL GERAL</td>'+
+    '<td style="text-align:right;'+fs+'color:var(--gnl)" id="mapa-foot-vtot">'+fmtBRL(totalVlTot)+'</td>'+
+    '<td colspan="2" style="border-top:2px solid rgba(255,255,255,.12)"></td>'+
+    '<td style="text-align:right;'+fs+'color:var(--gl)" id="mapa-foot-prevR">'+fmtBRL(totalPrev)+'</td>'+
+    '<td style="text-align:right;'+fs+'color:#10b981" id="mapa-foot-medR">'+fmtBRL(totalMed)+'</td>'+
+    '<td style="border-top:2px solid rgba(255,255,255,.12)"></td>'+
+    '<td style="text-align:right;'+fs+'color:'+(totalDif>0.01?'#f87171':'var(--t3)')+'" id="mapa-foot-difR">'+fmtBRL(totalDif)+'</td>'+
+    '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-at">'+fmtBRL(totalAtest)+'</td>'+
+    '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-fa">'+fmtBRL(totalFalt)+'</td>'+
+    '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-fe">'+fmtBRL(totalFer)+'</td>'+
+    '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-mo">'+fmtBRL(totalMob)+'</td>'+
+    '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-di">'+fmtBRL(totalDiv)+'</td>'+
+    '<td style="border-top:2px solid rgba(255,255,255,.12)"></td>'+
+    _mapaExtraCols.map(function(ec){
+      return '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-ex-'+ec.key+'">'+fmtBRL(totalExtra[ec.key]||0)+'</td>';
+    }).join('')+
+    '<td style="border-top:2px solid rgba(255,255,255,.12)"></td>'+
+  '</tr></tfoot>';
+
+  tbl.innerHTML=thead+'<tbody id="mapa-tbody">'+rows+'</tbody>'+foot;
+  // Sync scrollbars and fix sticky row2 offset after DOM paints
+  requestAnimationFrame(function(){ setTimeout(_mapaSyncScrollBars, 30); });
+}
+
+// ── Atualiza células calculadas em tempo real (sem re-render) ──────────
+function mapaLinhaChange(i, field, val){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  if(!draft||!draft.linhas||!draft.linhas[i]) return;
+  var rl=draft.linhas[i];
+
+  // Salva o valor
+  var numFields=['previsto','medido','atestados','faltas','ferias','mobDesmob','divergPreCusto'];
+  if(field.indexOf('extra_')===0){
+    if(!rl.extra) rl.extra={};
+    rl.extra[field.slice(6)]=parseFloat(val)||0;
+  } else {
+    rl[field]=numFields.indexOf(field)>=0?parseFloat(val)||0:val;
+  }
+
+  // Atualiza células R$ calculadas
+  var linhas=_mapaGetLinhas(_mapaMesKey);
+  var it=linhas[i]; if(!it) return;
+  var vlUnit=parseFloat(it.vlUnit)||0;
+  var prev=parseFloat(rl.previsto)||0;
+  var med=parseFloat(rl.medido)||0;
+  var prevR=prev*vlUnit;
+  var medR=med*vlUnit;
+  var difIdx=prev-med;
+  var difR=prevR-medR;
+  var hasDif=Math.abs(difR)>0.009;
+
+  var setPrev=document.getElementById('mapa-prevR-'+i);
+  var setMed =document.getElementById('mapa-medR-'+i);
+  var setDifI=document.getElementById('mapa-difIdx-'+i);
+  var setDifR=document.getElementById('mapa-difR-'+i);
+  var row    =document.getElementById('mapa-row-'+i);
+
+  if(setPrev) setPrev.textContent=fmtBRL(prevR);
+  if(setMed)  setMed.textContent=fmtBRL(medR);
+  if(setDifI){ setDifI.textContent=difIdx!==0?(difIdx>0?'+':'')+difIdx.toFixed(3).replace(/\.?0+$/,''):'—';
+               setDifI.style.color=hasDif?'#f87171':'var(--t3)'; }
+  if(setDifR){ setDifR.textContent=fmtBRL(difR); setDifR.style.color=hasDif?'#f87171':'var(--t3)'; }
+  if(row)     row.style.background=hasDif?'rgba(245,158,11,.05)':'transparent';
+
+  // Atualiza totais do rodapé
+  _mapaUpdateFooter(draft, linhas);
+  _mapaRenderKPIs();
+}
+
+function _mapaUpdateFooter(draft, linhas){
+  var tp=0,tm=0,td=0,at=0,fa=0,fe=0,mo=0,di=0;
+  var ex={};
+  _mapaExtraCols.forEach(function(ec){ ex[ec.key]=0; });
+
+  (draft.linhas||[]).forEach(function(rl,i){
+    var it=linhas[i]; if(!it) return;
+    var vu=parseFloat(it.vlUnit)||0;
+    var pr=(parseFloat(rl.previsto)||0)*vu;
+    var me=(parseFloat(rl.medido)||0)*vu;
+    tp+=pr; tm+=me; td+=(pr-me);
+    at+=parseFloat(rl.atestados)||0; fa+=parseFloat(rl.faltas)||0;
+    fe+=parseFloat(rl.ferias)||0;    mo+=parseFloat(rl.mobDesmob)||0;
+    di+=parseFloat(rl.divergPreCusto)||0;
+    _mapaExtraCols.forEach(function(ec){ ex[ec.key]+=(parseFloat((rl.extra||{})[ec.key])||0); });
+  });
+
+  function setEl(id,val,redIfPos){ var el=document.getElementById(id); if(el){ el.textContent=fmtBRL(val); if(redIfPos) el.style.color=val>0.01?'#f87171':'var(--t3)'; } }
+  setEl('mapa-foot-prevR',tp); setEl('mapa-foot-medR',tm); setEl('mapa-foot-difR',td,true);
+  setEl('mapa-foot-at',at); setEl('mapa-foot-fa',fa); setEl('mapa-foot-fe',fe);
+  setEl('mapa-foot-mo',mo); setEl('mapa-foot-di',di);
+  _mapaExtraCols.forEach(function(ec){ setEl('mapa-foot-ex-'+ec.key, ex[ec.key]); });
+}
+
+// ── Toggle linhas zeradas ─────────────────────────────────────────────
+function mapaToggleZeros(){
+  _mapaHideZeros=!_mapaHideZeros;
+  var btn=document.getElementById('mapa-toggle-zeros');
+  if(btn){ btn.textContent=_mapaHideZeros?'👁 Ver todos':'🙈 Ocultar zeros';
+           btn.style.background=_mapaHideZeros?'rgba(56,189,248,.15)':'rgba(255,255,255,.06)';
+           btn.style.borderColor=_mapaHideZeros?'rgba(56,189,248,.4)':'rgba(255,255,255,.1)'; }
+  var linhas=_mapaGetLinhas(_mapaMesKey);
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  linhas.forEach(function(it,i){
+    var row=document.getElementById('mapa-row-'+i); if(!row) return;
+    var rl=draft&&draft.linhas&&draft.linhas[i]||{};
+    var isZero=(parseFloat(rl.medido)||0)===0&&(parseFloat(rl.previsto)||0)===0&&(parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0)===0;
+    row.style.display=(_mapaHideZeros&&isZero)?'none':'';
+  });
+}
+
+// ── Adicionar coluna extra ────────────────────────────────────────────
+function mapaAddExtraCol(){
+  var label=prompt('Nome da nova coluna (ex: Outros, Horas Extras, Greve):');
+  if(!label||!label.trim()) return;
+  var key='col_'+Date.now();
+  _mapaExtraCols.push({key:key,label:label.trim()});
+  // Salva no draft
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  if(draft) draft.extraCols=_mapaExtraCols.slice();
+  _mapaRenderTable();
+}
+function mapaRemoveExtraCol(key){
+  if(!confirm('Remover a coluna "'+(_mapaExtraCols.find(function(e){return e.key===key;})||{}).label+'"?')) return;
+  _mapaExtraCols=_mapaExtraCols.filter(function(e){return e.key!==key;});
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  if(draft) draft.extraCols=_mapaExtraCols.slice();
+  _mapaRenderTable();
+}
+
+// ── Menu de contexto da linha ─────────────────────────────────────────
+function mapaRowCtx(e, i){
+  e.stopPropagation();
+  // Remove menu anterior
+  var old=document.getElementById('mapa-row-ctx'); if(old) old.remove();
+
+  var menu=document.createElement('div');
+  menu.id='mapa-row-ctx';
+  menu.style.cssText='position:fixed;z-index:9999;background:linear-gradient(160deg,#0e2818,#091a10);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:8px;min-width:180px;box-shadow:0 16px 48px rgba(0,0,0,.8)';
+  menu.style.left=Math.min(e.clientX, window.innerWidth-200)+'px';
+  menu.style.top=Math.min(e.clientY, window.innerHeight-160)+'px';
+
+  function item(icon, label, fn){
+    var d=document.createElement('div');
+    d.innerHTML=icon+' '+label;
+    d.style.cssText='padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--tx);transition:background .12s';
+    d.onmouseover=function(){this.style.background='rgba(255,255,255,.08)';};
+    d.onmouseout=function(){this.style.background='';};
+    d.onclick=function(){menu.remove();fn();};
+    menu.appendChild(d);
+  }
+
+  item('➕','Inserir linha acima',function(){mapaInsertRow(i,'above');});
+  item('➕','Inserir linha abaixo',function(){mapaInsertRow(i,'below');});
+  var sep=document.createElement('div'); sep.style.cssText='height:1px;background:rgba(255,255,255,.08);margin:4px 0'; menu.appendChild(sep);
+  item('📋','Copiar linha',function(){mapaCtxCopy(i);});
+  item('📌','Colar abaixo',function(){mapaCtxPaste(i);});
+  var sep2=document.createElement('div'); sep2.style.cssText='height:1px;background:rgba(255,255,255,.08);margin:4px 0'; menu.appendChild(sep2);
+  item('🗑','Remover linha',function(){mapaRemoveRow(i);});
+
+  document.body.appendChild(menu);
+  setTimeout(function(){ document.addEventListener('click',function rm(){menu.remove();document.removeEventListener('click',rm);},{once:true}); },10);
+}
+
+var _mapaCtxClipboard=null;
+function mapaCtxCopy(i){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
+  _mapaCtxClipboard=JSON.parse(JSON.stringify(draft.linhas[i]||{}));
+  showToast('📋 Linha copiada!','gn',1800);
+}
+function mapaCtxPaste(i){
+  if(!_mapaCtxClipboard){ showToast('Nada copiado ainda.','go'); return; }
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
+  draft.linhas.splice(i+1,0,JSON.parse(JSON.stringify(_mapaCtxClipboard)));
+  _mapaRenderTable(); showToast('📌 Linha colada!','gn',1800);
+}
+function mapaInsertRow(i,dir){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
+  var at=dir==='above'?i:i+1;
+  draft.linhas.splice(at,0,{previsto:0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}});
+  _mapaRenderTable(); showToast('Linha inserida!','gn',1800);
+}
+function mapaRemoveRow(i){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
+  if(!confirm('Remover esta linha da medição?')) return;
+  draft.linhas.splice(i,1);
+  _mapaRenderTable(); showToast('🗑 Linha removida.','go',1800);
+}
+
+// ── Scrollbar dupla — sincronização ────────────────────────────────────
+var _mapaScrollSyncing = false;
+
+function _mapaSyncScrollBars() {
+  var main = document.getElementById('mapa-scroll-main');
+  var tbl  = document.getElementById('mapa-tbl');
+  if(!main || !tbl) return;
+
+  // Fix sticky top for row 2: must be offset by row 1's height
+  var r1 = document.getElementById('mapa-thead-r1');
+  var r2 = document.getElementById('mapa-thead-r2');
+  if(r1 && r2) {
+    var h1 = r1.getBoundingClientRect().height || r1.offsetHeight || 40;
+    var cells2 = r2.querySelectorAll('th');
+    for(var ci=0; ci<cells2.length; ci++) {
+      cells2[ci].style.top = Math.round(h1) + 'px';
+    }
+    // Row 1 cells also need explicit top:0
+    var cells1 = r1.querySelectorAll('th');
+    for(var ci=0; ci<cells1.length; ci++) {
+      cells1[ci].style.top = '0px';
+    }
+  }
+
+  // Sync mirror scrollbar widths
+  var w = tbl.scrollWidth;
+  var ti = document.getElementById('mapa-scroll-top-inner');
+  var bi = document.getElementById('mapa-scroll-bot-inner');
+  if(ti) ti.style.width = w + 'px';
+  if(bi) bi.style.width = w + 'px';
+}
+
+function mapaScrollSync(src) {
+  if(_mapaScrollSyncing) return;
+  _mapaScrollSyncing = true;
+  var main = document.getElementById('mapa-scroll-main');
+  var top  = document.getElementById('mapa-scroll-top');
+  var pos  = src === 'top' ? (top && top.scrollLeft) : (main && main.scrollLeft);
+  if(src !== 'main' && main) main.scrollLeft = pos;
+  if(src !== 'top'  && top)  top.scrollLeft  = pos;
+  _mapaScrollSyncing = false;
+}
+
+// Também sincroniza quando renderiza
+function _colInsertMapa(refCi, dir){
+  var label=prompt('Nome da nova coluna (ex: Horas Extras, Greve, Outros):','');
+  if(!label||!label.trim()) return;
+  var key='col_'+Date.now();
+  // ci negativo = coluna fixa do G3 → insere no início das extra cols
+  var at = refCi < 0 ? 0 : (dir==='left' ? refCi : refCi+1);
+  _mapaExtraCols.splice(at,0,{key:key,label:label.trim()});
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  if(draft) draft.extraCols=_mapaExtraCols.slice();
+  _mapaRenderTable(); setTimeout(_mapaSyncScrollBars,80);
+}
+function _colDeleteMapa(ci){
+  var col=_mapaExtraCols[ci];
+  if(!col) return;
+  if(!confirm('Remover a coluna "'+col.label+'"?')) return;
+  _mapaExtraCols.splice(ci,1);
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  if(draft) draft.extraCols=_mapaExtraCols.slice();
+  _mapaRenderTable(); setTimeout(_mapaSyncScrollBars,80);
+}
+
+function _mapaUpdateTotals(){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  var linhas=_mapaGetLinhas(_mapaMesKey);
+  if(!draft||!linhas.length) return;
+  _mapaUpdateFooter(draft,linhas);
+  _mapaRenderKPIs();
+}
+
+
+// ── Salvar medição ────────────────────────────────────────────────────
+function mapaSave(){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
+  var linhas=_mapaGetLinhas(_mapaMesKey);
+  if(!draft){
+    showToast('⚠ Nenhum dado para salvar.','go'); return;
+  }
+  // Compute totals
+  var totalPrev=0,totalMed=0;
+  draft.linhas.forEach(function(rl,i){
+    var it=linhas[i]; if(!it) return;
+    var vu=parseFloat(it.vlUnit)||0;
+    totalPrev+=(parseFloat(rl.previsto)||0)*vu;
+    totalMed +=(parseFloat(rl.medido)||0)*vu;
+  });
+  draft.totalPrevisto=totalPrev;
+  draft.totalMedido=totalMed;
+  draft.savedAt=new Date().toISOString();
+  draft.linhasKey=_mapaMesKey;
+  ct.mapaMedicoes[_mapaMesKey]=draft;
+  // Clean up draft
+  delete ct.mapaMedicoes['__draft__'+_mapaMesKey];
+
+  // Update ST.medicoes for dashboard compatibility
+  if(!ST.medicoes) ST.medicoes=[];
+  var mIdx=ST.medicoes.findIndex(function(m){return m.contractId===_mapaCtId&&m.key===_mapaMesKey;});
+  var mRec={contractId:_mapaCtId,key:_mapaMesKey,previsto:totalPrev,realizado:totalMed};
+  if(mIdx>=0) Object.assign(ST.medicoes[mIdx],mRec); else ST.medicoes.push(mRec);
+  recalcContractFinancials(ct);
+
+  scheduleAutoSync();
+  renderMapaMedicoes();
+  try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
+  showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva!','gn',2500);
+}
+
+// ── Histórico ─────────────────────────────────────────────────────────
+function mapaHistToggle(){
+  _mapaHistOpen=!_mapaHistOpen;
+  var panel=document.getElementById('mapa-hist-panel');
+  var icon=document.getElementById('mapa-hist-icon');
+  if(panel) panel.style.display=_mapaHistOpen?'block':'none';
+  if(icon)  icon.style.transform=_mapaHistOpen?'rotate(180deg)':'';
+  if(_mapaHistOpen) _mapaRenderHist();
+}
+function _mapaRenderHist(){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var mapa=ct.mapaMedicoes||{};
+  var keys=Object.keys(mapa).filter(function(k){return k.indexOf('__draft__')<0&&mapa[k]&&mapa[k].savedAt;}).sort();
+
+  var count=document.getElementById('mapa-hist-count');
+  var tot=document.getElementById('mapa-hist-total');
+  var grandTotal=keys.reduce(function(s,k){return s+(mapa[k].totalMedido||0);},0);
+  if(count) count.textContent=keys.length+(keys.length===1?' medição salva':' medições salvas');
+  if(tot) tot.textContent=keys.length>0?'· acumulado '+fmtBRL(grandTotal):'';
+
+  var el=document.getElementById('mapa-hist-list'); if(!el||!_mapaHistOpen) return;
+  var q=((document.getElementById('mapa-hist-search')||{}).value||'').toLowerCase().trim();
+  var filt=keys.filter(function(ym){
+    if(!q) return true;
+    var lbl=_mapaMesLbl(ym).toLowerCase();
+    return lbl.includes(q)||ym.includes(q);
+  });
+
+  if(filt.length===0){
+    el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">'+(q?'Nenhum resultado para "'+q+'"':'📝 Nenhuma medição salva ainda.')+'</div>';
+  } else {
+    var html='';
+    filt.forEach(function(ym){
+      var r=mapa[ym];
+      var isAct=ym===_mapaMesKey;
+      var bg=isAct?'rgba(56,189,248,.07)':'transparent';
+      var nLinhas=r.linhas?r.linhas.length:0;
+      var difVal=(r.totalPrevisto||0)-(r.totalMedido||0);
+      var hasDif=Math.abs(difVal)>0.01;
+      var savedStr=_mapaSavedStr(r.savedAt||'');
+      var lbl=_mapaMesLbl(ym);
+      html+='<div style="display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;background:'+bg+'"';
+      html+=' onmouseover="this.style.background=\'rgba(255,255,255,.04)\'"';
+      html+=' onmouseout="this.style.background=\''+bg+'\'">';
+      html+='<div onclick="mapaHistJump(\''+ym+'\')" style="min-width:88px;padding:5px 10px;border-radius:8px;text-align:center;font-size:12px;font-weight:800;font-family:var(--fn);cursor:pointer;';
+      html+=(isAct?'background:rgba(56,189,248,.2);color:var(--ac2);border:1.5px solid rgba(56,189,248,.5)':'background:rgba(16,185,129,.1);color:var(--gnl);border:1px solid rgba(16,185,129,.22)')+'">';
+      html+=lbl+'</div>';
+      html+='<div onclick="mapaHistJump(\''+ym+'\')" style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;min-width:0">';
+      html+='<div style="min-width:64px;font-size:11px;color:var(--t2)">'+nLinhas+' linhas</div>';
+      html+='<div style="flex:1"><div style="font-family:var(--fn);font-size:13px;font-weight:700;color:var(--gnl)">'+fmtBRL(r.totalMedido||0)+'</div>';
+      html+='<div style="font-size:9px;color:var(--t3)">previsto: '+fmtBRL(r.totalPrevisto||0)+'</div></div>';
+      if(hasDif) html+='<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.22);white-space:nowrap">⚠ '+fmtBRL(difVal)+'</span>';
+      else html+='<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,.1);color:var(--gnl);white-space:nowrap">✅ OK</span>';
+      if(savedStr) html+='<span style="font-size:9px;color:var(--t3);white-space:nowrap">'+savedStr+'</span>';
+      if(isAct) html+='<span style="font-size:10px;font-weight:800;color:var(--ac2);white-space:nowrap">← aberto</span>';
+      html+='<span style="font-size:14px;color:var(--t3)">›</span></div>';
+      html+='<button onclick="event.stopPropagation();mapaDeleteMonth(\''+ym+'\')" style="padding:4px 9px;border-radius:7px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.07);color:#f87171;font-size:10px;cursor:pointer">🗑</button>';
+      html+='</div>';
+    });
+    el.innerHTML=html;
+  }
+
+  var ft=document.getElementById('mapa-hist-footer-txt');
+  if(ft) ft.textContent=q?'Mostrando '+filt.length+' de '+keys.length:keys.length+' medições · acumulado '+fmtBRL(grandTotal);
+}
+function mapaHistJump(ym){
+  _mapaMesKey=ym;
+  if(_mapaHistOpen) mapaHistToggle();
+  renderMapaMedicoes();
+}
+function mapaDeleteMonth(ym){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var pass=prompt('Digite sua senha para excluir a medição de '+_mapaMesLbl(ym)+':');
+  if(pass===null) return;
+  var uid=typeof currentUser!=='undefined'&&currentUser?currentUser.id:null;
+  var p=uid?(ST.participants||[]).find(function(x){return x.id===uid;}):(ST.participants||[]).find(function(x){return x.role==='admin';});
+  if(!p||pass!==p.password){ showToast('❌ Senha incorreta.','rd',2000); return; }
+  delete ct.mapaMedicoes[ym];
+  ST.medicoes=(ST.medicoes||[]).filter(function(m){return !(m.contractId===_mapaCtId&&m.key===ym);});
+  recalcContractFinancials(ct);
+  scheduleAutoSync();
+  if(_mapaMesKey===ym) _mapaMesKey=_mapaYM();
+  renderMapaMedicoes();
+  try{renderMedicoes();renderFinanceiro();renderDashboard();}catch(e){}
+  showToast('🗑 Medição de '+_mapaMesLbl(ym)+' excluída.','go',2200);
+}
+function mapaOvToggle(){ /* seção removida */ }
+
+// ── Hook: quando a seção abre ─────────────────────────────────────────
+function _initMapaMedicoes(){
+  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
+  if(!_mapaMesKey) _mapaMesKey=_mapaYM();
+  _mapaExtraCols=[];
+  renderMapaMedicoes();
+}
+
 //  MAPA DE MEDIÇÕES
 // ════════════════════════════════════════════════════════════════
 let medOffset = 0;
@@ -10894,6 +12348,8 @@ function saveMed(contractId, mesKey){
   if(_ctEdit && resumoFat) _ctEdit.comentFat = resumoFat;
   recalcContractFinancials(_ctEdit);
   closeModal(); renderMedicoes(); renderFinanceiro(); renderContracts(); renderDashboard(); scheduleAutoSync();
+  // Atualiza painel de saldo na aba Linhas de Medição (se estiver aberta)
+  try { if(document.getElementById('custo-med-saldo-bar')) _custoMedicao(); } catch(e){}
   showToast('✅ Medição salva!','gn');
 }
 
@@ -10903,6 +12359,8 @@ function deleteMed(contractId, mesKey){
   const _ctDel = ST.contracts.find(c => c.id === contractId);
   recalcContractFinancials(_ctDel);
   closeModal(); renderMedicoes(); renderFinanceiro(); renderContracts(); renderDashboard(); scheduleAutoSync();
+  // Atualiza painel de saldo na aba Linhas de Medição (se estiver aberta)
+  try { if(document.getElementById('custo-med-saldo-bar')) _custoMedicao(); } catch(e){}
   showToast('🗑 Medição removida.','gn');
 }
 
@@ -18073,6 +19531,8 @@ var _custoCtId   = null;
 var _custoTabAtv = 'capa';
 var _custoCen    = 'orcado';
 var _custoMedCen = 'orcado';
+var _custoMedMes = '';       // 'YYYY-MM' do mês ativo
+var _custoMedReadOnly = false; // true = modo visualização (exige senha para editar)
 var _custoNextId = 1000;
 var _custoDreCollapsed = {}; // { 'conta': true/false } — persiste durante a sessão
 
@@ -18208,8 +19668,8 @@ function _custoRenderTab(tab) {
   if(tab==='capa')     _custoCapa();
   if(tab==='estudo')   _custoEstudo();
   if(tab==='memoria')  _custoMemoria();
-  if(tab==='medicao')  _custoMedicao();
-  if(tab==='funcoes')  { _custoFuncoes(); _refreshMemoriaIfOpen(); }
+  if(tab==='medicao')  { if(!_custoMedMes) { _custoMedMes = _custoYM(); _custoMedReadOnly = _custoMedIsSaved(_custoMedMes); } _custoMedicao(); }
+  if(tab==='funcoes')  { _custoFuncoes(); _refreshMemoriaIfOpen(); _refreshRentabIfOpen(); }
   if(tab==='epi')      _custoEPI();
   if(tab==='encargos') _custoEncargos();
   if(tab==='materiais')   _custoMateriais();
@@ -18228,6 +19688,10 @@ function _custoRenderTab(tab) {
 function _refreshMemoriaIfOpen(){
   var sec=document.getElementById('custosec-memoria');
   if(sec&&sec.style.display!=='none') _custoMemoria();
+}
+function _refreshRentabIfOpen(){
+  var sec=document.getElementById('custosec-rentab');
+  if(sec&&sec.style.display!=='none') _custoRentab();
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -18932,51 +20396,577 @@ function custoMemLinhaSave(gi,li,k,v){ custoMemSave(gi,li,k,v); }
 function custoMemValSave(gi,li,ci,v){ /* legado — não utilizado */ }
 
 // ══════════════════════════════════════════════════════════════════════
-//  MEDIÇÃO
+//  MEDIÇÃO — Linhas de Medição com histórico mensal, modo leitura e senha
 // ══════════════════════════════════════════════════════════════════════
+
+var _custoMedPickerYear = new Date().getFullYear();
+var _custoMedHistOpen   = false;
+
+// ── Helpers de data/mês ────────────────────────────────────────────────
+function _custoYM() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+var _MES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+function _custoMedMesLbl(ym) {
+  if(!ym) return '—';
+  var p = ym.split('-');
+  return _MES_NOMES[parseInt(p[1],10)-1] + '/' + p[0];
+}
+
+// ── Acesso aos itens do mês ativo ─────────────────────────────────────
+function _custoMedItems() {
+  var a = _custoAnalise(); if(!a) return [];
+  if(!a.medicao.history) a.medicao.history = {};
+  var snap = a.medicao.history[_custoMedMes];
+  return snap ? snap.items||[] : [];
+}
+
+// ── Verifica se o mês foi explicitamente salvo ─────────────────────────
+function _custoMedIsSaved(ym) {
+  var a = _custoAnalise(); if(!a) return false;
+  var hist = a.medicao && a.medicao.history ? a.medicao.history : {};
+  var snap = hist[ym];
+  // Considera salvo se tem items (retrocompat) ou flag savedAt
+  return snap && (snap.savedAt || (snap.items && snap.items.length > 0));
+}
+
+// ── Legado: troca de cenário ───────────────────────────────────────────
 function custoMedicaoCen(cen, btn) {
   _custoMedCen = cen;
   document.querySelectorAll('[data-mcen]').forEach(function(b){ b.classList.remove('active'); });
   if(btn) btn.classList.add('active');
   _custoMedicao();
 }
+
+// ══════════════════════════════════════════════════════════════════════
+//  MONTH PICKER
+// ══════════════════════════════════════════════════════════════════════
+function custoMedPickerToggle(e) {
+  if(e) e.stopPropagation();
+  var pk = document.getElementById('custo-med-picker'); if(!pk) return;
+  var open = pk.style.display !== 'none';
+  if(open) { pk.style.display = 'none'; return; }
+  _custoMedPickerYear = _custoMedMes ? parseInt(_custoMedMes.split('-')[0],10) : new Date().getFullYear();
+  _custoMedPickerRender();
+  pk.style.display = 'block';
+  setTimeout(function(){
+    document.addEventListener('click', _custoMedPickerOutside, {once:true});
+  },10);
+}
+function _custoMedPickerOutside(e) {
+  var pk = document.getElementById('custo-med-picker');
+  if(pk && !pk.contains(e.target)) pk.style.display = 'none';
+}
+function custoMedPickerYear(dir, e) {
+  if(e) e.stopPropagation();
+  _custoMedPickerYear += dir;
+  _custoMedPickerRender();
+}
+function _custoMedPickerRender() {
+  var yrEl = document.getElementById('custo-med-picker-year');
+  if(yrEl) yrEl.textContent = _custoMedPickerYear;
+  var grid = document.getElementById('custo-med-picker-grid'); if(!grid) return;
+  var today = _custoYM();
+  var html = '';
+  _MES_NOMES.forEach(function(mn, idx) {
+    var ym = _custoMedPickerYear + '-' + String(idx+1).padStart(2,'0');
+    var isActive  = ym === _custoMedMes;
+    var isSaved   = _custoMedIsSaved(ym);
+    var isToday   = ym === today;
+    html += '<button onclick="custoMedPickerSelect(\'' + ym + '\',event)" style="' +
+      'padding:7px 4px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;' +
+      (isActive
+        ? 'background:rgba(56,189,248,.25);border:1.5px solid rgba(56,189,248,.6);color:var(--ac2)'
+        : isSaved
+          ? 'background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.3);color:var(--gnl)'
+          : isToday
+            ? 'background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:var(--tx)'
+            : 'background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--t2)') +
+      '">' + mn +
+      (isSaved ? '<div style="font-size:7px;margin-top:1px;opacity:.7">●</div>' : '') +
+      '</button>';
+  });
+  grid.innerHTML = html;
+}
+function custoMedPickerSelect(ym, e) {
+  if(e) e.stopPropagation();
+  custoMedJumpTo(ym);
+  var pk = document.getElementById('custo-med-picker');
+  if(pk) pk.style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  NAVEGAÇÃO MENSAL
+// ══════════════════════════════════════════════════════════════════════
+function custoMedMesShift(dir) {
+  var ym = _custoMedMes || _custoYM();
+  var p = ym.split('-');
+  var y = parseInt(p[0],10), m = parseInt(p[1],10);
+  m += dir;
+  if(m < 1)  { m = 12; y--; }
+  if(m > 12) { m = 1;  y++; }
+  custoMedJumpTo(y + '-' + String(m).padStart(2,'0'));
+}
+
+function custoMedJumpTo(ym) {
+  if(!ym) ym = _custoYM();
+  _custoMedMes = ym;
+  // Define modo leitura: se o mês já foi salvo → leitura; caso contrário → edição
+  _custoMedReadOnly = _custoMedIsSaved(ym);
+  _custoMedicao();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  RENDER PRINCIPAL
+// ══════════════════════════════════════════════════════════════════════
+// ── Estado extra da tabela de linhas ──────────────────────────────────
+var _custoMedHideZeros = false;
+var _custoMedScrollSyncing = false;
+
+function custoMedToggleZeros() {
+  _custoMedHideZeros = !_custoMedHideZeros;
+  var btn = document.getElementById('custo-med-hide-zeros');
+  if(btn) {
+    btn.textContent = _custoMedHideZeros ? '👁 Ver todos' : '🙈 Ocultar Qtd. zero';
+    btn.style.background = _custoMedHideZeros ? 'rgba(56,189,248,.15)' : 'rgba(255,255,255,.06)';
+    btn.style.borderColor = _custoMedHideZeros ? 'rgba(56,189,248,.4)' : 'rgba(255,255,255,.1)';
+    btn.style.color = _custoMedHideZeros ? 'var(--ac2)' : 'var(--t2)';
+  }
+  var items = _custoMedItems();
+  items.forEach(function(it, i) {
+    var row = document.getElementById('custo-med-row-'+i); if(!row) return;
+    var isZero = !parseFloat(it.qtd);
+    row.style.display = (_custoMedHideZeros && isZero) ? 'none' : '';
+  });
+}
+
+function _custoMedSyncScroll() {
+  var main = document.getElementById('custo-med-scroll-main');
+  var tbl  = document.getElementById('custo-medicao-tbl');
+  if(!main || !tbl) return;
+  var w = tbl.scrollWidth;
+  var ti = document.getElementById('custo-med-scroll-top-inner');
+  var bi = document.getElementById('custo-med-scroll-bot-inner');
+  if(ti) ti.style.width = w + 'px';
+  if(bi) bi.style.width = w + 'px';
+}
+
+function custoMedScrollSync(src) {
+  if(_custoMedScrollSyncing) return;
+  _custoMedScrollSyncing = true;
+  var main = document.getElementById('custo-med-scroll-main');
+  var top  = document.getElementById('custo-med-scroll-top');
+  var pos  = src === 'top' ? (top && top.scrollLeft) : (main && main.scrollLeft);
+  if(src !== 'main' && main) main.scrollLeft = pos;
+  if(src !== 'top'  && top)  top.scrollLeft  = pos;
+  _custoMedScrollSyncing = false;
+}
+
 function _custoMedicao() {
   var a = _custoAnalise(); if(!a) return;
+  // Garante que temos um mês selecionado
+  if(!_custoMedMes) { _custoMedMes = _custoYM(); _custoMedReadOnly = _custoMedIsSaved(_custoMedMes); }
   var tbody = document.getElementById('custo-medicao-tbody'); if(!tbody) return;
-  var items = a.medicao[_custoMedCen]||[];
+
+  // Badge de mês
+  var badge = document.getElementById('custo-med-mes-badge');
+  if(badge) {
+    badge.textContent = _custoMedMesLbl(_custoMedMes);
+    var isSaved = _custoMedIsSaved(_custoMedMes);
+    badge.style.cssText = 'font-family:var(--fn);font-size:13px;font-weight:800;padding:6px 18px;border-radius:20px;' +
+      'letter-spacing:.5px;white-space:nowrap;cursor:pointer;user-select:none;transition:all .15s;' +
+      (isSaved
+        ? 'background:rgba(16,185,129,.15);color:var(--gnl);border:1px solid rgba(16,185,129,.3)'
+        : 'background:rgba(56,189,248,.12);color:var(--ac2);border:1px solid rgba(56,189,248,.3)');
+  }
+
+  // Banner de modo leitura
+  var banner = document.getElementById('custo-med-readonly-banner');
+  var lblRO  = document.getElementById('custo-med-readonly-lbl');
+  var addBtn = document.getElementById('custo-med-add-btn');
+  var savBtn = document.getElementById('custo-med-save-btn');
+  var reajInp = document.getElementById('custo-med-reaj-inp');
+  var reajBtn = document.getElementById('custo-med-reaj-btn');
+  if(banner) banner.style.display = _custoMedReadOnly ? 'flex' : 'none';
+  if(lblRO)  lblRO.textContent = _custoMedReadOnly
+    ? (_custoMedMesLbl(_custoMedMes) + ' salvo — somente visualização. Clique em "Solicitar Edição" para alterar.')
+    : '';
+  if(addBtn) addBtn.style.display = _custoMedReadOnly ? 'none' : '';
+  if(savBtn) savBtn.style.display = _custoMedReadOnly ? 'none' : '';
+  if(reajInp) { reajInp.disabled = _custoMedReadOnly; }
+  if(reajBtn) { reajBtn.disabled = _custoMedReadOnly; }
+
+  // Reajuste input: mostra valor do mês
+  if(reajInp && !_custoMedReadOnly) {
+    var snap = a.medicao.history && a.medicao.history[_custoMedMes];
+    reajInp.value = snap && snap.reajPct ? snap.reajPct : '';
+  }
+
+  // Renderiza linhas
+  var items = _custoMedItems();
+  var ro = _custoMedReadOnly;
+  var roStyle = ro ? 'opacity:.78;cursor:default;pointer-events:none;' : '';
   var tb = '';
+  var total = 0;
+  if(items.length === 0) {
+    tb = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">' +
+      (ro ? '🔒 Nenhum item registrado neste mês.' : '📝 Nenhum item. Clique em "＋ Item" para adicionar.') + '</td></tr>';
+  }
   items.forEach(function(it,i) {
-    var tot = (parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0);
-    tb += '<tr>' +
-      '<td style="text-align:center;font-weight:700;color:var(--t3)">' + (i+1) + '</td>' +
-      '<td><textarea class="fi" style="height:44px;font-size:11px;resize:none;padding:4px 8px;width:100%;min-width:280px" data-key=\"desc\" onchange=\"custoMedSave('+i+',this.dataset.key,this.value)\">' + (it.desc||'') + '</textarea></td>' +
-      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="' + (it.qtd||'') + '" placeholder="0" data-key=\"qtd\" onchange=\"custoMedSave('+i+',this.dataset.key,this.value)\"></td>' +
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:45px" value="' + (it.un||'vb') + '" data-key=\"un\" onchange=\"custoMedSave('+i+',this.dataset.key,this.value)\"></td>' +
-      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="' + (it.vlUnit||'') + '" placeholder="0,00" data-key=\"vlUnit\" onchange=\"custoMedSave('+i+',this.dataset.key,this.value)\"></td>' +
-      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">' + _fmtBRL(tot) + '</td>' +
-      '<td><button class="bic ctx-btn" data-ctx-table="medicao" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
+    var qtd = parseFloat(it.qtd)||0;
+    var vlu = parseFloat(it.vlUnit)||0;
+    var tot = qtd * vlu;
+    total += tot;
+    var rowBg = tot > 0 ? 'rgba(16,185,129,0.07)' : 'transparent';
+    var isZero = qtd === 0;
+    var hideStyle = (_custoMedHideZeros && isZero) ? 'display:none' : '';
+    tb += '<tr id="custo-med-row-'+i+'" style="background:'+rowBg+';'+hideStyle+'">' +
+      '<td style="text-align:center;font-weight:700;color:var(--t3);padding:5px 4px">' + (i+1) + '</td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:90px;font-family:var(--fn);letter-spacing:.5px;' + roStyle + '" value="'+(it.cod||'').replace(/"/g,'&quot;')+'" placeholder="1.1.1.5"' + (ro?' readonly':' data-key="cod" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td><textarea class="fi" style="height:44px;font-size:11px;resize:none;padding:4px 8px;width:100%;min-width:260px;' + roStyle + '"' + (ro?' readonly':' data-key="desc" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '>'+(it.desc||'')+'</textarea></td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:52px;text-align:center;' + roStyle + '" value="'+(it.un||'vb')+'"' + (ro?' readonly':' data-key="un" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:72px;font-family:var(--fn);text-align:right;' + roStyle + '" value="'+(it.qtd||'')+'" placeholder="0"' + (ro?' readonly':' data-key="qtd" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:100px;font-family:var(--fn);text-align:right;' + roStyle + '" value="'+(it.vlUnit||'')+'" placeholder="0,00"' + (ro?' readonly':' data-key="vlUnit" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td style="font-family:var(--fn);font-size:12px;font-weight:700;text-align:right;padding:5px 8px;' + (tot>0?'color:var(--gnl)':'color:var(--t2)') + '">' + _fmtBRL(tot) + '</td>' +
+      '<td style="min-width:200px"><textarea class="fi custo-obs-ta" style="font-size:11px;min-width:200px;' + roStyle + '" placeholder="observação..."' + (ro?' readonly':' data-key="obs" oninput="custoMedSave('+i+',this.dataset.key,this.value);this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'"') + '>'+(it.obs||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea></td>' +
+      '<td>' + (ro ? '' : '<button class="bic ctx-btn" data-ctx-table="medicao" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button>') + '</td></tr>';
   });
   tbody.innerHTML = tb;
-  var total = items.reduce(function(s,it){ return s+(parseFloat(it.qtd||0)*parseFloat(it.vlUnit||0)); },0);
-  var tel = document.getElementById('custo-med-total');
-  if(tel) tel.textContent = _fmtBRL(total);
+  setTimeout(function(){_resizeObsTAs('custo-medicao-tbody');},50);
+  var tel = document.getElementById('custo-med-total'); if(tel) tel.textContent = _fmtBRL(total);
+
+  // Contagem
+  var cnt = document.getElementById('custo-med-line-count');
+  if(cnt) {
+    var zeros = items.filter(function(it){return !parseFloat(it.qtd);}).length;
+    cnt.textContent = items.length + ' linha(s)' + (zeros > 0 ? ' · ' + zeros + ' com Qtd. zero' : '');
+  }
+
+  _custoMedSaldoBar(total);
+  _custoMedCtInfo();
+  _custoMedHistTimeline();
+
+  // Sync scrollbars
+  requestAnimationFrame(function(){ setTimeout(_custoMedSyncScroll, 30); });
 }
+
+// ── Painel de informações do contrato ─────────────────────────────────
+function _custoMedCtInfo() {
+  var el = document.getElementById('custo-med-ct-info'); if(!el) return;
+  var a = _custoAnalise(); if(!a) { el.innerHTML=''; return; }
+  var ct = (ST.contracts||[]).find(function(c){ return c.id === a.contractId; });
+  if(!ct) { el.innerHTML=''; return; }
+  var vg = (ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0); if(!vg) vg = ct.saldoGlobal||0;
+  var execPct = vg > 0 ? Math.min(100,(ct._totalFaturado||0)/vg*100).toFixed(1) : '0.0';
+  var idxMap = {IPCA:{c:'#38bdf8',bg:'rgba(56,189,248,.12)'},'IGP-M':{c:'#a78bfa',bg:'rgba(167,139,250,.1)'},INPC:{c:'#fb923c',bg:'rgba(251,146,60,.1)'},Acordo:{c:'#fbbf24',bg:'rgba(251,191,36,.1)'}};
+  var idxStyle = ct.index && idxMap[ct.index] ? idxMap[ct.index] : {c:'var(--t2)',bg:'rgba(255,255,255,.06)'};
+  var daysLeft = ct.end ? Math.round((new Date(ct.end+'T00:00:00')-new Date())/86400000) : null;
+  var daysColor = daysLeft===null?'var(--t2)':daysLeft<0?'#ef4444':daysLeft<90?'#fbbf24':'#10b981';
+  var daysStr   = daysLeft===null?'':daysLeft>=0?daysLeft+' dias restantes':Math.abs(daysLeft)+' dias vencido';
+  function chip(icon,lbl,val,valStyle){ return '<div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px;background:rgba(0,0,0,.22);border-radius:10px;border:1px solid rgba(255,255,255,.06)"><div style="font-size:8px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:800">'+icon+' '+lbl+'</div><div style="font-size:12px;font-weight:700;'+(valStyle||'color:var(--tx)')+'">'+val+'</div></div>'; }
+  el.innerHTML='<div style="background:linear-gradient(145deg,rgba(0,0,0,0.38),rgba(0,0,0,0.18));border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 18px;"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px"><div style="flex:1;min-width:180px"><div style="font-size:8px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:800;margin-bottom:3px">Contrato</div><div style="font-family:var(--fh);font-size:16px;font-weight:700;color:var(--tx);line-height:1.2">'+(ct.name||'—')+'</div>'+(ct.code?'<div style="font-size:11px;color:var(--t2);margin-top:2px">CC: <strong>'+ct.code+'</strong>'+(ct.nObra?' &nbsp;·&nbsp; Obra: <strong>'+ct.nObra+'</strong>':'')+'</div>':'')+'</div>'+statusBadge(ct.status||'ativo')+(ct.index?'<span style="font-size:11px;font-weight:800;padding:4px 12px;border-radius:12px;background:'+idxStyle.bg+';color:'+idxStyle.c+';border:1px solid '+idxStyle.c+'50;letter-spacing:1px;white-space:nowrap">📈 '+ct.index+'</span>':'')+'</div><div style="display:flex;flex-wrap:wrap;gap:8px">'+chip('📅','Vigência',fmtDate(ct.start)+' → '+fmtDate(ct.end))+(daysStr?'<div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px;background:rgba(0,0,0,.22);border-radius:10px;border:1px solid rgba(255,255,255,.06)"><div style="font-size:8px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:800">⏱ Prazo</div><div style="font-size:12px;font-weight:700;color:'+daysColor+'">'+daysStr+'</div></div>':'')+chip('💰','Valor Global',_fmtBRL(vg),'color:var(--gnl);font-family:var(--fn);font-size:13px;font-weight:800')+chip('📊','Executado',execPct+'% faturado','color:var(--gl)')+(ct.gestorTecnico||ct.responsible?chip('👷','Gestor Técnico',ct.gestorTecnico||ct.responsible||'—'):'')+( ct.gestorAdministrativo?chip('🗂️','Gestor Adm.',ct.gestorAdministrativo):'')+( ct.uen?chip('🏢','UEN',ct.uen):'')+' </div></div>';
+}
+
+// ── Saldo do contrato (KPIs) ──────────────────────────────────────────
+function _custoMedSaldoBar(totalLinhas) {
+  var bar = document.getElementById('custo-med-saldo-bar'); if(!bar) return;
+  var a = _custoAnalise(); if(!a) return;
+  var ct = (ST.contracts||[]).find(function(c){ return c.id === a.contractId; }) || {};
+  var vgAtual = (ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0); if(!vgAtual) vgAtual = ct.saldoGlobal||0;
+  var totalFaturado = ct._totalFaturado||0;
+  var saldoAFaturar = vgAtual - totalFaturado;
+  var totalLin = typeof totalLinhas === 'number' ? totalLinhas : 0;
+  var pctExec = vgAtual>0?Math.min(100,(totalFaturado/vgAtual*100)).toFixed(1):'0.0';
+  var pctLin  = vgAtual>0?Math.min(100,(totalLin/vgAtual*100)).toFixed(1):'0.0';
+  function kpi(icon,lbl,val,cor,sub){ return '<div style="background:linear-gradient(145deg,rgba(0,0,0,0.42),rgba(0,0,0,0.22));border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px 18px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:800;margin-bottom:5px">'+icon+' '+lbl+'</div><div style="font-family:var(--fn);font-size:17px;font-weight:800;color:'+cor+';letter-spacing:-0.3px">'+val+'</div>'+(sub?'<div style="font-size:10px;color:var(--t2);margin-top:3px">'+sub+'</div>':'')+'</div>'; }
+  bar.innerHTML=kpi('💰','Valor Global',_fmtBRL(vgAtual),'var(--gnl)',vgAtual?'Contrato + aditivos':'Não informado')+kpi('📐','Linhas ('+_custoMedMesLbl(_custoMedMes)+')',_fmtBRL(totalLin),'var(--ac2)',pctLin+'% do valor global')+kpi('📊','Medido / Faturado',_fmtBRL(totalFaturado),'var(--gl)',pctExec+'% executado · Mapa Medições')+kpi('💵','Saldo a Faturar',_fmtBRL(saldoAFaturar),saldoAFaturar>=0?'#10b981':'#ef4444',saldoAFaturar>=0?'Disponível para faturar':'⚠ Excedido em '+_fmtBRL(Math.abs(saldoAFaturar)));
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  HISTÓRICO — somente meses salvos, lista com busca
+// ══════════════════════════════════════════════════════════════════════
+function custoMedHistToggle() {
+  _custoMedHistOpen = !_custoMedHistOpen;
+  var panel = document.getElementById('custo-med-hist-panel');
+  var icon  = document.getElementById('custo-med-hist-toggle-icon');
+  var hint  = document.getElementById('custo-med-hist-hint');
+  if(panel) panel.style.display = _custoMedHistOpen ? 'block' : 'none';
+  if(icon)  icon.style.transform = _custoMedHistOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+  if(hint)  hint.textContent = _custoMedHistOpen ? '' : 'clique para expandir';
+  if(_custoMedHistOpen) _custoMedHistTimeline();
+}
+
+function _custoMedHistTimeline() {
+  var a = _custoAnalise();
+  var history = a && a.medicao && a.medicao.history ? a.medicao.history : {};
+  // Apenas meses com dados (savedAt ou itens)
+  var savedKeys = Object.keys(history).filter(function(ym) {
+    var snap = history[ym];
+    return snap && (snap.savedAt || (snap.items && snap.items.length > 0));
+  }).sort();
+
+  var grandTotal = savedKeys.reduce(function(s,ym) {
+    var snap = history[ym]; if(!snap) return s;
+    return s + (snap.items||[]).reduce(function(ss,it){ return ss+(parseFloat(it.qtd||0)*parseFloat(it.vlUnit||0)); },0);
+  },0);
+
+  var countEl = document.getElementById('custo-med-hist-count');
+  if(countEl) countEl.textContent = savedKeys.length + (savedKeys.length===1?' mês salvo':' meses salvos');
+  var totalLbl = document.getElementById('custo-med-hist-total-lbl');
+  if(totalLbl) totalLbl.textContent = savedKeys.length > 0 ? '· acumulado ' + _fmtBRL(grandTotal) : '';
+
+  var el = document.getElementById('custo-med-hist-timeline');
+  if(!el || !_custoMedHistOpen) return;
+
+  var q = (document.getElementById('custo-med-hist-search')||{}).value || '';
+  q = q.toLowerCase().trim();
+
+  var filteredKeys = savedKeys.filter(function(ym) {
+    if(!q) return true;
+    var lbl = _custoMedMesLbl(ym).toLowerCase();
+    var p = ym.split('-');
+    return lbl.includes(q) || ym.includes(q) || p[0].includes(q) || _MES_NOMES[parseInt(p[1],10)-1].toLowerCase().includes(q);
+  });
+
+  var html = '';
+  filteredKeys.forEach(function(ym) {
+    var snap  = history[ym];
+    var items = snap.items||[];
+    var tot   = items.reduce(function(s,it){return s+(parseFloat(it.qtd||0)*parseFloat(it.vlUnit||0));},0);
+    html += _custoMedHistRow(ym, items.length, tot, snap.reajPct||0, snap.savedAt||'', _custoMedMes === ym);
+  });
+
+  if(filteredKeys.length === 0) {
+    html = q
+      ? '<div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">🔍 Nenhum resultado para <strong>&quot;' + q + '&quot;</strong></div>'
+      : '<div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">📝 Nenhum mês salvo ainda. Adicione linhas a um mês e clique em 💾 Salvar.</div>';
+  }
+  el.innerHTML = html;
+
+  var foot = document.getElementById('custo-med-hist-footer-txt');
+  if(foot) {
+    foot.textContent = q
+      ? 'Mostrando ' + filteredKeys.length + ' de ' + savedKeys.length + ' meses'
+      : savedKeys.length + ' meses salvos' + (grandTotal>0?' · Acumulado: '+_fmtBRL(grandTotal):'');
+  }
+}
+
+function _custoMedHistRow(ym, nItems, tot, reajPct, savedAt, isActive) {
+  var lbl = _custoMedMesLbl(ym);
+  var today = _custoYM();
+  var isToday = ym === today;
+  var rowBg = isActive ? 'rgba(56,189,248,.07)' : '';
+  var savedStr = savedAt ? (function(d){
+    try{ var dt=new Date(d); return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }catch(e){return '';}
+  })(savedAt) : '';
+
+  return '<div style="display:flex;align-items:center;gap:10px;padding:11px 16px;' +
+    'border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;background:' + rowBg + '"' +
+    ' onmouseover="this.style.background=\'rgba(255,255,255,.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'">' +
+
+    // Badge do mês (clicável — abre)
+    '<div onclick="custoMedJumpTo(\'' + ym + '\');if(_custoMedHistOpen)custoMedHistToggle();" style="min-width:88px;padding:5px 10px;border-radius:8px;text-align:center;font-size:12px;font-weight:800;font-family:var(--fn);letter-spacing:.3px;cursor:pointer;' +
+    (isActive
+      ? 'background:rgba(56,189,248,.2);color:var(--ac2);border:1.5px solid rgba(56,189,248,.5)'
+      : 'background:rgba(16,185,129,.1);color:var(--gnl);border:1px solid rgba(16,185,129,.22)') + '">' +
+    lbl + '</div>' +
+
+    // Área central clicável — abre o mês
+    '<div onclick="custoMedJumpTo(\'' + ym + '\');if(_custoMedHistOpen)custoMedHistToggle();" style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;min-width:0">' +
+      '<div style="min-width:64px;font-size:11px;color:var(--t2)">' + nItems + ' ' + (nItems===1?'item':'itens') + '</div>' +
+      '<div style="flex:1;font-family:var(--fn);font-size:13px;font-weight:700;color:' + (tot>0?'var(--gnl)':'var(--t2)') + '">' + _fmtBRL(tot) + '</div>' +
+      (reajPct ? '<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:rgba(245,158,11,.12);color:var(--gl);border:1px solid rgba(245,158,11,.25);white-space:nowrap">📈 +' + reajPct + '%</span>' : '') +
+      (savedStr ? '<span style="font-size:9px;color:var(--t3);white-space:nowrap">' + savedStr + '</span>' : '') +
+      '<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.25);white-space:nowrap">🔒</span>' +
+      (isToday ? '<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(56,189,248,.12);color:var(--ac2);border:1px solid rgba(56,189,248,.25);white-space:nowrap">ATUAL</span>' : '') +
+      (isActive ? '<span style="font-size:10px;font-weight:800;color:var(--ac2);white-space:nowrap">← aberto</span>' : '') +
+      '<span style="font-size:14px;color:var(--t3);line-height:1;flex-shrink:0">›</span>' +
+    '</div>' +
+
+    // Botão Excluir — NÃO abre o mês
+    '<button onclick="event.stopPropagation();custoMedDeleteMonth(\'' + ym + '\')" title="Excluir ' + lbl + '" style="flex-shrink:0;padding:5px 11px;border-radius:8px;border:1px solid rgba(239,68,68,.22);background:rgba(239,68,68,.07);color:#f87171;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap" onmouseover="this.style.background=\'rgba(239,68,68,.2)\';this.style.borderColor=\'rgba(239,68,68,.5)\'" onmouseout="this.style.background=\'rgba(239,68,68,.07)\';this.style.borderColor=\'rgba(239,68,68,.22)\'">🗑</button>' +
+
+    '</div>';
+}
+
+
+// ══════════════════════════════════════════════════════════════════════
+//  MODO LEITURA — Senha de desbloqueio
+// ══════════════════════════════════════════════════════════════════════
+function custoMedUnlockEdit() {
+  var modal = document.getElementById('custo-med-pass-modal'); if(!modal) return;
+  var mesLbl = document.getElementById('custo-med-pass-mes-lbl');
+  var usrLbl = document.getElementById('custo-med-pass-user-lbl');
+  var passInp = document.getElementById('custo-med-pass-inp');
+  var errEl   = document.getElementById('custo-med-pass-err');
+  // Garante modo unlock
+  modal.dataset.mode = 'unlock';
+  _custoMedDeleteTarget = null;
+  var title = modal.querySelector('[data-pass-title]');
+  var sub   = modal.querySelector('[data-pass-sub]');
+  var confirmBtn = modal.querySelector('[data-pass-confirm]');
+  if(title)  title.textContent = '🔐 Autenticação';
+  if(sub)    sub.innerHTML = 'Digite sua senha para liberar a edição de <strong id="custo-med-pass-mes-lbl" style="color:var(--ac2)"></strong>';
+  if(confirmBtn){ confirmBtn.textContent='🔓 Confirmar Acesso'; confirmBtn.style.background='rgba(16,185,129,.15)'; confirmBtn.style.borderColor='rgba(16,185,129,.4)'; confirmBtn.style.color='var(--gnl)'; }
+  var mesLblEl = document.getElementById('custo-med-pass-mes-lbl');
+  if(mesLblEl) mesLblEl.textContent = _custoMedMesLbl(_custoMedMes);
+  if(usrLbl) usrLbl.textContent = (typeof currentUser !== 'undefined' && currentUser) ? (currentUser.name||currentUser.username||'—') : '— Não identificado —';
+  if(passInp) passInp.value = '';
+  if(errEl)   errEl.textContent = '';
+  modal.style.display = 'flex';
+  setTimeout(function(){ if(passInp) passInp.focus(); }, 80);
+}
+
+function custoMedClosePassModal() {
+  var modal = document.getElementById('custo-med-pass-modal');
+  if(!modal) return;
+  modal.style.display = 'none';
+  modal.dataset.mode = 'unlock'; // reset
+  // Reset aparência do botão confirmar
+  var confirmBtn = modal.querySelector('[data-pass-confirm]');
+  if(confirmBtn){ confirmBtn.textContent = '🔓 Confirmar Acesso'; confirmBtn.style.background='rgba(16,185,129,.15)'; confirmBtn.style.borderColor='rgba(16,185,129,.4)'; confirmBtn.style.color='var(--gnl)'; }
+  var title = modal.querySelector('[data-pass-title]');
+  var sub   = modal.querySelector('[data-pass-sub]');
+  if(title) title.textContent = '🔐 Autenticação';
+  if(sub)   sub.innerHTML = 'Digite sua senha para liberar a edição de <strong id="custo-med-pass-mes-lbl" style="color:var(--ac2)"></strong>';
+  _custoMedDeleteTarget = null;
+}
+
+function custoMedConfirmPass() {
+  var modal   = document.getElementById('custo-med-pass-modal');
+  var passInp = document.getElementById('custo-med-pass-inp');
+  var errEl   = document.getElementById('custo-med-pass-err');
+  var typed   = (passInp ? passInp.value : '').trim();
+  if(!typed) { if(errEl) errEl.textContent = '⚠ Digite sua senha.'; return; }
+
+  // Valida senha
+  var uid = typeof currentUser !== 'undefined' && currentUser ? currentUser.id : null;
+  var participant = uid ? (ST.participants||[]).find(function(p){ return p.id === uid; }) : null;
+  var valid = false;
+  if(participant && participant.password) {
+    valid = typed === participant.password;
+  } else {
+    var admin = (ST.participants||[]).find(function(p){ return p.role==='admin'; });
+    valid = admin && typed === admin.password;
+  }
+
+  if(!valid) {
+    if(errEl) errEl.textContent = '❌ Senha incorreta. Tente novamente.';
+    if(passInp) { passInp.value = ''; passInp.focus(); }
+    return;
+  }
+
+  var mode = modal ? modal.dataset.mode : 'unlock';
+
+  if(mode === 'delete' && _custoMedDeleteTarget) {
+    // ── EXCLUIR MÊS ──────────────────────────────────────────────
+    var ymDel = _custoMedDeleteTarget;
+    var a = _custoAnalise();
+    if(a && a.medicao && a.medicao.history) {
+      delete a.medicao.history[ymDel];
+    }
+    var lbl = _custoMedMesLbl(ymDel);
+    // Se o mês excluído era o aberto, redireciona para o mês atual
+    if(_custoMedMes === ymDel) {
+      _custoMedMes = _custoYM();
+      _custoMedReadOnly = _custoMedIsSaved(_custoMedMes);
+    }
+    custoMedClosePassModal();
+    scheduleAutoSync();
+    _custoMedicao();
+    showToast('🗑 ' + lbl + ' excluído com sucesso.', 'go', 2500);
+
+  } else {
+    // ── DESBLOQUEAR EDIÇÃO ──────────────────────────────────────
+    _custoMedReadOnly = false;
+    custoMedClosePassModal();
+    _custoMedicao();
+    showToast('🔓 Edição liberada para ' + _custoMedMesLbl(_custoMedMes) + '!', 'gn', 2500);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  EXCLUSÃO DE MÊS — com senha
+// ══════════════════════════════════════════════════════════════════════
+var _custoMedDeleteTarget = null; // ym a excluir
+
+function custoMedDeleteMonth(ym) {
+  // Reutiliza o modal de senha, mas no modo exclusão
+  _custoMedDeleteTarget = ym;
+  var modal  = document.getElementById('custo-med-pass-modal'); if(!modal) return;
+  var mesLbl = document.getElementById('custo-med-pass-mes-lbl');
+  var usrLbl = document.getElementById('custo-med-pass-user-lbl');
+  var passInp= document.getElementById('custo-med-pass-inp');
+  var errEl  = document.getElementById('custo-med-pass-err');
+  var title  = modal.querySelector('[data-pass-title]');
+  var sub    = modal.querySelector('[data-pass-sub]');
+  var confirmBtn = modal.querySelector('[data-pass-confirm]');
+  if(mesLbl) mesLbl.textContent = _custoMedMesLbl(ym);
+  if(usrLbl) usrLbl.textContent = (typeof currentUser!=='undefined'&&currentUser) ? (currentUser.name||currentUser.username||'—') : '—';
+  if(passInp) passInp.value = '';
+  if(errEl)   errEl.textContent = '';
+  // Ajusta textos para modo exclusão
+  if(title)  title.textContent  = '🗑 Confirmar Exclusão';
+  if(sub)    sub.innerHTML      = 'Digite sua senha para excluir permanentemente <strong id="custo-med-pass-mes-lbl2" style="color:#f87171">' + _custoMedMesLbl(ym) + '</strong>';
+  if(confirmBtn){ confirmBtn.textContent = '🗑 Excluir definitivamente'; confirmBtn.style.background='rgba(239,68,68,.15)'; confirmBtn.style.borderColor='rgba(239,68,68,.4)'; confirmBtn.style.color='#f87171'; }
+  modal.dataset.mode = 'delete';
+  modal.style.display = 'flex';
+  setTimeout(function(){ if(passInp) passInp.focus(); }, 80);
+}
+
+// ── Aplicar reajuste ──────────────────────────────────────────────────
+function custoMedAplicarReajuste() {
+  if(_custoMedReadOnly) { showToast('🔒 Desbloqueie o mês para aplicar reajuste.','go'); return; }
+  var pctVal = parseFloat(document.getElementById('custo-med-reaj-inp').value)||0;
+  if(!pctVal) { showToast('Informe o percentual de reajuste (ex: 5.5).','go'); return; }
+  var a = _custoAnalise(); if(!a) return;
+  var coef = 1 + pctVal/100;
+  if(!a.medicao.history) a.medicao.history = {};
+  if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes] = {items:[],reajPct:0};
+  var snap = a.medicao.history[_custoMedMes];
+  snap.reajPct = pctVal;
+  snap.items.forEach(function(it) {
+    it.vlUnit = parseFloat((parseFloat(it.vlUnit||0)*coef).toFixed(4));
+  });
+  _custoMedicao(); scheduleAutoSync();
+  showToast('✅ Reajuste de '+pctVal+'% aplicado!','gn',2500);
+}
+
+// ── CRUD de itens ─────────────────────────────────────────────────────
 function custoMedSave(i,k,v) {
+  if(_custoMedReadOnly) return;
   var a=_custoAnalise(); if(!a)return;
-  var items=a.medicao[_custoMedCen];
-  if(items&&items[i]){ items[i][k]=(k==='qtd'||k==='vlUnit')?parseFloat(v)||0:v; _custoMedicao(); scheduleAutoSync(); }
+  var items=_custoMedItems();
+  var numFields=['qtd','vlUnit'];
+  if(items&&items[i]){ items[i][k]=numFields.indexOf(k)>=0?parseFloat(v)||0:v; _custoMedicao(); scheduleAutoSync(); }
 }
 function custoAddMedicaoItem() {
+  if(_custoMedReadOnly) { showToast('🔒 Desbloqueie o mês para adicionar itens.','go'); return; }
   var a=_custoAnalise(); if(!a)return;
-  if(!a.medicao[_custoMedCen]) a.medicao[_custoMedCen]=[];
-  a.medicao[_custoMedCen].push({desc:'',qtd:0,un:'vb',vlUnit:0});
+  if(!_custoMedMes) { _custoMedMes = _custoYM(); }
+  if(!a.medicao.history) a.medicao.history={};
+  if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
+  a.medicao.history[_custoMedMes].items.push({cod:'',desc:'',qtd:0,un:'vb',vlUnit:0});
   _custoMedicao(); scheduleAutoSync();
 }
 function custoRemoveMedItem(i) {
+  if(_custoMedReadOnly) { showToast('🔒 Desbloqueie o mês para remover itens.','go'); return; }
   var a=_custoAnalise(); if(!a)return;
-  a.medicao[_custoMedCen].splice(i,1); _custoMedicao(); scheduleAutoSync();
+  _custoMedItems().splice(i,1); _custoMedicao(); scheduleAutoSync();
 }
-function custoSaveMedicao() { scheduleAutoSync(); showToast('Medição salva!','gn',2000); }
+function custoSaveMedicao() {
+  if(!_custoMedMes) { _custoMedMes = _custoYM(); }
+  var a=_custoAnalise(); if(!a)return;
+  if(!a.medicao.history) a.medicao.history={};
+  if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
+  a.medicao.history[_custoMedMes].savedAt = new Date().toISOString();
+  _custoMedReadOnly = true; // re-bloqueia após salvar
+  scheduleAutoSync();
+  _custoMedicao();
+  showToast('💾 ' + _custoMedMesLbl(_custoMedMes) + ' salvo com sucesso!','gn',2200);
+}
+
 
 // ══════════════════════════════════════════════════════════════════════
 //  FUNÇÕES
@@ -19811,7 +21801,10 @@ function _custoRentab(){
   var tfoot=document.getElementById('custo-rentab-tfoot');
   if(!thead||!tbody||!tfoot) return;
   var cols=a.rentabCols;
-  var CATS=['Colaborador','Recurso','Equipamento','Veiculo','Terceiro'];
+  // Categoria = lista de cargos de Funções + opções fixas de fallback
+  var fnCargos=(a.funcoes||[]).map(function(f,fi){return {key:'fn_'+fi, label:f.cargo||'Função '+(fi+1)};});
+  var CATS_FIXAS=[{key:'Terceiro',label:'Terceiro'},{key:'Recurso',label:'Recurso'},{key:'Equipamento',label:'Equipamento'},{key:'Veículo',label:'Veículo'}];
+  var CATS_ALL=fnCargos.concat(CATS_FIXAS);
   var CAT_BG={
     'Colaborador':'rgba(16,185,129,.10)','Recurso':'rgba(56,189,248,.10)',
     'Equipamento':'rgba(245,158,11,.10)','Veiculo':'rgba(168,85,247,.10)','Terceiro':'rgba(239,68,68,.10)'
@@ -19837,9 +21830,10 @@ function _custoRentab(){
       var isRes=c.key==='resultado'||c.key==='resultPerc';
       var col=isRes?(parseFloat(v||0)>=0?'var(--gnl)':'var(--rdl)'):'';
       if(c.key==='categoria'){
-        var opts='';
-        CATS.forEach(function(opt){opts+='<option'+(v===opt?' selected':'')+'>'+opt+'</option>';});
-        tb+='<td style="padding:3px 5px"><select class="fi" style="height:26px;font-size:11px;padding:2px 5px;min-width:118px" data-ri="'+ri+'" onchange="custoRentabCat(+this.dataset.ri,this.value)">'+opts+'</select></td>';
+        var opts=CATS_ALL.map(function(opt){
+          return '<option value="'+opt.key+'"'+(v===opt.key?' selected':'')+'>'+opt.label+'</option>';
+        }).join('');
+        tb+='<td style="padding:3px 5px"><select class="fi" style="height:26px;font-size:11px;padding:2px 5px;min-width:160px" data-ri="'+ri+'" onchange="custoRentabCat(+this.dataset.ri,this.value)">'+opts+'</select></td>';
       } else if(c.tipo==='txt'){
         tb+='<td><input class="fi" style="height:26px;font-size:11px;min-width:140px" value="'+(v||'')+'" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoRentabSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
       } else {
@@ -19883,12 +21877,33 @@ function _rentabNewRow(cat){
   var a=_custoAnalise(); if(!a) return;
   if(!a.rentab) a.rentab=[];
   if(!a.rentabCols) a.rentabCols=CUSTO_RENTAB_COLS.map(function(c){return Object.assign({},c);});
-  var row={categoria:cat||'Colaborador'};
+  var row={categoria:cat||''};
   a.rentabCols.forEach(function(c){if(!(c.key in row))row[c.key]=c.tipo==='txt'?'':0;});
   a.rentab.push(row); _custoRentab(); scheduleAutoSync();
-  showToast((cat||'Item')+' adicionado!','gn',1600);
 }
-function custoAddRentab(){ _rentabNewRow('Colaborador'); }
+function custoAddRentab(){
+  // Abre modal de seleção: cargos de Funções + opções fixas
+  var a=_custoAnalise(); if(!a) return;
+  var fnCargos=(a.funcoes||[]).map(function(f,fi){return {key:'fn_'+fi,label:f.cargo||'Função '+(fi+1)};});
+  var fixas=[{key:'Terceiro',label:'Terceiro'},{key:'Recurso',label:'Recurso'},{key:'Equipamento',label:'Equipamento'},{key:'Veículo',label:'Veículo'}];
+  var all=fnCargos.concat(fixas);
+  var optsHtml=all.map(function(o){return '<option value="'+o.key+'">'+o.label+'</option>';}).join('');
+  document.getElementById('modal-title').textContent='➕ Adicionar à Rentabilidade';
+  document.getElementById('modal-body').innerHTML=
+    '<div style="display:flex;flex-direction:column;gap:12px">'+
+    '<div><label class="fl">Categoria / Cargo</label>'+
+    '<select class="fi" id="rentab-cat-sel">'+optsHtml+'</select></div></div>';
+  document.getElementById('modal-footer').innerHTML=
+    '<button class="btn btn-s" onclick="closeModal()">Cancelar</button>'+
+    '<button class="btn btn-p" onclick="_rentabModalOk()">Adicionar</button>';
+  document.getElementById('modal-overlay').style.display='flex';
+}
+function _rentabModalOk(){
+  var sel=document.getElementById('rentab-cat-sel');
+  var val=sel?sel.value:'';
+  closeModal();
+  _rentabNewRow(val);
+}
 function custoAddRecurso(){ _rentabNewRow('Recurso'); }
 function custoRemoveRentab(i){ var a=_custoAnalise(); if(!a)return; a.rentab.splice(i,1); _custoRentab(); scheduleAutoSync(); }
 function custoRemoveRentabCol(ci){
@@ -20211,10 +22226,13 @@ function ctxDelete(){
 
 // ── Insert handlers ───────────────────────────────────────────────────
 function _ctxInsertMedicao(ref,dir){
+  if(_custoMedReadOnly) { showToast('🔒 Desbloqueie o mês para inserir linhas.','go'); return; }
   var a=_custoAnalise();if(!a)return;
-  var items=a.medicao[_custoMedCen];if(!items)return;
+  var items=_custoMedItems();if(!items||!items.length) items=[];
   var at=dir==='above'?ref:ref+1;
-  items.splice(at,0,{desc:'',qtd:0,un:'vb',vlUnit:0});
+  if(!a.medicao.history) a.medicao.history={};
+  if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
+  a.medicao.history[_custoMedMes].items.splice(at,0,{cod:'',desc:'',qtd:0,un:'vb',vlUnit:0});
   _custoMedicao();scheduleAutoSync();
   showToast('Item inserido '+(dir==='above'?'acima':'abaixo')+'!','gn',1800);
 }
@@ -20344,7 +22362,7 @@ function colCtxOpen(evt, btn) {
   var tbl = btn.dataset.colTbl;
   var cn  = btn.dataset.colCn||'';
   var delBtn = document.getElementById('col-ctx-del');
-  if(delBtn) delBtn.style.display = (tbl==='dre' && ['orcado','estudo','precusto'].indexOf(cn)!==-1)?'none':'';
+  if(delBtn) delBtn.style.display = (tbl==='dre' && ['orcado','estudo','precusto'].indexOf(cn)!==-1)?'none':(tbl==='mapa'&&ci<0)?'none':'';
 }
 
 function colCtxInsert(dir) {
@@ -20359,6 +22377,7 @@ function colCtxInsert(dir) {
   if(tbl==='funcoes') {_colInsertFuncao(ci,dir);return;}
   if(tbl==='mem')     {_colInsertMem(gi,ci,dir);return;}
   if(tbl==='dre')     {_colInsertDRE(ci,dir);return;}
+  if(tbl==='mapa')    {_colInsertMapa(ci,dir);return;}
 }
 
 function colCtxDelete() {
@@ -20372,6 +22391,7 @@ function colCtxDelete() {
   if(tbl==='epi')     {custoRemoveEPICol(ci);return;}
   if(tbl==='funcoes') {custoRemoveFuncaoCol(ci);return;}
   if(tbl==='mem')     {_colRemoveMem(gi,ci);return;}
+  if(tbl==='mapa')    {_colDeleteMapa(ci);return;}
   if(tbl==='dre')     {
     var cn=_colCtxBtn.dataset.colCn||'';
     if(cn && ['orcado','estudo','precusto'].indexOf(cn)===-1){
@@ -22496,6 +24516,49 @@ function calibDeleteNC(){
   ST.calibNCs=(ST.calibNCs||[]).filter(function(n){return n.id!==_calibNCId;});
   closeCalibNCModal(); renderCalib(); scheduleAutoSync();
 }
+
+/* ─── Responsive grid fix — inline styles ─────────────────────────────── */
+(function(){
+  var GRIDS=[
+    {id:'fin-kpi-all',        def:'repeat(auto-fit,minmax(155px,1fr))',md:'repeat(2,1fr)',xs:'1fr'},
+    {id:'fin-kpi',            def:'repeat(auto-fit,minmax(155px,1fr))',md:'repeat(2,1fr)',xs:'1fr'},
+    {id:'fin-period-row',     def:'1fr 1fr 2fr',lg:'1fr 1fr',md:'1fr',xs:'1fr'},
+    {id:'dash-intg-kpis',     def:'repeat(auto-fit,minmax(135px,1fr))',lg:'repeat(3,1fr)',md:'repeat(2,1fr)',xs:'1fr'},
+    {id:'dash-intg-insights', def:'repeat(auto-fit,minmax(155px,1fr))',md:'1fr',xs:'1fr'},
+    {id:'virada-kpis',        def:'repeat(auto-fit,minmax(135px,1fr))',md:'repeat(2,1fr)',xs:'1fr'},
+  ];
+  function fix(){
+    var w=window.innerWidth;
+    GRIDS.forEach(function(g){
+      var el=document.getElementById(g.id); if(!el) return;
+      var c = w<=480 ? (g.xs||g.md||g.def)
+            : w<=768 ? (g.md||g.def)
+            : w<=1024? (g.lg||g.def)
+            : g.def;
+      el.style.gridTemplateColumns=c;
+    });
+    // custo nav overflow
+    var cn=document.getElementById('custo-sec-nav');
+    if(cn){cn.style.flexWrap=w<=768?'nowrap':'';cn.style.overflowX=w<=768?'auto':'hidden';}
+  }
+  var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(fix,80);});
+  document.addEventListener('DOMContentLoaded',function(){fix();setTimeout(fix,500);setTimeout(fix,1500);});
+})();
+
+
+/* ── Auto-resize textareas de observação ao renderizar ─────────── */
+function _resizeObsTAs(rootId){
+  var root = rootId ? document.getElementById(rootId) : document;
+  if(!root) root = document;
+  var tas = root.querySelectorAll ? root.querySelectorAll('.mapa-obs-ta, .custo-obs-ta')
+                                  : document.querySelectorAll('.mapa-obs-ta, .custo-obs-ta');
+  tas.forEach(function(ta){
+    ta.style.height = 'auto';
+    var sh = ta.scrollHeight;
+    ta.style.height = (sh < 28 ? 28 : sh) + 'px';
+  });
+}
+
 </script>
 
 </body>
