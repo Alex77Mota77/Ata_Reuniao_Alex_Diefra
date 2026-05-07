@@ -1894,9 +1894,9 @@ html { max-width:100%; }
   width: 100%;
   min-width: 200px;
   min-height: 28px;
-  height: 28px;
-  max-height: 300px;
-  resize: none;
+  height: auto;
+  max-height: 400px;
+  resize: vertical;
   overflow: hidden;
   box-sizing: border-box;
   background: rgba(255,255,255,.05);
@@ -1930,9 +1930,9 @@ html { max-width:100%; }
   width: 100%;
   min-width: 200px;
   min-height: 28px;
-  height: 28px;
-  max-height: 300px;
-  resize: none;
+  height: auto;
+  max-height: 400px;
+  resize: vertical;
   overflow: hidden;
   box-sizing: border-box;
   background: rgba(255,255,255,.04);
@@ -1964,6 +1964,139 @@ html { max-width:100%; }
   border-color: transparent;
   background: transparent;
   cursor: default;
+}
+
+/* ══ Mapa de Medições — alinhamento e estética ══════════════════ */
+
+/* Todas as células da tabela mapa: vertical-align middle por padrão */
+#mapa-tbl td,
+#mapa-tbl th {
+  vertical-align: middle;
+}
+
+/* Hover nas linhas */
+#mapa-tbl tbody tr:hover {
+  background: rgba(255,255,255,.035) !important;
+  transition: background .12s;
+}
+
+/* Separação visual entre grupos G1/G2/G3 — borda lateral */
+#mapa-thead-r2 th:nth-child(7),
+#mapa-tbl tbody td:nth-child(7) {
+  border-left: 2px solid rgba(245,158,11,.22) !important;
+}
+#mapa-thead-r2 th:nth-child(13),
+#mapa-tbl tbody td:nth-child(13) {
+  border-left: 2px solid rgba(124,58,237,.22) !important;
+}
+
+/* Campos numéricos — centralizados e uniformes */
+.mapa-num-inp {
+  display: block;
+  width: 100% !important;
+  height: 30px !important;
+  min-width: 58px;
+  max-width: 80px;
+  margin: 0 auto;
+}
+
+/* Célula da obs — alinhamento top quando cresce */
+#mapa-tbl td:has(.mapa-obs-ta) {
+  vertical-align: top !important;
+  padding-top: 6px !important;
+}
+
+/* Footer total — compacto e limpo */
+#mapa-tbl tfoot td {
+  vertical-align: middle;
+}
+
+/* Thead row 1 — grupo labels */
+#mapa-thead-r1 th {
+  letter-spacing: .6px;
+  font-size: 9.5px !important;
+}
+
+/* Thead row 2 — col names */
+#mapa-thead-r2 th {
+  font-size: 10px !important;
+  padding: 6px 8px !important;
+  line-height: 1.3;
+}
+
+/* Input fields uniformes dentro das td */
+#mapa-tbl td {
+  padding: 5px 7px;
+}
+
+/* ══ Mapa de Medições — área de trabalho expandida ══════════════ */
+/* Quando estiver na seção mapa, expandir o cont */
+body.sec-medicoes .cont,
+.cont:has(#sec-medicoes.active) {
+  max-width: 100% !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Wrapper do mapa: usar largura total */
+#mapa-tbl-outer {
+  width: 100%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Scroll container do mapa: altura generosa */
+#mapa-scroll-main {
+  max-height: calc(100vh - 290px) !important;
+  min-height: 320px;
+}
+
+/* Colunas G3 — largura mais confortável */
+#mapa-tbl thead th:nth-child(n+13) {
+  min-width: 96px;
+}
+
+/* Coluna Observações — expandível */
+#mapa-tbl thead th:last-of-type,
+#mapa-tbl td:has(.mapa-obs-ta) {
+  min-width: 220px;
+  max-width: 400px;
+}
+
+/* Coluna Nome Subitem — usar mais espaço disponível */
+#mapa-tbl th:nth-child(2),
+#mapa-tbl td:nth-child(2) {
+  min-width: 240px !important;
+  max-width: 380px !important;
+}
+
+/* thead sticky mais compacto para ganhar altura útil */
+#mapa-thead-r1 th {
+  padding: 5px 8px !important;
+  font-size: 9px !important;
+  letter-spacing: .7px;
+}
+#mapa-thead-r2 th {
+  padding: 5px 8px !important;
+  font-size: 10px !important;
+}
+
+/* ══ Mapa — tfoot extras: destaque visual ══════════════════════ */
+#mapa-tbl tfoot td {
+  font-size: 11px;
+  font-weight: 800;
+  border-top: 2px solid rgba(255,255,255,.12);
+  padding: 7px 8px;
+  vertical-align: middle;
+}
+#mapa-tbl tfoot tr {
+  background: rgba(0,0,0,.35) !important;
+}
+/* Células de extras no footer com destaque roxo sutil */
+[id^="mapa-foot-ex-"] {
+  color: #c4b5fd !important;
+  background: rgba(124,58,237,.06);
+  border-top: 2px solid rgba(124,58,237,.2) !important;
 }
 
 </style>
@@ -11241,12 +11374,12 @@ function _mapaRenderTable(){
       '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:106px">Férias<br>(R$)'+colBtn('mapa',-3)+'</th>'+
       '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:110px">Mob./<br>Desmob. (R$)'+colBtn('mapa',-2)+'</th>'+
       '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);width:116px">Diverg.<br>Pré-Custo (R$)'+colBtn('mapa',-1)+'</th>'+
-      // Observações — ⋮ para adicionar no final das extra cols
-      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);min-width:160px">Observações'+colBtn('mapa',_mapaExtraCols.length)+'</th>'+
-      // Extra cols dinâmicas — cada uma com ⋮
+      // Extra cols dinâmicas — ANTES de Observações
       _mapaExtraCols.map(function(ec,ci){
-        return '<th style="'+TH_R2+'background:'+H3+';color:#e9d5ff;border:1px solid rgba(124,58,237,.12);width:116px">'+ec.label+colBtn('mapa',ci)+'</th>';
+        return '<th style="'+TH_R2+'background:'+H3+';color:#e9d5ff;border:1px solid rgba(124,58,237,.12);width:120px">'+ec.label+colBtn('mapa',ci)+'</th>';
       }).join('')+
+      // Observações — sempre última coluna, ⋮ abre menu de inserção antes dela
+      '<th style="'+TH_R2+'background:'+H3+';color:#c4b5fd;border:1px solid rgba(124,58,237,.12);min-width:220px">Observações'+colBtn('mapa',_mapaExtraCols.length)+'</th>'+
     '</tr>'+
   '</thead>';
 
@@ -11308,28 +11441,28 @@ function _mapaRenderTable(){
         ' placeholder="observação...">'+_v+'</textarea>';
     }
     function calcCell(id,val,color,size){
-      return '<td style="padding:5px 7px;text-align:right;'+brd+'">'+
+      return '<td style="padding:4px 8px;text-align:right;vertical-align:middle;'+brd+'">'+
         '<span id="'+id+'" style="font-family:var(--fn);font-size:'+(size||'11px')+';font-weight:'+(size==='12px'?'700':'500')+';color:'+(color||'var(--t2)')+'">'+fmtBRL(val)+'</span>'+
       '</td>';
     }
 
     rows+='<tr id="mapa-row-'+i+'" style="background:'+rowBg+';'+hide+'">';
     // #
-    rows+='<td style="text-align:center;font-weight:700;color:var(--t3);padding:5px 3px;'+brd+'font-size:11px">'+(i+1)+'</td>';
+    rows+='<td style="text-align:center;font-weight:700;color:var(--t3);padding:4px 6px;vertical-align:middle;width:34px;'+brd+'font-size:11px">'+(i+1)+'</td>';
     // G1 — readonly
-    rows+=td('<div style="font-size:9.5px;color:var(--t3);letter-spacing:.4px;margin-bottom:1px">'+(it.cod||'')+'</div>'+
-             '<div style="font-size:11px;color:var(--tx);line-height:1.3">'+(it.desc||'—')+'</div>','min-width:200px');
-    rows+=td('<span style="font-size:11px;color:var(--t2)">'+(it.un||'vb')+'</span>','text-align:center;width:60px');
-    rows+=td('<span style="font-size:12px;font-family:var(--fn);font-weight:700;color:var(--tx)">'+qtd.toFixed(3).replace(/\.?0+$/,'')+'</span>','text-align:right;width:75px');
-    rows+=td('<span style="font-size:11px;font-family:var(--fn);color:var(--t2)">'+fmtBRL(vlUnit)+'</span>','text-align:right;width:110px');
-    rows+=td('<span id="mapa-vtot-'+i+'" style="font-size:12px;font-family:var(--fn);font-weight:700;color:var(--gnl)">'+fmtBRL(vlTot)+'</span>','text-align:right;width:120px');
+    rows+=td('<div style="font-size:9px;color:var(--t3);letter-spacing:.5px;margin-bottom:2px;font-weight:600">'+(it.cod||'')+'</div>'+
+             '<div style="font-size:11.5px;color:var(--tx);line-height:1.35;font-weight:500">'+(it.desc||'—')+'</div>','min-width:210px;max-width:320px;word-break:break-word;white-space:normal');
+    rows+=td('<span style="font-size:11px;color:var(--t2);font-weight:500">'+(it.un||'vb')+'</span>','text-align:center;width:56px');
+    rows+=td('<span style="font-size:11.5px;font-family:var(--fn);font-weight:700;color:var(--tx)">'+qtd.toFixed(3).replace(/\.?0+$/,'')+'</span>','text-align:right;width:68px');
+    rows+=td('<span style="font-size:11px;font-family:var(--fn);color:var(--t2)">'+fmtBRL(vlUnit)+'</span>','text-align:right;width:105px');
+    rows+=td('<span id="mapa-vtot-'+i+'" style="font-size:12px;font-family:var(--fn);font-weight:700;color:var(--gnl)">'+fmtBRL(vlTot)+'</span>','text-align:right;width:115px');
     // G2 — editável + calculado em tempo real
     rows+=td(numInp(prev,'previsto','0','border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.06);'),'width:72px;text-align:center');
     rows+=td(numInp(med,'medido','0','border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.06);'),'width:72px;text-align:center');
     rows+=calcCell('mapa-prevR-'+i, prevR, 'var(--gl)','11px');
     rows+=calcCell('mapa-medR-'+i,  medR,  '#10b981','12px');
     // Diferença índice
-    rows+='<td style="padding:5px 7px;text-align:right;'+brd+'">';
+    rows+='<td style="padding:4px 8px;text-align:right;vertical-align:middle;'+brd+'">';
     rows+='<span id="mapa-difIdx-'+i+'" style="font-family:var(--fn);font-size:11px;font-weight:700;color:'+(hasDif?'#f87171':'var(--t3)')+'">'+
       (difIdx!==0?(difIdx>0?'+':'')+difIdx.toFixed(3).replace(/\.?0+$/, ''):'—')+'</span></td>';
     rows+=calcCell('mapa-difR-'+i,  difR,  hasDif?'#f87171':'var(--t3)','11px');
@@ -11339,13 +11472,14 @@ function _mapaRenderTable(){
     rows+=td(numInp(fe||'','ferias','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
     rows+=td(numInp(mo||'','mobDesmob','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
     rows+=td(numInp(di||'','divergPreCusto','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
-    rows+=td(txtInp(rl.obs||'','obs'),'min-width:160px');
-    // Extra colunas
+    // Extra colunas — ANTES de Observações
     _mapaExtraCols.forEach(function(ec){
-      rows+=td(numInp(parseFloat((rl.extra||{})[ec.key])||'','extra_'+ec.key,'0','border-color:rgba(124,58,237,.3);'),'width:72px;text-align:center');
+      rows+=td(numInp(parseFloat((rl.extra||{})[ec.key])||'','extra_'+ec.key,'0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
     });
+    // Observações — sempre última
+    rows+=td(txtInp(rl.obs||'','obs'),'min-width:220px;max-width:400px');
     // Botão ⋮
-    rows+='<td style="text-align:center;padding:4px 2px;'+brd+'">'+
+    rows+='<td style="text-align:center;padding:4px 4px;vertical-align:middle;'+brd+'">'+
       '<button onclick="mapaRowCtx(event,'+i+')" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:5px;color:var(--t2);font-size:12px;cursor:pointer;padding:2px 6px;transition:all .15s" '+
       'onmouseover="this.style.background=\'rgba(255,255,255,.12)\'" onmouseout="this.style.background=\'rgba(255,255,255,.05)\'">⋮</button></td>';
     rows+='</tr>';
@@ -11367,16 +11501,20 @@ function _mapaRenderTable(){
     '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-fe">'+fmtBRL(totalFer)+'</td>'+
     '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-mo">'+fmtBRL(totalMob)+'</td>'+
     '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-di">'+fmtBRL(totalDiv)+'</td>'+
-    '<td style="border-top:2px solid rgba(255,255,255,.12)"></td>'+
     _mapaExtraCols.map(function(ec){
-      return '<td style="text-align:right;'+fs+'color:var(--t2)" id="mapa-foot-ex-'+ec.key+'">'+fmtBRL(totalExtra[ec.key]||0)+'</td>';
+      return '<td style="text-align:right;'+fs+'color:#c4b5fd;border-top:2px solid rgba(124,58,237,.2)" id="mapa-foot-ex-'+ec.key+'">'+fmtBRL(totalExtra[ec.key]||0)+'</td>';
     }).join('')+
-    '<td style="border-top:2px solid rgba(255,255,255,.12)"></td>'+
+    '<td style="border-top:2px solid rgba(255,255,255,.06)"></td>'+
+    '<td style="border-top:2px solid rgba(255,255,255,.06)"></td>'+
   '</tr></tfoot>';
 
   tbl.innerHTML=thead+'<tbody id="mapa-tbody">'+rows+'</tbody>'+foot;
   // Sync scrollbars and fix sticky row2 offset after DOM paints
-  requestAnimationFrame(function(){ setTimeout(_mapaSyncScrollBars, 30); });
+  requestAnimationFrame(function(){
+    setTimeout(_mapaSyncScrollBars, 30);
+    // Resize all obs textareas para mostrar conteúdo completo
+    setTimeout(function(){ _resizeObsTAs('mapa-tbody'); }, 40);
+  });
 }
 
 // ── Atualiza células calculadas em tempo real (sem re-render) ──────────
@@ -11447,7 +11585,10 @@ function _mapaUpdateFooter(draft, linhas){
   setEl('mapa-foot-prevR',tp); setEl('mapa-foot-medR',tm); setEl('mapa-foot-difR',td,true);
   setEl('mapa-foot-at',at); setEl('mapa-foot-fa',fa); setEl('mapa-foot-fe',fe);
   setEl('mapa-foot-mo',mo); setEl('mapa-foot-di',di);
-  _mapaExtraCols.forEach(function(ec){ setEl('mapa-foot-ex-'+ec.key, ex[ec.key]); });
+  _mapaExtraCols.forEach(function(ec){
+    var el=document.getElementById('mapa-foot-ex-'+ec.key);
+    if(el){ el.textContent=fmtBRL(ex[ec.key]); el.style.color='#c4b5fd'; }
+  });
 }
 
 // ── Toggle linhas zeradas ─────────────────────────────────────────────
@@ -24548,16 +24689,91 @@ function calibDeleteNC(){
 
 /* ── Auto-resize textareas de observação ao renderizar ─────────── */
 function _resizeObsTAs(rootId){
-  var root = rootId ? document.getElementById(rootId) : document;
-  if(!root) root = document;
-  var tas = root.querySelectorAll ? root.querySelectorAll('.mapa-obs-ta, .custo-obs-ta')
-                                  : document.querySelectorAll('.mapa-obs-ta, .custo-obs-ta');
-  tas.forEach(function(ta){
-    ta.style.height = 'auto';
-    var sh = ta.scrollHeight;
-    ta.style.height = (sh < 28 ? 28 : sh) + 'px';
+  // Garante que o DOM está pronto antes de calcular scrollHeight
+  requestAnimationFrame(function(){
+    var root = rootId ? (document.getElementById(rootId) || document) : document;
+    var tas = root.querySelectorAll('.mapa-obs-ta, .custo-obs-ta');
+    tas.forEach(function(ta){
+      // Forçar recalculo de layout
+      ta.style.height = '0px';
+      ta.style.overflow = 'hidden';
+      var sh = ta.scrollHeight;
+      ta.style.height = (sh < 28 ? 28 : sh) + 'px';
+    });
   });
 }
+
+
+/* ── Expansão da área de trabalho do Mapa ───────────────────── */
+(function(){
+  var _origContMaxW = '';
+  var _origContPadL = '';
+  var _origContPadR = '';
+
+  function _mapaExpandArea(expand){
+    var cont = document.querySelector('.cont');
+    if(!cont) return;
+    if(expand){
+      _origContMaxW = cont.style.maxWidth;
+      _origContPadL = cont.style.paddingLeft;
+      _origContPadR = cont.style.paddingRight;
+      cont.style.maxWidth    = '100%';
+      cont.style.paddingLeft = '16px';
+      cont.style.paddingRight= '16px';
+    } else {
+      cont.style.maxWidth    = _origContMaxW;
+      cont.style.paddingLeft = _origContPadL;
+      cont.style.paddingRight= _origContPadR;
+    }
+  }
+
+  // Hookar showSec para detectar entrada/saída da seção mapa
+  var _origShowSec = window.showSec;
+  window.showSec = function(sec, btn){
+    _mapaExpandArea(sec === 'medicoes');
+    if(_origShowSec) _origShowSec.apply(this, arguments);
+  };
+})();
+
+
+/* ── Auto-resize obs textareas via MutationObserver (robusto) ─── */
+(function(){
+  function resizeTA(ta){
+    ta.style.height = '0px';
+    ta.style.overflow = 'hidden';
+    var sh = ta.scrollHeight;
+    ta.style.height = (sh < 28 ? 28 : sh) + 'px';
+  }
+
+  // Observa inserções no DOM para capturar novos textareas
+  var obs = new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      m.addedNodes.forEach(function(n){
+        if(n.nodeType !== 1) return;
+        // Checar o próprio nó
+        if(n.classList && (n.classList.contains('mapa-obs-ta') || n.classList.contains('custo-obs-ta'))){
+          requestAnimationFrame(function(){ resizeTA(n); });
+        }
+        // Checar descendentes
+        var tas = n.querySelectorAll ? n.querySelectorAll('.mapa-obs-ta, .custo-obs-ta') : [];
+        tas.forEach(function(ta){ requestAnimationFrame(function(){ resizeTA(ta); }); });
+      });
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function(){
+    obs.observe(document.body, { childList: true, subtree: true });
+  });
+
+  // Re-resize em resize de janela (layout muda → scrollHeight muda)
+  var _wrTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(_wrTimer);
+    _wrTimer = setTimeout(function(){
+      document.querySelectorAll('.mapa-obs-ta, .custo-obs-ta').forEach(resizeTA);
+    }, 120);
+  });
+})();
 
 </script>
 
