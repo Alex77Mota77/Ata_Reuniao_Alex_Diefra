@@ -473,16 +473,18 @@ body{
   backdrop-filter: blur(16px) saturate(150%);
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.05);
-  /* Key: never allow horizontal overflow to be hidden */
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 .custo-tbl-scroll {
   overflow-x: auto;
   overflow-y: visible;
   -webkit-overflow-scrolling: touch;
-  /* Custom scrollbar */
   scrollbar-width: thin;
-  scrollbar-color: rgba(16,185,129,.35) transparent;
+  scrollbar-color: rgba(16,185,129,.4) rgba(0,0,0,.18);
+  width: 100%;
+  box-sizing: border-box;
 }
 .custo-tbl-scroll::-webkit-scrollbar { height: 6px; }
 .custo-tbl-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,.15); }
@@ -2099,6 +2101,147 @@ body.sec-medicoes .cont,
   border-top: 2px solid rgba(124,58,237,.2) !important;
 }
 
+/* ══ Calculadora Mapa ════════════════════════════════════════════ */
+.calc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.07);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .12s;
+  font-family: 'Courier New', monospace;
+  position: relative;
+  overflow: hidden;
+}
+.calc-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.08);
+  opacity: 0;
+  transition: opacity .12s;
+}
+.calc-btn:active::after { opacity: 1; }
+
+.calc-num {
+  background: rgba(255,255,255,.06);
+  color: #f1f5f9;
+}
+.calc-num:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.14); }
+
+.calc-op {
+  background: rgba(16,185,129,.12);
+  color: #10b981;
+  border-color: rgba(16,185,129,.2);
+  font-size: 20px;
+}
+.calc-op:hover { background: rgba(16,185,129,.25); border-color: rgba(16,185,129,.4); box-shadow: 0 0 16px rgba(16,185,129,.2); }
+.calc-op.active-op { background: rgba(16,185,129,.35) !important; border-color: rgba(16,185,129,.6) !important; box-shadow: 0 0 20px rgba(16,185,129,.3) !important; }
+
+.calc-fn {
+  background: rgba(56,189,248,.07);
+  color: rgba(56,189,248,.8);
+  border-color: rgba(56,189,248,.12);
+  font-size: 12px;
+  letter-spacing: .5px;
+}
+.calc-fn:hover { background: rgba(56,189,248,.15); border-color: rgba(56,189,248,.3); }
+
+.calc-util {
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.6);
+  border-color: rgba(255,255,255,.08);
+  font-size: 15px;
+}
+.calc-util:hover { background: rgba(255,255,255,.1); }
+
+.calc-eq {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+  border-color: transparent;
+  font-size: 22px;
+  box-shadow: 0 4px 18px rgba(16,185,129,.35);
+}
+.calc-eq:hover { background: linear-gradient(135deg,#047857,#059669); box-shadow: 0 6px 24px rgba(16,185,129,.5); transform: translateY(-1px); }
+.calc-eq:active { transform: translateY(0); }
+
+/* Overlay animado */
+#mapa-calc-overlay.open {
+  display: flex !important;
+  animation: calcFadeIn .22s ease;
+}
+#mapa-calc-modal {
+  animation: calcSlideIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes calcFadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes calcSlideIn { from { opacity:0;transform:scale(.88) translateY(20px) } to { opacity:1;transform:scale(1) translateY(0) } }
+
+/* ══ Linhas de Medição — responsividade e scrollbar ════════════ */
+
+/* Seção linhas de medição: usa 100% da largura disponível */
+#sec-custo .cont,
+.sec-custo-wrap {
+  max-width: 100%;
+}
+
+/* Wrapper externo da tabela — nunca corta nas bordas */
+#custo-med-tbl-outer {
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Scrollbar espelho (topo) */
+#custo-med-scroll-top {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16,185,129,.4) rgba(0,0,0,.2);
+}
+#custo-med-scroll-top::-webkit-scrollbar { height: 7px; }
+#custo-med-scroll-top::-webkit-scrollbar-track { background: rgba(0,0,0,.2); }
+#custo-med-scroll-top::-webkit-scrollbar-thumb { background: rgba(16,185,129,.45); border-radius: 4px; }
+#custo-med-scroll-top::-webkit-scrollbar-thumb:hover { background: rgba(16,185,129,.7); }
+
+/* Container principal com scroll horizontal e vertical */
+#custo-med-scroll-main {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16,185,129,.4) rgba(0,0,0,.18);
+}
+#custo-med-scroll-main::-webkit-scrollbar { width: 7px; height: 7px; }
+#custo-med-scroll-main::-webkit-scrollbar-track { background: rgba(0,0,0,.18); }
+#custo-med-scroll-main::-webkit-scrollbar-thumb { background: rgba(16,185,129,.45); border-radius: 4px; }
+#custo-med-scroll-main::-webkit-scrollbar-thumb:hover { background: rgba(16,185,129,.7); }
+#custo-med-scroll-main::-webkit-scrollbar-corner { background: transparent; }
+
+/* Tabela de medição: nunca excede o container */
+#custo-medicao-tbl {
+  min-width: 860px;
+  table-layout: auto;
+}
+
+/* Linhas: altura mínima confortável */
+#custo-medicao-tbl tr { min-height: 44px; }
+#custo-medicao-tbl td,
+#custo-medicao-tbl th { white-space: nowrap; }
+#custo-medicao-tbl td:nth-child(3),
+#custo-medicao-tbl th:nth-child(3) {
+  white-space: normal;
+  min-width: 220px;
+  max-width: 360px;
+  word-break: break-word;
+}
+
+/* Correção do cont na seção custo para usar largura total */
+@media (max-width: 1400px) {
+  #custo-med-tbl-outer { margin: 0 !important; }
+}
+
 </style>
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -3034,6 +3177,15 @@ body.sec-medicoes .cont,
                    color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0">
       &#128585; Ocultar zeros
     </button>
+    <button onclick="mapaOpenCalc()" id="mapa-calc-btn"
+            style="font-size:11px;font-weight:700;padding:4px 14px;border-radius:10px;
+                   border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.1);
+                   color:#10b981;cursor:pointer;white-space:nowrap;transition:all .18s;flex-shrink:0;
+                   display:flex;align-items:center;gap:5px"
+            onmouseover="this.style.background='rgba(16,185,129,.22)';this.style.borderColor='rgba(16,185,129,.6)'"
+            onmouseout="this.style.background='rgba(16,185,129,.1)';this.style.borderColor='rgba(16,185,129,.35)'">
+      <span style="font-size:14px">&#xf0ae;</span> ⊞ Cálculo
+    </button>
   </div>
 
   <!-- Tabela: scrollbar topo + nativa embaixo -->
@@ -3363,6 +3515,26 @@ body.sec-medicoes .cont,
       <button class="btn btn-s btn-sm" onclick="custoAddContaCusto()">＋ Linha</button>
       <button class="btn btn-s btn-sm" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--ac2)" onclick="custoAddColuna()">＋ Coluna</button>
       <button class="btn btn-s btn-sm" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--gl)" onclick="custoRecalcEstudo()">🔄 Recalc</button>
+      <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#10b981;font-weight:800" onclick="custoVincularDRE(true)" title="Sincroniza Receita da Linhas de Medição + Custos da Memória na DRE">⚡ Vincular DRE</button>
+      <button class="btn btn-s btn-sm" style="background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.4);color:#c4b5fd;font-weight:700" onclick="dreSalvarMes()" title="Salvar snapshot mensal da DRE e bloquear edição">💾 Salvar Mês</button>
+      <div id="custo-dre-lock-badge" style="display:none;font-size:10px;font-weight:700;color:#f87171;letter-spacing:.5px;padding:3px 8px;border:1px solid rgba(239,68,68,.3);border-radius:8px;background:rgba(239,68,68,.08)">🔒 BLOQUEADO</div>
+      <div id="custo-dre-vinc-status" style="font-size:10px;color:rgba(16,185,129,.7);letter-spacing:.5px"></div>
+    </div>
+    <!-- DRE: seletor de mês e status -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3)">Período:</span>
+      <button class="bic" onclick="dreNavMes(-1)">◀</button>
+      <span id="dre-mes-label" style="font-size:13px;font-weight:700;color:var(--tx);min-width:90px;text-align:center">—</span>
+      <button class="bic" onclick="dreNavMes(1)">▶</button>
+      <button class="btn btn-s btn-sm" style="font-size:10px" onclick="dreIrHoje()">Mês Atual</button>
+      <div style="flex:1"></div>
+      <button onclick="dreHistToggle()" style="font-size:10px;font-weight:700;padding:4px 12px;border-radius:10px;border:1px solid rgba(124,58,237,.25);background:rgba(124,58,237,.07);color:#c4b5fd;cursor:pointer;white-space:nowrap">
+        📅 Histórico DRE <span id="dre-hist-count" style="opacity:.7"></span>
+      </button>
+    </div>
+    <!-- Painel histórico DRE -->
+    <div id="dre-hist-panel" style="display:none;margin-bottom:14px;background:rgba(0,0,0,.25);border:1px solid rgba(124,58,237,.15);border-radius:12px;padding:14px;max-height:260px;overflow-y:auto">
+      <div id="dre-hist-list"></div>
     </div>
     <div class="custo-tbl-wrap">
       <div class="custo-tbl-scroll">
@@ -3519,16 +3691,16 @@ body.sec-medicoes .cont,
     </div>
 
     <!-- ── Tabela de linhas com scrollbar dupla ── -->
-    <div id="custo-med-tbl-outer" style="border-radius:12px;border:1px solid rgba(255,255,255,.07);overflow:visible;margin-left:calc(-1*clamp(24px,4vw,60px));margin-right:calc(-1*clamp(24px,4vw,60px))">
+    <div id="custo-med-tbl-outer" style="border-radius:12px;border:1px solid rgba(255,255,255,.07);overflow:hidden;width:100%;box-sizing:border-box;">
       <!-- Scrollbar espelho (topo) -->
       <div id="custo-med-scroll-top" onscroll="custoMedScrollSync('top')"
-           style="overflow-x:auto;overflow-y:hidden;height:10px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.06)">
+           style="overflow-x:auto;overflow-y:hidden;height:10px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.06);scrollbar-width:thin;scrollbar-color:rgba(16,185,129,.4) rgba(0,0,0,.2)">
         <div id="custo-med-scroll-top-inner" style="height:1px"></div>
       </div>
       <!-- Container principal — scrollbar nativa é a única inferior -->
       <div id="custo-med-scroll-main" onscroll="custoMedScrollSync('main')"
-           style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 380px)">
-        <table class="ft custo-tbl" id="custo-medicao-tbl" style="min-width:900px;border-collapse:separate;border-spacing:0">
+           style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 320px);scrollbar-width:thin;scrollbar-color:rgba(16,185,129,.4) rgba(0,0,0,.2)">
+        <table class="ft custo-tbl" id="custo-medicao-tbl" style="min-width:860px;border-collapse:separate;border-spacing:0;width:100%">
           <thead id="custo-med-thead">
             <tr id="custo-med-thead-r1">
               <th style="position:sticky;top:0;z-index:11;background:#070e09;width:36px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1)">#</th>
@@ -11804,10 +11976,12 @@ function mapaSave(){
   if(mIdx>=0) Object.assign(ST.medicoes[mIdx],mRec); else ST.medicoes.push(mRec);
   recalcContractFinancials(ct);
 
+  // Bloquear edição após salvar
+  _mapaLockedKeys[_mapaMesKey] = true;
   scheduleAutoSync();
   renderMapaMedicoes();
   try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
-  showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva!','gn',2500);
+  showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva e bloqueada! Use 🔓 para editar.','gn',3000);
 }
 
 // ── Histórico ─────────────────────────────────────────────────────────
@@ -15690,7 +15864,9 @@ function fpVerHolerite(idx){
   <div style="text-align:center;margin-top:16px">
     <button onclick="window.print()" style="background:#0b2215;color:#10b981;border:1px solid #10b981;border-radius:8px;padding:10px 24px;font-family:Inter;font-size:13px;font-weight:700;cursor:pointer">🖨️ Imprimir / Salvar PDF</button>
   </div>
-  </body></html>`);
+  
+
+</body></html>`);
   w.document.close();
 }
 
@@ -24775,7 +24951,823 @@ function _resizeObsTAs(rootId){
   });
 })();
 
+
+
+
+
+
+
+
+/* ── CALCULADORA DIEFRA — funções globais ── */
+var _calcC = {cur:'0',expr:'',op:null,prev:null,fresh:true,dec:false,mem:0,hist:[]};
+
+function mapaOpenCalc(){
+  var ov = document.getElementById('mapa-calc-overlay');
+  if(!ov) return;
+  ov.style.display = 'block';
+  _calcRender();
+}
+
+function mapaCloseCalc(){
+  var ov = document.getElementById('mapa-calc-overlay');
+  if(ov) ov.style.display = 'none';
+}
+
+function mapaCloseCalcBg(e){
+  if(e && e.target && e.target.id === 'mapa-calc-overlay') mapaCloseCalc();
+}
+
+function _calcRender(){
+  var C = _calcC;
+  var d  = document.getElementById('calc-display');
+  var ex = document.getElementById('calc-expr');
+  var mi = document.getElementById('calc-mem-ind');
+  if(d)  d.textContent  = _calcFmt(C.cur);
+  if(ex) ex.textContent = C.expr || String.fromCharCode(8203);
+  if(mi) mi.textContent = C.mem !== 0 ? 'M: ' + _calcFmt(String(C.mem)) : '';
+  document.querySelectorAll('.calc-op').forEach(function(b){ b.classList.remove('active-op'); });
+  if(C.op && C.fresh && C.prev !== null){
+    document.querySelectorAll('.calc-op').forEach(function(b){
+      if(b.textContent.trim() === C.op) b.classList.add('active-op');
+    });
+  }
+}
+
+function _calcFmt(v){
+  var n = parseFloat(v);
+  if(isNaN(n)) return v;
+  var s = parseFloat(n.toPrecision(12)).toString();
+  var p = s.split('.');
+  p[0] = p[0].replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+  return p.join(',');
+}
+
+function _calcApply(a, op, b){
+  a = parseFloat(a); b = parseFloat(b);
+  if(op==='+') return a+b;
+  if(op==='-' || op==='−') return a-b;
+  if(op==='*' || op==='×') return a*b;
+  if(op==='/' || op==='÷') return b===0 ? NaN : a/b;
+  return b;
+}
+
+function calcNum(n){
+  var C = _calcC;
+  if(n==='.' && C.dec) return;
+  if(n==='.') C.dec = true;
+  if(C.fresh){ C.cur = (n==='.') ? '0.' : n; C.fresh = false; }
+  else {
+    if(C.cur.replace('-','').replace('.','').length >= 12) return;
+    C.cur = (C.cur==='0' && n!=='.') ? n : C.cur + n;
+  }
+  _calcRender();
+}
+
+function calcOp(op){
+  var C = _calcC;
+  if(C.op && !C.fresh){
+    var res = _calcApply(C.prev, C.op, C.cur);
+    C.expr  = _calcFmt(C.prev)+' '+C.op+' '+_calcFmt(C.cur)+' '+op;
+    C.cur   = isNaN(res) ? 'Erro' : String(parseFloat(res.toPrecision(12)));
+    C.prev  = C.cur;
+  } else {
+    C.expr  = _calcFmt(C.cur)+' '+op;
+    C.prev  = C.cur;
+  }
+  C.op = op; C.fresh = true; C.dec = false;
+  _calcRender();
+}
+
+function calcEq(){
+  var C = _calcC;
+  if(!C.op || C.prev===null) return;
+  var res   = _calcApply(C.prev, C.op, C.cur);
+  var rStr  = isNaN(res) ? 'Erro' : String(parseFloat(res.toPrecision(12)));
+  var entry = _calcFmt(C.prev)+' '+C.op+' '+_calcFmt(C.cur)+' = '+_calcFmt(rStr);
+  C.hist.unshift(entry); if(C.hist.length>8) C.hist.pop();
+  var hi = document.getElementById('calc-hist'); if(hi) hi.textContent = C.hist[0];
+  C.expr  = entry; C.cur = rStr; C.op = null; C.prev = null; C.fresh = true;
+  C.dec   = C.cur.indexOf('.') >= 0;
+  _calcRender();
+}
+
+function calcFn(fn){
+  var C = _calcC;
+  if(fn==='AC'){ C.cur='0';C.expr='';C.op=null;C.prev=null;C.fresh=true;C.dec=false; }
+  else if(fn==='BS'){
+    if(C.fresh){ C.cur='0'; return _calcRender(); }
+    C.cur = C.cur.length>1 ? C.cur.slice(0,-1) : '0';
+    C.dec = C.cur.indexOf('.')>=0;
+  }
+  else if(fn==='+/-'){ C.cur=String(parseFloat(C.cur)*-1); C.fresh=false; }
+  else if(fn==='%'  ){ C.cur=String(parseFloat(C.cur)/100); C.dec=true; C.fresh=false; }
+  else if(fn==='MC' ){ C.mem=0; }
+  else if(fn==='MR' ){ C.cur=String(C.mem); C.fresh=false; C.dec=String(C.mem).indexOf('.')>=0; }
+  else if(fn==='M+' ){ C.mem=(parseFloat(C.mem)||0)+(parseFloat(C.cur)||0); }
+  else if(fn==='M-' ){ C.mem=(parseFloat(C.mem)||0)-(parseFloat(C.cur)||0); }
+  _calcRender();
+}
+
+function calcCopyResult(){
+  var val = _calcC.cur;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(val).then(function(){
+      if(window.showToast) showToast('Copiado: '+val,'gn',1400);
+    });
+  } else {
+    var t=document.createElement('textarea'); t.value=val;
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+    if(window.showToast) showToast('Copiado!','gn',1400);
+  }
+}
+
+document.addEventListener('keydown', function(e){
+  var ov = document.getElementById('mapa-calc-overlay');
+  if(!ov || ov.style.display==='none' || !ov.style.display) return;
+  var k = e.key;
+  if(k>='0'&&k<='9'){ e.preventDefault(); calcNum(k); }
+  else if(k==='.'||k===','){ e.preventDefault(); calcNum('.'); }
+  else if(k==='+'){ e.preventDefault(); calcOp('+'); }
+  else if(k==='-'){ e.preventDefault(); calcOp('−'); }
+  else if(k==='*'){ e.preventDefault(); calcOp('×'); }
+  else if(k==='/'){ e.preventDefault(); calcOp('÷'); }
+  else if(k==='Enter'||k==='='){ e.preventDefault(); calcEq(); }
+  else if(k==='Backspace'){ e.preventDefault(); calcFn('BS'); }
+  else if(k==='Escape'){ e.preventDefault(); mapaCloseCalc(); }
+  else if(k==='%'){ e.preventDefault(); calcFn('%'); }
+});
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   VINCULAÇÃO CONTÁBIL: Memória + Linhas de Medição → DRE
+   Implementação conforme normas NBC TG / CPC para DRE analítica
+   ══════════════════════════════════════════════════════════════════════════
+
+   RECEITA (conta 81):
+   ├─ 8101011111 FATURAMENTO  ← Σ (qtd × vlUnit) das Linhas de Medição (cenário ativo)
+   └─ (financeiras, imóveis: mantidas manuais)
+
+   DESPESAS (conta 82) ← Σ por tipo de grupo da Memória:
+   ├─ Pessoal (8202):
+   │  ├─ 8202022221 SALÁRIOS           ← mem tipo:'salario'
+   │  ├─ 8202032232 HORAS EXTRAS       ← mem tipo:'salario' extra
+   │  ├─ 8202052251 ENCARGOS           ← mem tipo:'encargos'
+   │  ├─ 8202062266 UNIFORME/EPI       ← mem tipo:'epi'
+   │  ├─ 8202062267 CURSOS             ← mem tipo:'cursos'
+   │  ├─ 8202062263 SAÚDE OCUPACIONAL  ← mem tipo:'exames'
+   │  ├─ 8202062262 ASSIST. MÉDICA     ← mem tipo:'seguros'
+   │  └─ 8202062264 SEGURO DE VIDA     ← mem tipo:'seguros' (proporcional)
+   ├─ Materiais (8203):
+   │  ├─ 8203012311 MATERIAIS CONSUMO  ← mem tipo:'materiais'
+   │  ├─ 8203012316 FERRAMENTAS/EQUIP  ← mem tipo:'ferramentas'
+   │  └─ 8203012314 EPI/UNIFORMES      ← já em pessoal
+   ├─ Equipamentos (8204):
+   │  └─ 8204011412 LOCAÇÃO EQUIP      ← mem tipo:'informatica' + tipo:'equipamentos'
+   ├─ Veículos (8206):
+   │  └─ 8206011612 LOCAÇÃO VEÍCULOS   ← mem tipo:'veiculos'
+   └─ Custos Indiretos (8207):
+      ├─ 8207011713 IMPOSTOS S/RECEITA ← aliquotas do contrato (% sobre receita)
+      ├─ 8207011711 RATEIO COORD       ← mem tipo:'alugueis' ou genérico
+      └─ 8207011712 RATEIO ADM         ← mem tipo:'generico'
+*/
+
+// ── Mapa: tipo de grupo da Memória → conta(s) da DRE ───────────────────────
+var CUSTO_MEM_DRE_MAP = {
+  'salario':     [{conta:'8202022221', perc:1.0}],
+  'epi':         [{conta:'8202062266', perc:1.0}],
+  'encargos':    [{conta:'8202052251', perc:1.0}],
+  'materiais':   [{conta:'8203012311', perc:1.0}],
+  'ferramentas': [{conta:'8203012316', perc:1.0}],
+  'informatica': [{conta:'8204011412', perc:1.0}],
+  'veiculos':    [{conta:'8206011612', perc:1.0}],
+  'generico':    [{conta:'8207011712', perc:1.0}]
+};
+
+// Tipos adicionais cadastrados em outras seções
+var CUSTO_SEC_DRE_MAP = {
+  'cursos':      '8202062267',
+  'exames':      '8202062263',
+  'seguros':     '8202062262',
+  'equipamentos':'8204011412',
+  'alugueis':    '8207011711',
+  'impostos':    '8207011713',
+  'ferramentas': '8203012316',
+  'materiais':   '8203012311',
+  'informatica': '8204011412',
+  'veiculos':    '8206011612'
+};
+
+// ── Função principal de vinculação ──────────────────────────────────────────
+function custoVincularDRE(showMsg) {
+  var a = _custoAnalise(); if(!a) return;
+  var cenarios = ['orcado','estudo','precusto'];
+
+  // ── PASSO 1: RECEITA ← Linhas de Medição ───────────────────────────────
+  // Para cada cenário, somar qtd × vlUnit das linhas de medição
+  cenarios.forEach(function(cn) {
+    var medTotal = _dreGetReceitaMed(a, cn);
+    _dreSetConta(a, '8101011111', cn, medTotal);
+  });
+
+  // ── PASSO 2: CUSTOS ← Memória (grupos por tipo) ────────────────────────
+  // Zerar primeiro as contas que serão auto-preenchidas
+  var contasAutomatic = [
+    '8202022221','8202052251','8202062266','8202062267','8202062268',
+    '8202062263','8202062262','8202062264',
+    '8203012311','8203012316','8204011412',
+    '8206011612','8206011613','8207011711','8207011712','8207011713'
+  ];
+
+  cenarios.forEach(function(cn) {
+    // Zerar contas automáticas antes de somar
+    contasAutomatic.forEach(function(cod) {
+      var row = a.dreContas.find(function(c){ return c.conta === cod; });
+      if(row) row[cn] = 0;
+    });
+
+    // Somar grupos da Memória
+    (a.memoria && a.memoria.grupos || []).forEach(function(g) {
+      var tipo = g.tipo || 'generico';
+      var mapa = CUSTO_MEM_DRE_MAP[tipo] || CUSTO_MEM_DRE_MAP['generico'];
+
+      // Calcular total do grupo para este cenário
+      var totalGrupo = 0;
+      (g.linhas || []).forEach(function(l) {
+        var d = l[cn] || {vlUnit:0, qtd:0};
+        totalGrupo += (parseFloat(d.vlUnit)||0) * (parseFloat(d.qtd)||0);
+      });
+
+      // Distribuir para conta(s) da DRE conforme mapa
+      mapa.forEach(function(m) {
+        var row = a.dreContas.find(function(c){ return c.conta === m.conta; });
+        if(row) row[cn] = (row[cn]||0) + totalGrupo * (m.perc||1);
+      });
+    });
+
+    // ── PASSO 3: Outras seções → DRE ────────────────────────────────────
+    Object.keys(CUSTO_SEC_DRE_MAP).forEach(function(secKey) {
+      var conta = CUSTO_SEC_DRE_MAP[secKey];
+      var items = a[secKey] || [];
+      if(!items.length) return;
+      var total = 0;
+      items.forEach(function(it) {
+        // Cada seção pode ter campos diferentes — tenta os mais comuns
+        var vlUnit = parseFloat(it.vlUnit||it.vlMensal||it.valor||it.custo||0);
+        var qtd    = parseFloat(it.qtd||it.quantidade||it.meses||1);
+        total += vlUnit * qtd;
+      });
+      if(total > 0) {
+        var row = a.dreContas.find(function(c){ return c.conta === conta; });
+        if(row) row[cn] = (row[cn]||0) + total;
+      }
+    });
+
+    // ── PASSO 4: Impostos s/ Receita ← aliquotas do contrato ───────────
+    var recBruta = _dreGetReceitaMed(a, cn);
+    var impRow = a.dreContas.find(function(c){ return c.conta==='8207011713'; });
+    if(impRow && recBruta > 0) {
+      var percImp = 0;
+      (a.aliquotas || []).forEach(function(al) {
+        percImp += parseFloat(al.perc||0);
+      });
+      impRow[cn] = (impRow[cn]||0) + recBruta * (percImp/100);
+    }
+  });
+
+  // ── PASSO 5: Recalcular agregadores (grupos pai) e Resultado ───────────
+  custoRecalcEstudo();
+
+  // Feedback visual
+  var status = document.getElementById('custo-dre-vinc-status');
+  var now = new Date();
+  var hm  = ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2)+':'+('0'+now.getSeconds()).slice(-2);
+  if(status) {
+    status.textContent = '⚡ Vinculado às '+hm;
+    setTimeout(function(){ if(status) status.textContent=''; }, 8000);
+  }
+  if(showMsg) showToast('✅ DRE vinculada — Receita das Linhas de Medição + Custos da Memória aplicados!','gn',3500);
+  scheduleAutoSync();
+}
+
+// ── Helpers de vinculação ───────────────────────────────────────────────────
+function _dreGetReceitaMed(a, cn) {
+  // Receita = Σ qtd × vlUnit das linhas de medição do cenário
+  // Usa: a.medicao[cn] (array de linhas) OU a.medicao.history (histórico mensal)
+  var linhas = [];
+  if(a.medicao && a.medicao[cn] && a.medicao[cn].length) {
+    linhas = a.medicao[cn];
+  } else if(a.medicao && a.medicao.history) {
+    // Pegar o mês mais recente salvo
+    var keys = Object.keys(a.medicao.history).sort().reverse();
+    if(keys.length) {
+      var snap = a.medicao.history[keys[0]];
+      linhas = (snap && snap.items) || [];
+    }
+  }
+  var total = 0;
+  linhas.forEach(function(it) {
+    var qtd    = parseFloat(it.qtd||it.quantidade||0);
+    var vlUnit = parseFloat(it.vlUnit||it.preco||0);
+    total += qtd * vlUnit;
+  });
+  return total;
+}
+
+function _dreSetConta(a, cod, cn, val) {
+  var row = a.dreContas.find(function(c){ return c.conta === cod; });
+  if(row) row[cn] = val;
+}
+
+// ── Auto-vincular sempre que abrir o Estudo ─────────────────────────────────
+var _dreAutoVincOrigTab = typeof custoTab === 'function' ? custoTab : null;
+(function(){
+  var _origCustoTab = window.custoTab;
+  window.custoTab = function(tab, btn) {
+    if(_origCustoTab) _origCustoTab.apply(this, arguments);
+    if(tab === 'estudo') {
+      setTimeout(function(){ custoVincularDRE(false); }, 120);
+    }
+  };
+})();
+
+// ── Painel de resumo da vinculação (badge no Resumo DRE) ────────────────────
+var _dreOrigRenderKPIs = typeof _custoRenderKPIs === 'function' ? _custoRenderKPIs : null;
+function _dreRenderVincBadge(){
+  var a = _custoAnalise(); if(!a) return;
+  var cn = _custoCen || 'estudo';
+  var recRow  = a.dreContas.find(function(c){ return c.conta==='81'; });
+  var despRow = a.dreContas.find(function(c){ return c.conta==='82'; });
+  var resRow  = a.dreContas.find(function(c){ return c.conta==='83'; });
+  var rec  = recRow  ? (recRow[cn]||0)  : 0;
+  var desp = despRow ? (despRow[cn]||0) : 0;
+  var res  = resRow  ? (resRow[cn]||0)  : rec-desp;
+  var pct  = rec>0 ? (res/rec*100) : 0;
+  var color= res>=0?'#10b981':'#f87171';
+
+  var resumo = document.getElementById('custo-resumo-dre'); if(!resumo) return;
+  resumo.innerHTML =
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px">'+
+    _dreKpiCard('📥 RECEITA',rec,'#10b981',cn)+
+    _dreKpiCard('📤 DESPESAS',desp,'#f87171',cn)+
+    _dreKpiCard('📊 RESULTADO',res,color,cn,pct.toFixed(1)+'%')+
+    '</div>';
+}
+
+function _dreKpiCard(label, val, color, cn, sub) {
+  return '<div style="background:rgba(0,0,0,.28);border:1px solid '+color.replace(')',', .2)').replace('rgb','rgba')+';border-radius:10px;padding:10px 14px;">'+
+    '<div style="font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.4);margin-bottom:4px">'+label+' · '+cn.toUpperCase()+'</div>'+
+    '<div style="font-size:16px;font-weight:800;font-family:monospace;color:'+color+'">'+_fmtBRL(val)+'</div>'+
+    (sub?'<div style="font-size:10px;color:'+color+';opacity:.7;margin-top:2px">Margem: '+sub+'</div>':'')+
+  '</div>';
+}
+
+// Chamar ao renderizar KPIs
+var _origCustoRenderKPIs2 = window._custoRenderKPIs;
+window._custoRenderKPIs = function(){
+  if(_origCustoRenderKPIs2) _origCustoRenderKPIs2.apply(this, arguments);
+  setTimeout(_dreRenderVincBadge, 50);
+};
+
+
+/* ══════════════════════════════════════════════════════════════════
+   DRE HISTÓRICO MENSAL + LOCK POR SENHA
+   ══════════════════════════════════════════════════════════════════ */
+
+// ── Estado DRE mensal ───────────────────────────────────────────────
+var _dreMesAtivo = '';   // 'YYYY-MM'
+var _dreHistOpen  = false;
+
+function _dreYM(offset) {
+  var d = new Date(); if(offset) d.setMonth(d.getMonth()+offset);
+  return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);
+}
+function _dreMesLbl(ym) {
+  if(!ym) return '—';
+  var p=ym.split('-');
+  var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  return meses[parseInt(p[1])-1]+'/'+p[0];
+}
+
+// ── Inicializar mês ao abrir Estudo ────────────────────────────────
+(function(){
+  var _origCustoTabDre = window.custoTab;
+  window.custoTab = function(tab, btn) {
+    if(_origCustoTabDre) _origCustoTabDre.apply(this, arguments);
+    if(tab === 'estudo') {
+      if(!_dreMesAtivo) _dreMesAtivo = _dreYM(0);
+      _dreAtualizaMesUI();
+      setTimeout(function(){ custoVincularDRE(false); }, 120);
+    }
+  };
+})();
+
+function dreNavMes(delta) {
+  var p = _dreMesAtivo.split('-');
+  var d = new Date(parseInt(p[0]), parseInt(p[1])-1+delta, 1);
+  _dreMesAtivo = d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);
+  _dreAtualizaMesUI();
+  dreCarregarMes(_dreMesAtivo);
+}
+function dreIrHoje() {
+  _dreMesAtivo = _dreYM(0);
+  _dreAtualizaMesUI();
+  dreCarregarMes(_dreMesAtivo);
+}
+function _dreAtualizaMesUI() {
+  var lbl = document.getElementById('dre-mes-label');
+  if(lbl) lbl.textContent = _dreMesLbl(_dreMesAtivo);
+  // Atualizar badge de bloqueio
+  var a = _custoAnalise(); if(!a) return;
+  var snap = a.dreHistorico && a.dreHistorico[_dreMesAtivo];
+  var badge = document.getElementById('custo-dre-lock-badge');
+  if(badge) badge.style.display = snap ? 'flex' : 'none';
+  // Atualizar contador histórico
+  var cnt = document.getElementById('dre-hist-count');
+  var total = Object.keys(a.dreHistorico||{}).length;
+  if(cnt) cnt.textContent = total > 0 ? '('+total+')' : '';
+}
+
+// ── Salvar snapshot mensal da DRE ───────────────────────────────────
+function dreSalvarMes() {
+  var a = _custoAnalise(); if(!a) return;
+  if(!_dreMesAtivo) _dreMesAtivo = _dreYM(0);
+  var mes = _dreMesAtivo;
+  var lbl = _dreMesLbl(mes);
+
+  // Verificar se já existe — pede confirmação
+  if(a.dreHistorico && a.dreHistorico[mes]) {
+    if(!confirm('Já existe uma DRE salva para '+lbl+'. Sobrescrever e bloquear novamente?')) return;
+  }
+
+  // Pedir senha antes de salvar (autentica o usuário)
+  _dreAbrirModalSenha('save', mes, function() {
+    _dreSalvarSnapshot(mes);
+  });
+}
+
+function _dreSalvarSnapshot(mes) {
+  var a = _custoAnalise(); if(!a) return;
+  if(!a.dreHistorico) a.dreHistorico = {};
+  var user = (typeof currentUser !== 'undefined' && currentUser) ? (currentUser.name||currentUser.username||'Sistema') : 'Sistema';
+
+  // Calcular totais resumidos
+  var cn = _custoCen||'estudo';
+  var r81  = a.dreContas.find(function(c){return c.conta==='81';})||{};
+  var r82  = a.dreContas.find(function(c){return c.conta==='82';})||{};
+  var r83  = a.dreContas.find(function(c){return c.conta==='83';})||{};
+
+  a.dreHistorico[mes] = {
+    savedAt:   new Date().toISOString(),
+    savedBy:   user,
+    cenario:   cn,
+    receita:   r81[cn]||0,
+    despesa:   r82[cn]||0,
+    resultado: r83[cn]||0,
+    dreContas: a.dreContas.map(function(c){ return Object.assign({},c); })
+  };
+  scheduleAutoSync();
+  _dreAtualizaMesUI();
+  if(_dreHistOpen) dreHistRender();
+  showToast('💾 DRE de '+_dreMesLbl(mes)+' salva e bloqueada por '+user,'gn',3500);
+}
+
+// ── Carregar snapshot de mês anterior ───────────────────────────────
+function dreCarregarMes(mes) {
+  var a = _custoAnalise(); if(!a) return;
+  var snap = a.dreHistorico && a.dreHistorico[mes];
+  if(snap) {
+    // Restaurar dreContas do snapshot (somente leitura visual)
+    a.dreContas = snap.dreContas.map(function(c){ return Object.assign({},c); });
+    _custoCen = snap.cenario || _custoCen;
+    _custoEstudo();
+    showToast('📅 DRE de '+_dreMesLbl(mes)+' carregada (bloqueada)','go',2000);
+  } else {
+    // Mês sem snapshot — modo edição normal
+    showToast('📝 '+_dreMesLbl(mes)+' — sem snapshot. Edição livre.','go',1800);
+    _custoEstudo();
+  }
+  _dreAtualizaMesUI();
+}
+
+// ── Histórico: toggle e render ───────────────────────────────────────
+function dreHistToggle() {
+  _dreHistOpen = !_dreHistOpen;
+  var panel = document.getElementById('dre-hist-panel');
+  if(panel) panel.style.display = _dreHistOpen ? 'block' : 'none';
+  if(_dreHistOpen) dreHistRender();
+}
+
+function dreHistRender() {
+  var el = document.getElementById('dre-hist-list'); if(!el) return;
+  var a = _custoAnalise(); if(!a) { el.innerHTML='<div style="color:var(--t3);font-size:12px;text-align:center;padding:20px">Nenhum contrato selecionado</div>'; return; }
+  var hist = a.dreHistorico || {};
+  var keys = Object.keys(hist).sort().reverse();
+  if(!keys.length) { el.innerHTML='<div style="color:var(--t3);font-size:12px;text-align:center;padding:20px">Nenhuma DRE salva ainda.<br>Use <strong>💾 Salvar Mês</strong> para criar o primeiro histórico.</div>'; return; }
+
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:11px">';
+  html += '<thead><tr style="color:var(--t3);font-size:9px;letter-spacing:1px;text-transform:uppercase">';
+  html += '<th style="text-align:left;padding:4px 8px">Período</th>';
+  html += '<th style="text-align:right;padding:4px 8px">Receita</th>';
+  html += '<th style="text-align:right;padding:4px 8px">Despesa</th>';
+  html += '<th style="text-align:right;padding:4px 8px">Resultado</th>';
+  html += '<th style="text-align:right;padding:4px 8px">Margem%</th>';
+  html += '<th style="text-align:left;padding:4px 8px">Salvo por</th>';
+  html += '<th style="padding:4px 4px"></th></tr></thead><tbody>';
+
+  keys.forEach(function(mes) {
+    var s = hist[mes];
+    var pct = s.receita > 0 ? (s.resultado/s.receita*100).toFixed(1)+'%' : '—';
+    var color = s.resultado >= 0 ? '#10b981' : '#f87171';
+    var isAtivo = mes === _dreMesAtivo;
+    var rowBg = isAtivo ? 'rgba(16,185,129,.06)' : '';
+    var dt = s.savedAt ? new Date(s.savedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    html += '<tr style="border-top:1px solid rgba(255,255,255,.05);background:'+rowBg+';cursor:pointer" onclick="dreCarregarMes(\''+mes+'\')" title="Carregar DRE de '+_dreMesLbl(mes)+'">';
+    html += '<td style="padding:6px 8px;font-weight:700;color:'+(isAtivo?'#10b981':'var(--tx)')+'">'+_dreMesLbl(mes)+'</td>';
+    html += '<td style="padding:6px 8px;text-align:right;font-family:monospace;color:#10b981">'+_fmtBRL(s.receita)+'</td>';
+    html += '<td style="padding:6px 8px;text-align:right;font-family:monospace;color:#f87171">'+_fmtBRL(s.despesa)+'</td>';
+    html += '<td style="padding:6px 8px;text-align:right;font-family:monospace;color:'+color+';font-weight:700">'+_fmtBRL(s.resultado)+'</td>';
+    html += '<td style="padding:6px 8px;text-align:right;color:'+color+'">'+pct+'</td>';
+    html += '<td style="padding:6px 8px;color:var(--t3)">'+s.savedBy+'<br><span style="font-size:9px;opacity:.6">'+dt+'</span></td>';
+    html += '<td style="padding:4px 4px;text-align:center">';
+    html += '<button onclick="event.stopPropagation();dreUnlockMes(\''+mes+'\')" title="Desbloquear para editar" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:6px;color:var(--gl);font-size:10px;cursor:pointer;padding:2px 6px">🔓</button> ';
+    html += '<button onclick="event.stopPropagation();dreDeleteSnap(\''+mes+'\')" title="Excluir snapshot" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:6px;color:#f87171;font-size:10px;cursor:pointer;padding:2px 6px">🗑</button>';
+    html += '</td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+// ── Desbloquear snapshot para edição ────────────────────────────────
+function dreUnlockMes(mes) {
+  _dreAbrirModalSenha('unlock', mes, function() {
+    var a = _custoAnalise(); if(!a) return;
+    if(a.dreHistorico) delete a.dreHistorico[mes];
+    scheduleAutoSync();
+    _dreAtualizaMesUI();
+    dreHistRender();
+    showToast('🔓 DRE de '+_dreMesLbl(mes)+' desbloqueada para edição','gn',2500);
+    _custoEstudo();
+  });
+}
+
+function dreDeleteSnap(mes) {
+  _dreAbrirModalSenha('delete', mes, function() {
+    var a = _custoAnalise(); if(!a) return;
+    if(!a.dreHistorico) return;
+    delete a.dreHistorico[mes];
+    scheduleAutoSync();
+    _dreAtualizaMesUI();
+    dreHistRender();
+    showToast('🗑 Snapshot de '+_dreMesLbl(mes)+' excluído','go',2000);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MODAL DE SENHA — reutilizado para DRE e Mapa
+   ══════════════════════════════════════════════════════════════════ */
+var _dreSenhaCallback = null;
+var _dreSenhaMes = '';
+
+function _dreAbrirModalSenha(mode, mes, callback) {
+  _dreSenhaCallback = callback;
+  _dreSenhaMes = mes;
+  // Reutilizar o modal de senha do custo-med se existir, senão criar
+  var modal = document.getElementById('dre-pass-modal');
+  if(!modal) {
+    modal = document.createElement('div');
+    modal.id = 'dre-pass-modal';
+    modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);align-items:center;justify-content:center';
+    modal.innerHTML = '<div style="background:linear-gradient(145deg,#071810,#0a2015);border:1px solid rgba(16,185,129,.25);border-radius:18px;padding:28px 30px;width:340px;box-shadow:0 40px 100px rgba(0,0,0,.8)">'
+      +'<div id="dre-pass-title" style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:6px">🔐 Autenticação</div>'
+      +'<div id="dre-pass-sub" style="font-size:12px;color:var(--t2);margin-bottom:18px"></div>'
+      +'<div style="font-size:10px;color:var(--t3);margin-bottom:6px">Usuário: <strong id="dre-pass-user" style="color:var(--tx)"></strong></div>'
+      +'<input id="dre-pass-inp" type="password" class="fi" placeholder="Senha" style="width:100%;box-sizing:border-box;font-size:14px;padding:10px 14px" onkeydown="if(event.key===\'Enter\')drePassConfirm()">'
+      +'<div id="dre-pass-err" style="font-size:11px;color:#f87171;margin-top:6px;min-height:16px"></div>'
+      +'<div style="display:flex;gap:10px;margin-top:18px">'
+        +'<button onclick="drePassCancel()" class="btn btn-s" style="flex:1">Cancelar</button>'
+        +'<button onclick="drePassConfirm()" class="btn btn-p" style="flex:1" id="dre-pass-confirm">Confirmar</button>'
+      +'</div>'
+      +'</div>';
+    document.body.appendChild(modal);
+  }
+
+  var titles = {save:'💾 Salvar DRE', unlock:'🔓 Desbloquear', delete:'🗑 Excluir Snapshot'};
+  var subs   = {save:'Confirme sua senha para salvar e bloquear a DRE de ', unlock:'Confirme sua senha para desbloquear e editar a DRE de ', delete:'Confirme sua senha para excluir o snapshot de '};
+  document.getElementById('dre-pass-title').textContent = titles[mode]||'🔐 Autenticação';
+  document.getElementById('dre-pass-sub').textContent   = (subs[mode]||'Período: ')+_dreMesLbl(mes);
+  var u = (typeof currentUser!=='undefined'&&currentUser)?(currentUser.name||currentUser.username||'—'):'—';
+  document.getElementById('dre-pass-user').textContent = u;
+  var inp = document.getElementById('dre-pass-inp'); if(inp) { inp.value=''; }
+  document.getElementById('dre-pass-err').textContent = '';
+  modal.style.display = 'flex';
+  setTimeout(function(){ if(inp) inp.focus(); }, 80);
+}
+
+function drePassCancel() {
+  var m=document.getElementById('dre-pass-modal'); if(m) m.style.display='none';
+  _dreSenhaCallback=null;
+}
+function drePassConfirm() {
+  var inp = document.getElementById('dre-pass-inp');
+  var err = document.getElementById('dre-pass-err');
+  var typed = inp ? inp.value.trim() : '';
+  if(!typed) { if(err) err.textContent='⚠ Digite sua senha.'; return; }
+
+  // Validar senha igual ao sistema existente
+  var user = (typeof currentUser!=='undefined'&&currentUser) ? currentUser : null;
+  var participants = ST.participants||[];
+  var found = participants.find(function(p){ return p.username===(user&&user.username) && p.password===typed; });
+  if(!found && participants.length) {
+    // Permitir qualquer admin com senha correta
+    found = participants.find(function(p){ return p.password===typed&&(p.role==='admin'||p.role==='gestor'); });
+  }
+  if(!found) {
+    if(err) { err.textContent='❌ Senha incorreta.'; }
+    if(inp) { inp.value=''; inp.focus(); }
+    return;
+  }
+  var m=document.getElementById('dre-pass-modal'); if(m) m.style.display='none';
+  if(_dreSenhaCallback) { var cb=_dreSenhaCallback; _dreSenhaCallback=null; cb(); }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MAPA DE MEDIÇÃO — LOCK COM SENHA
+   ══════════════════════════════════════════════════════════════════ */
+var _mapaLockedKeys = {};  // { 'YYYY-MM': true }
+
+// Verificar lock ao renderizar o mapa
+(function(){
+  var _origRenderMapa = window.renderMapaMedicoes;
+  window.renderMapaMedicoes = function() {
+    if(_origRenderMapa) _origRenderMapa.apply(this, arguments);
+    setTimeout(_mapaAtualizaLockUI, 100);
+  };
+})();
+
+function _mapaIsLocked() {
+  return !!_mapaLockedKeys[_mapaMesKey];
+}
+
+function _mapaAtualizaLockUI() {
+  var locked = _mapaIsLocked();
+  // Botão salvar
+  var savBtn = document.getElementById('mapa-save-btn');
+  if(savBtn) savBtn.style.display = locked ? 'none' : '';
+  // Botão desbloquear
+  var unlockBtn = document.getElementById('mapa-unlock-btn');
+  if(!unlockBtn && locked) {
+    unlockBtn = document.createElement('button');
+    unlockBtn.id = 'mapa-unlock-btn';
+    unlockBtn.className = 'btn btn-sm';
+    unlockBtn.style.cssText = 'background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.35);color:var(--gl);font-weight:700';
+    unlockBtn.textContent = '🔓 Desbloquear';
+    unlockBtn.onclick = mapaUnlockMes;
+    if(savBtn && savBtn.parentNode) savBtn.parentNode.insertBefore(unlockBtn, savBtn.nextSibling);
+  }
+  if(unlockBtn) unlockBtn.style.display = locked ? '' : 'none';
+  // Badge de bloqueio
+  var badge = document.getElementById('mapa-lock-badge');
+  if(!badge) {
+    badge = document.createElement('div');
+    badge.id = 'mapa-lock-badge';
+    badge.style.cssText = 'display:none;font-size:10px;font-weight:700;color:#f87171;padding:3px 10px;border:1px solid rgba(239,68,68,.3);border-radius:8px;background:rgba(239,68,68,.07)';
+    badge.textContent = '🔒 SALVO E BLOQUEADO';
+    if(savBtn && savBtn.parentNode) savBtn.parentNode.insertBefore(badge, savBtn);
+  }
+  badge.style.display = locked ? 'flex' : 'none';
+  // Bloquear inputs da tabela
+  document.querySelectorAll('#mapa-tbl input, #mapa-tbl textarea, #mapa-tbl select').forEach(function(el){
+    el.disabled = locked;
+    el.style.opacity = locked ? '.45' : '';
+    el.style.cursor  = locked ? 'not-allowed' : '';
+  });
+}
+
+function mapaUnlockMes() {
+  _dreAbrirModalSenha('unlock', _mapaMesKey, function() {
+    delete _mapaLockedKeys[_mapaMesKey];
+    _mapaAtualizaLockUI();
+    showToast('🔓 Mapa de '+_mapaMesLbl(_mapaMesKey)+' desbloqueado para edição','gn',2500);
+  });
+}
+
+// Bloquear entradas enquanto locked
+(function(){
+  var _origMapaLinhaChange = window.mapaLinhaChange;
+  window.mapaLinhaChange = function() {
+    if(_mapaIsLocked()) { showToast('🔒 Mês bloqueado. Clique em 🔓 Desbloquear.','go',2000); return; }
+    if(_origMapaLinhaChange) _origMapaLinhaChange.apply(this, arguments);
+  };
+})();
+
 </script>
+
+
+<!-- ═══════════════════ CALCULADORA MAPA ═══════════════════ -->
+<div id="mapa-calc-overlay" onclick="mapaCloseCalcBg(event)"
+     style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:8000;
+            background:rgba(0,0,0,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);">
+  <div id="mapa-calc-modal" onclick="event.stopPropagation()"
+       style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+              width:340px;background:linear-gradient(145deg,#071810,#0a2015,#061410);
+              border:1px solid rgba(16,185,129,.25);border-radius:22px;
+              box-shadow:0 40px 120px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06);
+              overflow:hidden;user-select:none;font-family:'Courier New',monospace">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;
+                border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#febc2e"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28c840"></div>
+      </div>
+      <span style="font-size:11px;letter-spacing:2px;color:rgba(16,185,129,.7);font-weight:700">⊞ CALC DIEFRA</span>
+      <button onclick="mapaCloseCalc()" style="background:none;border:none;color:rgba(255,255,255,.35);font-size:16px;cursor:pointer;padding:0 2px;line-height:1">✕</button>
+    </div>
+
+    <!-- Display principal -->
+    <div style="padding:12px 18px 6px;background:rgba(0,0,0,.25)">
+      <!-- Expressão -->
+      <div id="calc-expr" style="min-height:18px;text-align:right;font-size:11px;color:rgba(16,185,129,.55);
+                                  letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                                  margin-bottom:4px">&#8203;</div>
+      <!-- Valor atual -->
+      <div id="calc-display"
+           style="text-align:right;font-size:36px;font-weight:700;color:#f1f5f9;
+                  letter-spacing:-1px;line-height:1.1;min-height:44px;word-break:break-all;
+                  text-shadow:0 0 24px rgba(16,185,129,.3)">0</div>
+      <!-- Memória -->
+      <div id="calc-mem-ind" style="text-align:left;font-size:9px;color:rgba(16,185,129,.5);
+                                     letter-spacing:1.5px;margin-top:3px;min-height:12px"></div>
+    </div>
+
+    <!-- Histórico rápido -->
+    <div id="calc-hist" style="padding:4px 18px;min-height:22px;text-align:right;
+                                font-size:10px;color:rgba(148,163,184,.4);
+                                border-bottom:1px solid rgba(255,255,255,.04);
+                                white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+      Histórico vazio
+    </div>
+
+    <!-- Grid de botões -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:14px 14px 18px">
+
+      <!-- Linha 1: funções especiais -->
+      <button class="calc-btn calc-fn" onclick="calcFn('MC')"    >MC</button>
+      <button class="calc-btn calc-fn" onclick="calcFn('MR')"    >MR</button>
+      <button class="calc-btn calc-fn" onclick="calcFn('M+')"    >M+</button>
+      <button class="calc-btn calc-fn" onclick="calcFn('M-')"    >M−</button>
+
+      <!-- Linha 2 -->
+      <button class="calc-btn calc-util" onclick="calcFn('AC')"  style="color:#f87171">AC</button>
+      <button class="calc-btn calc-util" onclick="calcFn('+/-')" >±</button>
+      <button class="calc-btn calc-util" onclick="calcFn('%')"   >%</button>
+      <button class="calc-btn calc-op"   onclick="calcOp('÷')"   >÷</button>
+
+      <!-- Linha 3 -->
+      <button class="calc-btn calc-num"  onclick="calcNum('7')"  >7</button>
+      <button class="calc-btn calc-num"  onclick="calcNum('8')"  >8</button>
+      <button class="calc-btn calc-num"  onclick="calcNum('9')"  >9</button>
+      <button class="calc-btn calc-op"   onclick="calcOp('×')"   >×</button>
+
+      <!-- Linha 4 -->
+      <button class="calc-btn calc-num"  onclick="calcNum('4')"  >4</button>
+      <button class="calc-btn calc-num"  onclick="calcNum('5')"  >5</button>
+      <button class="calc-btn calc-num"  onclick="calcNum('6')"  >6</button>
+      <button class="calc-btn calc-op"   onclick="calcOp('−')"   >−</button>
+
+      <!-- Linha 5 -->
+      <button class="calc-btn calc-num"  onclick="calcNum('1')"  >1</button>
+      <button class="calc-btn calc-num"  onclick="calcNum('2')"  >2</button>
+      <button class="calc-btn calc-num"  onclick="calcNum('3')"  >3</button>
+      <button class="calc-btn calc-op"   onclick="calcOp('+')"   >+</button>
+
+      <!-- Linha 6 -->
+      <button class="calc-btn calc-num"  onclick="calcNum('0')"
+              style="grid-column:span 2;justify-content:flex-start;padding-left:22px">0</button>
+      <button class="calc-btn calc-num"  onclick="calcNum('.')"  >.</button>
+      <button class="calc-btn calc-eq"   onclick="calcEq()"      >=</button>
+
+    </div>
+
+    <!-- Barra de ações extras -->
+    <div style="display:flex;gap:7px;padding:0 14px 14px">
+      <button onclick="calcFn('BS')"
+              style="flex:1;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.08);
+                     background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-size:11px;
+                     cursor:pointer;transition:all .15s;font-family:'Courier New',monospace"
+              onmouseover="this.style.background='rgba(255,255,255,.1)'"
+              onmouseout="this.style.background='rgba(255,255,255,.04)'">⌫ Apagar</button>
+      <button onclick="calcCopyResult()"
+              style="flex:1;padding:8px;border-radius:10px;border:1px solid rgba(16,185,129,.25);
+                     background:rgba(16,185,129,.08);color:#10b981;font-size:11px;
+                     cursor:pointer;transition:all .15s;font-family:'Courier New',monospace"
+              onmouseover="this.style.background='rgba(16,185,129,.2)'"
+              onmouseout="this.style.background='rgba(16,185,129,.08)'">⎘ Copiar</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
