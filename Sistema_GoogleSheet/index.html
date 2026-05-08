@@ -798,10 +798,10 @@ select option:hover,select option:focus,select option:checked{background:#1d4ed8
   display:flex;align-items:center;justify-content:center;
   font-size:13px;font-weight:900;color:#fff;flex-shrink:0;
   font-family:var(--fh);border:2px solid rgba(56,189,248,.35)}
-.gestor-foto-zone{width:80px;height:80px;border-radius:50%;border:2px dashed var(--b1);
+.gestor-foto-zone{width:80px;height:80px;border-radius:50%;border:2px dashed var(--b1);cursor:pointer;transition:border-color .15s,background .15s;overflow:hidden;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   flex-direction:column;gap:4px;transition:all .2s;flex-shrink:0;position:relative;overflow:hidden}
-.gestor-foto-zone:hover{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.05)}
+.gestor-foto-zone:hover{border-color:rgba(16,185,129,.6);background:rgba(16,185,129,.08);transform:scale(1.03)}
 .gestor-foto-zone img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .gestor-foto-zone-lbl{font-size:9px;font-weight:700;color:var(--t3);text-align:center;line-height:1.3}
 
@@ -5824,6 +5824,8 @@ function toggleTask(tid){
 // ════════════════════════════════════════════════════════════
 function openContractModal(id){
   const c=id?getContract(id):null;
+  _pendingGestorFoto=null;
+  _pendingGestorAdmFoto=null;
   _pendingLogo=null;
   _pendingFit=null;
   _pendingPad=null;
@@ -5881,10 +5883,15 @@ function openContractModal(id){
         <div style="display:flex;align-items:flex-start;gap:16px">
           <div style="flex-shrink:0">
             <div class="flbl" style="margin-bottom:6px">📷 Foto do Gestor</div>
-            <div class="gestor-foto-zone" id="ci-gtec-foto-zone" style="cursor:default;border-color:rgba(16,185,129,.2);pointer-events:none">
+            <input type="file" id="ci-gtec-foto-inp" accept="image/*" style="display:none"
+              onchange="handleGestorFotoChange(event)">
+            <div class="gestor-foto-zone" id="ci-gtec-foto-zone"
+              style="cursor:pointer;border-color:rgba(16,185,129,.35)"
+              onclick="document.getElementById('ci-gtec-foto-inp').click()"
+              title="Clique para adicionar foto do Gestor Técnico">
               ${c&&c.fotoGestorTec
-                ? `<img src="${c.fotoGestorTec}" alt="foto">`
-                : `<span style="font-size:24px">👤</span><span class="gestor-foto-zone-lbl">Foto do cadastro</span>`}
+                ? `<img src="${c.fotoGestorTec}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+                : `<span style="font-size:24px">👤</span><span class="gestor-foto-zone-lbl">Clique para<br>adicionar foto</span>`}
             </div>
           </div>
           <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
@@ -5910,10 +5917,15 @@ function openContractModal(id){
         <div style="display:flex;align-items:flex-start;gap:16px">
           <div style="flex-shrink:0">
             <div class="flbl" style="margin-bottom:6px">📷 Foto do Gestor Adm.</div>
-            <div class="gestor-foto-zone" id="ci-gadm-foto-zone" style="cursor:default;border-color:rgba(217,119,6,.25);pointer-events:none">
+            <input type="file" id="ci-gadm-foto-inp" accept="image/*" style="display:none"
+              onchange="handleGestorAdmFotoChange(event)">
+            <div class="gestor-foto-zone" id="ci-gadm-foto-zone"
+              style="cursor:pointer;border-color:rgba(217,119,6,.45)"
+              onclick="document.getElementById('ci-gadm-foto-inp').click()"
+              title="Clique para adicionar foto do Gestor Administrativo">
               ${c&&c.fotoGestorAdm
-                ? `<img src="${c.fotoGestorAdm}" alt="foto">`
-                : `<span style="font-size:24px">🗂️</span><span class="gestor-foto-zone-lbl">Foto do cadastro</span>`}
+                ? `<img src="${c.fotoGestorAdm}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+                : `<span style="font-size:24px">🗂️</span><span class="gestor-foto-zone-lbl">Clique para<br>adicionar foto</span>`}
             </div>
           </div>
           <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
@@ -6359,16 +6371,12 @@ function saveContract(id){
     justificativa: id ? (getContract(id)||{}).justificativa||'' : '',
     viradaCvMes:   id ? (getContract(id)||{}).viradaCvMes||null : null,
     logo, logoFit, logoPad,
-    fotoGestorTec: window._pendingGestorTecFoto !== undefined
-      ? window._pendingGestorTecFoto
-      : (_pendingGestorFoto !== null
-        ? _pendingGestorFoto
-        : (id ? (getContract(id)||{}).fotoGestorTec||'' : '')),
-    fotoGestorAdm: window._pendingGestorAdmFoto !== undefined
-      ? window._pendingGestorAdmFoto
-      : (_pendingGestorAdmFoto !== null
-        ? _pendingGestorAdmFoto
-        : (id ? (getContract(id)||{}).fotoGestorAdm||'' : '')),
+    fotoGestorTec: _pendingGestorFoto !== null
+      ? _pendingGestorFoto
+      : (id ? (getContract(id)||{}).fotoGestorTec||'' : ''),
+    fotoGestorAdm: _pendingGestorAdmFoto !== null
+      ? _pendingGestorAdmFoto
+      : (id ? (getContract(id)||{}).fotoGestorAdm||'' : ''),
     nObra: document.getElementById('ci-nobra').value.trim(),
     linkContrato: normalizeUrl(((document.getElementById('ci-link')||{}).value||'').trim()),
   };
@@ -25659,6 +25667,70 @@ function mapaUnlockMes() {
     if(_origMapaLinhaChange) _origMapaLinhaChange.apply(this, arguments);
   };
 })();
+
+
+/* ══════════════════════════════════════════════════════════════════
+   CAMADA DE SEGURANÇA — Hash de senhas + proteção do ST
+   ══════════════════════════════════════════════════════════════════ */
+
+// ── 1. Hash SHA-256 nativo via WebCrypto API ──────────────────────
+async function _secHash(str) {
+  var encoder = new TextEncoder();
+  var data = encoder.encode(str);
+  var hashBuf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+// ── 2. Salt fixo por instalação (dificulta rainbow tables) ────────
+var _SEC_SALT = 'DIEFRA_' + (location.hostname||'local') + '_2026_SEC';
+
+async function _secHashPass(plain) {
+  return await _secHash(_SEC_SALT + plain + _SEC_SALT);
+}
+
+async function _secValidatePassword(plain, storedHash) {
+  var hashed = await _secHashPass(plain);
+  return hashed === storedHash;
+}
+
+
+
+// ── 7. Validação de senha nos modais internos (DRE, Mapa) ─────────
+var _origDrePassConfirm = window.drePassConfirm;
+window.drePassConfirm = async function() {
+  var inp = document.getElementById('dre-pass-inp');
+  var err = document.getElementById('dre-pass-err');
+  var typed = inp ? inp.value.trim() : '';
+  if(!typed) { if(err) err.textContent='⚠ Digite sua senha.'; return; }
+
+  var user = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
+  var participants = ST.participants||[];
+
+  var found = null;
+  for(var i=0; i<participants.length; i++) {
+    var p = participants[i];
+    var isCurrentUser = user && (p.username === user.username || p.id === user.id);
+    var isAdmin = (p.role==='admin'||p.role==='gestor');
+    if(!isCurrentUser && !isAdmin) continue;
+
+    var ok = false;
+    if(p.password && p.password.length === 64) {
+      ok = await _secValidatePassword(typed, p.password);
+    } else {
+      ok = (p.password === typed);
+    }
+    if(ok) { found = p; break; }
+  }
+
+  if(!found) {
+    if(err) err.textContent='❌ Senha incorreta.';
+    if(inp) { inp.value=''; inp.focus(); }
+    return;
+  }
+  var m=document.getElementById('dre-pass-modal'); if(m) m.style.display='none';
+  if(_dreSenhaCallback) { var cb=_dreSenhaCallback; _dreSenhaCallback=null; cb(); }
+};
+
 
 </script>
 
