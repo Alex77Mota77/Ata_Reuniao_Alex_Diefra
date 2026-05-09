@@ -2301,7 +2301,7 @@ body.sec-medicoes .cont,
     <div class="lg-field">
       <label class="lg-label" for="lg-pass">Senha</label>
       <div style="position:relative">
-        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px" spellcheck="false" autocomplete="new-password">
+        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px" spellcheck="false">
         <button type="button" onclick="togglePassVis('lg-pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:17px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--gnl)'" onmouseout="this.style.color='var(--t3)'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:clamp(15px,3vw,17px);line-height:1;transition:color .2s;padding:4px;-webkit-tap-highlight-color:transparent">👁</button>
       </div>
     </div>
@@ -3664,7 +3664,7 @@ body.sec-medicoes .cont,
           <input id="custo-med-pass-inp" type="password" class="finp"
                  placeholder="••••••••" autocomplete="current-password"
                  style="width:100%"
-                 onkeydown="if(event.key==='Enter')custoMedConfirmPass()" spellcheck="false" autocomplete="new-password">
+                 onkeydown="if(event.key==='Enter')custoMedConfirmPass()" spellcheck="false">
         </div>
         <div id="custo-med-pass-err" style="font-size:11px;color:#ef4444;min-height:16px;margin-bottom:12px;text-align:center"></div>
         <div style="display:flex;gap:10px">
@@ -8220,7 +8220,7 @@ function openGUModal(id){
         <div class="fgrp"><div class="flbl">🔒 Senha</div>
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass" value="${p?p.password||'':''}"
-              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px" spellcheck="false" autocomplete="new-password">
+              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px" spellcheck="false">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8492,7 +8492,7 @@ function openParticipantModal(id){
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass"
               value="${p?p.password||'':''}" placeholder="••••••••"
-              autocomplete="new-password" autocomplete="off" style="padding-right:40px" spellcheck="false" autocomplete="new-password">
+              autocomplete="new-password" style="padding-right:40px" spellcheck="false">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8514,7 +8514,7 @@ function openParticipantModal(id){
             <div style="position:relative">
               <input class="finp" type="password" id="pi-newpass" autocomplete="new-password"
                 placeholder="Mín. 6 caracteres" style="padding-right:40px"
-                oninput="checkPassStrength(this.value)" spellcheck="false" autocomplete="new-password">
+                oninput="checkPassStrength(this.value)" spellcheck="false">
               <button type="button" onclick="togglePassVis('pi-newpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8528,7 +8528,7 @@ function openParticipantModal(id){
           <div class="fgrp"><div class="flbl">Confirmar Nova Senha</div>
             <div style="position:relative">
               <input class="finp" type="password" id="pi-confpass" autocomplete="new-password"
-                placeholder="Repita a senha" style="padding-right:40px" spellcheck="false" autocomplete="new-password">
+                placeholder="Repita a senha" style="padding-right:40px" spellcheck="false">
               <button type="button" onclick="togglePassVis('pi-confpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
