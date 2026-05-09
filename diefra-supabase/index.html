@@ -10155,6 +10155,7 @@ async function pullFromSheets(silent){
       const av = document.getElementById('nav-av');
       if(me && av) _updateNavAvatar(av, me);
     }
+    _aplicarPermissoes(); // garante botões corretos após carregar dados
     renderDashboard(); renderContracts(); renderFinanceiro();
     renderTasks(); renderManagers(); renderVacations(); renderParticipants();
     if(document.getElementById('agenda')?.classList.contains('active'))      renderAgenda();
@@ -11234,19 +11235,16 @@ window.addEventListener('DOMContentLoaded',()=>{
         un.textContent = currentUser.name;
         pill.style.display = 'flex';
       }
-      // Mostra botão Usuários se admin
-      if(currentUser.role === 'admin' || (currentUser.username||'') === 'alex.mota'){
-        const btnU = document.getElementById('nav-btn-usuarios');
-        if(btnU) btnU.style.display = '';
-      }
+      // Aplica permissões IMEDIATAMENTE ao restaurar sessão
+      _aplicarPermissoes();
     }
     // Esconde login e carrega dados
     const screen = document.getElementById('login-screen');
     if(screen) screen.classList.add('hidden');
     pullFromSheets(true).finally(()=>{
       startSyncPolling();
-      _aplicarPermissoes();
-      _initPresence();   // inicia presença ao restaurar sessão
+      _aplicarPermissoes(); // re-aplica após carregar dados
+      _initPresence();
     });
   }
   // Load data from Google Sheets (if configured)
