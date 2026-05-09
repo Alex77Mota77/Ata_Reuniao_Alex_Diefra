@@ -2911,7 +2911,7 @@ body.sec-medicoes .cont,
       </div>
     </div>
     <div class="sh-acts">
-      <button class="btn btn-s btn-sm" onclick="openManagerModal()">👤 Cadastrar Gestor</button>
+      <button class="btn btn-s btn-sm" onclick="openManagerModal()" id="btn-cad-gestor" style="display:none">👤 Cadastrar Gestor</button>
       <button class="btn btn-p" onclick="openVacModal(null)">＋ Programar Férias</button>
     </div>
   </div>
@@ -2952,7 +2952,7 @@ body.sec-medicoes .cont,
       </div>
     </div>
     <div class="sh-acts">
-      <button class="btn btn-p" onclick="openParticipantModal()">＋ Novo Gestor</button>
+      <button class="btn btn-p" onclick="openParticipantModal()" id="btn-novo-gestor" style="display:none">＋ Novo Gestor</button>
     </div>
   </div>
   <div class="pg" id="participants-grid"></div>
@@ -2969,7 +2969,7 @@ body.sec-medicoes .cont,
       </div>
     </div>
     <div class="sh-acts">
-      <button class="btn btn-p" onclick="openGUModal()">＋ Novo Gestor Unidade</button>
+      <button class="btn btn-p" onclick="openGUModal()" id="btn-novo-gu" style="display:none">＋ Novo Gestor Unidade</button>
     </div>
   </div>
   <div class="pg" id="gu-grid"></div>
@@ -4408,6 +4408,28 @@ const DB = {
 };
 
 let currentUser = null;
+
+// ── Controle de Acesso ────────────────────────────────────────
+// Somente Alex Mota tem acesso total ao sistema
+function _isAlex(){
+  if(!currentUser) return false;
+  return (
+    (currentUser.username||'').toLowerCase() === 'alex.mota' ||
+    (currentUser.email||'').toLowerCase().includes('alex.mota')
+  );
+}
+
+function _aplicarPermissoes(){
+  const alex = _isAlex();
+  // Botões de adicionar/editar/deletar gestores
+  ['btn-novo-gestor','btn-novo-gu','btn-cad-gu','btn-cad-gestor','nav-btn-usuarios'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = alex ? '' : 'none';
+  });
+  // Re-renderiza seções que têm botões condicionais
+  if(typeof renderParticipants === 'function') renderParticipants();
+  if(typeof renderGestoresUnidade === 'function') renderGestoresUnidade();
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  EMAILJS CONFIG — preencha com suas credenciais de https://www.emailjs.com
@@ -8112,7 +8134,7 @@ function renderGestoresUnidade(){
   if(!gu.length){
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--t3);font-size:13px">
       Nenhum Gestor de Unidade cadastrado.<br><br>
-      <button class="btn btn-p" onclick="openGUModal()">＋ Cadastrar Gestor Unidade</button>
+      <button class="btn btn-p" onclick="openGUModal()" id="btn-cad-gu" style="display:none">＋ Cadastrar Gestor Unidade</button>
     </div>`;
     return;
   }
@@ -8135,8 +8157,8 @@ function renderGestoresUnidade(){
         ${p.unidade ? `<span class="pc-cred-badge">🏢 ${p.unidade}</span>` : ''}
       </div>
       <div class="p-acts">
-        <button class="bic" style="padding:5px 10px;font-size:11px" onclick="openGUModal(${p.id})">✎ Editar</button>
-        <button class="bic del" style="padding:5px 8px;font-size:11px" onclick="confirmDeleteGU(${p.id})">✕</button>
+        ${_isAlex() ? `<button class="bic" style="padding:5px 10px;font-size:11px" onclick="openGUModal(${p.id})">✎ Editar</button>
+        <button class="bic del" style="padding:5px 8px;font-size:11px" onclick="confirmDeleteGU(${p.id})">✕</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -8266,6 +8288,7 @@ function _guEnsureExtraFields(){
 
 async function saveGU(id){
   _guInit();
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode editar Gestores de Unidade.','rd'); return; }
   const p = id ? ST.gestoresUnidade.find(x=>x.id===id) : null;
   const name = (document.getElementById('pi-name').value||'').trim();
   if(!name){ alert('Nome é obrigatório.'); return; }
@@ -8323,6 +8346,7 @@ async function saveGU(id){
 }
 
 async function confirmDeleteGU(id){
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode excluir Gestores de Unidade.','rd'); return; }
   if(!confirm('Excluir este Gestor de Unidade?')) return;
   try {
     await _sb.from('gestores_unidade').update({ ativo: false }).eq('id', id);
@@ -8380,10 +8404,13 @@ function renderParticipants(){
         ${passEl}
       </div>
       <div class="p-acts"${(isMe||canEditAll)?' style="opacity:1"':''}>
+        ${_isAlex() ? `
         <button class="bic" style="padding:5px 10px;font-size:11px"
           onclick="openParticipantModal(${p.id})">✎ Editar</button>
         <button class="bic del" style="padding:5px 8px;font-size:11px"
-          onclick="confirmDelete('participant',${p.id})">✕</button>
+          onclick="confirmDelete('participant',${p.id})">✕</button>` : (isMe ? `
+        <button class="bic" style="padding:5px 10px;font-size:11px"
+          onclick="openParticipantModal(${p.id})">✎ Meu Perfil</button>` : '')}
       </div>
     </div>`;
   }).join('');
@@ -8632,6 +8659,8 @@ async function saveParticipant(id){
       ativo:    true,
     };
 
+    // Verifica permissão
+    if(!_isAlex()){ showToast('⛔ Apenas o administrador pode cadastrar gestores.','rd'); return; }
     // Salva no Supabase e pega o ID gerado
     try {
       const { data, error } = await _sb.from('gestores_contrato').insert([newP]).select().single();
@@ -9550,6 +9579,8 @@ async function doLogin(){
     // Carrega dados do Supabase e inicia polling
     await pullFromSheets(true);
     startSyncPolling();
+    // Mostra botões de admin apenas para Alex Mota
+    _aplicarPermissoes();
 
   } catch(e){
     err.textContent = e.message || 'Erro ao conectar.';
@@ -12925,6 +12956,7 @@ function toggleContractSelect(){
 }
 
 async function salvarNovoUsuario(){
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode criar usuários.','rd'); return; }
   const name     = document.getElementById('nu-name')?.value.trim();
   const username = document.getElementById('nu-username')?.value.trim();
   const email    = document.getElementById('nu-email')?.value.trim();
@@ -13004,6 +13036,7 @@ function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
 }
 
 async function salvarEdicaoUsuario(id){
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode editar usuários.','rd'); return; }
   const p = ST.participants.find(x=>x.id===id);
   if(!p){ showToast('❌ Usuário não encontrado','rd'); return; }
   const name     = document.getElementById('eu-name')?.value.trim();
@@ -13039,6 +13072,7 @@ async function salvarEdicaoUsuario(id){
 }
 
 async function deleteUsuario(id, name){
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode remover usuários.','rd'); return; }
   if(!confirm(`Remover o usuário "${name}"?\nEsta ação não pode ser desfeita.`)) return;
 
   // Remove do Supabase
