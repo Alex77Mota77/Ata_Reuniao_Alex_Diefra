@@ -8191,7 +8191,7 @@ function openGUModal(id){
       <!-- nome + cargo -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp" style="grid-column:1/-1"><div class="flbl">Nome Completo *</div>
-          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do gestor"
+          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do gestor" autocorrect="off" spellcheck="false"
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo Gestor Unidade';
                      document.getElementById('pi-av-prev').textContent=
@@ -8213,12 +8213,12 @@ function openGUModal(id){
           <input class="finp" id="gu-phone" value="${p?p.phone||'':''}" placeholder="(31) 99999-9999">
         </div>
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
-          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off">
+          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">🔒 Senha</div>
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass" value="${p?p.password||'':''}"
-              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px">
+              placeholder="••••••••" autocomplete="new-password" autocapitalize="none" autocorrect="off" style="padding-right:40px">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8376,8 +8376,9 @@ function colorPickerHTML(selectedVal, targetId, previewId){
 function openParticipantModal(id){
   const p = id ? ST.participants.find(x=>x.id===id) : null;
   _pendingParticipantFoto = null;
-  // Guard: só o próprio usuário logado pode editar seu perfil
-  if(p && (!currentUser || currentUser.id !== p.id)){
+  // Guard: admin e alex.mota podem editar qualquer perfil
+  const _isSuperAdmin = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota');
+  if(p && !_isSuperAdmin && (!currentUser || currentUser.id !== p.id)){
     showToast('⛔ Você não tem permissão para editar este perfil.','rd');
     return;
   }
@@ -8426,7 +8427,7 @@ function openParticipantModal(id){
       <!-- nome + cargo -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp" style="grid-column:1/-1"><div class="flbl">Nome Completo *</div>
-          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do participante"
+          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do participante" autocorrect="off" spellcheck="false"
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo participante';
                      document.getElementById('pi-av-prev').textContent=
@@ -8444,11 +8445,11 @@ function openParticipantModal(id){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
           <input class="finp" id="pi-user" value="${p?p.username||'':''}"
-            placeholder="nome.sobrenome" autocomplete="off">
+            placeholder="nome.sobrenome" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">✉ E-mail</div>
           <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}"
-            placeholder="seu@email.com" autocomplete="email">
+            placeholder="seu@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
       </div>
 
@@ -8458,7 +8459,7 @@ function openParticipantModal(id){
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass"
               value="${p?p.password||'':''}" placeholder="••••••••"
-              autocomplete="new-password" style="padding-right:40px">
+              autocomplete="new-password" autocapitalize="none" autocorrect="off" style="padding-right:40px">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8479,7 +8480,7 @@ function openParticipantModal(id){
           <div class="fgrp"><div class="flbl">Nova Senha</div>
             <div style="position:relative">
               <input class="finp" type="password" id="pi-newpass"
-                placeholder="Mín. 6 caracteres" style="padding-right:40px"
+                placeholder="Mín. 6 caracteres" autocapitalize="none" autocorrect="off" style="padding-right:40px"
                 oninput="checkPassStrength(this.value)">
               <button type="button" onclick="togglePassVis('pi-newpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
@@ -8494,7 +8495,7 @@ function openParticipantModal(id){
           <div class="fgrp"><div class="flbl">Confirmar Nova Senha</div>
             <div style="position:relative">
               <input class="finp" type="password" id="pi-confpass"
-                placeholder="Repita a senha" style="padding-right:40px">
+                placeholder="Repita a senha" autocapitalize="none" autocorrect="off" style="padding-right:40px">
               <button type="button" onclick="togglePassVis('pi-confpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8545,7 +8546,8 @@ function saveParticipant(id){
 
   if(id){
     // ── EDITAR existente ────────────────────────────────────────────────────
-    if(!currentUser || currentUser.id!==id){
+    const _isSuperAdminSave = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota');
+    if(!currentUser || (!_isSuperAdminSave && currentUser.id!==id)){
       showToast('⛔ Você não tem permissão para editar este perfil.','rd'); return;
     }
     const p = ST.participants.find(x=>x.id===id);
@@ -12995,15 +12997,15 @@ function openNovoUsuarioModal(){
       </div>
       <div>
         <label class="fl">Username</label>
-        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text">
+        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">E-mail (para login)</label>
-        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email">
+        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">Senha</label>
-        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password">
+        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password" autocapitalize="none" autocorrect="off">
       </div>
       <div>
         <label class="fl">Perfil</label>
@@ -13080,15 +13082,15 @@ function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
       </div>
       <div>
         <label class="fl">Username</label>
-        <input class="fi" id="eu-username" value="${username}" type="text">
+        <input class="fi" id="eu-username" value="${username}" type="text" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">E-mail</label>
-        <input class="fi" id="eu-email" value="${email||''}" type="email">
+        <input class="fi" id="eu-email" value="${email||''}" type="email" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(vazio = manter)</span></label>
-        <input class="fi" id="eu-pass" placeholder="••••••" type="password">
+        <input class="fi" id="eu-pass" placeholder="••••••" type="password" autocapitalize="none" autocorrect="off">
       </div>
       <div>
         <label class="fl">Perfil</label>
