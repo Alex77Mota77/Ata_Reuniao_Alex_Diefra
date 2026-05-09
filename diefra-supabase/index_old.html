@@ -86,7 +86,7 @@ body{
 .sub-edit{background:none;border:none;border-bottom:1px dashed rgba(255,255,255,.18);color:var(--t2);font-family:var(--fb);font-size:12.5px;font-weight:400;outline:none;cursor:text;padding:0 2px;width:var(--sub-w,58px);min-width:20px;max-width:200px;transition:border-color .2s}
 .sub-edit:hover,.sub-edit:focus{border-bottom-color:var(--gnl);color:var(--tx)}
 .hdr-sub-sep{width:1px;height:13px;background:rgba(255,255,255,0.14);display:inline-block;margin:0 2px}
-.hdr-stats{display:flex;flex-direction:column;gap:10px;margin-top:60px}
+.hdr-stats{display:flex;flex-direction:column;gap:10px}
 .sp{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(0,0,0,0.52),rgba(0,0,0,0.28));border-radius:12px;padding:13px 22px;min-width:178px;border:1px solid rgba(0,0,0,0.68);box-shadow:inset 0 3px 10px rgba(0,0,0,0.68),inset 0 1px 3px rgba(0,0,0,0.85),inset 0 -1px 0 rgba(255,255,255,0.055),0 1px 0 rgba(255,255,255,0.09),0 2px 4px rgba(0,0,0,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .sp::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.28),transparent)}
 .sp::after{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:linear-gradient(180deg,rgba(16,185,129,0.55),rgba(16,185,129,0.04));border-radius:0 12px 12px 0}
@@ -2397,12 +2397,9 @@ body.sec-medicoes .cont,
       <!-- UEN picker moved to body to escape overflow:hidden of header -->
     </div>
     <div class="hdr-stats">
-      <div class="sp" style="min-width:200px">
-        <div class="sl">Data e Hora</div>
-        <div class="sv" id="hdr-live-date" style="font-size:17px;letter-spacing:-0.3px">--/--/----</div>
-        <div style="font-size:11px;color:var(--gnl);font-weight:700;letter-spacing:1px;margin-top:2px" id="hdr-live-time">--:--:--</div>
-      </div>
-      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">0</div></div>
+      <div class="sp"><div class="sl">Data da Reunião</div><input class="sv hdr-date-inp" type="date" id="hdr-date" value="2026-03-05" title="Clique para editar a data da reunião" onchange="updateReunionDate(this.value)"></div>
+      <div class="sp"><div class="sl">Participantes</div><div class="sv" id="hdr-part-count">10 pessoas</div></div>
+      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">12</div></div>
     </div>
   </div>
 
@@ -8978,21 +8975,6 @@ function updateReunionDate(v){
   localStorage.setItem('diefra_reunion_date', v);
 }
 
-// ── Relógio em tempo real ──────────────────────────────────────────────────
-function _initLiveClock(){
-  function _tick(){
-    const now = new Date();
-    const dateEl = document.getElementById("hdr-live-date");
-    const timeEl = document.getElementById("hdr-live-time");
-    const subEl  = document.getElementById("hdr-sub-date");
-    if(dateEl) dateEl.textContent = now.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
-    if(timeEl) timeEl.textContent = now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-    if(subEl)  subEl.textContent  = now.toLocaleDateString("pt-BR",{day:"numeric",month:"long",year:"numeric"});
-  }
-  _tick();
-  setInterval(_tick, 1000);
-}
-
 // Sync sala header → footer in real time
 function _initSalaSync(){
   const inp = document.getElementById('hdr-sala');
@@ -9474,7 +9456,7 @@ async function doLogin(){
     setTimeout(()=>screen.classList.add('hidden'), 500);
 
     // Mostra botão Usuários apenas para admin
-    if(userData.role === 'admin' || (userData.username||'') === 'alex.mota'){
+    if(userData.role === 'admin'){
       const btnU = document.getElementById('nav-btn-usuarios');
       if(btnU) btnU.style.display = '';
     }
@@ -11092,7 +11074,7 @@ window.addEventListener('DOMContentLoaded',()=>{
         pill.style.display = 'flex';
       }
       // Mostra botão Usuários se admin
-      if(currentUser.role === 'admin' || (currentUser.username||'') === 'alex.mota'){
+      if(currentUser.role === 'admin'){
         const btnU = document.getElementById('nav-btn-usuarios');
         if(btnU) btnU.style.display = '';
       }
@@ -11133,7 +11115,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   // Sync sala → footer
   _initSalaSync();
-  _initLiveClock(); // relógio ao vivo
   // Init UEN picker + dept editor
   _initUenPicker();
 });
@@ -12894,7 +12875,6 @@ function roleColor(r){ return (ROLES.find(x=>x.value===r)||{color:'#888'}).color
 async function renderUsuarios(){
   const el = document.getElementById('usuarios-list');
   if(!el) return;
-  const isSuperAdmin = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota');
   const list = ST.participants || [];
   el.innerHTML = `
   <div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden">
@@ -12902,52 +12882,40 @@ async function renderUsuarios(){
       <thead>
         <tr style="border-bottom:1px solid var(--b1)">
           <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Usuário</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Login / E-mail</th>
+          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Login</th>
           <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Cargo</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Perfil</th>
+          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Depto</th>
           <th style="text-align:right;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Ações</th>
         </tr>
       </thead>
       <tbody>
-        ${list.map(u => {
-          const isMe = u.id === (currentUser||{}).id || u.username === (currentUser||{}).username;
-          const roleBadge = u.role==='admin'
-            ? '<span style="background:rgba(139,92,246,.2);color:#a78bfa;border:1px solid rgba(139,92,246,.3);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800">ADMIN</span>'
-            : '<span style="background:rgba(255,255,255,.06);color:var(--t3);border:1px solid var(--b1);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">USER</span>';
-          return `
-          <tr style="border-bottom:1px solid var(--b1);transition:background .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
-            <td style="padding:14px 20px">
-              <div style="display:flex;align-items:center;gap:10px">
-                <div style="width:34px;height:34px;border-radius:50%;background:${u.color||'#1d4ed8'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0">
-                  ${u.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
-                </div>
-                <div>
-                  <div style="font-weight:700;color:var(--tx)">${u.name}</div>
-                  ${isMe ? '<div style="font-size:10px;color:var(--gnl);font-weight:700">● Você</div>' : ''}
-                </div>
+        ${list.map(u => `
+        <tr style="border-bottom:1px solid var(--b1);transition:background .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+          <td style="padding:14px 20px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:34px;height:34px;border-radius:50%;background:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0">
+                ${u.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
               </div>
-            </td>
-            <td style="padding:14px 20px">
-              <div style="font-size:13px;color:var(--t2)">${u.username||'—'}</div>
-              <div style="font-size:11px;color:var(--t3)">${u.email||'—'}</div>
-            </td>
-            <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.cargo||'—'} ${u.dept?'<span style="color:var(--t3)">· '+u.dept+'</span>':''}</td>
-            <td style="padding:14px 20px">${roleBadge}</td>
-            <td style="padding:14px 20px;text-align:right;white-space:nowrap">
-              <button onclick="openEditUsuarioModal(${u.id},'${u.name.replace(/'/g,"\'")}','${(u.username||'').replace(/'/g,"\'")}','${(u.cargo||'').replace(/'/g,"\'")}','${(u.dept||'').replace(/'/g,"\'")}','${(u.email||'').replace(/'/g,"\'")}','${u.role||'user'}')"
-                style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:#60a5fa;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;transition:all .2s"
-                onmouseover="this.style.background='rgba(59,130,246,.25)'" onmouseout="this.style.background='rgba(59,130,246,.1)'">
-                ✎ Editar
-              </button>
-              ${!isMe ? `
-              <button onclick="deleteUsuario(${u.id},'${u.name.replace(/'/g,"\'")}')"
-                style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s"
-                onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">
-                🗑 Remover
-              </button>` : ''}
-            </td>
-          </tr>`;
-        }).join('')}
+              <span style="font-weight:700;color:var(--tx)">${u.name}</span>
+            </div>
+          </td>
+          <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.username||u.email||'—'}</td>
+          <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.cargo||'—'}</td>
+          <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.dept||'—'}</td>
+          <td style="padding:14px 20px;text-align:right">
+            <button onclick="openEditUsuarioModal(${u.id},'${u.name.replace(/'/g,"\\'")}','${(u.username||'').replace(/'/g,"\\'")}','${(u.cargo||'').replace(/'/g,"\\'")}','${(u.dept||'').replace(/'/g,"\\'")}')"
+              style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:#60a5fa;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;transition:all .2s"
+              onmouseover="this.style.background='rgba(59,130,246,.25)'" onmouseout="this.style.background='rgba(59,130,246,.1)'">
+              ✎ Editar
+            </button>
+            ${u.id !== (currentUser||{}).id ? `
+            <button onclick="deleteUsuario(${u.id},'${u.name.replace(/'/g,"\\'")}')"
+              style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s"
+              onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">
+              🗑 Remover
+            </button>` : '<span style="font-size:11px;color:var(--t3);padding:5px 12px">Você</span>'}
+          </td>
+        </tr>`).join('')}
       </tbody>
     </table>
   </div>`;
@@ -12962,23 +12930,12 @@ function openNovoUsuarioModal(){
         <input class="fi" id="nu-name" placeholder="Nome do usuário" type="text">
       </div>
       <div>
-        <label class="fl">Username</label>
+        <label class="fl">Login (username)</label>
         <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text">
-      </div>
-      <div>
-        <label class="fl">E-mail (para login)</label>
-        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email">
       </div>
       <div>
         <label class="fl">Senha</label>
         <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password">
-      </div>
-      <div>
-        <label class="fl">Perfil</label>
-        <select class="fi" id="nu-role">
-          <option value="user">Usuário</option>
-          <option value="admin">Administrador</option>
-        </select>
       </div>
       <div>
         <label class="fl">Cargo</label>
@@ -12987,6 +12944,10 @@ function openNovoUsuarioModal(){
       <div>
         <label class="fl">Departamento</label>
         <input class="fi" id="nu-dept" placeholder="ex: UEN-300" type="text">
+      </div>
+      <div>
+        <label class="fl">Email</label>
+        <input class="fi" id="nu-email" placeholder="email@exemplo.com" type="email">
       </div>
     </div>`;
   document.getElementById('modal-footer').innerHTML = `
@@ -13004,41 +12965,27 @@ function toggleContractSelect(){
 async function salvarNovoUsuario(){
   const name     = document.getElementById('nu-name')?.value.trim();
   const username = document.getElementById('nu-username')?.value.trim();
-  const email    = document.getElementById('nu-email')?.value.trim();
   const pass     = document.getElementById('nu-pass')?.value;
   const cargo    = document.getElementById('nu-cargo')?.value.trim();
   const dept     = document.getElementById('nu-dept')?.value.trim();
-  const role     = document.getElementById('nu-role')?.value || 'user';
-  if(!name||!username){ showToast('⚠ Preencha nome e username','rd'); return; }
-  if(!email){ showToast('⚠ Informe o e-mail para login','rd'); return; }
-  if(!pass||pass.length<6){ showToast('⚠ Senha deve ter pelo menos 6 caracteres','rd'); return; }
-  if(ST.participants.find(p=>p.username===username)){ showToast('⚠ Esse username já existe','rd'); return; }
-
-  const newId = `p_${Date.now()}`;
+  const email    = document.getElementById('nu-email')?.value.trim();
+  if(!name||!username||!pass){ showToast('⚠ Preencha nome, login e senha','rd'); return; }
+  if(pass.length < 6){ showToast('⚠ Senha deve ter pelo menos 6 caracteres','rd'); return; }
+  if(ST.participants.find(p=>p.username===username)){ showToast('⚠ Esse login já existe','rd'); return; }
   const newP = {
-    id: newId, name, username, email, cargo: cargo||'', dept: dept||'',
-    role, color: 'linear-gradient(135deg,#1e40af,#38bdf8)', ativo: true,
+    id: ++ST.nextId,
+    name, username, password: pass,
+    cargo: cargo||'', dept: dept||'', email: email||'',
+    color: 'linear-gradient(135deg,#1e40af,#38bdf8)',
   };
-
-  // Salva no Supabase
-  try {
-    const { error } = await _sb.from('participantes').insert([{
-      name, username, email, cargo: cargo||'', dept: dept||'',
-      role, color: newP.color, ativo: true,
-    }]);
-    if(error) throw error;
-    showToast('✅ Usuário criado! Cadastre a senha no Supabase Auth.','bl', 5000);
-  } catch(e){
-    showToast('⚠ Erro ao salvar no banco: ' + e.message,'rd'); return;
-  }
-
   ST.participants.push(newP);
+  scheduleAutoSync();
   closeModal();
+  showToast('✅ Usuário criado com sucesso','bl');
   renderUsuarios();
-  await pullFromSheets(true);
 }
 
-function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
+function openEditUsuarioModal(id, name, username, cargo, dept){
   document.getElementById('modal-title').textContent = '✎ Editar Usuário';
   document.getElementById('modal-body').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
@@ -13047,23 +12994,12 @@ function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
         <input class="fi" id="eu-name" value="${name}" type="text">
       </div>
       <div>
-        <label class="fl">Username</label>
+        <label class="fl">Login (username)</label>
         <input class="fi" id="eu-username" value="${username}" type="text">
       </div>
       <div>
-        <label class="fl">E-mail</label>
-        <input class="fi" id="eu-email" value="${email||''}" type="email">
-      </div>
-      <div>
-        <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(vazio = manter)</span></label>
+        <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(deixe vazio para manter)</span></label>
         <input class="fi" id="eu-pass" placeholder="••••••" type="password">
-      </div>
-      <div>
-        <label class="fl">Perfil</label>
-        <select class="fi" id="eu-role">
-          <option value="user" ${role!=='admin'?'selected':''}>Usuário</option>
-          <option value="admin" ${role==='admin'?'selected':''}>Administrador</option>
-        </select>
       </div>
       <div>
         <label class="fl">Cargo</label>
@@ -13076,7 +13012,7 @@ function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
     </div>`;
   document.getElementById('modal-footer').innerHTML = `
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-p" onclick="salvarEdicaoUsuario(${JSON.stringify(id)})">💾 Salvar</button>`;
+    <button class="btn btn-p" onclick="salvarEdicaoUsuario(${id})">💾 Salvar</button>`;
   openModal();
 }
 
@@ -13085,52 +13021,28 @@ async function salvarEdicaoUsuario(id){
   if(!p){ showToast('❌ Usuário não encontrado','rd'); return; }
   const name     = document.getElementById('eu-name')?.value.trim();
   const username = document.getElementById('eu-username')?.value.trim();
-  const email    = document.getElementById('eu-email')?.value.trim();
   const pass     = document.getElementById('eu-pass')?.value;
   const cargo    = document.getElementById('eu-cargo')?.value.trim();
   const dept     = document.getElementById('eu-dept')?.value.trim();
-  const role     = document.getElementById('eu-role')?.value || 'user';
-  if(!name||!username){ showToast('⚠ Nome e username são obrigatórios','rd'); return; }
-
-  // Atualiza no Supabase
-  try {
-    const upd = { name, username, email, cargo, dept, role };
-    const { error } = await _sb.from('participantes').update(upd).eq('id', id);
-    if(error) throw error;
-
-    // Se informou nova senha → reseta via SQL (requer permissão)
-    if(pass && pass.length >= 6 && email){
-      await _sb.rpc('reset_user_password', { user_email: email, new_password: pass })
-        .then(({error:e})=>{ if(e) showToast('⚠ Dados salvos, mas redefinição de senha requer acesso admin no Supabase','or',4000); });
-    }
-  } catch(e){
-    showToast('⚠ Erro ao salvar: ' + e.message,'rd');
-  }
-
-  // Atualiza ST local
-  Object.assign(p, { name, username, email, cargo, dept, role });
+  if(!name||!username){ showToast('⚠ Nome e login são obrigatórios','rd'); return; }
+  p.name     = name;
+  p.username = username;
+  p.cargo    = cargo;
+  p.dept     = dept;
   if(pass && pass.length >= 6) p.password = pass;
+  scheduleAutoSync();
   closeModal();
   showToast('✅ Usuário atualizado','bl');
   renderUsuarios();
 }
 
 async function deleteUsuario(id, name){
-  if(!confirm(`Remover o usuário "${name}"?\nEsta ação não pode ser desfeita.`)) return;
-
-  // Remove do Supabase
-  try {
-    const { error } = await _sb.from('participantes').update({ ativo: false }).eq('id', id);
-    if(error) throw error;
-  } catch(e){
-    showToast('⚠ Erro ao remover: ' + e.message,'rd'); return;
-  }
-
+  if(!confirm(`Remover o usuário "${name}"? Esta ação não pode ser desfeita.`)) return;
   ST.participants = ST.participants.filter(p=>p.id!==id);
-  showToast(`✅ Usuário "${name}" removido`,'bl');
+  scheduleAutoSync();
+  showToast('✅ Usuário removido','bl');
   renderUsuarios();
 }
-
 
 
 
