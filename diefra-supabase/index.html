@@ -8264,7 +8264,7 @@ function _guEnsureExtraFields(){
   container.appendChild(extra);
 }
 
-function saveGU(id){
+async function saveGU(id){
   _guInit();
   const p = id ? ST.gestoresUnidade.find(x=>x.id===id) : null;
   const name = (document.getElementById('pi-name').value||'').trim();
@@ -8284,6 +8284,32 @@ function saveGU(id){
     foto:     _pendingParticipantFoto || (p ? p.foto||'' : '')
   };
 
+  // Salva no Supabase — tabela gestores_unidade
+  try {
+    const sbData = {
+      id:       data.id,
+      name:     data.name,
+      cargo:    data.cargo,
+      dept:     data.dept,
+      email:    data.email,
+      username: data.username,
+      unidade:  data.unidade,
+      phone:    data.phone,
+      color:    data.color,
+      ativo:    true,
+    };
+    const { data: saved, error } = await _sb
+      .from('gestores_unidade')
+      .upsert(sbData, { onConflict: 'id' })
+      .select()
+      .single();
+    if(error) throw error;
+    if(saved && saved.id) data.id = saved.id;
+    showToast('✅ Gestor de Unidade salvo!','gn');
+  } catch(err){
+    showToast('⚠ Erro ao salvar no banco: ' + err.message,'rd');
+  }
+
   if(id && p){
     const idx = ST.gestoresUnidade.findIndex(x=>x.id===id);
     if(idx>-1) ST.gestoresUnidade[idx] = data;
@@ -8291,16 +8317,21 @@ function saveGU(id){
     ST.gestoresUnidade.push(data);
   }
 
+  _pendingParticipantFoto = null;
   closeModal();
   renderGestoresUnidade();
-  scheduleAutoSync();
 }
 
-function confirmDeleteGU(id){
+async function confirmDeleteGU(id){
   if(!confirm('Excluir este Gestor de Unidade?')) return;
+  try {
+    await _sb.from('gestores_unidade').update({ ativo: false }).eq('id', id);
+  } catch(err){
+    showToast('⚠ Erro ao remover: ' + err.message,'rd');
+  }
   ST.gestoresUnidade = (ST.gestoresUnidade||[]).filter(x=>x.id!==id);
   renderGestoresUnidade();
-  scheduleAutoSync();
+  showToast('✅ Gestor removido','gn');
 }
 
 // ════════════════════════════════════════════════════════════
@@ -8526,7 +8557,7 @@ function openParticipantModal(id){
   openModal();
 }
 
-function saveParticipant(id){
+async function saveParticipant(id){
   const name     = (document.getElementById('pi-name')||{}).value||'';
   const cargo    = (document.getElementById('pi-cargo')||{}).value||'';
   const dept     = (document.getElementById('pi-dept')||{}).value||'';
@@ -8540,18 +8571,17 @@ function saveParticipant(id){
 
   if(!name.trim()){showToast('⛔ Informe o nome do participante.','rd');return;}
 
-  // Validar nova senha no modo edição
   if(newpass){
     if(newpass.length<6){if(errEl)errEl.textContent='Nova senha deve ter pelo menos 6 caracteres.';return;}
     if(newpass!==confpass){if(errEl)errEl.textContent='As senhas não coincidem.';return;}
   }
 
   if(id){
-    // ── EDITAR existente ────────────────────────────────────────────────────
-    // Qualquer usuário logado pode salvar alterações
+    // ── EDITAR existente ─────────────────────────────────────────────────────
     if(!currentUser){ showToast('⛔ Faça login primeiro.','rd'); return; }
     const p = ST.participants.find(x=>x.id===id);
     if(!p) return;
+
     p.name     = name.trim();
     p.cargo    = cargo.trim();
     p.dept     = dept.trim() || '—';
@@ -8562,34 +8592,60 @@ function saveParticipant(id){
     if(newpass) p.password = newpass;
     if(_pendingParticipantFoto !== null) p.foto = _pendingParticipantFoto;
 
+    // Salva no Supabase
+    try {
+      const { error } = await _sb.from('gestores_contrato').update({
+        name:     p.name,
+        cargo:    p.cargo,
+        dept:     p.dept,
+        color:    p.color,
+        username: p.username,
+        email:    p.email,
+      }).eq('id', id);
+      if(error) throw error;
+    } catch(err){
+      showToast('⚠ Erro ao salvar no banco: ' + err.message, 'rd');
+    }
+
     // Atualizar pill do nav se for o usuário logado
-    if(currentUser && currentUser.id===id){
+    if(currentUser && String(currentUser.id)===String(id)){
       currentUser.name=p.name; currentUser.color=p.color; currentUser.foto=p.foto||'';
       const av=document.getElementById('nav-av');
       const un=document.getElementById('nav-uname');
       if(av) _updateNavAvatar(av, p);
       if(un) un.textContent=p.name.split(' ').filter(Boolean).slice(0,2).join(' ');
+      localStorage.setItem('diefra_user', JSON.stringify(currentUser));
     }
     _pendingParticipantFoto=null;
-    closeModal(); renderParticipants(); scheduleAutoSync();
+    closeModal(); renderParticipants();
     showToast('✅ Participante atualizado!','gn');
 
   } else {
-    // ── CRIAR novo ──────────────────────────────────────────────────────────
-    ST.participants.push({
-      id: ++ST.nextId,
-      name: name.trim(),
-      cargo: cargo.trim(),
-      dept:  dept.trim() || '—',
+    // ── CRIAR novo ───────────────────────────────────────────────────────────
+    const newP = {
+      name:     name.trim(),
+      cargo:    cargo.trim(),
+      dept:     dept.trim() || '—',
       color,
       username: username.trim(),
-      email: email.trim(),
-      password: passEl ? passEl.value : '',
-      foto: _pendingParticipantFoto || '',
-    });
+      email:    email.trim(),
+      ativo:    true,
+    };
+
+    // Salva no Supabase e pega o ID gerado
+    try {
+      const { data, error } = await _sb.from('gestores_contrato').insert([newP]).select().single();
+      if(error) throw error;
+      newP.id = data.id;
+      showToast('✅ Participante cadastrado!','gn');
+    } catch(err){
+      showToast('⚠ Erro ao salvar no banco: ' + err.message, 'rd');
+      newP.id = ++ST.nextId; // fallback local
+    }
+
+    ST.participants.push(newP);
     _pendingParticipantFoto=null;
-    closeModal(); renderParticipants(); scheduleAutoSync();
-    showToast('✅ Participante cadastrado!','gn');
+    closeModal(); renderParticipants();
   }
 }
 
@@ -9451,13 +9507,13 @@ async function doLogin(){
 
     // Busca dados do participante pelo e-mail
     const { data: part, error: partErr } = await _sb
-      .from('participantes').select('*').eq('email', email).maybeSingle();
+      .from('gestores_contrato').select('*').eq('email', email).maybeSingle();
 
     // Fallback: busca pelo username (caso e-mail não esteja preenchido na tabela ainda)
     let userData = part;
     if(!userData){
       const { data: byUser } = await _sb
-        .from('participantes').select('*').eq('username', email).maybeSingle();
+        .from('gestores_contrato').select('*').eq('username', email).maybeSingle();
       userData = byUser;
     }
     if(!userData){
@@ -9955,6 +10011,18 @@ async function pushToSheets(silent){
       descricao:c.descricao,valor:c.valor,data:c.data,categoria:c.categoria,obs:c.obs
     })),{onConflict:'id'}));
 
+    if(ST.participants?.length)    ops.push(_sb.from('gestores_contrato').upsert(ST.participants.map(p=>({
+      id:p.id,name:p.name,cargo:p.cargo||'',dept:p.dept||'',
+      color:p.color||'',username:p.username||'',email:p.email||'',
+      role:p.role||'user',ativo:p.ativo!==false
+    })).filter(p=>p.id),{onConflict:'id'}));
+
+    if(ST.gestoresUnidade?.length) ops.push(_sb.from('gestores_unidade').upsert(ST.gestoresUnidade.map(g=>({
+      id:g.id,name:g.name,cargo:g.cargo||'',dept:g.dept||'',
+      email:g.email||'',username:g.username||'',unidade:g.unidade||'',
+      phone:g.phone||'',color:g.color||'#7c3aed',ativo:true
+    })).filter(g=>g.id),{onConflict:'id'}));
+
     await Promise.all(ops);
 
     _lastSyncAt = new Date();
@@ -9976,7 +10044,7 @@ async function pullFromSheets(silent){
   if(!silent) setSyncStatus('syncing','Carregando…');
   try {
     const [
-      {data:contratos},  {data:tarefas},     {data:participantes},
+      {data:contratos},  {data:tarefas},     {data:participantes},  {data:gestoresUnidadeDB},
       {data:medicoes},   {data:entregaveis}, {data:auditorias},
       {data:frota},      {data:viagens},     {data:ferias},
       {data:epiItens},   {data:epiEntregas}, {data:calibEquips},
@@ -9984,7 +10052,8 @@ async function pullFromSheets(silent){
     ] = await Promise.all([
       _sb.from('contratos').select('*').order('criado_em',{ascending:false}),
       _sb.from('tarefas').select('*'),
-      _sb.from('participantes').select('*').eq('ativo',true),
+      _sb.from('gestores_contrato').select('*').eq('ativo',true),
+      _sb.from('gestores_unidade').select('*').eq('ativo',true),
       _sb.from('medicoes').select('*'),
       _sb.from('entregaveis').select('*'),
       _sb.from('auditorias').select('*'),
@@ -10003,7 +10072,8 @@ async function pullFromSheets(silent){
 
     ST.contracts       = _merge(contratos,      ST.contracts);
     ST.tasks           = _merge(tarefas,         ST.tasks);
-    ST.participants    = _merge(participantes,   ST.participants);
+    ST.participants    = _merge(participantes,      ST.participants);
+    ST.gestoresUnidade = _merge(gestoresUnidadeDB, ST.gestoresUnidade);
     ST.vacations       = _merge(ferias,          ST.vacations);
     ST.trips           = _merge(viagens,         ST.trips);
     ST.frota           = _merge(frota,           ST.frota);
@@ -12875,7 +12945,7 @@ async function salvarNovoUsuario(){
 
   // Salva no Supabase
   try {
-    const { error } = await _sb.from('participantes').insert([{
+    const { error } = await _sb.from('gestores_contrato').insert([{
       name, username, email, cargo: cargo||'', dept: dept||'',
       role, color: newP.color, ativo: true,
     }]);
@@ -12948,7 +13018,7 @@ async function salvarEdicaoUsuario(id){
   // Atualiza no Supabase
   try {
     const upd = { name, username, email, cargo, dept, role };
-    const { error } = await _sb.from('participantes').update(upd).eq('id', id);
+    const { error } = await _sb.from('gestores_contrato').update(upd).eq('id', id);
     if(error) throw error;
 
     // Se informou nova senha → reseta via SQL (requer permissão)
@@ -12973,7 +13043,7 @@ async function deleteUsuario(id, name){
 
   // Remove do Supabase
   try {
-    const { error } = await _sb.from('participantes').update({ ativo: false }).eq('id', id);
+    const { error } = await _sb.from('gestores_contrato').update({ ativo: false }).eq('id', id);
     if(error) throw error;
   } catch(e){
     showToast('⚠ Erro ao remover: ' + e.message,'rd'); return;
