@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
 <title>DIEFRA · Gestão de Contratos 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Nunito:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Slab:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
@@ -696,8 +697,7 @@ body{
 .fgrp{display:flex;flex-direction:column;gap:6px}
 .flbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3)}
 .finp,.fsel,.ftxa{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--tx);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s;width:100%}
-input.finp,input.fi{text-transform:none!important}
-input.finp,input.fi,input.lg-inp,input.finp[type=password],input.finp[type=email],input.finp[type=text]{-webkit-text-size-adjust:100%;}
+input.finp,input.fi,input.lg-inp,input,textarea{text-transform:none!important;-webkit-text-transform:none!important}
 select.fsel,select.finp{text-transform:none}
 .finp:focus,.fsel:focus,.ftxa:focus{border-color:rgba(29,78,216,.5);background:rgba(29,78,216,.04)}
 .finp-tc{text-transform:none}
@@ -2296,12 +2296,12 @@ body.sec-medicoes .cont,
     <div class="lg-hint">Use seu email e senha cadastrados</div>
     <div class="lg-field">
       <label class="lg-label" for="lg-user">Login (usuário ou e-mail)</label>
-      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()">
+      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()" spellcheck="false">
     </div>
     <div class="lg-field">
       <label class="lg-label" for="lg-pass">Senha</label>
       <div style="position:relative">
-        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px">
+        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px" spellcheck="false" autocomplete="new-password">
         <button type="button" onclick="togglePassVis('lg-pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:17px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--gnl)'" onmouseout="this.style.color='var(--t3)'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:clamp(15px,3vw,17px);line-height:1;transition:color .2s;padding:4px;-webkit-tap-highlight-color:transparent">👁</button>
       </div>
     </div>
@@ -2392,7 +2392,7 @@ body.sec-medicoes .cont,
       <div class="hdr-sub">
         <span style="color:var(--t3);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.8px">Gestão de Contratos</span>
         <span class="hdr-sub-sep"></span>
-        Sede — <input class="sub-edit" id="hdr-sala" value="Sala 02" title="Clique para editar a sala">
+        Sede — <input class="sub-edit" id="hdr-sala" value="Sala 02" title="Clique para editar a sala" spellcheck="false">
         <span class="hdr-sub-sep"></span>
         <span id="hdr-sub-date">5 de Março de 2026</span>
       </div>
@@ -2482,7 +2482,7 @@ body.sec-medicoes .cont,
             oninput="dashSearch(this.value)"
             onkeydown="if(event.key==='Escape'){this.value='';dashSearch('');this.blur()}"
             onfocus="this.parentElement.style.borderColor='rgba(16,185,129,.4)'"
-            onblur="this.parentElement.style.borderColor='rgba(255,255,255,.10)';setTimeout(function(){var d=document.getElementById('dash-search-drop');if(d)d.style.display='none'},200)">
+            onblur="this.parentElement.style.borderColor='rgba(255,255,255,.10)';setTimeout(function(){var d=document.getElementById('dash-search-drop');if(d)d.style.display='none'},200)" spellcheck="false">
           <kbd style="font-size:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:5px;padding:2px 7px;color:var(--t3);font-family:monospace;flex-shrink:0">/</kbd>
         </div>
         <!-- Search dropdown -->
@@ -2813,7 +2813,7 @@ body.sec-medicoes .cont,
     <button class="fc" onclick="filterC('desmob',this)">Desmobilizado</button>
     <button class="fc" onclick="filterC('paralizado',this)">Paralizado</button>
     <button class="fc" onclick="filterC('finalizado',this)">Finalizado</button>
-    <div class="sw"><input class="si" placeholder="Buscar contrato..." oninput="searchC(this.value)"></div>
+    <div class="sw"><input class="si" placeholder="Buscar contrato..." oninput="searchC(this.value)" spellcheck="false"></div>
   </div>
   <div class="cg" id="contracts-grid"></div>
   <div id="kanban-board"></div>
@@ -3118,7 +3118,7 @@ body.sec-medicoes .cont,
         <option value="funcao">Função</option>
       </select>
       <div class="dp-search-wrap" style="flex:1;min-width:160px">
-        <input id="dp-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, cargo, função, matrícula…" oninput="renderDPCards()">
+        <input id="dp-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, cargo, função, matrícula…" oninput="renderDPCards()" spellcheck="false">
       </div>
       <button class="dp-pill" onclick="dpExportCSV()" title="Exportar CSV">📥 CSV</button>
       <button class="dp-pill" onclick="dpLimparFiltros()">✕ Limpar</button>
@@ -3225,7 +3225,7 @@ body.sec-medicoes .cont,
         <span style="font-size:13px;color:var(--t3)">&#128269;</span>
         <input id="mapa-hist-search" type="text" placeholder="Buscar por m&#234;s ou ano..."
                oninput="_mapaRenderHist()"
-               style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)">
+               style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)" spellcheck="false">
         <button onclick="document.getElementById('mapa-hist-search').value='';_mapaRenderHist()"
                 style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px">&#x2715;</button>
       </div>
@@ -3315,7 +3315,7 @@ body.sec-medicoes .cont,
       <option value="administrativo">Administrativo</option>
       <option value="comercial">Comercial</option>
     </select>
-    <input id="frota-f-busca" class="frota-filter-search" type="text" placeholder="🔍  Buscar placa, modelo, motorista…" oninput="renderFrotaCards()">
+    <input id="frota-f-busca" class="frota-filter-search" type="text" placeholder="🔍  Buscar placa, modelo, motorista…" oninput="renderFrotaCards()" spellcheck="false">
     <button class="frota-fbtn" onclick="frotaLimparFiltros()" style="flex-shrink:0">✕ Limpar</button>
   </div>
   <div class="frota-grid" id="frota-cards-wrap"></div>
@@ -3386,7 +3386,7 @@ body.sec-medicoes .cont,
         <option value="ferramenta">Ferramenta / Equipamento</option>
       </select>
       <div class="dp-search-wrap" style="flex:1;min-width:160px">
-        <input id="epi-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, CA, fabricante…" oninput="renderEPIEstoque()">
+        <input id="epi-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, CA, fabricante…" oninput="renderEPIEstoque()" spellcheck="false">
       </div>
       <button class="epi-pill" onclick="epiExportCSV()" title="Exportar CSV">📥 CSV</button>
       <button class="epi-pill" onclick="epiLimparFiltros()">✕ Limpar</button>
@@ -3408,7 +3408,7 @@ body.sec-medicoes .cont,
         <button class="epi-pill" data-epist="baixado" onclick="epiFiltroStatus(this,'baixado')" style="background:rgba(100,116,139,.1);border-color:rgba(100,116,139,.3);color:var(--t3)">🔻 Baixado</button>
       </div>
       <div class="dp-search-wrap" style="flex:1;min-width:160px">
-        <input id="epi-ent-busca" class="dp-search" type="text" placeholder="🔍  Colaborador, item, matrícula…" oninput="renderEPIEntregas()">
+        <input id="epi-ent-busca" class="dp-search" type="text" placeholder="🔍  Colaborador, item, matrícula…" oninput="renderEPIEntregas()" spellcheck="false">
       </div>
       <button class="epi-pill" onclick="epiExportEntregasCSV()">📥 CSV</button>
     </div>
@@ -3664,7 +3664,7 @@ body.sec-medicoes .cont,
           <input id="custo-med-pass-inp" type="password" class="finp"
                  placeholder="••••••••" autocomplete="current-password"
                  style="width:100%"
-                 onkeydown="if(event.key==='Enter')custoMedConfirmPass()">
+                 onkeydown="if(event.key==='Enter')custoMedConfirmPass()" spellcheck="false" autocomplete="new-password">
         </div>
         <div id="custo-med-pass-err" style="font-size:11px;color:#ef4444;min-height:16px;margin-bottom:12px;text-align:center"></div>
         <div style="display:flex;gap:10px">
@@ -3758,7 +3758,7 @@ body.sec-medicoes .cont,
                  type="text"
                  placeholder="Buscar por mês ou ano... (ex: mai, 2026, jan, set)"
                  oninput="_custoMedHistTimeline()"
-                 style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)">
+                 style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)" spellcheck="false">
           <button onclick="document.getElementById('custo-med-hist-search').value='';_custoMedHistTimeline()"
                   style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:2px 8px;border-radius:6px"
                   title="Limpar busca">✕</button>
@@ -5949,9 +5949,9 @@ function openContractModal(id){
       </div>
     </div>
     <div class="fg">
-      <div class="fgrp full"><div class="flbl">Nome do Contrato</div><input class="finp" id="ci-name" value="${c?c.name:''}" placeholder="Nome completo do contrato"></div>
-      <div class="fgrp"><div class="flbl">Centro de Custo</div><input class="finp" id="ci-code" value="${c?c.code:''}" placeholder="Ex: 230209301"></div>
-      <div class="fgrp"><div class="flbl">Nº Obra</div><input class="finp" id="ci-nobra" value="${c?c.nObra||'':''}" placeholder="Ex: 2093"></div>
+      <div class="fgrp full"><div class="flbl">Nome do Contrato</div><input class="finp" id="ci-name" value="${c?c.name:''}" placeholder="Nome completo do contrato" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Centro de Custo</div><input class="finp" id="ci-code" value="${c?c.code:''}" placeholder="Ex: 230209301" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Nº Obra</div><input class="finp" id="ci-nobra" value="${c?c.nObra||'':''}" placeholder="Ex: 2093" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Status</div><select class="fsel" id="ci-status">
         <option value="ativo"          ${c&&c.status==='ativo'?          'selected':''}>Ativo</option>
         <option value="finalizado"     ${c&&c.status==='finalizado'?     'selected':''}>Finalizado</option>
@@ -5994,7 +5994,7 @@ function openContractModal(id){
                 })()}
               </select>
             </div>
-            <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}"></div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}" spellcheck="false"></div>
           </div>
         </div>
       </div>
@@ -6028,7 +6028,7 @@ function openContractModal(id){
                 })()}
               </select>
             </div>
-            <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}"></div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}" spellcheck="false"></div>
           </div>
         </div>
       </div>
@@ -6044,7 +6044,7 @@ function openContractModal(id){
           📎 Link do Contrato no Google Drive
           ${c&&c.linkContrato ? `<a href="${c.linkContrato}" target="_blank" onclick="event.stopPropagation()" style="font-size:10px;color:#38bdf8;font-weight:700;text-decoration:none;padding:2px 8px;border-radius:6px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2)">↗ Testar link</a>` : ''}
         </div>
-        <input class="finp" id="ci-link" value="${c?c.linkContrato||'':''}" placeholder="Cole o link do Google Drive aqui (https://...)">
+        <input class="finp" id="ci-link" value="${c?c.linkContrato||'':''}" placeholder="Cole o link do Google Drive aqui (https://...)" spellcheck="false">
       </div>
     </div>
     <div style="margin:20px 0 14px;font-family:var(--fh);font-size:16px;font-weight:700;padding-top:16px;border-top:1px solid var(--b1)">
@@ -6112,19 +6112,19 @@ function openContractModal(id){
       </div>
       <div class="fgrp full" style="margin-bottom:4px">
         <div class="flbl">📅 Período de Medição</div>
-        <input class="finp" type="text" id="ci-periodo-med" value="${c?c.periodoMedicao||'':''}" placeholder="Ex: 21 - 20  (dia início — dia fim do ciclo)">
+        <input class="finp" type="text" id="ci-periodo-med" value="${c?c.periodoMedicao||'':''}" placeholder="Ex: 21 - 20  (dia início — dia fim do ciclo)" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">📐 Período de Entrega da Medição</div>
-        <input class="finp" type="text" id="ci-periodo-entrega" value="${c?c.periodoEntrega||'':''}" placeholder="Ex: 12 - 15  (dia início — dia fim)">
+        <input class="finp" type="text" id="ci-periodo-entrega" value="${c?c.periodoEntrega||'':''}" placeholder="Ex: 12 - 15  (dia início — dia fim)" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">🔍 Período de Análise do Cliente</div>
-        <input class="finp" type="text" id="ci-periodo-analise" value="${c?c.periodoAnalise||'':''}" placeholder="Ex: 16 - 20  (dia início — dia fim)">
+        <input class="finp" type="text" id="ci-periodo-analise" value="${c?c.periodoAnalise||'':''}" placeholder="Ex: 16 - 20  (dia início — dia fim)" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">💳 Período de Pagamento do Cliente</div>
-        <input class="finp" type="text" id="ci-periodo-pagamento" value="${c?c.periodoPagamento||'':''}" placeholder="Ex: 25  (dia do pagamento)">
+        <input class="finp" type="text" id="ci-periodo-pagamento" value="${c?c.periodoPagamento||'':''}" placeholder="Ex: 25  (dia do pagamento)" spellcheck="false">
       </div>
     </div>`;
   // Auto-calc: Valor Global Atual = Original + Último Aditivo
@@ -7476,10 +7476,10 @@ function openManagerModal(id){
           oninput="const v=this.value.trim()||'?';
             document.getElementById('mg-name-prev').textContent=this.value||'Novo gestor';
             const av=document.getElementById('mg-av-prev');
-            if(av&&!av.querySelector('img')){av.textContent=v.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');}">
+            if(av&&!av.querySelector('img')){av.textContent=v.split(/\s+/).filter(Boolean).slice(0,2).map(w= spellcheck="false">w[0].toUpperCase()).join('');}">
       </div>
-      <div class="fgrp"><div class="flbl">Cargo / Função</div><input class="finp" id="mg-cargo" value="${m?m.cargo||'':'' }" placeholder="Ex: Coordenador, Supervisor de Contrato"></div>
-      <div class="fgrp"><div class="flbl">Departamento / UEN</div><input class="finp" id="mg-dept" value="${m?m.dept:''}" placeholder="Ex: UEN-300, Lab. Técnica"></div>
+      <div class="fgrp"><div class="flbl">Cargo / Função</div><input class="finp" id="mg-cargo" value="${m?m.cargo||'':'' }" placeholder="Ex: Coordenador, Supervisor de Contrato" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Departamento / UEN</div><input class="finp" id="mg-dept" value="${m?m.dept:''}" placeholder="Ex: UEN-300, Lab. Técnica" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Data de Admissão</div><input class="finp" type="date" id="mg-adm" value="${m?m.admissao||'':''}"></div>
       <div class="fgrp full"><div class="flbl">Contrato Vinculado</div>
         <select class="fsel" id="mg-cid">
@@ -8034,7 +8034,7 @@ function openVacModal(vid){
   document.getElementById('modal-body').innerHTML=`
     <div class="fg">
       <div class="fgrp full"><div class="flbl">Colaborador</div><select class="fsel" id="vi-mgr">${mgrOpts}</select></div>
-      <div class="fgrp"><div class="flbl">Período Aquisitivo</div><input class="finp" id="vi-pa" value="${v?v.periodoAquisitivo:''}" placeholder="Ex: 2024-2025"></div>
+      <div class="fgrp"><div class="flbl">Período Aquisitivo</div><input class="finp" id="vi-pa" value="${v?v.periodoAquisitivo:''}" placeholder="Ex: 2024-2025" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Substituto durante as Férias</div><select class="fsel" id="vi-sub">${partOpts}</select></div>
       <div class="fgrp" style="grid-column:1/-1">
         <div class="flbl">Período das Últimas Férias Gozadas</div>
@@ -8197,30 +8197,30 @@ function openGUModal(id){
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo Gestor Unidade';
                      document.getElementById('pi-av-prev').textContent=
-                       v.split(/\\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');"/>
+                       v.split(/\\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');" spellcheck="false"/>
         </div>
         <div class="fgrp"><div class="flbl">Cargo / Função</div>
-          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Gerente de Unidade">
+          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Gerente de Unidade" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">Unidade / UEN</div>
-          <input class="finp" id="gu-unidade" value="${p?p.unidade||'':''}" placeholder="Ex: UEN-300, Unidade Norte">
+          <input class="finp" id="gu-unidade" value="${p?p.unidade||'':''}" placeholder="Ex: UEN-300, Unidade Norte" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">Departamento</div>
-          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: Diretoria Técnica">
+          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: Diretoria Técnica" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">✉ E-mail</div>
-          <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}" placeholder="seu@email.com">
+          <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}" placeholder="seu@email.com" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">📱 Telefone</div>
-          <input class="finp" id="gu-phone" value="${p?p.phone||'':''}" placeholder="(31) 99999-9999">
+          <input class="finp" id="gu-phone" value="${p?p.phone||'':''}" placeholder="(31) 99999-9999" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
-          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off">
+          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">🔒 Senha</div>
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass" value="${p?p.password||'':''}"
-              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px">
+              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px" spellcheck="false" autocomplete="new-password">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8258,9 +8258,9 @@ function _guEnsureExtraFields(){
   extra.id = 'gu-extra-fields';
   extra.innerHTML = `
     <div><label class="fl" style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);display:block;margin-bottom:4px">UNIDADE</label>
-      <input id="gu-unidade-inp" class="fi" placeholder="Ex: Unidade Norte, UEN-300" style="width:100%"></div>
+      <input id="gu-unidade-inp" class="fi" placeholder="Ex: Unidade Norte, UEN-300" style="width:100%" spellcheck="false"></div>
     <div><label class="fl" style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);display:block;margin-bottom:4px">TELEFONE</label>
-      <input id="gu-phone-inp" class="fi" placeholder="Ex: (31) 99999-9999" style="width:100%"></div>`;
+      <input id="gu-phone-inp" class="fi" placeholder="Ex: (31) 99999-9999" style="width:100%" spellcheck="false"></div>`;
   container.appendChild(extra);
 }
 
@@ -8379,14 +8379,9 @@ function colorPickerHTML(selectedVal, targetId, previewId){
 function openParticipantModal(id){
   const p = id ? ST.participants.find(x=>x.id===id) : null;
   _pendingParticipantFoto = null;
-  // Guard: admin e alex.mota podem editar qualquer perfil
-  const _isSuperAdmin = currentUser && (
-    currentUser.role==='admin' ||
-    (currentUser.username||'')==='alex.mota' ||
-    (currentUser.email||'').toLowerCase().includes('alex.mota')
-  );
-  if(p && !_isSuperAdmin && (!currentUser || String(currentUser.id) !== String(p.id))){
-    showToast('⛔ Você não tem permissão para editar este perfil.','rd');
+  // Qualquer usuário logado pode editar perfis
+  if(p && !currentUser){
+    showToast('⛔ Faça login para editar perfis.','rd');
     return;
   }
   const initColor = p ? p.color : COLORS[0].val;
@@ -8438,13 +8433,13 @@ function openParticipantModal(id){
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo participante';
                      document.getElementById('pi-av-prev').textContent=
-                       v.split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');"/>
+                       v.split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');" spellcheck="false"/>
         </div>
         <div class="fgrp"><div class="flbl">Cargo / Função</div>
-          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Engenheiro Civil">
+          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Engenheiro Civil" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">Departamento / UEN</div>
-          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: UEN-300">
+          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: UEN-300" spellcheck="false">
         </div>
       </div>
 
@@ -8452,11 +8447,11 @@ function openParticipantModal(id){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
           <input class="finp" id="pi-user" value="${p?p.username||'':''}"
-            placeholder="nome.sobrenome" autocomplete="off">
+            placeholder="nome.sobrenome" autocomplete="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">✉ E-mail</div>
           <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}"
-            placeholder="seu@email.com" autocomplete="email">
+            placeholder="seu@email.com" autocomplete="email" spellcheck="false">
         </div>
       </div>
 
@@ -8466,7 +8461,7 @@ function openParticipantModal(id){
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass"
               value="${p?p.password||'':''}" placeholder="••••••••"
-              autocomplete="new-password" autocomplete="off" style="padding-right:40px">
+              autocomplete="new-password" autocomplete="off" style="padding-right:40px" spellcheck="false" autocomplete="new-password">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8488,7 +8483,7 @@ function openParticipantModal(id){
             <div style="position:relative">
               <input class="finp" type="password" id="pi-newpass" autocomplete="new-password"
                 placeholder="Mín. 6 caracteres" style="padding-right:40px"
-                oninput="checkPassStrength(this.value)">
+                oninput="checkPassStrength(this.value)" spellcheck="false" autocomplete="new-password">
               <button type="button" onclick="togglePassVis('pi-newpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8502,7 +8497,7 @@ function openParticipantModal(id){
           <div class="fgrp"><div class="flbl">Confirmar Nova Senha</div>
             <div style="position:relative">
               <input class="finp" type="password" id="pi-confpass" autocomplete="new-password"
-                placeholder="Repita a senha" style="padding-right:40px">
+                placeholder="Repita a senha" style="padding-right:40px" spellcheck="false" autocomplete="new-password">
               <button type="button" onclick="togglePassVis('pi-confpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8553,14 +8548,8 @@ function saveParticipant(id){
 
   if(id){
     // ── EDITAR existente ────────────────────────────────────────────────────
-    const _isSuperAdminSave = currentUser && (
-      currentUser.role==='admin' ||
-      (currentUser.username||'')==='alex.mota' ||
-      (currentUser.email||'').toLowerCase().includes('alex.mota')
-    );
-    if(!currentUser || (!_isSuperAdminSave && String(currentUser.id)!==String(id))){
-      showToast('⛔ Você não tem permissão para editar este perfil.','rd'); return;
-    }
+    // Qualquer usuário logado pode salvar alterações
+    if(!currentUser){ showToast('⛔ Faça login primeiro.','rd'); return; }
     const p = ST.participants.find(x=>x.id===id);
     if(!p) return;
     p.name     = name.trim();
@@ -8608,8 +8597,16 @@ function saveParticipant(id){
 function togglePassVis(inputId,btn){
   const inp=document.getElementById(inputId);
   if(!inp) return;
-  inp.type = inp.type==='password' ? 'text' : 'password';
-  btn.textContent = inp.type==='password' ? '👁' : '🙈';
+  const showing = inp.type==='password';
+  inp.type = showing ? 'text' : 'password';
+  btn.textContent = showing ? '🙈' : '👁';
+  // Quando mostra a senha (type=text), desativa correção automática do Chrome
+  if(showing){
+    inp.setAttribute('spellcheck','false');
+    inp.setAttribute('autocorrect','off');
+    inp.setAttribute('autocomplete','off');
+    inp.setAttribute('autocapitalize','none');
+  }
 }
 
 // Helper: atualiza o avatar do nav com foto ou iniciais
@@ -8687,13 +8684,13 @@ function openChangePassModal(pid){
       </div>
       <div class="fgrp"><div class="flbl">Senha Atual</div>
         <div style="position:relative">
-          <input class="finp" type="password" id="cp-old" placeholder="••••••••" style="padding-right:44px">
+          <input class="finp" type="password" id="cp-old" placeholder="••••••••" style="padding-right:44px" spellcheck="false" autocomplete="new-password">
           <button onclick="togglePassVis('cp-old',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:16px">👁</button>
         </div>
       </div>
       <div class="fgrp"><div class="flbl">Nova Senha</div>
         <div style="position:relative">
-          <input class="finp" type="password" id="cp-new" placeholder="Mínimo 6 caracteres" style="padding-right:44px" oninput="checkPassStrength(this.value)">
+          <input class="finp" type="password" id="cp-new" placeholder="Mínimo 6 caracteres" style="padding-right:44px" oninput="checkPassStrength(this.value)" spellcheck="false" autocomplete="new-password">
           <button onclick="togglePassVis('cp-new',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:16px">👁</button>
         </div>
         <div id="pass-strength" style="margin-top:6px;height:4px;border-radius:4px;background:var(--b1);overflow:hidden"><div id="pass-bar" style="height:100%;width:0;transition:all .3s;border-radius:4px"></div></div>
@@ -8701,7 +8698,7 @@ function openChangePassModal(pid){
       </div>
       <div class="fgrp"><div class="flbl">Confirmar Nova Senha</div>
         <div style="position:relative">
-          <input class="finp" type="password" id="cp-conf" placeholder="Repita a nova senha" style="padding-right:44px">
+          <input class="finp" type="password" id="cp-conf" placeholder="Repita a nova senha" style="padding-right:44px" spellcheck="false" autocomplete="new-password">
           <button onclick="togglePassVis('cp-conf',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:16px">👁</button>
         </div>
       </div>
@@ -9822,7 +9819,7 @@ function openTripModal(tid, prefillPid){
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="tr-obs" value="${trip?trip.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="tr-obs" value="${trip?trip.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">🎨 Cor</div>
@@ -10330,11 +10327,11 @@ function openAuditModal(aid, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">🔗 Link da Auditoria</div>
-        <input class="finp" id="au-link" value="${audit?audit.link||'':''}" placeholder="https://...">
+        <input class="finp" id="au-link" value="${audit?audit.link||'':''}" placeholder="https://..." spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="au-obs" value="${audit?audit.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="au-obs" value="${audit?audit.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
     </div>`;
 
@@ -10653,11 +10650,11 @@ function openGestaoModal(agid, prefillCtId){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp">
           <div class="flbl">📄 Nº Relatório</div>
-          <input class="finp" id="ag-numrel" value="${ag?ag.numRelatorio||'':''}" placeholder="Ex: 001/26">
+          <input class="finp" id="ag-numrel" value="${ag?ag.numRelatorio||'':''}" placeholder="Ex: 001/26" spellcheck="false">
         </div>
         <div class="fgrp">
           <div class="flbl">🔗 Link do Relatório</div>
-          <input class="finp" id="ag-linkrel" value="${ag?ag.linkRelatorio||'':''}" placeholder="https://...">
+          <input class="finp" id="ag-linkrel" value="${ag?ag.linkRelatorio||'':''}" placeholder="https://..." spellcheck="false">
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -10680,7 +10677,7 @@ function openGestaoModal(agid, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="ag-obs" value="${ag?ag.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="ag-obs" value="${ag?ag.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
     </div>`;
 
@@ -10958,7 +10955,7 @@ function openEntModal(entId, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">📦 Nome do Entregável</div>
-        <input class="finp" id="ent-nome" value="${ent?ent.nome||'':''}" placeholder="Ex: RELATÓRIO DE ENSAIOS">
+        <input class="finp" id="ent-nome" value="${ent?ent.nome||'':''}" placeholder="Ex: RELATÓRIO DE ENSAIOS" spellcheck="false">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp">
@@ -10976,7 +10973,7 @@ function openEntModal(entId, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="ent-obs" value="${ent?ent.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="ent-obs" value="${ent?ent.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
     </div>`;
 
@@ -11042,11 +11039,11 @@ function openEntMesModal(entId, mesKey, triggerEl){
       </div>
       <div class="fgrp">
         <div class="flbl">📄 Entregável (nome/identificação)</div>
-        <input class="finp" id="em-texto" value="${entr.texto||''}" placeholder="Ex: 01. Janeiro, MEDIÇAO_JAN26...">
+        <input class="finp" id="em-texto" value="${entr.texto||''}" placeholder="Ex: 01. Janeiro, MEDIÇAO_JAN26..." spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">🔗 Link (opcional)</div>
-        <input class="finp" id="em-link" value="${entr.link||''}" placeholder="https://...">
+        <input class="finp" id="em-link" value="${entr.link||''}" placeholder="https://..." spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">📅 Data de Entrega</div>
@@ -11149,9 +11146,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   // Sync sala → footer
   _initSalaSync();
   _initLiveClock(); // relógio ao vivo
-  var n=Math.max(0,Math.min(cts.length-1,idx+dir));
-  if(cts[n]) mapaSelectCt(cts[n].id);
-}
+  _initUenPicker();
+});
 
 // ── Navegação de mês ───────────────────────────────────────────────────
 function mapaMesShift(dir){
@@ -12270,7 +12266,7 @@ function openMedNovaModal(prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">🔗 Boletim de Medição (Google Drive)</div>
-        <input class="finp" id="mn-link" placeholder="Cole o link do Google Drive aqui (https://...)">
+        <input class="finp" id="mn-link" placeholder="Cole o link do Google Drive aqui (https://...)" spellcheck="false">
       </div>
       <div style="margin-top:4px;padding-top:14px;border-top:1px solid var(--b1)">
         <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">📅 Datas de Faturamento</div>
@@ -12410,7 +12406,7 @@ function openMedModal(contractId, mesKey){
           ${rec.link ? `<a href="${rec.link}" target="_blank" onclick="event.stopPropagation()" style="font-size:10px;color:#38bdf8;font-weight:700;text-decoration:none;padding:1px 7px;border-radius:100px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2)">↗ Abrir link</a>` : ''}
         </div>
         <input class="finp" id="med-link" value="${rec.link||''}"
-          placeholder="Cole o link do Google Drive aqui (https://...)">
+          placeholder="Cole o link do Google Drive aqui (https://...)" spellcheck="false">
       </div>
       <div style="margin-top:4px;padding-top:14px;border-top:1px solid var(--b1)">
         <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">📅 Datas de Faturamento</div>
@@ -12555,7 +12551,7 @@ function _showLinkModal(url){
         <input id="_link-url-inp" value="${url}" readonly
           style="flex:1;background:#021a0a;border:1px solid rgba(56,189,248,.3);border-radius:8px;
                  padding:10px 14px;color:#e2e8f0;font-size:12px;font-family:monospace;outline:none"
-          onclick="this.select()">
+          onclick="this.select()" spellcheck="false">
         <button onclick="_copyLink()" id="_copy-btn"
           style="background:#1d4ed8;border:none;border-radius:8px;color:#fff;
                  padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;
@@ -12613,58 +12609,7 @@ function linkBtn(url, label){
 }
 
 
-// ════════════════════════════════════════════════════════════════
-//  TITLE CASE AUTO-FORMAT — aplica em todos os .finp texto
-// ════════════════════════════════════════════════════════════════
-const TC_SKIP = new Set([
-  'de','da','do','das','dos','e','a','o','as','os',
-  'em','na','no','nas','nos','com','por','para','que',
-  'ao','à','às','aos','se','ou','nem','mas','pois',
-]);
-
-function toTitleCase(str){
-  if(!str) return str;
-  return str.replace(/\S+/g, (word, offset)=>{
-    const lower = word.toLowerCase();
-    // Always capitalize first word; skip particles in the middle
-    if(offset === 0 || !TC_SKIP.has(lower)){
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    }
-    return lower;
-  });
-}
-
-// Delegated listener — catches all current and future .finp text inputs
-document.addEventListener('input', function(e){
-  const el = e.target;
-  if(!el.classList.contains('finp')) return;
-  const type = (el.type||'text').toLowerCase();
-  // Only text-like inputs (not date, number, color, etc.)
-  if(['text','search','tel','url','email',''].includes(type)){
-    const pos  = el.selectionStart;
-    const val  = el.value;
-    const tc   = toTitleCase(val);
-    if(tc !== val){
-      el.value = tc;
-      // Restore caret position
-      try{ el.setSelectionRange(pos, pos); }catch(e){}
-    }
-  }
-}, true);
-
-// Also apply on paste
-document.addEventListener('paste', function(e){
-  const el = e.target;
-  if(!el.classList.contains('finp')) return;
-  const type = (el.type||'text').toLowerCase();
-  if(['text','search','tel','url','email',''].includes(type)){
-    // let paste happen, then format
-    setTimeout(()=>{
-      const tc = toTitleCase(el.value);
-      if(tc !== el.value) el.value = tc;
-    }, 0);
-  }
-}, true);
+// Campos livres — sem formatação automática
 
 // ════════════════════════════════════════════════════════════════
 //  NAV ARROW SCROLL
@@ -12867,19 +12812,19 @@ function openNovoUsuarioModal(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div style="grid-column:1/-1">
         <label class="fl">Nome Completo</label>
-        <input class="fi" id="nu-name" placeholder="Nome do usuário" type="text">
+        <input class="fi" id="nu-name" placeholder="Nome do usuário" type="text" spellcheck="false">
       </div>
       <div>
         <label class="fl">Username</label>
-        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text">
+        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text" spellcheck="false">
       </div>
       <div>
         <label class="fl">E-mail (para login)</label>
-        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email">
+        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email" spellcheck="false">
       </div>
       <div>
         <label class="fl">Senha</label>
-        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password">
+        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password" spellcheck="false" autocomplete="new-password">
       </div>
       <div>
         <label class="fl">Perfil</label>
@@ -12890,11 +12835,11 @@ function openNovoUsuarioModal(){
       </div>
       <div>
         <label class="fl">Cargo</label>
-        <input class="fi" id="nu-cargo" placeholder="ex: Supervisor de Campo" type="text">
+        <input class="fi" id="nu-cargo" placeholder="ex: Supervisor de Campo" type="text" spellcheck="false">
       </div>
       <div>
         <label class="fl">Departamento</label>
-        <input class="fi" id="nu-dept" placeholder="ex: UEN-300" type="text">
+        <input class="fi" id="nu-dept" placeholder="ex: UEN-300" type="text" spellcheck="false">
       </div>
     </div>`;
   document.getElementById('modal-footer').innerHTML = `
@@ -12952,19 +12897,19 @@ function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div style="grid-column:1/-1">
         <label class="fl">Nome</label>
-        <input class="fi" id="eu-name" value="${name}" type="text">
+        <input class="fi" id="eu-name" value="${name}" type="text" spellcheck="false">
       </div>
       <div>
         <label class="fl">Username</label>
-        <input class="fi" id="eu-username" value="${username}" type="text">
+        <input class="fi" id="eu-username" value="${username}" type="text" spellcheck="false">
       </div>
       <div>
         <label class="fl">E-mail</label>
-        <input class="fi" id="eu-email" value="${email||''}" type="email">
+        <input class="fi" id="eu-email" value="${email||''}" type="email" spellcheck="false">
       </div>
       <div>
         <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(vazio = manter)</span></label>
-        <input class="fi" id="eu-pass" placeholder="••••••" type="password">
+        <input class="fi" id="eu-pass" placeholder="••••••" type="password" spellcheck="false" autocomplete="new-password">
       </div>
       <div>
         <label class="fl">Perfil</label>
@@ -12975,11 +12920,11 @@ function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
       </div>
       <div>
         <label class="fl">Cargo</label>
-        <input class="fi" id="eu-cargo" value="${cargo}" type="text">
+        <input class="fi" id="eu-cargo" value="${cargo}" type="text" spellcheck="false">
       </div>
       <div>
         <label class="fl">Departamento</label>
-        <input class="fi" id="eu-dept" value="${dept}" type="text">
+        <input class="fi" id="eu-dept" value="${dept}" type="text" spellcheck="false">
       </div>
     </div>`;
   document.getElementById('modal-footer').innerHTML = `
@@ -13996,7 +13941,7 @@ function openFrotaModal(vid){
   const tabs=[{id:'ident',lbl:'1. Identificação'},{id:'operacao',lbl:'2. Operacional'},{id:'responsab',lbl:'3. Responsabilidade'},{id:'financeiro',lbl:'4. Financeiro'},{id:'manutencao',lbl:'5. Manutenção'},{id:'documentos',lbl:'6. Documentação'},{id:'seguranca',lbl:'7. Segurança'},{id:'foto',lbl:'8. Foto'}];
   const tabBar='<div class="frota-tab-bar">'+tabs.map(t=>'<button class="frota-tab'+(t.id==='ident'?' active':'')+'" onclick="switchFrotaTab(\''+t.id+'\')">'+t.lbl+'</button>').join('')+'</div>';
   const tipoGrid='<div class="vtype-grid" id="frota-tipo-grid">'+Object.keys(VTYPE_SVG).map(k=>'<div class="vtype-item'+(sv('tipoVeiculo','sedan')===k?' selected':'')+'" data-tipo="'+k+'" onclick="selectVTipo(\''+k+'\')">'+VTYPE_SVG[k]+'<div class="vtype-label">'+VTYPE_LABELS[k]+'</div></div>').join('')+'</div>';
-  const fi=(id,lbl,val,type,ph)=>'<div><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+(val||'')+'" placeholder="'+(ph||'')+'" class="fi"></div>';
+  const fi=(id,lbl,val,type,ph)=>'<div><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+(val||'')+'" placeholder="'+(ph||'')+'" class="fi" spellcheck="false"></div>';
   const fsel=(id,lbl,opts,val)=>'<div><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><select id="'+id+'" class="fi">'+opts.map(o=>'<option value="'+o.v+'"'+(o.v==val?' selected':'')+'>'+o.l+'</option>').join('')+'</select></div>';
   const fta=(id,lbl,val)=>'<div style="grid-column:1/-1"><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><textarea id="'+id+'" rows="3" class="fi" style="resize:vertical;text-transform:none">'+(val||'')+'</textarea></div>';
   const g2=(...a)=>'<div style="display:grid;grid-template-columns:'+('1fr '.repeat(a.length).trim())+';gap:14px;margin-bottom:14px">'+a.join('')+'</div>';
@@ -14341,7 +14286,7 @@ function openDPModal(id){
   const ctOpts=ST.contracts.map(ct=>`<option value="${ct.id}" ${ct.id==sv('contractId')?'selected':''}>${ct.name}</option>`).join('');
   const partOpts='<option value="">— Nenhum —</option>'+ST.participants.map(p=>`<option value="${p.name}" ${sv('responsavelDP')===p.name?'selected':''}>${p.name}</option>`).join('');
   // Helper de campo
-  const fi=(id,lbl,val,type='text',ph='',cls='')=>`<div class="fgrp ${cls}"><div class="flbl">${lbl}</div><input class="finp" id="${id}" type="${type}" value="${val}" placeholder="${ph}"></div>`;
+  const fi=(id,lbl,val,type='text',ph='',cls='')=>`<div class="fgrp ${cls}"><div class="flbl">${lbl}</div><input class="finp" id="${id}" type="${type}" value="${val}" placeholder="${ph}" spellcheck="false"></div>`;
   const fs=(id,lbl,opts,val)=>`<div class="fgrp"><div class="flbl">${lbl}</div><select class="fsel" id="${id}">${opts.map(o=>`<option value="${o.v}" ${val===o.v?'selected':''}>${o.l}</option>`).join('')}</select></div>`;
   const ft=(id,lbl,val,ph='',cls='')=>`<div class="fgrp ${cls}"><div class="flbl">${lbl}</div><textarea class="ftxa" id="${id}" placeholder="${ph}">${val}</textarea></div>`;
   const g2=(a,b)=>`<div class="fg">${a}${b}</div>`;
@@ -15201,7 +15146,7 @@ function fpOpenConfigImpostos(){
       ${fi2('fpc-salMinimo','Salário Mínimo (R$)',cfg.salMinimo)}
       <div class="fgrp" style="margin-bottom:0">
         <label class="flbl" style="font-size:10px">Referência Legal</label>
-        <input id="fpc-referencia" class="finp" type="text" value="${cfg.referencia}" style="padding:6px 10px;font-size:11px;height:34px">
+        <input id="fpc-referencia" class="finp" type="text" value="${cfg.referencia}" style="padding:6px 10px;font-size:11px;height:34px" spellcheck="false">
       </div>
     </div>
 
@@ -16024,11 +15969,11 @@ function _dpRenderFaltasModal(id, periodo){
         <select id="nf-motivo-sel" class="fsel" style="height:34px;font-size:11.5px;color-scheme:dark">
           ${ART473_MOTIVOS.map(m=>`<option value="${m.v}">${m.l}</option>`).join('')}
         </select>
-        <input id="nf-motivo-txt" class="finp" style="height:34px;font-size:12px;display:none" placeholder="Descreva o motivo">
+        <input id="nf-motivo-txt" class="finp" style="height:34px;font-size:12px;display:none" placeholder="Descreva o motivo" spellcheck="false">
       </div>
       <div class="fgrp" style="margin-bottom:0" id="nf-cid-grp">
         <label class="flbl" style="font-size:10px">CID (Atestado)</label>
-        <input id="nf-cid" class="finp" style="height:34px;font-size:12px" placeholder="Ex: J11, M54…">
+        <input id="nf-cid" class="finp" style="height:34px;font-size:12px" placeholder="Ex: J11, M54…" spellcheck="false">
       </div>
       <div class="fgrp" style="margin-bottom:0">
         <label class="flbl" style="font-size:10px">Comprovante Entregue?</label>
@@ -16042,7 +15987,7 @@ function _dpRenderFaltasModal(id, periodo){
     <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end">
       <div class="fgrp" style="margin-bottom:0">
         <label class="flbl" style="font-size:10px">Observação</label>
-        <input id="nf-obs" class="finp" style="height:34px;font-size:12px" placeholder="Observações adicionais…">
+        <input id="nf-obs" class="finp" style="height:34px;font-size:12px" placeholder="Observações adicionais…" spellcheck="false">
       </div>
       <button onclick="dpAdicionarFalta(${id})" class="btn btn-p" style="height:34px;white-space:nowrap;font-size:12px">
         ✚ Registrar Falta
@@ -16991,7 +16936,7 @@ function dpOpenFuncaoModal(id){
   const sv=(k,d='')=>f?f[k]||d:d;
   const ics=['🔧','👷','🏗','📐','🧪','💻','🚛','📋','💰','🔍','🎓','⚙️','🏢','📊','🔬','🌿','🚜','👔','🛡','📱'];
   document.getElementById('modal-title').textContent=f?'Editar Função':'Nova Função';
-  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div class="fgrp"><div class="flbl">Nome *</div><input class="finp" id="fn-nome" value="'+sv('nome')+'" placeholder="Ex: Técnico de Campo"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fgrp"><div class="flbl">CBO</div><input class="finp" id="fn-cbo" value="'+sv('cbo')+'" placeholder="Ex: 3114-05"></div><div class="fgrp"><div class="flbl">Categoria</div><input class="finp" id="fn-categoria" value="'+sv('categoria')+'" placeholder="Ex: Técnico"></div></div><div class="fgrp"><div class="flbl">Salário Referência (R$)</div><input class="finp" id="fn-salref" type="number" value="'+sv('salRef')+'" placeholder="0,00"></div><div class="fgrp"><div class="flbl">Descrição</div><textarea class="ftxa" id="fn-descricao" placeholder="Atividades principais…">'+sv('descricao')+'</textarea></div><div class="fgrp"><div class="flbl">Ícone</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ics.map(ic=>'<button type="button" onclick="document.getElementById(\'fn-icone\').value=\''+ic+'\';this.parentElement.querySelectorAll(\'button\').forEach(b=>b.style.background=\'transparent\');this.style.background=\'rgba(29,78,216,.3)\'" style="width:36px;height:36px;border:1px solid var(--b1);border-radius:8px;background:'+(sv('icone','🔧')===ic?'rgba(29,78,216,.3)':'transparent')+';cursor:pointer;font-size:18px">'+ic+'</button>').join('')+'<input id="fn-icone" value="'+sv('icone','🔧')+'" style="display:none"></div></div></div>';
+  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div class="fgrp"><div class="flbl">Nome *</div><input class="finp" id="fn-nome" value="'+sv('nome')+'" placeholder="Ex: Técnico de Campo" spellcheck="false"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fgrp"><div class="flbl">CBO</div><input class="finp" id="fn-cbo" value="'+sv('cbo')+'" placeholder="Ex: 3114-05" spellcheck="false"></div><div class="fgrp"><div class="flbl">Categoria</div><input class="finp" id="fn-categoria" value="'+sv('categoria')+'" placeholder="Ex: Técnico" spellcheck="false"></div></div><div class="fgrp"><div class="flbl">Salário Referência (R$)</div><input class="finp" id="fn-salref" type="number" value="'+sv('salRef')+'" placeholder="0,00"></div><div class="fgrp"><div class="flbl">Descrição</div><textarea class="ftxa" id="fn-descricao" placeholder="Atividades principais…">'+sv('descricao')+'</textarea></div><div class="fgrp"><div class="flbl">Ícone</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ics.map(ic=>'<button type="button" onclick="document.getElementById(\'fn-icone\').value=\''+ic+'\';this.parentElement.querySelectorAll(\'button\').forEach(b=>b.style.background=\'transparent\');this.style.background=\'rgba(29,78,216,.3)\'" style="width:36px;height:36px;border:1px solid var(--b1);border-radius:8px;background:'+(sv('icone','🔧')===ic?'rgba(29,78,216,.3)':'transparent')+';cursor:pointer;font-size:18px">'+ic+'</button>').join('')+'<input id="fn-icone" value="'+sv('icone','🔧')+'" style="display:none" spellcheck="false"></div></div></div>';
   document.getElementById('modal-footer').innerHTML='<button class="btn btn-s" onclick="closeModal()">Cancelar</button>'+(f?'<button class="btn btn-d" onclick="dpDeleteFuncao('+f.id+');closeModal()">🗑</button>':'')+'<button class="btn btn-p" onclick="dpSaveFuncao('+(f?f.id:0)+')">💾 Salvar</button>';
   openModal();
 }
@@ -17062,7 +17007,7 @@ function dpTransferirContrato(id){
   const c=(ST.dp||[]).find(x=>x.id===id);if(!c)return;
   const ctOpts=ST.contracts.map(ct=>'<option value="'+ct.id+'"'+(ct.id==c.contractId?' selected':'')+'>'+ct.name+'</option>').join('');
   document.getElementById('modal-title').textContent='🔄 Transferir Colaborador';
-  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(29,78,216,.08);border:1px solid rgba(29,78,216,.2);border-radius:12px"><div style="width:44px;height:44px;border-radius:12px;background:'+dpAvatarColor(c.nome||'?')+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;flex-shrink:0">'+dpInitials(c.nome)+'</div><div><div style="font-weight:700;font-size:14px">'+c.nome+'</div><div style="font-size:11px;color:var(--t2)">'+(c.cargo||'—')+(c.funcao?' · '+c.funcao:'')+'</div></div></div><div class="fgrp"><div class="flbl">Contrato atual</div><div style="background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--t2)">'+((ST.contracts.find(x=>x.id==c.contractId)||{}).name||'Não definido')+'</div></div><div class="fgrp"><div class="flbl">Transferir para *</div><select class="fsel" id="dp-transfer-ct">'+ctOpts+'</select></div><div class="fgrp"><div class="flbl">Motivo</div><input class="finp" id="dp-transfer-motivo" placeholder="Ex: Remanejamento…"></div></div>';
+  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(29,78,216,.08);border:1px solid rgba(29,78,216,.2);border-radius:12px"><div style="width:44px;height:44px;border-radius:12px;background:'+dpAvatarColor(c.nome||'?')+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;flex-shrink:0">'+dpInitials(c.nome)+'</div><div><div style="font-weight:700;font-size:14px">'+c.nome+'</div><div style="font-size:11px;color:var(--t2)">'+(c.cargo||'—')+(c.funcao?' · '+c.funcao:'')+'</div></div></div><div class="fgrp"><div class="flbl">Contrato atual</div><div style="background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--t2)">'+((ST.contracts.find(x=>x.id==c.contractId)||{}).name||'Não definido')+'</div></div><div class="fgrp"><div class="flbl">Transferir para *</div><select class="fsel" id="dp-transfer-ct">'+ctOpts+'</select></div><div class="fgrp"><div class="flbl">Motivo</div><input class="finp" id="dp-transfer-motivo" placeholder="Ex: Remanejamento…" spellcheck="false"></div></div>';
   document.getElementById('modal-footer').innerHTML='<button class="btn btn-s" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="dpConfirmarTransferencia('+id+')">🔄 Confirmar</button>';
   openModal();
 }
@@ -17213,7 +17158,7 @@ function dpEnhanceModal(id){
         <div style="font-size:10.5px;color:var(--t2);margin-bottom:12px">Converte HH:MM para número decimal (folha, Excel, eSocial)</div>
         <div class="fgrp" style="margin-bottom:10px">
           <div class="flbl">Tempo (HH:MM)</div>
-          <input class="finp" id="hc-hhm" type="text" placeholder="Ex: 8:30" oninput="dpHorasToDecimal()">
+          <input class="finp" id="hc-hhm" type="text" placeholder="Ex: 8:30" oninput="dpHorasToDecimal()" spellcheck="false">
         </div>
         <div id="hc-dec-result" style="background:rgba(0,0,0,.2);border-radius:10px;padding:14px;text-align:center;min-height:64px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">
           <span style="font-size:10px;color:var(--t3)">Digite um horário para converter</span>
@@ -17242,7 +17187,7 @@ function dpEnhanceModal(id){
           <div class="fgrp"><div class="flbl">Intervalo (min)</div>
             <input class="finp" id="bh-intervalo" type="number" value="60" oninput="dpCalcBancoHoras()"></div>
           <div class="fgrp"><div class="flbl">Jornada Contratual</div>
-            <input class="finp" id="bh-jornada" type="text" value="8:00" placeholder="Ex: 8:48" oninput="dpCalcBancoHoras()"></div>
+            <input class="finp" id="bh-jornada" type="text" value="8:00" placeholder="Ex: 8:48" oninput="dpCalcBancoHoras()" spellcheck="false"></div>
         </div>
         <div id="bh-result" style="background:rgba(0,0,0,.2);border-radius:10px;padding:14px;min-height:72px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px">
           <span style="font-size:10px;color:var(--t3)">Preencha os horários para calcular</span>
@@ -17604,10 +17549,10 @@ function epiOpenItemModal(id){
       </select></div>
       <div class="fgrp"><div class="flbl">Categoria *</div><select class="finp" id="eim-cat"><option value="">Selecione…</option>${selCat}</select></div>
     </div>
-    <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A"></div>
+    <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A" spellcheck="false"></div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…"></div>
-      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus"></div>
+      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus" spellcheck="false"></div>
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Vida Útil (dias)</div><input class="finp" type="number" id="eim-vida" value="${sv('vidaUtilDias')}" placeholder="Ex: 180"></div>
@@ -17618,7 +17563,7 @@ function epiOpenItemModal(id){
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Contrato (opcional)</div><select class="finp" id="eim-ct"><option value="">Global — todos contratos</option>${ctSel}</select></div>
-      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…"></div>
+      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…" spellcheck="false"></div>
     </div>
   </div>
   <div id="eim-estoque" style="display:none">
@@ -17630,18 +17575,18 @@ function epiOpenItemModal(id){
       <div class="fgrp"><div class="flbl">Preço Unitário (R$)</div><input class="finp" type="number" id="eim-preco" value="${sv('precoUnit','')}" step="0.01" placeholder="0,00"></div>
       <div class="fgrp"><div class="flbl">Consumo Médio/Mês</div><input class="finp" type="number" id="eim-consumo" value="${sv('consumoMensal','')}" placeholder="Qtd/mês"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3"></div>
+    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3" spellcheck="false"></div>
   </div>
   <div id="eim-ca" style="display:none">
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">Nº do CA (Certificado de Aprovação)</div><input class="finp" id="eim-ca-num" value="${sv('ca')}" placeholder="Ex: 12345"></div>
+      <div class="fgrp"><div class="flbl">Nº do CA (Certificado de Aprovação)</div><input class="finp" id="eim-ca-num" value="${sv('ca')}" placeholder="Ex: 12345" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Validade do CA</div><input class="finp" type="date" id="eim-ca-val" value="${sv('caValidade')}"></div>
     </div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…"></div>
-      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051"></div>
+      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051" spellcheck="false"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…"></div>
+    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…" spellcheck="false"></div>
     <div style="background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:11.5px;color:var(--t2)">
       💡 O <strong>CA</strong> (Certificado de Aprovação) é obrigatório para todos os EPIs conforme NR6. Mantenha sempre atualizado para conformidade em auditorias.
     </div>
@@ -17699,7 +17644,7 @@ function epiOpenEstoqueModal(itenId){
     </select></div>
     <div class="fgrp"><div class="flbl">Quantidade</div><input class="finp" type="number" id="em-qt" min="1" placeholder="0"></div>
   </div>
-  <div class="fgrp"><div class="flbl">Observação</div><input class="finp" id="em-obs" placeholder="Ex: NF 12345, ajuste de inventário…"></div>`,
+  <div class="fgrp"><div class="flbl">Observação</div><input class="finp" id="em-obs" placeholder="Ex: NF 12345, ajuste de inventário…" spellcheck="false"></div>`,
   `<button class="btn btn-s" onclick="closeModal()">Cancelar</button>
    <button class="btn btn-p" onclick="epiSaveEstoque('${itenId}')">✔ Confirmar</button>`);
 }
@@ -17737,28 +17682,28 @@ function epiOpenEntregaModal(id,preItemId){
         <option value="">Selecionar…</option>${colabSel}
       </select>
     </div>
-    <div class="fgrp"><div class="flbl">Ou digitar nome manualmente</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo"></div>
+    <div class="fgrp"><div class="flbl">Ou digitar nome manualmente</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo" spellcheck="false"></div>
   </div>
   <div class="fg2">
-    <div class="fgrp"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}"></div>
-    <div class="fgrp"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}"></div>
+    <div class="fgrp"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}" spellcheck="false"></div>
+    <div class="fgrp"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}" spellcheck="false"></div>
   </div>
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Quantidade</div><input class="finp" type="number" id="ee-qt" value="${sv('quantidade',1)}" min="1"></div>
-    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G"></div>
+    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G" spellcheck="false"></div>
   </div>
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Data de Entrega *</div><input class="finp" type="date" id="ee-dt" value="${sv('dtEntrega',new Date().toISOString().slice(0,10))}" onchange="epiEntCalcRenovacao()"></div>
     <div class="fgrp"><div class="flbl">Previsão de Renovação (auto)</div><input class="finp" type="date" id="ee-renov" value="${sv('dtRenovacao')}"></div>
   </div>
   <div class="fg2">
-    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel')}" placeholder="Nome de quem entregou"></div>
+    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel')}" placeholder="Nome de quem entregou" spellcheck="false"></div>
     <div class="fgrp"><div class="flbl">Exige Devolução?</div><select class="finp" id="ee-dev">
       <option value="nao" ${sv('exigeDevolucao','nao')==='nao'?'selected':''}>Não</option>
       <option value="sim" ${sv('exigeDevolucao')==='sim'?'selected':''}>Sim</option>
     </select></div>
   </div>
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição, nº série, lote…"></div>
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição, nº série, lote…" spellcheck="false"></div>
   <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:10px;padding:11px 13px;margin-top:12px;font-size:11px;color:var(--t2)">
     📋 O sistema calculará automaticamente a previsão de renovação com base na vida útil configurada no item e debitará do estoque.
   </div>`,
@@ -17830,7 +17775,7 @@ function epiDevolucao(entId){
     <option value="dano">Dano / Perda</option>
     <option value="outro">Outro</option>
   </select></div>
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ed-obs" placeholder="Condição, nº série…"></div>`,
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ed-obs" placeholder="Condição, nº série…" spellcheck="false"></div>`,
   `<button class="btn btn-s" onclick="closeModal()">Cancelar</button>
    <button class="btn btn-p" onclick="epiSaveDevolucao('${entId}')">↩ Confirmar Devolução</button>`);
 }
@@ -18056,12 +18001,12 @@ function epiOpenItemModal(id){
           </select></div>
           <div class="fgrp"><div class="flbl">Categoria *</div><select class="finp" id="eim-cat"><option value="">Selecione…</option>${selCat}</select></div>
         </div>
-        <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A"></div>
+        <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A" spellcheck="false"></div>
       </div>
     </div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…"></div>
-      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus"></div>
+      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus" spellcheck="false"></div>
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Vida Útil (dias)</div><input class="finp" type="number" id="eim-vida" value="${sv('vidaUtilDias')}" placeholder="Ex: 180" onchange="epiItemUpdateInfo()"></div>
@@ -18072,7 +18017,7 @@ function epiOpenItemModal(id){
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Contrato (opcional)</div><select class="finp" id="eim-ct"><option value="">Global — todos contratos</option>${ctSel}</select></div>
-      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…"></div>
+      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…" spellcheck="false"></div>
     </div>
     <div id="eim-info-vid" style="display:${sv('vidaUtilDias')?'block':'none'};background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:10px;padding:10px 13px;margin-top:4px;font-size:11.5px;color:var(--t2)">
       📅 Com vida útil de <strong>${sv('vidaUtilDias')} dias</strong>, a renovação será agendada automaticamente para <strong id="eim-renov-prev">—</strong> após a entrega.
@@ -18088,7 +18033,7 @@ function epiOpenItemModal(id){
       <div class="fgrp"><div class="flbl">Preço Unitário (R$)</div><input class="finp" type="number" id="eim-preco" value="${sv('precoUnit','')}" step="0.01" placeholder="0,00"></div>
       <div class="fgrp"><div class="flbl">Consumo Médio/Mês</div><input class="finp" type="number" id="eim-consumo" value="${sv('consumoMensal','')}" placeholder="Qtd/mês"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3"></div>
+    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3" spellcheck="false"></div>
   </div>
   <!-- CA / Normas -->
   <div id="eim-ca" style="display:none">
@@ -18100,7 +18045,7 @@ function epiOpenItemModal(id){
         <div style="position:relative;flex:1">
           <input class="finp" id="eim-ca-search" placeholder="Digite o número do CA (ex: 43962)" value="${sv('ca')}"
             style="padding-left:36px;font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:1px"
-            oninput="epiCaValidateFormat(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();epiCaBuscar()}">
+            oninput="epiCaValidateFormat(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();epiCaBuscar()}" spellcheck="false">
           <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none">🔐</span>
           <span id="eim-ca-fmt-badge" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:800;display:none"></span>
         </div>
@@ -18125,15 +18070,15 @@ function epiOpenItemModal(id){
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Nº do CA</div>
         <input class="finp" id="eim-ca-num" value="${sv('ca')}" placeholder="Ex: 43962"
-          style="font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:1px">
+          style="font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:1px" spellcheck="false">
       </div>
       <div class="fgrp"><div class="flbl">Validade do CA</div><input class="finp" type="date" id="eim-ca-val" value="${sv('caValidade')}"></div>
     </div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…"></div>
-      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051"></div>
+      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051" spellcheck="false"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…"></div>
+    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…" spellcheck="false"></div>
 
     <!-- ── Indicador de validade ── -->
     <div id="eim-ca-validade-box" style="display:none;margin-top:12px;border-radius:10px;padding:11px 14px;font-size:11.5px"></div>
@@ -18228,22 +18173,22 @@ function epiOpenEntregaModal(id, preItemId){
       <input type="hidden" id="ee-colab-id" value="${sv('colaboradorId')}">
     </div>
     <div style="display:flex;gap:8px;margin-top:8px">
-      <div class="fgrp" style="flex:2;margin-bottom:0"><div class="flbl">Nome (auto ou manual)</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo"></div>
-      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}"></div>
-      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}"></div>
+      <div class="fgrp" style="flex:2;margin-bottom:0"><div class="flbl">Nome (auto ou manual)</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo" spellcheck="false"></div>
+      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}" spellcheck="false"></div>
+      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}" spellcheck="false"></div>
     </div>
   </div>
 
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Quantidade</div><input class="finp" type="number" id="ee-qt" value="${sv('quantidade',1)}" min="1"></div>
-    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G"></div>
+    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G" spellcheck="false"></div>
   </div>
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Data de Entrega *</div><input class="finp" type="date" id="ee-dt" value="${sv('dtEntrega',new Date().toISOString().slice(0,10))}" onchange="epiEntCalcRenovacao()"></div>
     <div class="fgrp"><div class="flbl">Previsão de Renovação (automático)</div><input class="finp" type="date" id="ee-renov" value="${sv('dtRenovacao')}"></div>
   </div>
   <div class="fg2">
-    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel',typeof currentUser!=='undefined'&&currentUser?currentUser.name||'':'')}" placeholder="Nome de quem entregou"></div>
+    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel',typeof currentUser!=='undefined'&&currentUser?currentUser.name||'':'')}" placeholder="Nome de quem entregou" spellcheck="false"></div>
     <div class="fgrp"><div class="flbl">Exige Devolução?</div><select class="finp" id="ee-dev">
       <option value="nao" ${sv('exigeDevolucao','nao')==='nao'?'selected':''}>Não</option>
       <option value="sim" ${sv('exigeDevolucao')==='sim'?'selected':''}>Sim</option>
@@ -18268,7 +18213,7 @@ function epiOpenEntregaModal(id, preItemId){
     </div>
   </div>
 
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição do EPI, nº série, lote, CA do item…"></div>`;
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição do EPI, nº série, lote, CA do item…" spellcheck="false"></div>`;
 
   document.getElementById('modal-footer').innerHTML=`
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
@@ -18345,7 +18290,7 @@ function epiOpenTransferModal(entId){
     <select class="finp" id="etr-ct">${ctsSel||'<option disabled>Nenhum outro contrato disponível</option>'}</select>
   </div>
   <div class="fgrp"><div class="flbl">Motivo da Transferência</div>
-    <input class="finp" id="etr-motivo" placeholder="Ex: Remanejamento de equipe, mudança de frente…">
+    <input class="finp" id="etr-motivo" placeholder="Ex: Remanejamento de equipe, mudança de frente…" spellcheck="false">
   </div>
   <div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 13px;margin-top:8px;font-size:11.5px;color:var(--t2)">
     ⚠️ A transferência mantém o histórico completo da entrega e registra o evento de forma rastreável.
@@ -18427,7 +18372,7 @@ function epiOpenBaixaModal(entId){
       <option value="perdido">Perdido / Não encontrado</option>
     </select></div>
   </div>
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ebx-obs" placeholder="Detalhes da ocorrência, número de boletim, etc."></div>
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ebx-obs" placeholder="Detalhes da ocorrência, número de boletim, etc." spellcheck="false"></div>
   <div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:11px;color:var(--t2)">
     🗂️ A baixa é registrada no histórico e o item <strong>não</strong> retorna ao estoque. Ação irreversível.
   </div>`;
@@ -19119,7 +19064,7 @@ function epiOpenFichaModal(){
     <!-- Busca rápida -->
     <input id="epi-ficha-busca" class="finp" placeholder="🔍 Filtrar por nome ou matrícula…"
       oninput="epiFilterFichaCards(this.value)"
-      style="margin-bottom:12px;width:100%">
+      style="margin-bottom:12px;width:100%" spellcheck="false">
     <!-- Grid de colaboradores -->
     <div id="epi-ficha-cards" style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;padding-right:4px">
       ${cards}
@@ -19925,7 +19870,7 @@ function _custoCapa() {
       '<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:3px">' + f.label + '</div>' +
       '<input class="fi" type="' + (f.tipo||'text') + '" value="' + (a[f.k]||'') + '"' +
       ' style="height:32px;font-size:12px;padding:6px 10px"' +
-      ' data-k="' + f.k + '" onchange="custoCapaSave(this.dataset.k,this.value)">' +
+      ' data-k="' + f.k + '" onchange="custoCapaSave(this.dataset.k,this.value)" spellcheck="false">' +
       '</div>';
   });
   form.innerHTML = fhtml;
@@ -19944,10 +19889,10 @@ function _custoCapa() {
       }).join('');
       var sc = 'custoPontoSave';
       ptbl += '<tr>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:70px" value="' + (p.item||'') + '" data-idx="' + i + '" data-key="item" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:110px" value="' + (p.acao||'') + '" data-idx="' + i + '" data-key="acao" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.resp||'') + '" data-idx="' + i + '" data-key="resp" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.period||'') + '" data-idx="' + i + '" data-key="period" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:70px" value="' + (p.item||'') + '" data-idx="' + i + '" data-key="item" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:110px" value="' + (p.acao||'') + '" data-idx="' + i + '" data-key="acao" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.resp||'') + '" data-idx="' + i + '" data-key="resp" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.period||'') + '" data-idx="' + i + '" data-key="period" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
         '<td><select class="dp-ct-sel" style="height:26px;font-size:11px" data-idx="' + i + '" data-key="status" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)">' + statusOpts + '</select></td>' +
         '<td><button class="bic del" onclick="custoRemovePonto(' + i + ')">🗑</button></td>' +
         '</tr>';
@@ -19967,11 +19912,11 @@ function _custoCapa() {
       lhtml += '<div style="background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px 10px;margin-bottom:8px">' +
         '<div style="display:flex;gap:6px;align-items:center;margin-bottom:5px">' +
         '<span style="font-size:13px">🔗</span>' +
-        '<input class="fi" placeholder="Nome do link" style="height:26px;font-size:12px;font-weight:600;flex:1;border:none;background:transparent;padding:0 4px" value="' + (l.nome||'') + '" data-idx="' + i + '" data-key="nome" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)">' +
+        '<input class="fi" placeholder="Nome do link" style="height:26px;font-size:12px;font-weight:600;flex:1;border:none;background:transparent;padding:0 4px" value="' + (l.nome||'') + '" data-idx="' + i + '" data-key="nome" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false">' +
         (url ? '<a href="' + url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);border-radius:6px;color:var(--ac2);font-size:10px;font-weight:700;padding:3px 10px;text-decoration:none;white-space:nowrap">↗ Abrir</a>' : '<span style="font-size:10px;color:var(--t3)">sem URL</span>') +
         '<button class="bic del" onclick="custoRemoveLink(' + i + ')" title="Remover">✕</button>' +
         '</div>' +
-        '<input class="fi" placeholder="https://..." style="height:24px;font-size:11px;color:var(--t2);font-family:monospace" value="' + (l.url||'') + '" data-idx="' + i + '" data-key="url" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)">' +
+        '<input class="fi" placeholder="https://..." style="height:24px;font-size:11px;color:var(--t2);font-family:monospace" value="' + (l.url||'') + '" data-idx="' + i + '" data-key="url" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false">' +
         '</div>';
     });
     lw.innerHTML = lhtml;
@@ -19981,9 +19926,9 @@ function _custoCapa() {
   var gc = document.getElementById('custo-gestao-capa');
   if(gc) {
     gc.innerHTML =
-      '<input class="fi" placeholder="PCO" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pco||'') + '" data-key=\"pco\" onchange=\"custoCapaSave(this.dataset.key,this.value)\">' +
-      '<input class="fi" placeholder="PCE" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pce||'') + '" data-key=\"pce\" onchange=\"custoCapaSave(this.dataset.key,this.value)\">' +
-      '<input class="fi" placeholder="PR" style="height:28px;font-size:12px" value="' + (a.pr||'') + '" data-key=\"pr\" onchange=\"custoCapaSave(this.dataset.key,this.value)\">';
+      '<input class="fi" placeholder="PCO" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pco||'') + '" data-key=\"pco\" onchange=\"custoCapaSave(this.dataset.key,this.value)\" spellcheck="false">' +
+      '<input class="fi" placeholder="PCE" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pce||'') + '" data-key=\"pce\" onchange=\"custoCapaSave(this.dataset.key,this.value)\" spellcheck="false">' +
+      '<input class="fi" placeholder="PR" style="height:28px;font-size:12px" value="' + (a.pr||'') + '" data-key=\"pr\" onchange=\"custoCapaSave(this.dataset.key,this.value)\" spellcheck="false">';
   }
 
   // Resumo DRE
@@ -20386,8 +20331,8 @@ function _custoMemoria() {
     html+='<div class="tbl-wrap" style="margin-bottom:20px">'+
       '<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--b1)">'+
         '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3)">Conta</span>'+
-        '<input class="fi" style="height:28px;font-size:11px;width:100px" value="'+_esc(g.conta||'')+'" onchange="custoMemContaSave('+gi+',this.value)" placeholder="Código">'+
-        '<input class="fi" style="height:28px;font-size:13px;font-weight:700;font-family:var(--fh);flex:1;min-width:200px" value="'+_esc(g.titulo||cfg.titulo)+'" onchange="custoMemTituloSave('+gi+',this.value)" placeholder="Título do grupo">'+
+        '<input class="fi" style="height:28px;font-size:11px;width:100px" value="'+_esc(g.conta||'')+'" onchange="custoMemContaSave('+gi+',this.value)" placeholder="Código" spellcheck="false">'+
+        '<input class="fi" style="height:28px;font-size:13px;font-weight:700;font-family:var(--fh);flex:1;min-width:200px" value="'+_esc(g.titulo||cfg.titulo)+'" onchange="custoMemTituloSave('+gi+',this.value)" placeholder="Título do grupo" spellcheck="false">'+
         '<button class="btn btn-s btn-sm" onclick="custoAddMemLinha('+gi+')">＋ Linha</button>'+
         '<button class="bic del" onclick="custoRemoveGrupo('+gi+')" title="Excluir grupo">🗑</button>'+
       '</div>'+
@@ -20457,7 +20402,7 @@ function _custoMemoria() {
 
       // Conta
       html+='<tr>'+
-        '<td><input class="fi" style="height:26px;font-size:10px;width:92px" value="'+_esc(l.conta||'')+'" placeholder="—" onchange="custoMemSave('+gi+','+li+',\'conta\',this.value)"></td>';
+        '<td><input class="fi" style="height:26px;font-size:10px;width:92px" value="'+_esc(l.conta||'')+'" placeholder="—" onchange="custoMemSave('+gi+','+li+',\'conta\',this.value)" spellcheck="false"></td>';
 
       // Descrição — dropdown vinculado ou texto livre
       if(hasSrc){
@@ -20466,10 +20411,10 @@ function _custoMemoria() {
           '<option value="-1"'+(l.linkedIdx===-1?' selected':'')+'>✍ Digitar manualmente</option>';
         html+='<td style="padding:4px 6px">'+
           '<select class="dp-ct-sel" style="height:26px;font-size:11px;min-width:195px" onchange="custoMemLinkSelect('+gi+','+li+',this.value)">'+selOpts+'</select>'+
-          (l.linkedIdx===-1?'<br><input class="fi" style="height:24px;font-size:11px;min-width:195px;margin-top:3px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)">':'')+
+          (l.linkedIdx===-1?'<br><input class="fi" style="height:24px;font-size:11px;min-width:195px;margin-top:3px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)" spellcheck="false">':'')+
         '</td>';
       } else {
-        html+='<td><input class="fi" style="height:26px;font-size:11px;min-width:195px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)"></td>';
+        html+='<td><input class="fi" style="height:26px;font-size:11px;min-width:195px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)" spellcheck="false"></td>';
       }
 
       // ORÇADO
@@ -20828,9 +20773,9 @@ function _custoMedicao() {
     var hideStyle = (_custoMedHideZeros && isZero) ? 'display:none' : '';
     tb += '<tr id="custo-med-row-'+i+'" style="background:'+rowBg+';'+hideStyle+'">' +
       '<td style="text-align:center;font-weight:700;color:var(--t3);padding:5px 4px">' + (i+1) + '</td>' +
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:90px;font-family:var(--fn);letter-spacing:.5px;' + roStyle + '" value="'+(it.cod||'').replace(/"/g,'&quot;')+'" placeholder="1.1.1.5"' + (ro?' readonly':' data-key="cod" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:90px;font-family:var(--fn);letter-spacing:.5px;' + roStyle + '" value="'+(it.cod||'').replace(/"/g,'&quot;')+'" placeholder="1.1.1.5"' + (ro?' readonly':' data-key="cod" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + ' spellcheck="false"></td>' +
       '<td><textarea class="fi" style="height:44px;font-size:11px;resize:none;padding:4px 8px;width:100%;min-width:260px;' + roStyle + '"' + (ro?' readonly':' data-key="desc" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '>'+(it.desc||'')+'</textarea></td>' +
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:52px;text-align:center;' + roStyle + '" value="'+(it.un||'vb')+'"' + (ro?' readonly':' data-key="un" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:52px;text-align:center;' + roStyle + '" value="'+(it.un||'vb')+'"' + (ro?' readonly':' data-key="un" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + ' spellcheck="false"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:72px;font-family:var(--fn);text-align:right;' + roStyle + '" value="'+(it.qtd||'')+'" placeholder="0"' + (ro?' readonly':' data-key="qtd" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:100px;font-family:var(--fn);text-align:right;' + roStyle + '" value="'+(it.vlUnit||'')+'" placeholder="0,00"' + (ro?' readonly':' data-key="vlUnit" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;text-align:right;padding:5px 8px;' + (tot>0?'color:var(--gnl)':'color:var(--t2)') + '">' + _fmtBRL(tot) + '</td>' +
@@ -21249,8 +21194,8 @@ function _custoFuncoes() {
     var regBg = _fnRegimeBg(fn.regimeTrabalho||'adm');
 
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;width:54px;text-align:center" value="'+_esc(fn.cod||'')+'" placeholder="XXX" onchange="custoFnSave('+i+',\'cod\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:210px" value="'+_esc(fn.cargo||'')+'" placeholder="Cargo/Função" onchange="custoFnSave('+i+',\'cargo\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;width:54px;text-align:center" value="'+_esc(fn.cod||'')+'" placeholder="XXX" onchange="custoFnSave('+i+',\'cod\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:210px" value="'+_esc(fn.cargo||'')+'" placeholder="Cargo/Função" onchange="custoFnSave('+i+',\'cargo\',this.value)" spellcheck="false"></td>'+
       // Local/Alojado
       '<td style="background:'+laBg+';padding:3px 4px">'+
         '<select class="dp-ct-sel" style="height:28px;font-size:11px;width:84px;background:transparent" onchange="custoFnSave('+i+',\'localAlojado\',this.value)">'+
@@ -21435,7 +21380,7 @@ function _custoEPI() {
   a.epiItens.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||1)*(parseFloat(it.depPerc)||1);
     tb+='<tr>' +
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:200px" value="' + (it.desc||'') + '" data-key=\"desc\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:200px" value="' + (it.desc||'') + '" data-key=\"desc\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\" spellcheck="false"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:80px;font-family:var(--fn)" value="' + (it.vlUnit||'') + '" placeholder="0,00" data-key=\"vlUnit\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:50px;font-family:var(--fn)" value="' + (it.qtd||1) + '" min="0" data-key=\"qtd\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:65px;font-family:var(--fn)" step="0.01" min="0" max="1" value="' + (it.depPerc||1) + '" title="Fator depreciação: 1=sem depreciação" data-key=\"depPerc\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
@@ -21489,7 +21434,7 @@ function _custoEncargos(){
   var atb=document.getElementById('custo-aliq-tbody'); if(!atb)return;
   var ahtml='';
   a.aliquotas.forEach(function(al,i){
-    ahtml+='<tr><td><input class="fi" style="height:26px;font-size:11px" value="' + (al.imposto||'') + '" data-key=\"imposto\" onchange=\"custoAliqSave('+i+',this.dataset.key,this.value)\"></td>';
+    ahtml+='<tr><td><input class="fi" style="height:26px;font-size:11px" value="' + (al.imposto||'') + '" data-key=\"imposto\" onchange=\"custoAliqSave('+i+',this.dataset.key,this.value)\" spellcheck="false"></td>';
     ['eng','obras','outros'].forEach(function(k){
       ahtml+='<td><input type="number" class="fi" style="height:26px;font-size:11px;min-width:70px;font-family:var(--fn)" step="0.0001" value="' + ((al[k]||0).toFixed(4)) + '" data-idx="'+i+'" data-key="'+k+'" onchange="custoAliqSave(+this.dataset.idx,this.dataset.key,this.value)"></td>';
     });
@@ -21500,7 +21445,7 @@ function _custoEncargos(){
   var ehtml='';
   a.encargosSoc.forEach(function(e,i){
     ehtml+='<tr>' +
-      '<td><input class="fi" style="height:26px;font-size:11px" value="' + (e.modalidade||'') + '" data-key=\"modalidade\" onchange=\"custoEncSave('+i+',this.dataset.key,this.value)\"></td>' +
+      '<td><input class="fi" style="height:26px;font-size:11px" value="' + (e.modalidade||'') + '" data-key=\"modalidade\" onchange=\"custoEncSave('+i+',this.dataset.key,this.value)\" spellcheck="false"></td>' +
       '<td><input type="number" class="fi" style="height:26px;font-size:11px;min-width:80px;font-family:var(--fn)" step="0.0001" value="' + ((e.perc||0).toFixed(4)) + '" data-key=\"perc\" onchange=\"custoEncSave('+i+',this.dataset.key,this.value)\"></td>' +
       '<td style="font-size:11px;color:var(--t2)">' + ((e.perc||0)*100).toFixed(2) + '%</td>' +
       '<td><button class="bic ctx-btn" data-ctx-table="encargo" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
@@ -21525,8 +21470,8 @@ function _custoMateriais() {
   a.materiais.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:70px" value="'+(it.unidade||'')+'" placeholder="un, m, kg…" data-key="unidade" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoMatSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:70px" value="'+(it.unidade||'')+'" placeholder="un, m, kg…" data-key="unidade" onchange="custoMatSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21565,8 +21510,8 @@ function _custoFerramentas() {
   a.ferramentas.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+(it.codigo||'')+'" placeholder="REF-001" data-key="codigo" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoFerSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+(it.codigo||'')+'" placeholder="REF-001" data-key="codigo" onchange="custoFerSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21605,8 +21550,8 @@ function _custoInformatica() {
   a.informatica.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:120px" value="'+(it.marca||'')+'" placeholder="Dell XPS 15…" data-key="marca" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoInfSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:120px" value="'+(it.marca||'')+'" placeholder="Dell XPS 15…" data-key="marca" onchange="custoInfSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21645,8 +21590,8 @@ function _custoVeiculos() {
   a.veiculos.forEach(function(it,i){
     var tot=(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:180px" value="'+(it.desc||'')+'" placeholder="Tipo/Descrição" data-key="desc" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:90px" value="'+(it.placa||'')+'" placeholder="ABC-1234" data-key="placa" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:180px" value="'+(it.desc||'')+'" placeholder="Tipo/Descrição" data-key="desc" onchange="custoVeiSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:90px" value="'+(it.placa||'')+'" placeholder="ABC-1234" data-key="placa" onchange="custoVeiSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:100px;font-family:var(--fn)" value="'+(it.vlMensal||'')+'" placeholder="0,00" data-key="vlMensal" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21689,7 +21634,7 @@ function _custoCursos(){
     var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
     var tot=(parseFloat(it.vlUnit)||0)*qtd;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoCurSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoCurSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoCurSave('+i+',\'funcaoIdx\',this.value)">'+
         '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
         (a.funcoes||[]).map(function(f,fi){return '<option value="'+fi+'"'+(it.funcaoIdx===fi?' selected':'')+'>'+_esc(f.cargo||'Função '+(fi+1))+'</option>';}).join('')+
@@ -21724,7 +21669,7 @@ function _custoExames(){
     var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
     var tot=(parseFloat(it.vlUnit)||0)*qtd;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoExaSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoExaSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoExaSave('+i+',\'funcaoIdx\',this.value)">'+
         '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
         (a.funcoes||[]).map(function(f,fi){return '<option value="'+fi+'"'+(it.funcaoIdx===fi?' selected':'')+'>'+_esc(f.cargo||'Função '+(fi+1))+'</option>';}).join('')+
@@ -21759,7 +21704,7 @@ function _custoSeguros(){
     var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
     var tot=(parseFloat(it.vlUnit)||0)*qtd;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoSegSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoSegSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:110px" onchange="custoSegSave('+i+',\'tipo\',this.value)">'+tipos.map(function(t){return '<option value="'+t+'"'+(it.tipo===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoSegSave('+i+',\'funcaoIdx\',this.value)">'+
         '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
@@ -21791,9 +21736,9 @@ function _custoEquipamentos(){
   a.equipamentos.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoEqpSave('+i+',\'desc\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:105px" value="'+_esc(it.marca||'')+'" placeholder="Marca/Modelo" onchange="custoEqpSave('+i+',\'marca\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+_esc(it.serie||'')+'" placeholder="Nº Série" onchange="custoEqpSave('+i+',\'serie\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoEqpSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:105px" value="'+_esc(it.marca||'')+'" placeholder="Marca/Modelo" onchange="custoEqpSave('+i+',\'marca\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+_esc(it.serie||'')+'" placeholder="Nº Série" onchange="custoEqpSave('+i+',\'serie\',this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;width:65px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" onchange="custoEqpSave('+i+',\'qtd\',this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" onchange="custoEqpSave('+i+',\'vlUnit\',this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21821,8 +21766,8 @@ function _custoAlugueis(){
   a.alugueis.forEach(function(it,i){
     var tot=(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoAlgSave('+i+',\'desc\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:115px" value="'+_esc(it.ref||'')+'" placeholder="Endereço/Ref." onchange="custoAlgSave('+i+',\'ref\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoAlgSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:115px" value="'+_esc(it.ref||'')+'" placeholder="Endereço/Ref." onchange="custoAlgSave('+i+',\'ref\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:90px" onchange="custoAlgSave('+i+',\'tipo\',this.value)">'+tipos.map(function(t){return '<option value="'+t+'"'+(it.tipo===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;width:65px;font-family:var(--fn)" value="'+(it.qtd||1)+'" min="0" onchange="custoAlgSave('+i+',\'qtd\',this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlMensal||'')+'" placeholder="0,00" onchange="custoAlgSave('+i+',\'vlMensal\',this.value)"></td>'+
@@ -21867,7 +21812,7 @@ function _custoImpostos(){
     }
     var tot=baseVl*(parseFloat(it.aliquota)||0)/100;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoImpSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoImpSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:88px;font-family:var(--fn)" value="'+(it.aliquota||'')+'" placeholder="0,00 %" step="0.01" onchange="custoImpSave('+i+',\'aliquota\',this.value)"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:120px" onchange="custoImpSave('+i+',\'base\',this.value)">'+bases.map(function(b){return '<option value="'+b+'"'+(it.base===b?' selected':'')+'>'+b+'</option>';}).join('')+'</select></td>'+
       '<td style="font-family:var(--fn);font-size:12px;color:'+(it.base==='Base Personalizada'?'inherit':'var(--t3)')+'">'+(it.base==='Base Personalizada'?'<input type="number" class="fi" style="height:28px;font-size:12px;min-width:110px;font-family:var(--fn)" value="'+(it.baseVl||'')+'" placeholder="0,00" onchange="custoImpSave('+i+',\'baseVl\',this.value)">':_fmtBRL(baseVl)+' <span style="font-size:9px;opacity:.6">auto</span>')+'</td>'+
@@ -21911,7 +21856,7 @@ function _custoProjecoes(){
 
     cols.forEach(function(c){
       if(c.tipo==='txt'){
-        tb+='<td><input class="fi" style="height:28px;font-size:11px" value="' + (r[c.key]||'') + '" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoProjSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
+        tb+='<td><input class="fi" style="height:28px;font-size:11px" value="' + (r[c.key]||'') + '" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoProjSave(+this.dataset.ri,this.dataset.key,this.value)" spellcheck="false"></td>';
       } else {
         tb+='<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="' + (r[c.key]||'') + '" placeholder="0" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoProjSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
       }
@@ -22040,7 +21985,7 @@ function _custoRentab(){
         }).join('');
         tb+='<td style="padding:3px 5px"><select class="fi" style="height:26px;font-size:11px;padding:2px 5px;min-width:160px" data-ri="'+ri+'" onchange="custoRentabCat(+this.dataset.ri,this.value)">'+opts+'</select></td>';
       } else if(c.tipo==='txt'){
-        tb+='<td><input class="fi" style="height:26px;font-size:11px;min-width:140px" value="'+(v||'')+'" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoRentabSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
+        tb+='<td><input class="fi" style="height:26px;font-size:11px;min-width:140px" value="'+(v||'')+'" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoRentabSave(+this.dataset.ri,this.dataset.key,this.value)" spellcheck="false"></td>';
       } else {
         tb+='<td><input type="number" class="fi" style="height:26px;font-size:12px;min-width:90px;font-family:var(--fn);color:'+col+'" value="'+(v||'')+'" placeholder="0" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoRentabSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
       }
@@ -22721,7 +22666,7 @@ function _colInsertDRE(refCi,dir){
                padding:7px 10px;outline:none;transition:border-color .2s"
         onfocus="this.style.borderColor='rgba(16,185,129,.5)'"
         onblur="this.style.borderColor='var(--b1)'"
-        onkeydown="if(event.key==='Enter')applyUenCustom()">
+        onkeydown="if(event.key==='Enter')applyUenCustom()" spellcheck="false">
       <button onclick="applyUenCustom()"
         style="background:var(--gnl);border:none;border-radius:8px;color:#fff;
                font-size:11px;font-weight:800;padding:7px 16px;cursor:pointer;
@@ -22905,7 +22850,7 @@ function _colInsertDRE(refCi,dir){
             </div>
             <div>
               <label class="cfl">TAG / Código *</label>
-              <input id="ceq-tag" class="cfi" placeholder="Ex: LAB-001">
+              <input id="ceq-tag" class="cfi" placeholder="Ex: LAB-001" spellcheck="false">
             </div>
             <div>
               <label class="cfl">Status</label>
@@ -22923,23 +22868,23 @@ function _colInsertDRE(refCi,dir){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
           <div style="grid-column:1/-1">
             <label class="cfl">Nome do Equipamento *</label>
-            <input id="ceq-nome" class="cfi" placeholder="Ex: Balança Analítica">
+            <input id="ceq-nome" class="cfi" placeholder="Ex: Balança Analítica" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Fabricante</label>
-            <input id="ceq-fab" class="cfi" placeholder="Ex: Shimadzu, Mettler-Toledo">
+            <input id="ceq-fab" class="cfi" placeholder="Ex: Shimadzu, Mettler-Toledo" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Modelo / Referência</label>
-            <input id="ceq-modelo" class="cfi" placeholder="Ex: AY220">
+            <input id="ceq-modelo" class="cfi" placeholder="Ex: AY220" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Nº de Série</label>
-            <input id="ceq-nserie" class="cfi" placeholder="">
+            <input id="ceq-nserie" class="cfi" placeholder="" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Nº Patrimônio</label>
-            <input id="ceq-pat" class="cfi" placeholder="">
+            <input id="ceq-pat" class="cfi" placeholder="" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Data de Entrada</label>
@@ -22947,7 +22892,7 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Local Físico</label>
-            <input id="ceq-local" class="cfi" placeholder="Ex: Lab. Geotecnia, Campo, Almox.">
+            <input id="ceq-local" class="cfi" placeholder="Ex: Lab. Geotecnia, Campo, Almox." spellcheck="false">
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Observações</label>
@@ -22976,19 +22921,19 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Grandeza Metrológica</label>
-            <input id="ceq-grandeza" class="cfi" placeholder="Ex: Massa, Força, Temperatura">
+            <input id="ceq-grandeza" class="cfi" placeholder="Ex: Massa, Força, Temperatura" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Capacidade / Faixa</label>
-            <input id="ceq-cap" class="cfi" placeholder="Ex: 0–220 g, 0–50 kN">
+            <input id="ceq-cap" class="cfi" placeholder="Ex: 0–220 g, 0–50 kN" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Resolução / Divisão</label>
-            <input id="ceq-res" class="cfi" placeholder="Ex: 0,001 g, 0,1 kN">
+            <input id="ceq-res" class="cfi" placeholder="Ex: 0,001 g, 0,1 kN" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Norma de Referência</label>
-            <input id="ceq-norma" class="cfi" placeholder="Ex: ABNT NBR 9895, DNIT 049">
+            <input id="ceq-norma" class="cfi" placeholder="Ex: ABNT NBR 9895, DNIT 049" spellcheck="false">
           </div>
         </div>
       </div>
@@ -23008,7 +22953,7 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Laboratório Externo</label>
-            <input id="ceq-labext" class="cfi" placeholder="Nome do laboratório">
+            <input id="ceq-labext" class="cfi" placeholder="Nome do laboratório" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Periodicidade *</label>
@@ -23040,11 +22985,11 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Rastreabilidade Metrológica</label>
-            <input id="ceq-rastreab" class="cfi" placeholder="Ex: Inmetro → Lab. RBC Acreditado → Equipamento">
+            <input id="ceq-rastreab" class="cfi" placeholder="Ex: Inmetro → Lab. RBC Acreditado → Equipamento" spellcheck="false">
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Critério de Aceitação / Tolerância</label>
-            <input id="ceq-criterio" class="cfi" placeholder="Ex: Erro máx. ±0,1 g; Desvio ≤ 0,5% fs; conforme ABNT NBR 9895">
+            <input id="ceq-criterio" class="cfi" placeholder="Ex: Erro máx. ±0,1 g; Desvio ≤ 0,5% fs; conforme ABNT NBR 9895" spellcheck="false">
           </div>
         </div>
         <div class="cinfo-box cinfo-green" style="margin-top:14px">
@@ -23073,11 +23018,11 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Padrão de Verificação</label>
-            <input id="ceq-verif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g classe M1">
+            <input id="ceq-verif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g classe M1" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Critério Pass / Fail</label>
-            <input id="ceq-verif-crit" class="cfi" placeholder="Ex: Desvio ≤ 0,1 g; ±1°C; ±0,5 mm">
+            <input id="ceq-verif-crit" class="cfi" placeholder="Ex: Desvio ≤ 0,1 g; ±1°C; ±0,5 mm" spellcheck="false">
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Instrução de Verificação (resumida)</label>
@@ -23094,15 +23039,15 @@ function _colInsertDRE(refCi,dir){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
           <div>
             <label class="cfl">Código do POP</label>
-            <input id="ceq-pop-cod" class="cfi" placeholder="Ex: POP-CAL-001">
+            <input id="ceq-pop-cod" class="cfi" placeholder="Ex: POP-CAL-001" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Revisão</label>
-            <input id="ceq-pop-rev" class="cfi" placeholder="Ex: Rev. 02">
+            <input id="ceq-pop-rev" class="cfi" placeholder="Ex: Rev. 02" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Responsável Técnico</label>
-            <input id="ceq-pop-resp" class="cfi" placeholder="">
+            <input id="ceq-pop-resp" class="cfi" placeholder="" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Data de Aprovação</label>
@@ -23110,7 +23055,7 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Normas Aplicáveis</label>
-            <input id="ceq-pop-normas" class="cfi" placeholder="Ex: ABNT NBR 9895, ISO 17025, VIM">
+            <input id="ceq-pop-normas" class="cfi" placeholder="Ex: ABNT NBR 9895, ISO 17025, VIM" spellcheck="false">
           </div>
         </div>
         <div>
@@ -23171,7 +23116,7 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Nº Certificado / Boletim</label>
-          <input id="creg-cert" class="cfi" placeholder="Ex: RBC-2024/001234">
+          <input id="creg-cert" class="cfi" placeholder="Ex: RBC-2024/001234" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Resultado *</label>
@@ -23183,42 +23128,42 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Laboratório Responsável</label>
-          <input id="creg-lab" class="cfi" placeholder="">
+          <input id="creg-lab" class="cfi" placeholder="" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Técnico Responsável</label>
-          <input id="creg-tec" class="cfi" placeholder="">
+          <input id="creg-tec" class="cfi" placeholder="" spellcheck="false">
         </div>
 
         <div class="cmodal-section-title" style="grid-column:1/-1">📐 Dados Técnicos</div>
 
         <div>
           <label class="cfl">Incerteza de Medição</label>
-          <input id="creg-incerteza" class="cfi" placeholder="Ex: ±0,002 g (k=2)">
+          <input id="creg-incerteza" class="cfi" placeholder="Ex: ±0,002 g (k=2)" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Grandeza Calibrada</label>
-          <input id="creg-grandeza" class="cfi" placeholder="Ex: Massa, Temperatura">
+          <input id="creg-grandeza" class="cfi" placeholder="Ex: Massa, Temperatura" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Desvio Antes do Ajuste</label>
-          <input id="creg-devant" class="cfi" placeholder="Ex: +0,05%">
+          <input id="creg-devant" class="cfi" placeholder="Ex: +0,05%" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Desvio Após o Ajuste</label>
-          <input id="creg-devpos" class="cfi" placeholder="Ex: ±0,01%">
+          <input id="creg-devpos" class="cfi" placeholder="Ex: ±0,01%" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Pontos Calibrados</label>
-          <input id="creg-pontos" class="cfi" placeholder="Ex: 10g, 50g, 100g, 200g">
+          <input id="creg-pontos" class="cfi" placeholder="Ex: 10g, 50g, 100g, 200g" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Condições Ambientais (T°, UR%)</label>
-          <input id="creg-amb" class="cfi" placeholder="Ex: 23°C, 55% UR">
+          <input id="creg-amb" class="cfi" placeholder="Ex: 23°C, 55% UR" spellcheck="false">
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">URL / Referência do Certificado</label>
-          <input id="creg-url" class="cfi" placeholder="Link ou caminho do arquivo do certificado">
+          <input id="creg-url" class="cfi" placeholder="Link ou caminho do arquivo do certificado" spellcheck="false">
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">Observações</label>
@@ -23267,26 +23212,26 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Padrão Utilizado</label>
-          <input id="cverif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g M1">
+          <input id="cverif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g M1" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Técnico</label>
-          <input id="cverif-tec" class="cfi" placeholder="">
+          <input id="cverif-tec" class="cfi" placeholder="" spellcheck="false">
         </div>
 
         <div class="cmodal-section-title" style="grid-column:1/-1">📐 Medição</div>
 
         <div>
           <label class="cfl">Valor de Referência</label>
-          <input id="cverif-ref" class="cfi" placeholder="Ex: 100,000 g">
+          <input id="cverif-ref" class="cfi" placeholder="Ex: 100,000 g" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Valor Medido</label>
-          <input id="cverif-medido" class="cfi" placeholder="Ex: 100,012 g" oninput="calibVerifCalcDesvio()">
+          <input id="cverif-medido" class="cfi" placeholder="Ex: 100,012 g" oninput="calibVerifCalcDesvio()" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Desvio (calculado)</label>
-          <input id="cverif-desvio" class="cfi" readonly style="opacity:.7">
+          <input id="cverif-desvio" class="cfi" readonly style="opacity:.7" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Resultado *</label>
@@ -23298,7 +23243,7 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">Condições Ambientais</label>
-          <input id="cverif-amb" class="cfi" placeholder="Ex: 23°C, 58% UR">
+          <input id="cverif-amb" class="cfi" placeholder="Ex: 23°C, 58% UR" spellcheck="false">
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">Observações</label>
@@ -23359,7 +23304,7 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Responsável</label>
-          <input id="cnc-resp" class="cfi" placeholder="">
+          <input id="cnc-resp" class="cfi" placeholder="" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Data de Fechamento</label>
@@ -23867,7 +23812,7 @@ function _renderCalibEquips(){
 
   // Filtros
   var filtHtml='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">'
-    +'<input id="calib-f-busca" class="fi" placeholder="🔍 Buscar TAG, nome, série…" style="width:200px;height:32px;font-size:12px" oninput="_filterCalibEquips()">'
+    +'<input id="calib-f-busca" class="fi" placeholder="🔍 Buscar TAG, nome, série…" style="width:200px;height:32px;font-size:12px" oninput="_filterCalibEquips()" spellcheck="false">'
     +'<div style="display:flex;gap:4px;flex-wrap:wrap" id="calib-f-status">'
     +'<button class="calib-fbtn active" onclick="calibFiltroStatus(this,\'\')" data-s="">Todos</button>'
     +'<button class="calib-fbtn" onclick="calibFiltroStatus(this,\'ok\')" data-s="ok" style="color:#22c55e">✅ OK</button>'
@@ -25429,7 +25374,7 @@ function _dreAbrirModalSenha(mode, mes, callback) {
       +'<div id="dre-pass-title" style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:6px">🔐 Autenticação</div>'
       +'<div id="dre-pass-sub" style="font-size:12px;color:var(--t2);margin-bottom:18px"></div>'
       +'<div style="font-size:10px;color:var(--t3);margin-bottom:6px">Usuário: <strong id="dre-pass-user" style="color:var(--tx)"></strong></div>'
-      +'<input id="dre-pass-inp" type="password" class="fi" placeholder="Senha" style="width:100%;box-sizing:border-box;font-size:14px;padding:10px 14px" onkeydown="if(event.key===\'Enter\')drePassConfirm()">'
+      +'<input id="dre-pass-inp" type="password" class="fi" placeholder="Senha" style="width:100%;box-sizing:border-box;font-size:14px;padding:10px 14px" onkeydown="if(event.key===\'Enter\')drePassConfirm()" spellcheck="false" autocomplete="new-password">'
       +'<div id="dre-pass-err" style="font-size:11px;color:#f87171;margin-top:6px;min-height:16px"></div>'
       +'<div style="display:flex;gap:10px;margin-top:18px">'
         +'<button onclick="drePassCancel()" class="btn btn-s" style="flex:1">Cancelar</button>'
