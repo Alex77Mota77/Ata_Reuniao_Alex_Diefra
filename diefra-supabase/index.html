@@ -11243,7 +11243,11 @@ window.addEventListener('DOMContentLoaded',()=>{
     // Esconde login e carrega dados
     const screen = document.getElementById('login-screen');
     if(screen) screen.classList.add('hidden');
-    pullFromSheets(true).finally(()=>{ startSyncPolling(); });
+    pullFromSheets(true).finally(()=>{
+      startSyncPolling();
+      _aplicarPermissoes();
+      _initPresence();   // inicia presença ao restaurar sessão
+    });
   }
   // Load data from Google Sheets (if configured)
   // Pull silencioso no boot — erros não aparecem na tela de login
@@ -12878,22 +12882,25 @@ function roleColor(r){ return (ROLES.find(x=>x.value===r)||{color:'#888'}).color
 async function renderUsuarios(){
   const el = document.getElementById('usuarios-list');
   if(!el) return;
-  const isSuperAdmin = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota');
-  const list = ST.participants || [];
-  el.innerHTML = `
-  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden">
-    <table style="width:100%;border-collapse:collapse">
-      <thead>
-        <tr style="border-bottom:1px solid var(--b1)">
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Usuário</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Login / E-mail</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Cargo</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Perfil</th>
-          <th style="text-align:right;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${list.map(u => {
+  const gc = (ST.participants || []).map(u => ({...u, _tipo:'gestor_contrato'}));
+  const gu = (ST.gestoresUnidade || []).map(u => ({...u, _tipo:'gestor_unidade'}));
+  function _renderGroup(list, tipoLabel, tipoColor){
+    if(!list.length) return '';
+    return `
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:${tipoColor};text-transform:uppercase;padding:10px 20px;border-bottom:1px solid var(--b1);background:rgba(0,0,0,.2)">${tipoLabel} — ${list.length} cadastrado${list.length>1?'s':''}</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--b1)">
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Usuário</th>
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Login / E-mail</th>
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Cargo</th>
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Perfil</th>
+            <th style="text-align:right;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map(u => {
           const isMe = u.id === (currentUser||{}).id || u.username === (currentUser||{}).username;
           const roleBadge = u.role==='admin'
             ? '<span style="background:rgba(139,92,246,.2);color:#a78bfa;border:1px solid rgba(139,92,246,.3);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800">ADMIN</span>'
@@ -12932,9 +12939,16 @@ async function renderUsuarios(){
             </td>
           </tr>`;
         }).join('')}
-      </tbody>
-    </table>
-  </div>`;
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  el.innerHTML =
+    '<div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden">' +
+    _renderGroup(gc, '👥 Gestores de Contrato', '#38bdf8') +
+    _renderGroup(gu, '🏢 Gestores de Unidade', '#a78bfa') +
+    '</div>';
 }
 
 function openNovoUsuarioModal(){
@@ -12945,6 +12959,18 @@ function openNovoUsuarioModal(){
         <label class="fl">Nome Completo</label>
         <input class="fi" id="nu-name" placeholder="Nome do usuário" type="text" spellcheck="false">
       </div>
+      <div style="grid-column:1/-1">
+        <label class="fl">Tipo de Gestor</label>
+        <select class="fi" id="nu-tipo" onchange="toggleNuCampos()">
+          <option value="">— Selecione o tipo —</option>
+          <option value="gestor_contrato">👥 Gestor de Contrato</option>
+          <option value="gestor_unidade">🏢 Gestor de Unidade</option>
+        </select>
+      </div>
+      <div id="nu-campo-unidade" style="grid-column:1/-1;display:none">
+        <label class="fl">Unidade</label>
+        <input class="fi" id="nu-unidade" placeholder="ex: UEN-300" type="text" spellcheck="false">
+      </div>
       <div>
         <label class="fl">Username</label>
         <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text" spellcheck="false">
@@ -12954,7 +12980,7 @@ function openNovoUsuarioModal(){
         <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email" spellcheck="false">
       </div>
       <div>
-        <label class="fl">Senha</label>
+        <label class="fl">Senha inicial</label>
         <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password" spellcheck="false" autocomplete="new-password">
       </div>
       <div>
@@ -12965,11 +12991,11 @@ function openNovoUsuarioModal(){
         </select>
       </div>
       <div>
-        <label class="fl">Cargo</label>
+        <label class="fl">Cargo / Função</label>
         <input class="fi" id="nu-cargo" placeholder="ex: Supervisor de Campo" type="text" spellcheck="false">
       </div>
       <div>
-        <label class="fl">Departamento</label>
+        <label class="fl">Departamento / UEN</label>
         <input class="fi" id="nu-dept" placeholder="ex: UEN-300" type="text" spellcheck="false">
       </div>
     </div>`;
@@ -12977,6 +13003,12 @@ function openNovoUsuarioModal(){
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
     <button class="btn btn-p" onclick="salvarNovoUsuario()">💾 Criar Usuário</button>`;
   openModal();
+}
+
+function toggleNuCampos(){
+  const tipo = document.getElementById('nu-tipo')?.value;
+  const campoUnidade = document.getElementById('nu-campo-unidade');
+  if(campoUnidade) campoUnidade.style.display = tipo === 'gestor_unidade' ? '' : 'none';
 }
 
 function toggleContractSelect(){
@@ -12987,6 +13019,7 @@ function toggleContractSelect(){
 
 async function salvarNovoUsuario(){
   if(!_isAlex()){ showToast('⛔ Apenas o administrador pode criar usuários.','rd'); return; }
+  const tipo     = document.getElementById('nu-tipo')?.value;
   const name     = document.getElementById('nu-name')?.value.trim();
   const username = document.getElementById('nu-username')?.value.trim();
   const email    = document.getElementById('nu-email')?.value.trim();
@@ -12994,33 +13027,45 @@ async function salvarNovoUsuario(){
   const cargo    = document.getElementById('nu-cargo')?.value.trim();
   const dept     = document.getElementById('nu-dept')?.value.trim();
   const role     = document.getElementById('nu-role')?.value || 'user';
+  const unidade  = document.getElementById('nu-unidade')?.value.trim() || '';
+
+  if(!tipo){ showToast('⚠ Selecione o tipo de gestor','rd'); return; }
   if(!name||!username){ showToast('⚠ Preencha nome e username','rd'); return; }
   if(!email){ showToast('⚠ Informe o e-mail para login','rd'); return; }
   if(!pass||pass.length<6){ showToast('⚠ Senha deve ter pelo menos 6 caracteres','rd'); return; }
-  if(ST.participants.find(p=>p.username===username)){ showToast('⚠ Esse username já existe','rd'); return; }
 
-  const newId = `p_${Date.now()}`;
-  const newP = {
-    id: newId, name, username, email, cargo: cargo||'', dept: dept||'',
-    role, color: 'linear-gradient(135deg,#1e40af,#38bdf8)', ativo: true,
+  const color = 'linear-gradient(135deg,#1e40af,#38bdf8)';
+  const tabela = tipo === 'gestor_unidade' ? 'gestores_unidade' : 'gestores_contrato';
+
+  const registro = {
+    name, username, email,
+    cargo: cargo||'', dept: dept||'',
+    role, color, ativo: true,
+    ...(tipo === 'gestor_unidade' ? { unidade, phone: '' } : {}),
   };
 
-  // Salva no Supabase
   try {
-    const { error } = await _sb.from('gestores_contrato').insert([{
-      name, username, email, cargo: cargo||'', dept: dept||'',
-      role, color: newP.color, ativo: true,
-    }]);
+    const { data, error } = await _sb.from(tabela).insert([registro]).select().single();
     if(error) throw error;
-    showToast('✅ Usuário criado! Cadastre a senha no Supabase Auth.','bl', 5000);
-  } catch(e){
-    showToast('⚠ Erro ao salvar no banco: ' + e.message,'rd'); return;
-  }
+    registro.id = data.id;
 
-  ST.participants.push(newP);
-  closeModal();
-  renderUsuarios();
-  await pullFromSheets(true);
+    // Adiciona ao ST correto
+    if(tipo === 'gestor_unidade'){
+      if(!ST.gestoresUnidade) ST.gestoresUnidade = [];
+      ST.gestoresUnidade.push(registro);
+    } else {
+      ST.participants.push(registro);
+    }
+
+    closeModal();
+    renderUsuarios();
+    renderParticipants();
+    renderGestoresUnidade();
+    showToast('✅ ' + (tipo==='gestor_unidade'?'Gestor de Unidade':'Gestor de Contrato') + ' criado com sucesso!','gn');
+    showToast('ℹ️ Cadastre a senha no Supabase Auth → Authentication → Users → Add user','bl', 6000);
+  } catch(e){
+    showToast('⚠ Erro ao salvar: ' + e.message,'rd');
+  }
 }
 
 function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
