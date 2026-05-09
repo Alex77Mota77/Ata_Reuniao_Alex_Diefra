@@ -696,11 +696,9 @@ body{
 .fgrp{display:flex;flex-direction:column;gap:6px}
 .flbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3)}
 .finp,.fsel,.ftxa{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--tx);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s;width:100%}
-input.finp,input.fi{text-transform:none!important}
-input.finp,input.fi,input.lg-inp,input.finp[type=password],input.finp[type=email],input.finp[type=text]{-webkit-text-size-adjust:100%;}
-select.fsel,select.finp{text-transform:none}
+select.fsel,select.finp{text-transform:uppercase}
 .finp:focus,.fsel:focus,.ftxa:focus{border-color:rgba(29,78,216,.5);background:rgba(29,78,216,.04)}
-.finp-tc{text-transform:none}
+.finp-tc{text-transform:capitalize}
 .ftxa{resize:vertical;min-height:80px}
 /* ── Força tema escuro em TODOS os selects e suas options ── */
 select,.fsel,select.fi,select.finp,.frota-tipo-sel{color-scheme:dark}
@@ -1220,7 +1218,7 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
 /* ── Inputs do modal de frota ─────────────────────────── */
 .fi{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:11px 16px;color:var(--tx);font-family:var(--fb);font-size:13px;font-weight:600;outline:none;transition:border-color .2s,box-shadow .2s;width:100%;color-scheme:dark}
 .fi:focus{border-color:rgba(29,78,216,.55);box-shadow:0 0 0 3px rgba(29,78,216,.11);background:rgba(29,78,216,.04)}
-.fi[type=text],.fi[type=number],.fi[type=tel]{text-transform:none}
+.fi[type=text],.fi[type=number],.fi[type=tel]{text-transform:uppercase}
 select.fi{text-transform:uppercase}
 .fi::placeholder{text-transform:none;font-weight:400;color:var(--t3)}
 select.fi{color-scheme:dark}
@@ -2296,12 +2294,12 @@ body.sec-medicoes .cont,
     <div class="lg-hint">Use seu email e senha cadastrados</div>
     <div class="lg-field">
       <label class="lg-label" for="lg-user">Login (usuário ou e-mail)</label>
-      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()">
+      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()">
     </div>
     <div class="lg-field">
       <label class="lg-label" for="lg-pass">Senha</label>
       <div style="position:relative">
-        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px">
+        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocapitalize="none" autocorrect="off" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px">
         <button type="button" onclick="togglePassVis('lg-pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:17px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--gnl)'" onmouseout="this.style.color='var(--t3)'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:clamp(15px,3vw,17px);line-height:1;transition:color .2s;padding:4px;-webkit-tap-highlight-color:transparent">👁</button>
       </div>
     </div>
@@ -8193,7 +8191,7 @@ function openGUModal(id){
       <!-- nome + cargo -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp" style="grid-column:1/-1"><div class="flbl">Nome Completo *</div>
-          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do gestor"
+          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do gestor" autocorrect="off" spellcheck="false"
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo Gestor Unidade';
                      document.getElementById('pi-av-prev').textContent=
@@ -8215,12 +8213,12 @@ function openGUModal(id){
           <input class="finp" id="gu-phone" value="${p?p.phone||'':''}" placeholder="(31) 99999-9999">
         </div>
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
-          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off">
+          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">🔒 Senha</div>
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass" value="${p?p.password||'':''}"
-              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px">
+              placeholder="••••••••" autocomplete="new-password" autocapitalize="none" autocorrect="off" style="padding-right:40px">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8434,7 +8432,7 @@ function openParticipantModal(id){
       <!-- nome + cargo -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp" style="grid-column:1/-1"><div class="flbl">Nome Completo *</div>
-          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do participante"
+          <input class="finp" id="pi-name" value="${p?p.name:''}" placeholder="Nome do participante" autocorrect="off" spellcheck="false"
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo participante';
                      document.getElementById('pi-av-prev').textContent=
@@ -8452,11 +8450,11 @@ function openParticipantModal(id){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
           <input class="finp" id="pi-user" value="${p?p.username||'':''}"
-            placeholder="nome.sobrenome" autocomplete="off">
+            placeholder="nome.sobrenome" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">✉ E-mail</div>
           <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}"
-            placeholder="seu@email.com" autocomplete="email">
+            placeholder="seu@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
       </div>
 
@@ -8466,7 +8464,7 @@ function openParticipantModal(id){
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass"
               value="${p?p.password||'':''}" placeholder="••••••••"
-              autocomplete="new-password" autocomplete="off" style="padding-right:40px">
+              autocomplete="new-password" autocapitalize="none" autocorrect="off" style="padding-right:40px">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8486,8 +8484,8 @@ function openParticipantModal(id){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="fgrp"><div class="flbl">Nova Senha</div>
             <div style="position:relative">
-              <input class="finp" type="password" id="pi-newpass" autocomplete="new-password"
-                placeholder="Mín. 6 caracteres" style="padding-right:40px"
+              <input class="finp" type="password" id="pi-newpass"
+                placeholder="Mín. 6 caracteres" autocapitalize="none" autocorrect="off" style="padding-right:40px"
                 oninput="checkPassStrength(this.value)">
               <button type="button" onclick="togglePassVis('pi-newpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
@@ -8501,8 +8499,8 @@ function openParticipantModal(id){
           </div>
           <div class="fgrp"><div class="flbl">Confirmar Nova Senha</div>
             <div style="position:relative">
-              <input class="finp" type="password" id="pi-confpass" autocomplete="new-password"
-                placeholder="Repita a senha" style="padding-right:40px">
+              <input class="finp" type="password" id="pi-confpass"
+                placeholder="Repita a senha" autocapitalize="none" autocorrect="off" style="padding-right:40px">
               <button type="button" onclick="togglePassVis('pi-confpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8607,9 +8605,8 @@ function saveParticipant(id){
 
 function togglePassVis(inputId,btn){
   const inp=document.getElementById(inputId);
-  if(!inp) return;
-  inp.type = inp.type==='password' ? 'text' : 'password';
-  btn.textContent = inp.type==='password' ? '👁' : '🙈';
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈'}
+  else{inp.type='password';btn.textContent='👁'}
 }
 
 // Helper: atualiza o avatar do nav com foto ou iniciais
@@ -8992,6 +8989,36 @@ function updateReunionDate(v){
   localStorage.setItem('diefra_reunion_date', v);
 }
 
+// ── Desativa autocapitalize em inputs de email, senha e username ────────────
+function _fixInputCapitalize(){
+  const selectors = [
+    'input[type="email"]',
+    'input[type="password"]',
+    'input[type="text"]',
+    'input[id*="user"]',
+    'input[id*="email"]',
+    'input[id*="pass"]',
+    'input[id*="senha"]',
+    'input.fi',
+    'input.finp',
+    'input.lg-inp',
+  ];
+  document.querySelectorAll(selectors.join(',')).forEach(inp=>{
+    inp.setAttribute('autocapitalize','none');
+    inp.setAttribute('autocorrect','off');
+    inp.setAttribute('spellcheck','false');
+  });
+  // Observa novos inputs adicionados dinamicamente (modais)
+  new MutationObserver(()=>{
+    document.querySelectorAll(selectors.join(',')).forEach(inp=>{
+      if(!inp.getAttribute('autocapitalize')){
+        inp.setAttribute('autocapitalize','none');
+        inp.setAttribute('autocorrect','off');
+        inp.setAttribute('spellcheck','false');
+      }
+    });
+  }).observe(document.body,{childList:true,subtree:true});
+}
 
 // ── Relógio em tempo real ──────────────────────────────────────────────────
 function _initLiveClock(){
@@ -11149,6 +11176,114 @@ window.addEventListener('DOMContentLoaded',()=>{
   // Sync sala → footer
   _initSalaSync();
   _initLiveClock(); // relógio ao vivo
+  _fixInputCapitalize(); // sem caixa alta automática
+  // Init UEN picker + dept editor
+  _initUenPicker();
+});
+
+
+
+// ════════════════════════════════════════════════════════════════
+//  FINANCIAL CHARTS — Dashboard
+// ════════════════════════════════════════════════════════════════
+let _finDonutChart = null;
+let _finBarChart   = null;
+let _finGaugeChart = null;
+let _finLineChart  = null;
+
+function finChartShift(dir){
+  const sel = document.getElementById('fin-ct-sel');
+  if(!sel) return;
+  const opts = [...sel.options];
+  const cur  = sel.selectedIndex;
+  const next = Math.max(0, Math.min(opts.length-1, cur+dir));
+  sel.selectedIndex = next;
+  renderFinCharts();
+}
+
+
+
+
+
+
+
+
+// ════════════════════════════════════════════════════════════════
+//  EVOLUÇÃO FATURAMENTO × CUSTOS — Dashboard line chart
+// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  MAPA DE MEDIÇÕES DETALHADO — Medição por linha de serviço
+// ════════════════════════════════════════════════════════════════
+var _mapaCtId = null;
+var _mapaMesKey = '';
+var _mapaPickerYear = new Date().getFullYear();
+var _mapaHistOpen = false;
+var _mapaOvOpen = false;
+
+var _MES_NOMES_MAPA = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function _mapaYM(){
+  var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function _mapaMesLbl(ym){
+  if(!ym) return '—';
+  var p=ym.split('-');
+  return _MES_NOMES_MAPA[parseInt(p[1],10)-1]+'/'+p[0];
+}
+function _mapaGetAnalise(){
+  return (ST.custoAnalises||[]).find(function(a){ return a.contractId===_mapaCtId; })||null;
+}
+function _mapaGetLinhas(mesKey){
+  var a=_mapaGetAnalise(); if(!a) return [];
+  return a.medicao&&a.medicao.history&&a.medicao.history[mesKey]&&a.medicao.history[mesKey].items
+    ? a.medicao.history[mesKey].items : [];
+}
+function _mapaGetRec(ctId, key){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===ctId;}); if(!ct) return null;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  return ct.mapaMedicoes[key]||null;
+}
+function _mapaFmt(v){ return 'R$ '+(parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ── Render principal ───────────────────────────────────────────────────
+function renderMapaMedicoes(){
+  // Init
+  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
+  if(!_mapaMesKey) _mapaMesKey=_mapaYM();
+
+  _mapaRenderNav();
+  _mapaRenderCtInfo();
+  _mapaRenderTable();
+  _mapaRenderKPIs();
+  _mapaRenderHist();
+  _mapaUpdateStatus();
+
+  // Picker year
+  var py=document.getElementById('mapa-picker-year');
+  if(py){ var p=_mapaMesKey.split('-'); _mapaPickerYear=parseInt(p[0],10); py.textContent=_mapaPickerYear; }
+}
+
+// ── Nav de contratos ───────────────────────────────────────────────────
+function _mapaRenderNav(){
+  var scroll=document.getElementById('mapa-nav-scroll'); if(!scroll) return;
+  var cts=ST.contracts||[];
+  scroll.innerHTML=cts.map(function(c){
+    return '<button class="fin-pill'+(c.id===_mapaCtId?' active':'')+'" onclick="mapaSelectCt('+c.id+')">'+
+      '<span class="fp-obra">'+(c.nObra||c.code||'—')+'</span>'+
+      c.name+'</button>';
+  }).join('');
+  // Scroll ao ativo
+  var act=scroll.querySelector('.active');
+  if(act) setTimeout(function(){act.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});},50);
+}
+function mapaSelectCt(id){
+  _mapaCtId=id;
+  renderMapaMedicoes();
+}
+function mapaCtShift(dir){
+  var cts=ST.contracts||[];
+  var idx=cts.findIndex(function(c){return c.id===_mapaCtId;});
   var n=Math.max(0,Math.min(cts.length-1,idx+dir));
   if(cts[n]) mapaSelectCt(cts[n].id);
 }
@@ -12871,15 +13006,15 @@ function openNovoUsuarioModal(){
       </div>
       <div>
         <label class="fl">Username</label>
-        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text">
+        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">E-mail (para login)</label>
-        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email">
+        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">Senha</label>
-        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password">
+        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password" autocapitalize="none" autocorrect="off">
       </div>
       <div>
         <label class="fl">Perfil</label>
@@ -12956,15 +13091,15 @@ function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
       </div>
       <div>
         <label class="fl">Username</label>
-        <input class="fi" id="eu-username" value="${username}" type="text">
+        <input class="fi" id="eu-username" value="${username}" type="text" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">E-mail</label>
-        <input class="fi" id="eu-email" value="${email||''}" type="email">
+        <input class="fi" id="eu-email" value="${email||''}" type="email" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div>
         <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(vazio = manter)</span></label>
-        <input class="fi" id="eu-pass" placeholder="••••••" type="password">
+        <input class="fi" id="eu-pass" placeholder="••••••" type="password" autocapitalize="none" autocorrect="off">
       </div>
       <div>
         <label class="fl">Perfil</label>
