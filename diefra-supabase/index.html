@@ -8316,6 +8316,7 @@ function renderParticipants(){
 
   document.getElementById('participants-grid').innerHTML = parts.map(p=>{
     const isMe = currentUser && currentUser.id === p.id;
+    const canEditAll = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota' || (currentUser.email||'').toLowerCase().includes('alex.mota'));
     const firstName = p.name.trim().split(/\s+/)[0];
     const tag = isMe
       ? `<div class="pc-mine-tag">● Você</div>`
@@ -8342,10 +8343,10 @@ function renderParticipants(){
         ${p.username
           ? `<span class="pc-cred-badge user">👤 ${p.username}</span>`
           : `<span class="pc-cred-badge" style="color:var(--rdl)">⚠ sem usuário</span>`}
-        ${isMe && p.email ? `<span class="pc-cred-badge" title="${p.email}">✉ ${p.email}</span>` : ''}
+        ${(isMe||canEditAll) && p.email ? `<span class="pc-cred-badge" title="${p.email}">✉ ${p.email}</span>` : ''}
         ${passEl}
       </div>
-      <div class="p-acts"${isMe?' style="opacity:1"':''}>
+      <div class="p-acts"${(isMe||canEditAll)?' style="opacity:1"':''}>
         <button class="bic" style="padding:5px 10px;font-size:11px"
           onclick="openParticipantModal(${p.id})">✎ Editar</button>
         <button class="bic del" style="padding:5px 8px;font-size:11px"
@@ -8377,8 +8378,12 @@ function openParticipantModal(id){
   const p = id ? ST.participants.find(x=>x.id===id) : null;
   _pendingParticipantFoto = null;
   // Guard: admin e alex.mota podem editar qualquer perfil
-  const _isSuperAdmin = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota');
-  if(p && !_isSuperAdmin && (!currentUser || currentUser.id !== p.id)){
+  const _isSuperAdmin = currentUser && (
+    currentUser.role==='admin' ||
+    (currentUser.username||'')==='alex.mota' ||
+    (currentUser.email||'').toLowerCase().includes('alex.mota')
+  );
+  if(p && !_isSuperAdmin && (!currentUser || String(currentUser.id) !== String(p.id))){
     showToast('⛔ Você não tem permissão para editar este perfil.','rd');
     return;
   }
@@ -8546,8 +8551,12 @@ function saveParticipant(id){
 
   if(id){
     // ── EDITAR existente ────────────────────────────────────────────────────
-    const _isSuperAdminSave = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota');
-    if(!currentUser || (!_isSuperAdminSave && currentUser.id!==id)){
+    const _isSuperAdminSave = currentUser && (
+      currentUser.role==='admin' ||
+      (currentUser.username||'')==='alex.mota' ||
+      (currentUser.email||'').toLowerCase().includes('alex.mota')
+    );
+    if(!currentUser || (!_isSuperAdminSave && String(currentUser.id)!==String(id))){
       showToast('⛔ Você não tem permissão para editar este perfil.','rd'); return;
     }
     const p = ST.participants.find(x=>x.id===id);
