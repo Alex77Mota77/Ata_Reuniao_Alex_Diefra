@@ -2406,10 +2406,10 @@ body.sec-medicoes .cont,
   <!-- Topbar de controles — dentro do header, não sobrepõe o nav -->
   <div id="user-topbar" style="transition:opacity .4s">
     <div class="utb-sync">
-      <div class="sync-pill idle" id="sync-pill" onclick="manualSync()" title="Sincronizar com Google Sheets">
-        <span id="sync-icon">☁</span><span id="sync-label">Sheets</span>
+      <div class="sync-pill idle" id="sync-pill" onclick="manualSync()" title="Sincronizar com Supabase">
+        <span id="sync-icon">☁</span><span id="sync-label">Supabase</span>
       </div>
-      <div class="utb-config" onclick="openGSheetsConfig()" title="Configurar Google Sheets">⚙ Config</div>
+      <div class="utb-config" onclick="openGSheetsConfig()" title="Status Supabase">⚙ Config</div>
     </div>
     <div class="utb-sep"></div>
     <div class="nav-user utb-user" id="nav-user-pill" style="display:none;border:none;padding:0;margin:0">
@@ -9859,7 +9859,7 @@ function setSyncStatus(state, msg){
   if(!pill) return;
   pill.className = 'sync-pill ' + state;
   const map = {
-    idle:    {icon:'☁',  text: msg||'Sheets'},
+    idle:    {icon:'☁',  text: msg||'Supabase'},
     syncing: {icon:'↻',  text: msg||'Salvando…'},
     ok:      {icon:'✓',  text: msg||'Salvo'},
     err:     {icon:'⚠',  text: msg||'Erro'},
