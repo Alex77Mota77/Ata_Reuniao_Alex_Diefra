@@ -2294,12 +2294,12 @@ body.sec-medicoes .cont,
     <div class="lg-hint">Use seu email e senha cadastrados</div>
     <div class="lg-field">
       <label class="lg-label" for="lg-user">Login (usuário ou e-mail)</label>
-      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()">
+      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()">
     </div>
     <div class="lg-field">
       <label class="lg-label" for="lg-pass">Senha</label>
       <div style="position:relative">
-        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px">
+        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocapitalize="none" autocorrect="off" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px">
         <button type="button" onclick="togglePassVis('lg-pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:17px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--gnl)'" onmouseout="this.style.color='var(--t3)'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:clamp(15px,3vw,17px);line-height:1;transition:color .2s;padding:4px;-webkit-tap-highlight-color:transparent">👁</button>
       </div>
     </div>
@@ -8978,6 +8978,37 @@ function updateReunionDate(v){
   localStorage.setItem('diefra_reunion_date', v);
 }
 
+// ── Desativa autocapitalize em inputs de email, senha e username ────────────
+function _fixInputCapitalize(){
+  const selectors = [
+    'input[type="email"]',
+    'input[type="password"]',
+    'input[type="text"]',
+    'input[id*="user"]',
+    'input[id*="email"]',
+    'input[id*="pass"]',
+    'input[id*="senha"]',
+    'input.fi',
+    'input.finp',
+    'input.lg-inp',
+  ];
+  document.querySelectorAll(selectors.join(',')).forEach(inp=>{
+    inp.setAttribute('autocapitalize','none');
+    inp.setAttribute('autocorrect','off');
+    inp.setAttribute('spellcheck','false');
+  });
+  // Observa novos inputs adicionados dinamicamente (modais)
+  new MutationObserver(()=>{
+    document.querySelectorAll(selectors.join(',')).forEach(inp=>{
+      if(!inp.getAttribute('autocapitalize')){
+        inp.setAttribute('autocapitalize','none');
+        inp.setAttribute('autocorrect','off');
+        inp.setAttribute('spellcheck','false');
+      }
+    });
+  }).observe(document.body,{childList:true,subtree:true});
+}
+
 // ── Relógio em tempo real ──────────────────────────────────────────────────
 function _initLiveClock(){
   function _tick(){
@@ -11134,6 +11165,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   // Sync sala → footer
   _initSalaSync();
   _initLiveClock(); // relógio ao vivo
+  _fixInputCapitalize(); // sem caixa alta automática
   // Init UEN picker + dept editor
   _initUenPicker();
 });
