@@ -12746,104 +12746,88 @@ function linkBtn(url, label){
 
 
 // ════════════════════════════════════════════════════════════
-//  PRESENÇA EM TEMPO REAL — Supabase Realtime Presence
+//  PRESENÇA EM TEMPO REAL — via tabela presenca_online
 // ════════════════════════════════════════════════════════════
-let _presenceChannel = null;
-let _presenceState   = {};
-let _heartbeatTimer  = null;
+let _presenceTimer = null;
+let _presenceKey   = null;
 
 function _initPresence(){
   if(!currentUser || !_sb) return;
-  if(_presenceChannel){ try{ _sb.removeChannel(_presenceChannel); }catch(e){} }
-
-  _presenceChannel = _sb.channel('diefra-presence-v2', {
-    config: { presence: { key: String(currentUser.id || currentUser.username || 'user') } }
+  _presenceKey = 'u_' + String(currentUser.id || currentUser.username || Date.now());
+  _upsertPresence();
+  clearInterval(_presenceTimer);
+  _presenceTimer = setInterval(_upsertPresence, 15000);
+  document.querySelectorAll('.nb').forEach(function(btn){
+    btn.addEventListener('click', function(){ setTimeout(_upsertPresence, 400); });
   });
-
-  _presenceChannel
-    .on('presence', { event: 'sync' }, () => {
-      _presenceState = _presenceChannel.presenceState();
-      _renderPresence();
-    })
-    .on('presence', { event: 'join' }, () => { _renderPresence(); })
-    .on('presence', { event: 'leave' }, () => { _renderPresence(); })
-    .subscribe(async (status) => {
-      if(status === 'SUBSCRIBED'){
-        await _sendPresence();
-        clearInterval(_heartbeatTimer);
-        _heartbeatTimer = setInterval(_sendPresence, 25000);
-        document.querySelectorAll('.nb').forEach(btn => {
-          btn.addEventListener('click', () => setTimeout(_sendPresence, 300));
-        });
-      }
-    });
+  _pollPresence();
+  setInterval(_pollPresence, 10000);
 }
 
-async function _sendPresence(){
-  if(!_presenceChannel || !currentUser) return;
+async function _upsertPresence(){
+  if(!currentUser || !_sb || !_presenceKey) return;
   try {
-    const activeBtn = document.querySelector('.nb.active');
-    const secLabel  = activeBtn
+    var activeBtn = document.querySelector('.nb.active');
+    var secao = activeBtn
       ? (activeBtn.textContent||'').trim().replace(/^[^a-zA-Z]+/,'').split(' ').slice(0,2).join(' ')
       : 'Sistema';
-    await _presenceChannel.track({
-      name:     currentUser.name     || currentUser.username || 'Usuário',
-      username: currentUser.username || '',
-      color:    currentUser.color    || '#7c3aed',
-      secao:    secLabel,
-      at:       Date.now(),
-    });
-  } catch(e){ console.warn('Presence track error:', e); }
+    await _sb.from('presenca_online').upsert({
+      id:         _presenceKey,
+      name:       currentUser.name     || currentUser.username || 'Usuário',
+      username:   currentUser.username || '',
+      color:      currentUser.color    || '#7c3aed',
+      secao:      secao,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+  } catch(e){ console.warn('Presence upsert:', e.message); }
 }
 
-function _renderPresence(){
-  const bar   = document.getElementById('presence-bar');
-  const avDiv = document.getElementById('pr-avatars');
-  if(!bar || !avDiv) return;
-
-  const users = [];
+async function _pollPresence(){
+  if(!_sb) return;
   try {
-    Object.values(_presenceState).forEach(presences => {
-      if(Array.isArray(presences)) presences.forEach(p => { if(p && p.name) users.push(p); });
-    });
-  } catch(e){}
+    var cutoff = new Date(Date.now() - 45000).toISOString();
+    var res = await _sb.from('presenca_online').select('*').gte('updated_at', cutoff);
+    if(res.error) throw res.error;
+    _renderPresence(res.data || []);
+  } catch(e){ console.warn('Presence poll:', e.message); }
+}
 
-  if(users.length === 0){ bar.style.display = 'none'; return; }
+function _renderPresence(users){
+  var bar   = document.getElementById('presence-bar');
+  var avDiv = document.getElementById('pr-avatars');
+  if(!bar || !avDiv) return;
+  if(!users || users.length === 0){ bar.style.display = 'none'; return; }
   bar.style.display = 'flex';
-
-  const MAX   = 6;
-  const shown = users.slice(0, MAX);
-  const extra = users.length - MAX;
-  const now   = Date.now();
-
-  avDiv.innerHTML = shown.map(u => {
-    const ini  = (u.name||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
-    const away = (now - (u.at||now)) > 120000;
-    const dot  = away ? '#f59e0b' : '#10b981';
-    const mins = Math.floor((now - (u.at||now)) / 60000);
-    const time = mins < 1 ? 'agora' : mins + 'min';
-    return '<div class="pr-av" style="background:' + (u.color||'#7c3aed') + '"'
-      + ' data-pr-name="' + u.name + '" data-pr-sec="' + (u.secao||'Sistema') + '" data-pr-time="' + time + '"'
+  var MAX = 6, now = Date.now();
+  var shown = users.slice(0, MAX), extra = users.length - MAX;
+  avDiv.innerHTML = shown.map(function(u){
+    var ini  = (u.name||'?').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
+    var upd  = new Date(u.updated_at).getTime();
+    var away = (now - upd) > 25000;
+    var dot  = away ? '#f59e0b' : '#10b981';
+    var mins = Math.floor((now - upd) / 60000);
+    var time = mins < 1 ? 'agora' : mins + 'min';
+    return '<div class="pr-av" style="background:' + (u.color||'#7c3aed') + ';position:relative"'
+      + ' title="' + u.name + ' · ' + (u.secao||'Sistema') + ' · ' + time + '"'
       + ' onmouseenter="_showPrTooltip(event)" onmouseleave="_hidePrTooltip()">'
       + ini
       + '<span style="position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);background:' + dot + '"></span>'
       + '</div>';
   }).join('') + (extra > 0 ? '<span class="pr-count">+' + extra + '</span>' : '');
 
-  const ttList = document.getElementById('pr-tt-list');
+  var ttList = document.getElementById('pr-tt-list');
   if(ttList){
-    ttList.innerHTML = users.map(u => {
-      const ini  = (u.name||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
-      const away = (now - (u.at||now)) > 120000;
-      const dot  = away ? '#f59e0b' : '#10b981';
-      const mins = Math.floor((now - (u.at||now)) / 60000);
-      const time = mins < 1 ? 'agora' : mins + ' min atrás';
+    ttList.innerHTML = users.map(function(u){
+      var ini  = (u.name||'?').split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
+      var upd  = new Date(u.updated_at).getTime();
+      var away = (now - upd) > 25000;
+      var dot  = away ? '#f59e0b' : '#10b981';
+      var mins = Math.floor((now - upd) / 60000);
+      var time = mins < 1 ? 'agora' : mins + ' min atrás';
       return '<div class="pr-tt-row">'
         + '<div class="pr-tt-av" style="background:' + (u.color||'#7c3aed') + '">' + ini + '</div>'
-        + '<div class="pr-tt-info">'
-        + '<div class="pr-tt-name">' + u.name + '</div>'
-        + '<div class="pr-tt-sec">' + (u.secao||'Sistema') + ' · ' + time + '</div>'
-        + '</div>'
+        + '<div class="pr-tt-info"><div class="pr-tt-name">' + u.name + '</div>'
+        + '<div class="pr-tt-sec">' + (u.secao||'Sistema') + ' · ' + time + '</div></div>'
         + '<div style="width:8px;height:8px;border-radius:50%;background:' + dot + ';flex-shrink:0"></div>'
         + '</div>';
     }).join('');
@@ -12851,36 +12835,33 @@ function _renderPresence(){
 }
 
 function _showPrTooltip(e){
-  const tt = document.getElementById('pr-tooltip');
+  var tt = document.getElementById('pr-tooltip');
   if(!tt) return;
-  _renderPresence();
   tt.style.display = 'block';
-  const av   = e.target.closest('.pr-av') || e.target;
-  const rect = av.getBoundingClientRect();
+  var av = e.target.closest ? e.target.closest('.pr-av') : e.target;
+  var rect = (av||e.target).getBoundingClientRect();
   tt.style.top  = (rect.bottom + 8) + 'px';
   tt.style.left = Math.min(rect.left, window.innerWidth - 250) + 'px';
 }
 
 function _hidePrTooltip(){
   setTimeout(function(){
-    const tt = document.getElementById('pr-tooltip');
+    var tt = document.getElementById('pr-tooltip');
     if(tt) tt.style.display = 'none';
   }, 300);
 }
 
-function _stopPresence(){
-  clearInterval(_heartbeatTimer);
-  _heartbeatTimer = null;
-  if(_presenceChannel){
-    try { _presenceChannel.untrack(); _sb.removeChannel(_presenceChannel); } catch(e){}
+async function _stopPresence(){
+  clearInterval(_presenceTimer);
+  _presenceTimer = null;
+  if(_presenceKey && _sb){
+    try { await _sb.from('presenca_online').delete().eq('id', _presenceKey); } catch(e){}
   }
-  _presenceChannel = null;
-  _presenceState   = {};
-  const bar = document.getElementById('presence-bar');
+  _presenceKey = null;
+  var bar = document.getElementById('presence-bar');
   if(bar) bar.style.display = 'none';
 }
 
-// ════════════════════════════════════════════════════════════════
 //  NAV ARROW SCROLL
 // ════════════════════════════════════════════════════════════════
 function navScroll(dir){

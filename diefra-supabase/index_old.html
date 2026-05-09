@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
 <title>DIEFRA · Gestão de Contratos 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Nunito:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Slab:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
@@ -86,7 +87,7 @@ body{
 .sub-edit{background:none;border:none;border-bottom:1px dashed rgba(255,255,255,.18);color:var(--t2);font-family:var(--fb);font-size:12.5px;font-weight:400;outline:none;cursor:text;padding:0 2px;width:var(--sub-w,58px);min-width:20px;max-width:200px;transition:border-color .2s}
 .sub-edit:hover,.sub-edit:focus{border-bottom-color:var(--gnl);color:var(--tx)}
 .hdr-sub-sep{width:1px;height:13px;background:rgba(255,255,255,0.14);display:inline-block;margin:0 2px}
-.hdr-stats{display:flex;flex-direction:column;gap:10px}
+.hdr-stats{display:flex;flex-direction:column;gap:10px;margin-top:60px}
 .sp{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(0,0,0,0.52),rgba(0,0,0,0.28));border-radius:12px;padding:13px 22px;min-width:178px;border:1px solid rgba(0,0,0,0.68);box-shadow:inset 0 3px 10px rgba(0,0,0,0.68),inset 0 1px 3px rgba(0,0,0,0.85),inset 0 -1px 0 rgba(255,255,255,0.055),0 1px 0 rgba(255,255,255,0.09),0 2px 4px rgba(0,0,0,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .sp::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.28),transparent)}
 .sp::after{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:linear-gradient(180deg,rgba(16,185,129,0.55),rgba(16,185,129,0.04));border-radius:0 12px 12px 0}
@@ -696,9 +697,10 @@ body{
 .fgrp{display:flex;flex-direction:column;gap:6px}
 .flbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3)}
 .finp,.fsel,.ftxa{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--tx);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s;width:100%}
-select.fsel,select.finp{text-transform:uppercase}
+input.finp,input.fi,input.lg-inp,input,textarea{text-transform:none!important;-webkit-text-transform:none!important}
+select.fsel,select.finp{text-transform:none}
 .finp:focus,.fsel:focus,.ftxa:focus{border-color:rgba(29,78,216,.5);background:rgba(29,78,216,.04)}
-.finp-tc{text-transform:capitalize}
+.finp-tc{text-transform:none}
 .ftxa{resize:vertical;min-height:80px}
 /* ── Força tema escuro em TODOS os selects e suas options ── */
 select,.fsel,select.fi,select.finp,.frota-tipo-sel{color-scheme:dark}
@@ -1218,7 +1220,7 @@ html.lp #hdr-uen-picker{background:rgba(252,252,252,0.98)!important;border-color
 /* ── Inputs do modal de frota ─────────────────────────── */
 .fi{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:11px 16px;color:var(--tx);font-family:var(--fb);font-size:13px;font-weight:600;outline:none;transition:border-color .2s,box-shadow .2s;width:100%;color-scheme:dark}
 .fi:focus{border-color:rgba(29,78,216,.55);box-shadow:0 0 0 3px rgba(29,78,216,.11);background:rgba(29,78,216,.04)}
-.fi[type=text],.fi[type=number],.fi[type=tel]{text-transform:uppercase}
+.fi[type=text],.fi[type=number],.fi[type=tel]{text-transform:none}
 select.fi{text-transform:uppercase}
 .fi::placeholder{text-transform:none;font-weight:400;color:var(--t3)}
 select.fi{color-scheme:dark}
@@ -2242,6 +2244,27 @@ body.sec-medicoes .cont,
   #custo-med-tbl-outer { margin: 0 !important; }
 }
 
+/* ── Presença em Tempo Real ─────────────────────────────────── */
+#presence-bar{display:flex;align-items:center;gap:4px;margin:0 8px}
+#presence-bar .pr-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-right:4px;white-space:nowrap}
+.pr-av{position:relative;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;border:2px solid var(--bg);cursor:pointer;transition:transform .2s;flex-shrink:0;user-select:none}
+.pr-av:hover{transform:scale(1.15);z-index:10}
+.pr-dot{position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg)}
+.pr-dot.online{background:#10b981}
+.pr-dot.away{background:#f59e0b}
+.pr-count{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--gnl);border-radius:100px;font-size:10px;font-weight:800;padding:2px 8px;white-space:nowrap}
+/* Tooltip de presença */
+#pr-tooltip{position:fixed;background:rgba(8,22,14,.97);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:12px;min-width:220px;z-index:9999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+#pr-tooltip .pr-tt-title{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:8px}
+.pr-tt-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.pr-tt-row:last-child{border-bottom:none}
+.pr-tt-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;flex-shrink:0}
+.pr-tt-info{flex:1;min-width:0}
+.pr-tt-name{font-size:12px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-tt-sec{font-size:10px;color:var(--t3)}
+.pr-tt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+@media(max-width:700px){#presence-bar .pr-label{display:none}#presence-bar{margin:0 4px}}
+
 </style>
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -2294,12 +2317,12 @@ body.sec-medicoes .cont,
     <div class="lg-hint">Use seu email e senha cadastrados</div>
     <div class="lg-field">
       <label class="lg-label" for="lg-user">Login (usuário ou e-mail)</label>
-      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()">
+      <input class="lg-inp" type="text" id="lg-user" placeholder="ex: alex.mota" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lg-pass').focus()" spellcheck="false">
     </div>
     <div class="lg-field">
       <label class="lg-label" for="lg-pass">Senha</label>
       <div style="position:relative">
-        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px">
+        <input class="lg-inp" type="password" id="lg-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:48px" spellcheck="false">
         <button type="button" onclick="togglePassVis('lg-pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:17px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--gnl)'" onmouseout="this.style.color='var(--t3)'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:clamp(15px,3vw,17px);line-height:1;transition:color .2s;padding:4px;-webkit-tap-highlight-color:transparent">👁</button>
       </div>
     </div>
@@ -2390,16 +2413,19 @@ body.sec-medicoes .cont,
       <div class="hdr-sub">
         <span style="color:var(--t3);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.8px">Gestão de Contratos</span>
         <span class="hdr-sub-sep"></span>
-        Sede — <input class="sub-edit" id="hdr-sala" value="Sala 02" title="Clique para editar a sala">
+        Sede — <input class="sub-edit" id="hdr-sala" value="Sala 02" title="Clique para editar a sala" spellcheck="false">
         <span class="hdr-sub-sep"></span>
         <span id="hdr-sub-date">5 de Março de 2026</span>
       </div>
       <!-- UEN picker moved to body to escape overflow:hidden of header -->
     </div>
     <div class="hdr-stats">
-      <div class="sp"><div class="sl">Data da Reunião</div><input class="sv hdr-date-inp" type="date" id="hdr-date" value="2026-03-05" title="Clique para editar a data da reunião" onchange="updateReunionDate(this.value)"></div>
-      <div class="sp"><div class="sl">Participantes</div><div class="sv" id="hdr-part-count">10 pessoas</div></div>
-      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">12</div></div>
+      <div class="sp" style="min-width:200px">
+        <div class="sl">Data e Hora</div>
+        <div class="sv" id="hdr-live-date" style="font-size:17px;letter-spacing:-0.3px">--/--/----</div>
+        <div style="font-size:11px;color:var(--gnl);font-weight:700;letter-spacing:1px;margin-top:2px" id="hdr-live-time">--:--:--</div>
+      </div>
+      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">0</div></div>
     </div>
   </div>
 
@@ -2410,6 +2436,12 @@ body.sec-medicoes .cont,
         <span id="sync-icon">☁</span><span id="sync-label">Supabase</span>
       </div>
       <div class="utb-config" onclick="openGSheetsConfig()" title="Status Supabase">⚙ Config</div>
+    </div>
+    <div class="utb-sep"></div>
+    <!-- Presença em tempo real -->
+    <div id="presence-bar" style="display:none">
+      <span class="pr-label">Online</span>
+      <div id="pr-avatars" style="display:flex;align-items:center;gap:-6px"></div>
     </div>
     <div class="utb-sep"></div>
     <div class="nav-user utb-user" id="nav-user-pill" style="display:none;border:none;padding:0;margin:0">
@@ -2477,7 +2509,7 @@ body.sec-medicoes .cont,
             oninput="dashSearch(this.value)"
             onkeydown="if(event.key==='Escape'){this.value='';dashSearch('');this.blur()}"
             onfocus="this.parentElement.style.borderColor='rgba(16,185,129,.4)'"
-            onblur="this.parentElement.style.borderColor='rgba(255,255,255,.10)';setTimeout(function(){var d=document.getElementById('dash-search-drop');if(d)d.style.display='none'},200)">
+            onblur="this.parentElement.style.borderColor='rgba(255,255,255,.10)';setTimeout(function(){var d=document.getElementById('dash-search-drop');if(d)d.style.display='none'},200)" spellcheck="false">
           <kbd style="font-size:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:5px;padding:2px 7px;color:var(--t3);font-family:monospace;flex-shrink:0">/</kbd>
         </div>
         <!-- Search dropdown -->
@@ -2808,7 +2840,7 @@ body.sec-medicoes .cont,
     <button class="fc" onclick="filterC('desmob',this)">Desmobilizado</button>
     <button class="fc" onclick="filterC('paralizado',this)">Paralizado</button>
     <button class="fc" onclick="filterC('finalizado',this)">Finalizado</button>
-    <div class="sw"><input class="si" placeholder="Buscar contrato..." oninput="searchC(this.value)"></div>
+    <div class="sw"><input class="si" placeholder="Buscar contrato..." oninput="searchC(this.value)" spellcheck="false"></div>
   </div>
   <div class="cg" id="contracts-grid"></div>
   <div id="kanban-board"></div>
@@ -2906,7 +2938,7 @@ body.sec-medicoes .cont,
       </div>
     </div>
     <div class="sh-acts">
-      <button class="btn btn-s btn-sm" onclick="openManagerModal()">👤 Cadastrar Gestor</button>
+      <button class="btn btn-s btn-sm" onclick="openManagerModal()" id="btn-cad-gestor" style="display:none">👤 Cadastrar Gestor</button>
       <button class="btn btn-p" onclick="openVacModal(null)">＋ Programar Férias</button>
     </div>
   </div>
@@ -2947,7 +2979,7 @@ body.sec-medicoes .cont,
       </div>
     </div>
     <div class="sh-acts">
-      <button class="btn btn-p" onclick="openParticipantModal()">＋ Novo Gestor</button>
+      <button class="btn btn-p" onclick="openParticipantModal()" id="btn-novo-gestor" style="display:none">＋ Novo Gestor</button>
     </div>
   </div>
   <div class="pg" id="participants-grid"></div>
@@ -2964,7 +2996,7 @@ body.sec-medicoes .cont,
       </div>
     </div>
     <div class="sh-acts">
-      <button class="btn btn-p" onclick="openGUModal()">＋ Novo Gestor Unidade</button>
+      <button class="btn btn-p" onclick="openGUModal()" id="btn-novo-gu" style="display:none">＋ Novo Gestor Unidade</button>
     </div>
   </div>
   <div class="pg" id="gu-grid"></div>
@@ -3113,7 +3145,7 @@ body.sec-medicoes .cont,
         <option value="funcao">Função</option>
       </select>
       <div class="dp-search-wrap" style="flex:1;min-width:160px">
-        <input id="dp-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, cargo, função, matrícula…" oninput="renderDPCards()">
+        <input id="dp-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, cargo, função, matrícula…" oninput="renderDPCards()" spellcheck="false">
       </div>
       <button class="dp-pill" onclick="dpExportCSV()" title="Exportar CSV">📥 CSV</button>
       <button class="dp-pill" onclick="dpLimparFiltros()">✕ Limpar</button>
@@ -3220,7 +3252,7 @@ body.sec-medicoes .cont,
         <span style="font-size:13px;color:var(--t3)">&#128269;</span>
         <input id="mapa-hist-search" type="text" placeholder="Buscar por m&#234;s ou ano..."
                oninput="_mapaRenderHist()"
-               style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)">
+               style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)" spellcheck="false">
         <button onclick="document.getElementById('mapa-hist-search').value='';_mapaRenderHist()"
                 style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px">&#x2715;</button>
       </div>
@@ -3310,7 +3342,7 @@ body.sec-medicoes .cont,
       <option value="administrativo">Administrativo</option>
       <option value="comercial">Comercial</option>
     </select>
-    <input id="frota-f-busca" class="frota-filter-search" type="text" placeholder="🔍  Buscar placa, modelo, motorista…" oninput="renderFrotaCards()">
+    <input id="frota-f-busca" class="frota-filter-search" type="text" placeholder="🔍  Buscar placa, modelo, motorista…" oninput="renderFrotaCards()" spellcheck="false">
     <button class="frota-fbtn" onclick="frotaLimparFiltros()" style="flex-shrink:0">✕ Limpar</button>
   </div>
   <div class="frota-grid" id="frota-cards-wrap"></div>
@@ -3381,7 +3413,7 @@ body.sec-medicoes .cont,
         <option value="ferramenta">Ferramenta / Equipamento</option>
       </select>
       <div class="dp-search-wrap" style="flex:1;min-width:160px">
-        <input id="epi-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, CA, fabricante…" oninput="renderEPIEstoque()">
+        <input id="epi-f-busca" class="dp-search" type="text" placeholder="🔍  Nome, CA, fabricante…" oninput="renderEPIEstoque()" spellcheck="false">
       </div>
       <button class="epi-pill" onclick="epiExportCSV()" title="Exportar CSV">📥 CSV</button>
       <button class="epi-pill" onclick="epiLimparFiltros()">✕ Limpar</button>
@@ -3403,7 +3435,7 @@ body.sec-medicoes .cont,
         <button class="epi-pill" data-epist="baixado" onclick="epiFiltroStatus(this,'baixado')" style="background:rgba(100,116,139,.1);border-color:rgba(100,116,139,.3);color:var(--t3)">🔻 Baixado</button>
       </div>
       <div class="dp-search-wrap" style="flex:1;min-width:160px">
-        <input id="epi-ent-busca" class="dp-search" type="text" placeholder="🔍  Colaborador, item, matrícula…" oninput="renderEPIEntregas()">
+        <input id="epi-ent-busca" class="dp-search" type="text" placeholder="🔍  Colaborador, item, matrícula…" oninput="renderEPIEntregas()" spellcheck="false">
       </div>
       <button class="epi-pill" onclick="epiExportEntregasCSV()">📥 CSV</button>
     </div>
@@ -3659,7 +3691,7 @@ body.sec-medicoes .cont,
           <input id="custo-med-pass-inp" type="password" class="finp"
                  placeholder="••••••••" autocomplete="current-password"
                  style="width:100%"
-                 onkeydown="if(event.key==='Enter')custoMedConfirmPass()">
+                 onkeydown="if(event.key==='Enter')custoMedConfirmPass()" spellcheck="false">
         </div>
         <div id="custo-med-pass-err" style="font-size:11px;color:#ef4444;min-height:16px;margin-bottom:12px;text-align:center"></div>
         <div style="display:flex;gap:10px">
@@ -3753,7 +3785,7 @@ body.sec-medicoes .cont,
                  type="text"
                  placeholder="Buscar por mês ou ano... (ex: mai, 2026, jan, set)"
                  oninput="_custoMedHistTimeline()"
-                 style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)">
+                 style="flex:1;background:transparent;border:none;outline:none;color:var(--tx);font-size:12px;font-family:var(--fb)" spellcheck="false">
           <button onclick="document.getElementById('custo-med-hist-search').value='';_custoMedHistTimeline()"
                   style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:2px 8px;border-radius:6px"
                   title="Limpar busca">✕</button>
@@ -4403,6 +4435,28 @@ const DB = {
 };
 
 let currentUser = null;
+
+// ── Controle de Acesso ────────────────────────────────────────
+// Somente Alex Mota tem acesso total ao sistema
+function _isAlex(){
+  if(!currentUser) return false;
+  return (
+    (currentUser.username||'').toLowerCase() === 'alex.mota' ||
+    (currentUser.email||'').toLowerCase().includes('alex.mota')
+  );
+}
+
+function _aplicarPermissoes(){
+  const alex = _isAlex();
+  // Botões de adicionar/editar/deletar gestores
+  ['btn-novo-gestor','btn-novo-gu','btn-cad-gu','btn-cad-gestor','nav-btn-usuarios'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = alex ? '' : 'none';
+  });
+  // Re-renderiza seções que têm botões condicionais
+  if(typeof renderParticipants === 'function') renderParticipants();
+  if(typeof renderGestoresUnidade === 'function') renderGestoresUnidade();
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  EMAILJS CONFIG — preencha com suas credenciais de https://www.emailjs.com
@@ -5944,9 +5998,9 @@ function openContractModal(id){
       </div>
     </div>
     <div class="fg">
-      <div class="fgrp full"><div class="flbl">Nome do Contrato</div><input class="finp" id="ci-name" value="${c?c.name:''}" placeholder="Nome completo do contrato"></div>
-      <div class="fgrp"><div class="flbl">Centro de Custo</div><input class="finp" id="ci-code" value="${c?c.code:''}" placeholder="Ex: 230209301"></div>
-      <div class="fgrp"><div class="flbl">Nº Obra</div><input class="finp" id="ci-nobra" value="${c?c.nObra||'':''}" placeholder="Ex: 2093"></div>
+      <div class="fgrp full"><div class="flbl">Nome do Contrato</div><input class="finp" id="ci-name" value="${c?c.name:''}" placeholder="Nome completo do contrato" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Centro de Custo</div><input class="finp" id="ci-code" value="${c?c.code:''}" placeholder="Ex: 230209301" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Nº Obra</div><input class="finp" id="ci-nobra" value="${c?c.nObra||'':''}" placeholder="Ex: 2093" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Status</div><select class="fsel" id="ci-status">
         <option value="ativo"          ${c&&c.status==='ativo'?          'selected':''}>Ativo</option>
         <option value="finalizado"     ${c&&c.status==='finalizado'?     'selected':''}>Finalizado</option>
@@ -5989,7 +6043,7 @@ function openContractModal(id){
                 })()}
               </select>
             </div>
-            <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}"></div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Técnico</div><input class="finp" type="tel" id="ci-gtec-tel" value="${c?c.telGestorTec||'':''}" spellcheck="false"></div>
           </div>
         </div>
       </div>
@@ -6023,7 +6077,7 @@ function openContractModal(id){
                 })()}
               </select>
             </div>
-            <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}"></div>
+            <div class="fgrp"><div class="flbl">Telefone — Gestor Adm.</div><input class="finp" type="tel" id="ci-gadm-tel" value="${c?c.telGestorAdm||'':''}" spellcheck="false"></div>
           </div>
         </div>
       </div>
@@ -6039,7 +6093,7 @@ function openContractModal(id){
           📎 Link do Contrato no Google Drive
           ${c&&c.linkContrato ? `<a href="${c.linkContrato}" target="_blank" onclick="event.stopPropagation()" style="font-size:10px;color:#38bdf8;font-weight:700;text-decoration:none;padding:2px 8px;border-radius:6px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2)">↗ Testar link</a>` : ''}
         </div>
-        <input class="finp" id="ci-link" value="${c?c.linkContrato||'':''}" placeholder="Cole o link do Google Drive aqui (https://...)">
+        <input class="finp" id="ci-link" value="${c?c.linkContrato||'':''}" placeholder="Cole o link do Google Drive aqui (https://...)" spellcheck="false">
       </div>
     </div>
     <div style="margin:20px 0 14px;font-family:var(--fh);font-size:16px;font-weight:700;padding-top:16px;border-top:1px solid var(--b1)">
@@ -6107,19 +6161,19 @@ function openContractModal(id){
       </div>
       <div class="fgrp full" style="margin-bottom:4px">
         <div class="flbl">📅 Período de Medição</div>
-        <input class="finp" type="text" id="ci-periodo-med" value="${c?c.periodoMedicao||'':''}" placeholder="Ex: 21 - 20  (dia início — dia fim do ciclo)">
+        <input class="finp" type="text" id="ci-periodo-med" value="${c?c.periodoMedicao||'':''}" placeholder="Ex: 21 - 20  (dia início — dia fim do ciclo)" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">📐 Período de Entrega da Medição</div>
-        <input class="finp" type="text" id="ci-periodo-entrega" value="${c?c.periodoEntrega||'':''}" placeholder="Ex: 12 - 15  (dia início — dia fim)">
+        <input class="finp" type="text" id="ci-periodo-entrega" value="${c?c.periodoEntrega||'':''}" placeholder="Ex: 12 - 15  (dia início — dia fim)" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">🔍 Período de Análise do Cliente</div>
-        <input class="finp" type="text" id="ci-periodo-analise" value="${c?c.periodoAnalise||'':''}" placeholder="Ex: 16 - 20  (dia início — dia fim)">
+        <input class="finp" type="text" id="ci-periodo-analise" value="${c?c.periodoAnalise||'':''}" placeholder="Ex: 16 - 20  (dia início — dia fim)" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">💳 Período de Pagamento do Cliente</div>
-        <input class="finp" type="text" id="ci-periodo-pagamento" value="${c?c.periodoPagamento||'':''}" placeholder="Ex: 25  (dia do pagamento)">
+        <input class="finp" type="text" id="ci-periodo-pagamento" value="${c?c.periodoPagamento||'':''}" placeholder="Ex: 25  (dia do pagamento)" spellcheck="false">
       </div>
     </div>`;
   // Auto-calc: Valor Global Atual = Original + Último Aditivo
@@ -7471,10 +7525,10 @@ function openManagerModal(id){
           oninput="const v=this.value.trim()||'?';
             document.getElementById('mg-name-prev').textContent=this.value||'Novo gestor';
             const av=document.getElementById('mg-av-prev');
-            if(av&&!av.querySelector('img')){av.textContent=v.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');}">
+            if(av&&!av.querySelector('img')){av.textContent=v.split(/\s+/).filter(Boolean).slice(0,2).map(w= spellcheck="false">w[0].toUpperCase()).join('');}">
       </div>
-      <div class="fgrp"><div class="flbl">Cargo / Função</div><input class="finp" id="mg-cargo" value="${m?m.cargo||'':'' }" placeholder="Ex: Coordenador, Supervisor de Contrato"></div>
-      <div class="fgrp"><div class="flbl">Departamento / UEN</div><input class="finp" id="mg-dept" value="${m?m.dept:''}" placeholder="Ex: UEN-300, Lab. Técnica"></div>
+      <div class="fgrp"><div class="flbl">Cargo / Função</div><input class="finp" id="mg-cargo" value="${m?m.cargo||'':'' }" placeholder="Ex: Coordenador, Supervisor de Contrato" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Departamento / UEN</div><input class="finp" id="mg-dept" value="${m?m.dept:''}" placeholder="Ex: UEN-300, Lab. Técnica" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Data de Admissão</div><input class="finp" type="date" id="mg-adm" value="${m?m.admissao||'':''}"></div>
       <div class="fgrp full"><div class="flbl">Contrato Vinculado</div>
         <select class="fsel" id="mg-cid">
@@ -8029,7 +8083,7 @@ function openVacModal(vid){
   document.getElementById('modal-body').innerHTML=`
     <div class="fg">
       <div class="fgrp full"><div class="flbl">Colaborador</div><select class="fsel" id="vi-mgr">${mgrOpts}</select></div>
-      <div class="fgrp"><div class="flbl">Período Aquisitivo</div><input class="finp" id="vi-pa" value="${v?v.periodoAquisitivo:''}" placeholder="Ex: 2024-2025"></div>
+      <div class="fgrp"><div class="flbl">Período Aquisitivo</div><input class="finp" id="vi-pa" value="${v?v.periodoAquisitivo:''}" placeholder="Ex: 2024-2025" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Substituto durante as Férias</div><select class="fsel" id="vi-sub">${partOpts}</select></div>
       <div class="fgrp" style="grid-column:1/-1">
         <div class="flbl">Período das Últimas Férias Gozadas</div>
@@ -8107,7 +8161,7 @@ function renderGestoresUnidade(){
   if(!gu.length){
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--t3);font-size:13px">
       Nenhum Gestor de Unidade cadastrado.<br><br>
-      <button class="btn btn-p" onclick="openGUModal()">＋ Cadastrar Gestor Unidade</button>
+      <button class="btn btn-p" onclick="openGUModal()" id="btn-cad-gu" style="display:none">＋ Cadastrar Gestor Unidade</button>
     </div>`;
     return;
   }
@@ -8130,8 +8184,8 @@ function renderGestoresUnidade(){
         ${p.unidade ? `<span class="pc-cred-badge">🏢 ${p.unidade}</span>` : ''}
       </div>
       <div class="p-acts">
-        <button class="bic" style="padding:5px 10px;font-size:11px" onclick="openGUModal(${p.id})">✎ Editar</button>
-        <button class="bic del" style="padding:5px 8px;font-size:11px" onclick="confirmDeleteGU(${p.id})">✕</button>
+        ${_isAlex() ? `<button class="bic" style="padding:5px 10px;font-size:11px" onclick="openGUModal(${p.id})">✎ Editar</button>
+        <button class="bic del" style="padding:5px 8px;font-size:11px" onclick="confirmDeleteGU(${p.id})">✕</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -8192,30 +8246,30 @@ function openGUModal(id){
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo Gestor Unidade';
                      document.getElementById('pi-av-prev').textContent=
-                       v.split(/\\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');"/>
+                       v.split(/\\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');" spellcheck="false"/>
         </div>
         <div class="fgrp"><div class="flbl">Cargo / Função</div>
-          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Gerente de Unidade">
+          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Gerente de Unidade" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">Unidade / UEN</div>
-          <input class="finp" id="gu-unidade" value="${p?p.unidade||'':''}" placeholder="Ex: UEN-300, Unidade Norte">
+          <input class="finp" id="gu-unidade" value="${p?p.unidade||'':''}" placeholder="Ex: UEN-300, Unidade Norte" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">Departamento</div>
-          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: Diretoria Técnica">
+          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: Diretoria Técnica" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">✉ E-mail</div>
-          <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}" placeholder="seu@email.com">
+          <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}" placeholder="seu@email.com" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">📱 Telefone</div>
-          <input class="finp" id="gu-phone" value="${p?p.phone||'':''}" placeholder="(31) 99999-9999">
+          <input class="finp" id="gu-phone" value="${p?p.phone||'':''}" placeholder="(31) 99999-9999" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
-          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off">
+          <input class="finp" id="pi-user" value="${p?p.username||'':''}" placeholder="nome.sobrenome" autocomplete="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">🔒 Senha</div>
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass" value="${p?p.password||'':''}"
-              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px">
+              placeholder="••••••••" autocomplete="new-password" style="padding-right:40px" spellcheck="false">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8253,14 +8307,15 @@ function _guEnsureExtraFields(){
   extra.id = 'gu-extra-fields';
   extra.innerHTML = `
     <div><label class="fl" style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);display:block;margin-bottom:4px">UNIDADE</label>
-      <input id="gu-unidade-inp" class="fi" placeholder="Ex: Unidade Norte, UEN-300" style="width:100%"></div>
+      <input id="gu-unidade-inp" class="fi" placeholder="Ex: Unidade Norte, UEN-300" style="width:100%" spellcheck="false"></div>
     <div><label class="fl" style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--t3);display:block;margin-bottom:4px">TELEFONE</label>
-      <input id="gu-phone-inp" class="fi" placeholder="Ex: (31) 99999-9999" style="width:100%"></div>`;
+      <input id="gu-phone-inp" class="fi" placeholder="Ex: (31) 99999-9999" style="width:100%" spellcheck="false"></div>`;
   container.appendChild(extra);
 }
 
-function saveGU(id){
+async function saveGU(id){
   _guInit();
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode editar Gestores de Unidade.','rd'); return; }
   const p = id ? ST.gestoresUnidade.find(x=>x.id===id) : null;
   const name = (document.getElementById('pi-name').value||'').trim();
   if(!name){ alert('Nome é obrigatório.'); return; }
@@ -8279,6 +8334,32 @@ function saveGU(id){
     foto:     _pendingParticipantFoto || (p ? p.foto||'' : '')
   };
 
+  // Salva no Supabase — tabela gestores_unidade
+  try {
+    const sbData = {
+      id:       data.id,
+      name:     data.name,
+      cargo:    data.cargo,
+      dept:     data.dept,
+      email:    data.email,
+      username: data.username,
+      unidade:  data.unidade,
+      phone:    data.phone,
+      color:    data.color,
+      ativo:    true,
+    };
+    const { data: saved, error } = await _sb
+      .from('gestores_unidade')
+      .upsert(sbData, { onConflict: 'id' })
+      .select()
+      .single();
+    if(error) throw error;
+    if(saved && saved.id) data.id = saved.id;
+    showToast('✅ Gestor de Unidade salvo!','gn');
+  } catch(err){
+    showToast('⚠ Erro ao salvar no banco: ' + err.message,'rd');
+  }
+
   if(id && p){
     const idx = ST.gestoresUnidade.findIndex(x=>x.id===id);
     if(idx>-1) ST.gestoresUnidade[idx] = data;
@@ -8286,16 +8367,22 @@ function saveGU(id){
     ST.gestoresUnidade.push(data);
   }
 
+  _pendingParticipantFoto = null;
   closeModal();
   renderGestoresUnidade();
-  scheduleAutoSync();
 }
 
-function confirmDeleteGU(id){
+async function confirmDeleteGU(id){
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode excluir Gestores de Unidade.','rd'); return; }
   if(!confirm('Excluir este Gestor de Unidade?')) return;
+  try {
+    await _sb.from('gestores_unidade').update({ ativo: false }).eq('id', id);
+  } catch(err){
+    showToast('⚠ Erro ao remover: ' + err.message,'rd');
+  }
   ST.gestoresUnidade = (ST.gestoresUnidade||[]).filter(x=>x.id!==id);
   renderGestoresUnidade();
-  scheduleAutoSync();
+  showToast('✅ Gestor removido','gn');
 }
 
 // ════════════════════════════════════════════════════════════
@@ -8313,6 +8400,7 @@ function renderParticipants(){
 
   document.getElementById('participants-grid').innerHTML = parts.map(p=>{
     const isMe = currentUser && currentUser.id === p.id;
+    const canEditAll = currentUser && (currentUser.role==='admin' || (currentUser.username||'')==='alex.mota' || (currentUser.email||'').toLowerCase().includes('alex.mota'));
     const firstName = p.name.trim().split(/\s+/)[0];
     const tag = isMe
       ? `<div class="pc-mine-tag">● Você</div>`
@@ -8339,14 +8427,17 @@ function renderParticipants(){
         ${p.username
           ? `<span class="pc-cred-badge user">👤 ${p.username}</span>`
           : `<span class="pc-cred-badge" style="color:var(--rdl)">⚠ sem usuário</span>`}
-        ${isMe && p.email ? `<span class="pc-cred-badge" title="${p.email}">✉ ${p.email}</span>` : ''}
+        ${(isMe||canEditAll) && p.email ? `<span class="pc-cred-badge" title="${p.email}">✉ ${p.email}</span>` : ''}
         ${passEl}
       </div>
-      <div class="p-acts"${isMe?' style="opacity:1"':''}>
+      <div class="p-acts"${(isMe||canEditAll)?' style="opacity:1"':''}>
+        ${_isAlex() ? `
         <button class="bic" style="padding:5px 10px;font-size:11px"
           onclick="openParticipantModal(${p.id})">✎ Editar</button>
         <button class="bic del" style="padding:5px 8px;font-size:11px"
-          onclick="confirmDelete('participant',${p.id})">✕</button>
+          onclick="confirmDelete('participant',${p.id})">✕</button>` : (isMe ? `
+        <button class="bic" style="padding:5px 10px;font-size:11px"
+          onclick="openParticipantModal(${p.id})">✎ Meu Perfil</button>` : '')}
       </div>
     </div>`;
   }).join('');
@@ -8373,9 +8464,9 @@ function colorPickerHTML(selectedVal, targetId, previewId){
 function openParticipantModal(id){
   const p = id ? ST.participants.find(x=>x.id===id) : null;
   _pendingParticipantFoto = null;
-  // Guard: só o próprio usuário logado pode editar seu perfil
-  if(p && (!currentUser || currentUser.id !== p.id)){
-    showToast('⛔ Você não tem permissão para editar este perfil.','rd');
+  // Qualquer usuário logado pode editar perfis
+  if(p && !currentUser){
+    showToast('⛔ Faça login para editar perfis.','rd');
     return;
   }
   const initColor = p ? p.color : COLORS[0].val;
@@ -8427,13 +8518,13 @@ function openParticipantModal(id){
             oninput="var v=this.value.trim()||'?';
                      document.getElementById('pi-name-prev').textContent=this.value||'Novo participante';
                      document.getElementById('pi-av-prev').textContent=
-                       v.split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');"/>
+                       v.split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('');" spellcheck="false"/>
         </div>
         <div class="fgrp"><div class="flbl">Cargo / Função</div>
-          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Engenheiro Civil">
+          <input class="finp" id="pi-cargo" value="${p?p.cargo||'':''}" placeholder="Ex: Engenheiro Civil" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">Departamento / UEN</div>
-          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: UEN-300">
+          <input class="finp" id="pi-dept" value="${p?p.dept||'':''}" placeholder="Ex: UEN-300" spellcheck="false">
         </div>
       </div>
 
@@ -8441,11 +8532,11 @@ function openParticipantModal(id){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp"><div class="flbl">👤 Usuário de acesso</div>
           <input class="finp" id="pi-user" value="${p?p.username||'':''}"
-            placeholder="nome.sobrenome" autocomplete="off">
+            placeholder="nome.sobrenome" autocomplete="off" spellcheck="false">
         </div>
         <div class="fgrp"><div class="flbl">✉ E-mail</div>
           <input class="finp" type="email" id="pi-email" value="${p?p.email||'':''}"
-            placeholder="seu@email.com" autocomplete="email">
+            placeholder="seu@email.com" autocomplete="email" spellcheck="false">
         </div>
       </div>
 
@@ -8455,7 +8546,7 @@ function openParticipantModal(id){
           <div style="position:relative">
             <input class="finp" type="password" id="pi-pass"
               value="${p?p.password||'':''}" placeholder="••••••••"
-              autocomplete="new-password" style="padding-right:40px">
+              autocomplete="new-password" style="padding-right:40px" spellcheck="false">
             <button type="button" onclick="togglePassVis('pi-pass',this)"
               style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                      background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8475,9 +8566,9 @@ function openParticipantModal(id){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="fgrp"><div class="flbl">Nova Senha</div>
             <div style="position:relative">
-              <input class="finp" type="password" id="pi-newpass"
+              <input class="finp" type="password" id="pi-newpass" autocomplete="new-password"
                 placeholder="Mín. 6 caracteres" style="padding-right:40px"
-                oninput="checkPassStrength(this.value)">
+                oninput="checkPassStrength(this.value)" spellcheck="false">
               <button type="button" onclick="togglePassVis('pi-newpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8490,8 +8581,8 @@ function openParticipantModal(id){
           </div>
           <div class="fgrp"><div class="flbl">Confirmar Nova Senha</div>
             <div style="position:relative">
-              <input class="finp" type="password" id="pi-confpass"
-                placeholder="Repita a senha" style="padding-right:40px">
+              <input class="finp" type="password" id="pi-confpass" autocomplete="new-password"
+                placeholder="Repita a senha" style="padding-right:40px" spellcheck="false">
               <button type="button" onclick="togglePassVis('pi-confpass',this)"
                 style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
                        background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px">👁</button>
@@ -8520,7 +8611,7 @@ function openParticipantModal(id){
   openModal();
 }
 
-function saveParticipant(id){
+async function saveParticipant(id){
   const name     = (document.getElementById('pi-name')||{}).value||'';
   const cargo    = (document.getElementById('pi-cargo')||{}).value||'';
   const dept     = (document.getElementById('pi-dept')||{}).value||'';
@@ -8534,19 +8625,17 @@ function saveParticipant(id){
 
   if(!name.trim()){showToast('⛔ Informe o nome do participante.','rd');return;}
 
-  // Validar nova senha no modo edição
   if(newpass){
     if(newpass.length<6){if(errEl)errEl.textContent='Nova senha deve ter pelo menos 6 caracteres.';return;}
     if(newpass!==confpass){if(errEl)errEl.textContent='As senhas não coincidem.';return;}
   }
 
   if(id){
-    // ── EDITAR existente ────────────────────────────────────────────────────
-    if(!currentUser || currentUser.id!==id){
-      showToast('⛔ Você não tem permissão para editar este perfil.','rd'); return;
-    }
+    // ── EDITAR existente ─────────────────────────────────────────────────────
+    if(!currentUser){ showToast('⛔ Faça login primeiro.','rd'); return; }
     const p = ST.participants.find(x=>x.id===id);
     if(!p) return;
+
     p.name     = name.trim();
     p.cargo    = cargo.trim();
     p.dept     = dept.trim() || '—';
@@ -8557,42 +8646,79 @@ function saveParticipant(id){
     if(newpass) p.password = newpass;
     if(_pendingParticipantFoto !== null) p.foto = _pendingParticipantFoto;
 
+    // Salva no Supabase
+    try {
+      const { error } = await _sb.from('gestores_contrato').update({
+        name:     p.name,
+        cargo:    p.cargo,
+        dept:     p.dept,
+        color:    p.color,
+        username: p.username,
+        email:    p.email,
+      }).eq('id', id);
+      if(error) throw error;
+    } catch(err){
+      showToast('⚠ Erro ao salvar no banco: ' + err.message, 'rd');
+    }
+
     // Atualizar pill do nav se for o usuário logado
-    if(currentUser && currentUser.id===id){
+    if(currentUser && String(currentUser.id)===String(id)){
       currentUser.name=p.name; currentUser.color=p.color; currentUser.foto=p.foto||'';
       const av=document.getElementById('nav-av');
       const un=document.getElementById('nav-uname');
       if(av) _updateNavAvatar(av, p);
       if(un) un.textContent=p.name.split(' ').filter(Boolean).slice(0,2).join(' ');
+      localStorage.setItem('diefra_user', JSON.stringify(currentUser));
     }
     _pendingParticipantFoto=null;
-    closeModal(); renderParticipants(); scheduleAutoSync();
+    closeModal(); renderParticipants();
     showToast('✅ Participante atualizado!','gn');
 
   } else {
-    // ── CRIAR novo ──────────────────────────────────────────────────────────
-    ST.participants.push({
-      id: ++ST.nextId,
-      name: name.trim(),
-      cargo: cargo.trim(),
-      dept:  dept.trim() || '—',
+    // ── CRIAR novo ───────────────────────────────────────────────────────────
+    const newP = {
+      name:     name.trim(),
+      cargo:    cargo.trim(),
+      dept:     dept.trim() || '—',
       color,
       username: username.trim(),
-      email: email.trim(),
-      password: passEl ? passEl.value : '',
-      foto: _pendingParticipantFoto || '',
-    });
+      email:    email.trim(),
+      ativo:    true,
+    };
+
+    // Verifica permissão
+    if(!_isAlex()){ showToast('⛔ Apenas o administrador pode cadastrar gestores.','rd'); return; }
+    // Salva no Supabase e pega o ID gerado
+    try {
+      const { data, error } = await _sb.from('gestores_contrato').insert([newP]).select().single();
+      if(error) throw error;
+      newP.id = data.id;
+      showToast('✅ Participante cadastrado!','gn');
+    } catch(err){
+      showToast('⚠ Erro ao salvar no banco: ' + err.message, 'rd');
+      newP.id = ++ST.nextId; // fallback local
+    }
+
+    ST.participants.push(newP);
     _pendingParticipantFoto=null;
-    closeModal(); renderParticipants(); scheduleAutoSync();
-    showToast('✅ Participante cadastrado!','gn');
+    closeModal(); renderParticipants();
   }
 }
 
 
 function togglePassVis(inputId,btn){
   const inp=document.getElementById(inputId);
-  if(inp.type==='password'){inp.type='text';btn.textContent='🙈'}
-  else{inp.type='password';btn.textContent='👁'}
+  if(!inp) return;
+  const showing = inp.type==='password';
+  inp.type = showing ? 'text' : 'password';
+  btn.textContent = showing ? '🙈' : '👁';
+  // Quando mostra a senha (type=text), desativa correção automática do Chrome
+  if(showing){
+    inp.setAttribute('spellcheck','false');
+    inp.setAttribute('autocorrect','off');
+    inp.setAttribute('autocomplete','off');
+    inp.setAttribute('autocapitalize','none');
+  }
 }
 
 // Helper: atualiza o avatar do nav com foto ou iniciais
@@ -8670,13 +8796,13 @@ function openChangePassModal(pid){
       </div>
       <div class="fgrp"><div class="flbl">Senha Atual</div>
         <div style="position:relative">
-          <input class="finp" type="password" id="cp-old" placeholder="••••••••" style="padding-right:44px">
+          <input class="finp" type="password" id="cp-old" placeholder="••••••••" style="padding-right:44px" spellcheck="false" autocomplete="new-password">
           <button onclick="togglePassVis('cp-old',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:16px">👁</button>
         </div>
       </div>
       <div class="fgrp"><div class="flbl">Nova Senha</div>
         <div style="position:relative">
-          <input class="finp" type="password" id="cp-new" placeholder="Mínimo 6 caracteres" style="padding-right:44px" oninput="checkPassStrength(this.value)">
+          <input class="finp" type="password" id="cp-new" placeholder="Mínimo 6 caracteres" style="padding-right:44px" oninput="checkPassStrength(this.value)" spellcheck="false" autocomplete="new-password">
           <button onclick="togglePassVis('cp-new',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:16px">👁</button>
         </div>
         <div id="pass-strength" style="margin-top:6px;height:4px;border-radius:4px;background:var(--b1);overflow:hidden"><div id="pass-bar" style="height:100%;width:0;transition:all .3s;border-radius:4px"></div></div>
@@ -8684,7 +8810,7 @@ function openChangePassModal(pid){
       </div>
       <div class="fgrp"><div class="flbl">Confirmar Nova Senha</div>
         <div style="position:relative">
-          <input class="finp" type="password" id="cp-conf" placeholder="Repita a nova senha" style="padding-right:44px">
+          <input class="finp" type="password" id="cp-conf" placeholder="Repita a nova senha" style="padding-right:44px" spellcheck="false" autocomplete="new-password">
           <button onclick="togglePassVis('cp-conf',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:16px">👁</button>
         </div>
       </div>
@@ -8973,6 +9099,22 @@ function updateReunionDate(v){
   if(ftrDate) ftrDate.textContent=fmt;
   // Persistir data no localStorage
   localStorage.setItem('diefra_reunion_date', v);
+}
+
+
+// ── Relógio em tempo real ──────────────────────────────────────────────────
+function _initLiveClock(){
+  function _tick(){
+    const now = new Date();
+    const dateEl = document.getElementById("hdr-live-date");
+    const timeEl = document.getElementById("hdr-live-time");
+    const subEl  = document.getElementById("hdr-sub-date");
+    if(dateEl) dateEl.textContent = now.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
+    if(timeEl) timeEl.textContent = now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    if(subEl)  subEl.textContent  = now.toLocaleDateString("pt-BR",{day:"numeric",month:"long",year:"numeric"});
+  }
+  _tick();
+  setInterval(_tick, 1000);
 }
 
 // Sync sala header → footer in real time
@@ -9421,13 +9563,13 @@ async function doLogin(){
 
     // Busca dados do participante pelo e-mail
     const { data: part, error: partErr } = await _sb
-      .from('participantes').select('*').eq('email', email).maybeSingle();
+      .from('gestores_contrato').select('*').eq('email', email).maybeSingle();
 
     // Fallback: busca pelo username (caso e-mail não esteja preenchido na tabela ainda)
     let userData = part;
     if(!userData){
       const { data: byUser } = await _sb
-        .from('participantes').select('*').eq('username', email).maybeSingle();
+        .from('gestores_contrato').select('*').eq('username', email).maybeSingle();
       userData = byUser;
     }
     if(!userData){
@@ -9456,7 +9598,7 @@ async function doLogin(){
     setTimeout(()=>screen.classList.add('hidden'), 500);
 
     // Mostra botão Usuários apenas para admin
-    if(userData.role === 'admin'){
+    if(userData.role === 'admin' || (userData.username||'') === 'alex.mota'){
       const btnU = document.getElementById('nav-btn-usuarios');
       if(btnU) btnU.style.display = '';
     }
@@ -9464,6 +9606,10 @@ async function doLogin(){
     // Carrega dados do Supabase e inicia polling
     await pullFromSheets(true);
     startSyncPolling();
+    // Mostra botões de admin apenas para Alex Mota
+    _aplicarPermissoes();
+    // Inicia presença em tempo real
+    _initPresence();
 
   } catch(e){
     err.textContent = e.message || 'Erro ao conectar.';
@@ -9478,6 +9624,7 @@ async function doLogin(){
 
 function doLogout(){
   _sb.auth.signOut();
+  _stopPresence();
   currentUser = null;
   localStorage.removeItem('diefra_token');
   localStorage.removeItem('diefra_user');
@@ -9789,7 +9936,7 @@ function openTripModal(tid, prefillPid){
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="tr-obs" value="${trip?trip.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="tr-obs" value="${trip?trip.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">🎨 Cor</div>
@@ -9925,6 +10072,18 @@ async function pushToSheets(silent){
       descricao:c.descricao,valor:c.valor,data:c.data,categoria:c.categoria,obs:c.obs
     })),{onConflict:'id'}));
 
+    if(ST.participants?.length)    ops.push(_sb.from('gestores_contrato').upsert(ST.participants.map(p=>({
+      id:p.id,name:p.name,cargo:p.cargo||'',dept:p.dept||'',
+      color:p.color||'',username:p.username||'',email:p.email||'',
+      role:p.role||'user',ativo:p.ativo!==false
+    })).filter(p=>p.id),{onConflict:'id'}));
+
+    if(ST.gestoresUnidade?.length) ops.push(_sb.from('gestores_unidade').upsert(ST.gestoresUnidade.map(g=>({
+      id:g.id,name:g.name,cargo:g.cargo||'',dept:g.dept||'',
+      email:g.email||'',username:g.username||'',unidade:g.unidade||'',
+      phone:g.phone||'',color:g.color||'#7c3aed',ativo:true
+    })).filter(g=>g.id),{onConflict:'id'}));
+
     await Promise.all(ops);
 
     _lastSyncAt = new Date();
@@ -9946,7 +10105,7 @@ async function pullFromSheets(silent){
   if(!silent) setSyncStatus('syncing','Carregando…');
   try {
     const [
-      {data:contratos},  {data:tarefas},     {data:participantes},
+      {data:contratos},  {data:tarefas},     {data:participantes},  {data:gestoresUnidadeDB},
       {data:medicoes},   {data:entregaveis}, {data:auditorias},
       {data:frota},      {data:viagens},     {data:ferias},
       {data:epiItens},   {data:epiEntregas}, {data:calibEquips},
@@ -9954,7 +10113,8 @@ async function pullFromSheets(silent){
     ] = await Promise.all([
       _sb.from('contratos').select('*').order('criado_em',{ascending:false}),
       _sb.from('tarefas').select('*'),
-      _sb.from('participantes').select('*').eq('ativo',true),
+      _sb.from('gestores_contrato').select('*').eq('ativo',true),
+      _sb.from('gestores_unidade').select('*').eq('ativo',true),
       _sb.from('medicoes').select('*'),
       _sb.from('entregaveis').select('*'),
       _sb.from('auditorias').select('*'),
@@ -9973,7 +10133,8 @@ async function pullFromSheets(silent){
 
     ST.contracts       = _merge(contratos,      ST.contracts);
     ST.tasks           = _merge(tarefas,         ST.tasks);
-    ST.participants    = _merge(participantes,   ST.participants);
+    ST.participants    = _merge(participantes,      ST.participants);
+    ST.gestoresUnidade = _merge(gestoresUnidadeDB, ST.gestoresUnidade);
     ST.vacations       = _merge(ferias,          ST.vacations);
     ST.trips           = _merge(viagens,         ST.trips);
     ST.frota           = _merge(frota,           ST.frota);
@@ -9994,6 +10155,7 @@ async function pullFromSheets(silent){
       const av = document.getElementById('nav-av');
       if(me && av) _updateNavAvatar(av, me);
     }
+    _aplicarPermissoes(); // garante botões corretos após carregar dados
     renderDashboard(); renderContracts(); renderFinanceiro();
     renderTasks(); renderManagers(); renderVacations(); renderParticipants();
     if(document.getElementById('agenda')?.classList.contains('active'))      renderAgenda();
@@ -10297,11 +10459,11 @@ function openAuditModal(aid, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">🔗 Link da Auditoria</div>
-        <input class="finp" id="au-link" value="${audit?audit.link||'':''}" placeholder="https://...">
+        <input class="finp" id="au-link" value="${audit?audit.link||'':''}" placeholder="https://..." spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="au-obs" value="${audit?audit.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="au-obs" value="${audit?audit.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
     </div>`;
 
@@ -10620,11 +10782,11 @@ function openGestaoModal(agid, prefillCtId){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp">
           <div class="flbl">📄 Nº Relatório</div>
-          <input class="finp" id="ag-numrel" value="${ag?ag.numRelatorio||'':''}" placeholder="Ex: 001/26">
+          <input class="finp" id="ag-numrel" value="${ag?ag.numRelatorio||'':''}" placeholder="Ex: 001/26" spellcheck="false">
         </div>
         <div class="fgrp">
           <div class="flbl">🔗 Link do Relatório</div>
-          <input class="finp" id="ag-linkrel" value="${ag?ag.linkRelatorio||'':''}" placeholder="https://...">
+          <input class="finp" id="ag-linkrel" value="${ag?ag.linkRelatorio||'':''}" placeholder="https://..." spellcheck="false">
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -10647,7 +10809,7 @@ function openGestaoModal(agid, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="ag-obs" value="${ag?ag.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="ag-obs" value="${ag?ag.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
     </div>`;
 
@@ -10925,7 +11087,7 @@ function openEntModal(entId, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">📦 Nome do Entregável</div>
-        <input class="finp" id="ent-nome" value="${ent?ent.nome||'':''}" placeholder="Ex: RELATÓRIO DE ENSAIOS">
+        <input class="finp" id="ent-nome" value="${ent?ent.nome||'':''}" placeholder="Ex: RELATÓRIO DE ENSAIOS" spellcheck="false">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="fgrp">
@@ -10943,7 +11105,7 @@ function openEntModal(entId, prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">📝 Observação</div>
-        <input class="finp" id="ent-obs" value="${ent?ent.obs||'':''}" placeholder="Opcional">
+        <input class="finp" id="ent-obs" value="${ent?ent.obs||'':''}" placeholder="Opcional" spellcheck="false">
       </div>
     </div>`;
 
@@ -11009,11 +11171,11 @@ function openEntMesModal(entId, mesKey, triggerEl){
       </div>
       <div class="fgrp">
         <div class="flbl">📄 Entregável (nome/identificação)</div>
-        <input class="finp" id="em-texto" value="${entr.texto||''}" placeholder="Ex: 01. Janeiro, MEDIÇAO_JAN26...">
+        <input class="finp" id="em-texto" value="${entr.texto||''}" placeholder="Ex: 01. Janeiro, MEDIÇAO_JAN26..." spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">🔗 Link (opcional)</div>
-        <input class="finp" id="em-link" value="${entr.link||''}" placeholder="https://...">
+        <input class="finp" id="em-link" value="${entr.link||''}" placeholder="https://..." spellcheck="false">
       </div>
       <div class="fgrp">
         <div class="flbl">📅 Data de Entrega</div>
@@ -11073,16 +11235,17 @@ window.addEventListener('DOMContentLoaded',()=>{
         un.textContent = currentUser.name;
         pill.style.display = 'flex';
       }
-      // Mostra botão Usuários se admin
-      if(currentUser.role === 'admin'){
-        const btnU = document.getElementById('nav-btn-usuarios');
-        if(btnU) btnU.style.display = '';
-      }
+      // Aplica permissões IMEDIATAMENTE ao restaurar sessão
+      _aplicarPermissoes();
     }
     // Esconde login e carrega dados
     const screen = document.getElementById('login-screen');
     if(screen) screen.classList.add('hidden');
-    pullFromSheets(true).finally(()=>{ startSyncPolling(); });
+    pullFromSheets(true).finally(()=>{
+      startSyncPolling();
+      _aplicarPermissoes(); // re-aplica após carregar dados
+      _initPresence();
+    });
   }
   // Load data from Google Sheets (if configured)
   // Pull silencioso no boot — erros não aparecem na tela de login
@@ -11115,116 +11278,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   // Sync sala → footer
   _initSalaSync();
-  // Init UEN picker + dept editor
+  _initLiveClock(); // relógio ao vivo
   _initUenPicker();
 });
-
-
-
-// ════════════════════════════════════════════════════════════════
-//  FINANCIAL CHARTS — Dashboard
-// ════════════════════════════════════════════════════════════════
-let _finDonutChart = null;
-let _finBarChart   = null;
-let _finGaugeChart = null;
-let _finLineChart  = null;
-
-function finChartShift(dir){
-  const sel = document.getElementById('fin-ct-sel');
-  if(!sel) return;
-  const opts = [...sel.options];
-  const cur  = sel.selectedIndex;
-  const next = Math.max(0, Math.min(opts.length-1, cur+dir));
-  sel.selectedIndex = next;
-  renderFinCharts();
-}
-
-
-
-
-
-
-
-
-// ════════════════════════════════════════════════════════════════
-//  EVOLUÇÃO FATURAMENTO × CUSTOS — Dashboard line chart
-// ════════════════════════════════════════════════════════════════
-// ════════════════════════════════════════════════════════════════
-// ════════════════════════════════════════════════════════════════
-//  MAPA DE MEDIÇÕES DETALHADO — Medição por linha de serviço
-// ════════════════════════════════════════════════════════════════
-var _mapaCtId = null;
-var _mapaMesKey = '';
-var _mapaPickerYear = new Date().getFullYear();
-var _mapaHistOpen = false;
-var _mapaOvOpen = false;
-
-var _MES_NOMES_MAPA = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-
-function _mapaYM(){
-  var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-}
-function _mapaMesLbl(ym){
-  if(!ym) return '—';
-  var p=ym.split('-');
-  return _MES_NOMES_MAPA[parseInt(p[1],10)-1]+'/'+p[0];
-}
-function _mapaGetAnalise(){
-  return (ST.custoAnalises||[]).find(function(a){ return a.contractId===_mapaCtId; })||null;
-}
-function _mapaGetLinhas(mesKey){
-  var a=_mapaGetAnalise(); if(!a) return [];
-  return a.medicao&&a.medicao.history&&a.medicao.history[mesKey]&&a.medicao.history[mesKey].items
-    ? a.medicao.history[mesKey].items : [];
-}
-function _mapaGetRec(ctId, key){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===ctId;}); if(!ct) return null;
-  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
-  return ct.mapaMedicoes[key]||null;
-}
-function _mapaFmt(v){ return 'R$ '+(parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-
-// ── Render principal ───────────────────────────────────────────────────
-function renderMapaMedicoes(){
-  // Init
-  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
-  if(!_mapaMesKey) _mapaMesKey=_mapaYM();
-
-  _mapaRenderNav();
-  _mapaRenderCtInfo();
-  _mapaRenderTable();
-  _mapaRenderKPIs();
-  _mapaRenderHist();
-  _mapaUpdateStatus();
-
-  // Picker year
-  var py=document.getElementById('mapa-picker-year');
-  if(py){ var p=_mapaMesKey.split('-'); _mapaPickerYear=parseInt(p[0],10); py.textContent=_mapaPickerYear; }
-}
-
-// ── Nav de contratos ───────────────────────────────────────────────────
-function _mapaRenderNav(){
-  var scroll=document.getElementById('mapa-nav-scroll'); if(!scroll) return;
-  var cts=ST.contracts||[];
-  scroll.innerHTML=cts.map(function(c){
-    return '<button class="fin-pill'+(c.id===_mapaCtId?' active':'')+'" onclick="mapaSelectCt('+c.id+')">'+
-      '<span class="fp-obra">'+(c.nObra||c.code||'—')+'</span>'+
-      c.name+'</button>';
-  }).join('');
-  // Scroll ao ativo
-  var act=scroll.querySelector('.active');
-  if(act) setTimeout(function(){act.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});},50);
-}
-function mapaSelectCt(id){
-  _mapaCtId=id;
-  renderMapaMedicoes();
-}
-function mapaCtShift(dir){
-  var cts=ST.contracts||[];
-  var idx=cts.findIndex(function(c){return c.id===_mapaCtId;});
-  var n=Math.max(0,Math.min(cts.length-1,idx+dir));
-  if(cts[n]) mapaSelectCt(cts[n].id);
-}
 
 // ── Navegação de mês ───────────────────────────────────────────────────
 function mapaMesShift(dir){
@@ -12343,7 +12399,7 @@ function openMedNovaModal(prefillCtId){
       </div>
       <div class="fgrp">
         <div class="flbl">🔗 Boletim de Medição (Google Drive)</div>
-        <input class="finp" id="mn-link" placeholder="Cole o link do Google Drive aqui (https://...)">
+        <input class="finp" id="mn-link" placeholder="Cole o link do Google Drive aqui (https://...)" spellcheck="false">
       </div>
       <div style="margin-top:4px;padding-top:14px;border-top:1px solid var(--b1)">
         <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">📅 Datas de Faturamento</div>
@@ -12483,7 +12539,7 @@ function openMedModal(contractId, mesKey){
           ${rec.link ? `<a href="${rec.link}" target="_blank" onclick="event.stopPropagation()" style="font-size:10px;color:#38bdf8;font-weight:700;text-decoration:none;padding:1px 7px;border-radius:100px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2)">↗ Abrir link</a>` : ''}
         </div>
         <input class="finp" id="med-link" value="${rec.link||''}"
-          placeholder="Cole o link do Google Drive aqui (https://...)">
+          placeholder="Cole o link do Google Drive aqui (https://...)" spellcheck="false">
       </div>
       <div style="margin-top:4px;padding-top:14px;border-top:1px solid var(--b1)">
         <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:12px">📅 Datas de Faturamento</div>
@@ -12628,7 +12684,7 @@ function _showLinkModal(url){
         <input id="_link-url-inp" value="${url}" readonly
           style="flex:1;background:#021a0a;border:1px solid rgba(56,189,248,.3);border-radius:8px;
                  padding:10px 14px;color:#e2e8f0;font-size:12px;font-family:monospace;outline:none"
-          onclick="this.select()">
+          onclick="this.select()" spellcheck="false">
         <button onclick="_copyLink()" id="_copy-btn"
           style="background:#1d4ed8;border:none;border-radius:8px;color:#fff;
                  padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;
@@ -12686,58 +12742,143 @@ function linkBtn(url, label){
 }
 
 
-// ════════════════════════════════════════════════════════════════
-//  TITLE CASE AUTO-FORMAT — aplica em todos os .finp texto
-// ════════════════════════════════════════════════════════════════
-const TC_SKIP = new Set([
-  'de','da','do','das','dos','e','a','o','as','os',
-  'em','na','no','nas','nos','com','por','para','que',
-  'ao','à','às','aos','se','ou','nem','mas','pois',
-]);
+// Campos livres — sem formatação automática
 
-function toTitleCase(str){
-  if(!str) return str;
-  return str.replace(/\S+/g, (word, offset)=>{
-    const lower = word.toLowerCase();
-    // Always capitalize first word; skip particles in the middle
-    if(offset === 0 || !TC_SKIP.has(lower)){
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    }
-    return lower;
+
+// ════════════════════════════════════════════════════════════
+//  PRESENÇA EM TEMPO REAL — Supabase Realtime Presence
+// ════════════════════════════════════════════════════════════
+let _presenceChannel = null;
+let _presenceState   = {};
+let _heartbeatTimer  = null;
+
+function _initPresence(){
+  if(!currentUser || !_sb) return;
+  if(_presenceChannel){ try{ _sb.removeChannel(_presenceChannel); }catch(e){} }
+
+  _presenceChannel = _sb.channel('diefra-presence-v2', {
+    config: { presence: { key: String(currentUser.id || currentUser.username || 'user') } }
   });
+
+  _presenceChannel
+    .on('presence', { event: 'sync' }, () => {
+      _presenceState = _presenceChannel.presenceState();
+      _renderPresence();
+    })
+    .on('presence', { event: 'join' }, () => { _renderPresence(); })
+    .on('presence', { event: 'leave' }, () => { _renderPresence(); })
+    .subscribe(async (status) => {
+      if(status === 'SUBSCRIBED'){
+        await _sendPresence();
+        clearInterval(_heartbeatTimer);
+        _heartbeatTimer = setInterval(_sendPresence, 25000);
+        document.querySelectorAll('.nb').forEach(btn => {
+          btn.addEventListener('click', () => setTimeout(_sendPresence, 300));
+        });
+      }
+    });
 }
 
-// Delegated listener — catches all current and future .finp text inputs
-document.addEventListener('input', function(e){
-  const el = e.target;
-  if(!el.classList.contains('finp')) return;
-  const type = (el.type||'text').toLowerCase();
-  // Only text-like inputs (not date, number, color, etc.)
-  if(['text','search','tel','url','email',''].includes(type)){
-    const pos  = el.selectionStart;
-    const val  = el.value;
-    const tc   = toTitleCase(val);
-    if(tc !== val){
-      el.value = tc;
-      // Restore caret position
-      try{ el.setSelectionRange(pos, pos); }catch(e){}
-    }
-  }
-}, true);
+async function _sendPresence(){
+  if(!_presenceChannel || !currentUser) return;
+  try {
+    const activeBtn = document.querySelector('.nb.active');
+    const secLabel  = activeBtn
+      ? (activeBtn.textContent||'').trim().replace(/^[^a-zA-Z]+/,'').split(' ').slice(0,2).join(' ')
+      : 'Sistema';
+    await _presenceChannel.track({
+      name:     currentUser.name     || currentUser.username || 'Usuário',
+      username: currentUser.username || '',
+      color:    currentUser.color    || '#7c3aed',
+      secao:    secLabel,
+      at:       Date.now(),
+    });
+  } catch(e){ console.warn('Presence track error:', e); }
+}
 
-// Also apply on paste
-document.addEventListener('paste', function(e){
-  const el = e.target;
-  if(!el.classList.contains('finp')) return;
-  const type = (el.type||'text').toLowerCase();
-  if(['text','search','tel','url','email',''].includes(type)){
-    // let paste happen, then format
-    setTimeout(()=>{
-      const tc = toTitleCase(el.value);
-      if(tc !== el.value) el.value = tc;
-    }, 0);
+function _renderPresence(){
+  const bar   = document.getElementById('presence-bar');
+  const avDiv = document.getElementById('pr-avatars');
+  if(!bar || !avDiv) return;
+
+  const users = [];
+  try {
+    Object.values(_presenceState).forEach(presences => {
+      if(Array.isArray(presences)) presences.forEach(p => { if(p && p.name) users.push(p); });
+    });
+  } catch(e){}
+
+  if(users.length === 0){ bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+
+  const MAX   = 6;
+  const shown = users.slice(0, MAX);
+  const extra = users.length - MAX;
+  const now   = Date.now();
+
+  avDiv.innerHTML = shown.map(u => {
+    const ini  = (u.name||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const away = (now - (u.at||now)) > 120000;
+    const dot  = away ? '#f59e0b' : '#10b981';
+    const mins = Math.floor((now - (u.at||now)) / 60000);
+    const time = mins < 1 ? 'agora' : mins + 'min';
+    return '<div class="pr-av" style="background:' + (u.color||'#7c3aed') + '"'
+      + ' data-pr-name="' + u.name + '" data-pr-sec="' + (u.secao||'Sistema') + '" data-pr-time="' + time + '"'
+      + ' onmouseenter="_showPrTooltip(event)" onmouseleave="_hidePrTooltip()">'
+      + ini
+      + '<span style="position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);background:' + dot + '"></span>'
+      + '</div>';
+  }).join('') + (extra > 0 ? '<span class="pr-count">+' + extra + '</span>' : '');
+
+  const ttList = document.getElementById('pr-tt-list');
+  if(ttList){
+    ttList.innerHTML = users.map(u => {
+      const ini  = (u.name||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+      const away = (now - (u.at||now)) > 120000;
+      const dot  = away ? '#f59e0b' : '#10b981';
+      const mins = Math.floor((now - (u.at||now)) / 60000);
+      const time = mins < 1 ? 'agora' : mins + ' min atrás';
+      return '<div class="pr-tt-row">'
+        + '<div class="pr-tt-av" style="background:' + (u.color||'#7c3aed') + '">' + ini + '</div>'
+        + '<div class="pr-tt-info">'
+        + '<div class="pr-tt-name">' + u.name + '</div>'
+        + '<div class="pr-tt-sec">' + (u.secao||'Sistema') + ' · ' + time + '</div>'
+        + '</div>'
+        + '<div style="width:8px;height:8px;border-radius:50%;background:' + dot + ';flex-shrink:0"></div>'
+        + '</div>';
+    }).join('');
   }
-}, true);
+}
+
+function _showPrTooltip(e){
+  const tt = document.getElementById('pr-tooltip');
+  if(!tt) return;
+  _renderPresence();
+  tt.style.display = 'block';
+  const av   = e.target.closest('.pr-av') || e.target;
+  const rect = av.getBoundingClientRect();
+  tt.style.top  = (rect.bottom + 8) + 'px';
+  tt.style.left = Math.min(rect.left, window.innerWidth - 250) + 'px';
+}
+
+function _hidePrTooltip(){
+  setTimeout(function(){
+    const tt = document.getElementById('pr-tooltip');
+    if(tt) tt.style.display = 'none';
+  }, 300);
+}
+
+function _stopPresence(){
+  clearInterval(_heartbeatTimer);
+  _heartbeatTimer = null;
+  if(_presenceChannel){
+    try { _presenceChannel.untrack(); _sb.removeChannel(_presenceChannel); } catch(e){}
+  }
+  _presenceChannel = null;
+  _presenceState   = {};
+  const bar = document.getElementById('presence-bar');
+  if(bar) bar.style.display = 'none';
+}
 
 // ════════════════════════════════════════════════════════════════
 //  NAV ARROW SCROLL
@@ -12875,50 +13016,73 @@ function roleColor(r){ return (ROLES.find(x=>x.value===r)||{color:'#888'}).color
 async function renderUsuarios(){
   const el = document.getElementById('usuarios-list');
   if(!el) return;
-  const list = ST.participants || [];
-  el.innerHTML = `
-  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden">
-    <table style="width:100%;border-collapse:collapse">
-      <thead>
-        <tr style="border-bottom:1px solid var(--b1)">
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Usuário</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Login</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Cargo</th>
-          <th style="text-align:left;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Depto</th>
-          <th style="text-align:right;padding:14px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${list.map(u => `
-        <tr style="border-bottom:1px solid var(--b1);transition:background .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
-          <td style="padding:14px 20px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div style="width:34px;height:34px;border-radius:50%;background:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0">
-                ${u.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+  const gc = (ST.participants || []).map(u => ({...u, _tipo:'gestor_contrato'}));
+  const gu = (ST.gestoresUnidade || []).map(u => ({...u, _tipo:'gestor_unidade'}));
+  function _renderGroup(list, tipoLabel, tipoColor){
+    if(!list.length) return '';
+    return `
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:${tipoColor};text-transform:uppercase;padding:10px 20px;border-bottom:1px solid var(--b1);background:rgba(0,0,0,.2)">${tipoLabel} — ${list.length} cadastrado${list.length>1?'s':''}</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--b1)">
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Usuário</th>
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Login / E-mail</th>
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Cargo</th>
+            <th style="text-align:left;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Perfil</th>
+            <th style="text-align:right;padding:12px 20px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map(u => {
+          const isMe = u.id === (currentUser||{}).id || u.username === (currentUser||{}).username;
+          const roleBadge = u.role==='admin'
+            ? '<span style="background:rgba(139,92,246,.2);color:#a78bfa;border:1px solid rgba(139,92,246,.3);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800">ADMIN</span>'
+            : '<span style="background:rgba(255,255,255,.06);color:var(--t3);border:1px solid var(--b1);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">USER</span>';
+          return `
+          <tr style="border-bottom:1px solid var(--b1);transition:background .15s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+            <td style="padding:14px 20px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:34px;height:34px;border-radius:50%;background:${u.color||'#1d4ed8'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0">
+                  ${u.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+                </div>
+                <div>
+                  <div style="font-weight:700;color:var(--tx)">${u.name}</div>
+                  ${isMe ? '<div style="font-size:10px;color:var(--gnl);font-weight:700">● Você</div>' : ''}
+                </div>
               </div>
-              <span style="font-weight:700;color:var(--tx)">${u.name}</span>
-            </div>
-          </td>
-          <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.username||u.email||'—'}</td>
-          <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.cargo||'—'}</td>
-          <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.dept||'—'}</td>
-          <td style="padding:14px 20px;text-align:right">
-            <button onclick="openEditUsuarioModal(${u.id},'${u.name.replace(/'/g,"\\'")}','${(u.username||'').replace(/'/g,"\\'")}','${(u.cargo||'').replace(/'/g,"\\'")}','${(u.dept||'').replace(/'/g,"\\'")}')"
-              style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:#60a5fa;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;transition:all .2s"
-              onmouseover="this.style.background='rgba(59,130,246,.25)'" onmouseout="this.style.background='rgba(59,130,246,.1)'">
-              ✎ Editar
-            </button>
-            ${u.id !== (currentUser||{}).id ? `
-            <button onclick="deleteUsuario(${u.id},'${u.name.replace(/'/g,"\\'")}')"
-              style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s"
-              onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">
-              🗑 Remover
-            </button>` : '<span style="font-size:11px;color:var(--t3);padding:5px 12px">Você</span>'}
-          </td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-  </div>`;
+            </td>
+            <td style="padding:14px 20px">
+              <div style="font-size:13px;color:var(--t2)">${u.username||'—'}</div>
+              <div style="font-size:11px;color:var(--t3)">${u.email||'—'}</div>
+            </td>
+            <td style="padding:14px 20px;font-size:13px;color:var(--t2)">${u.cargo||'—'} ${u.dept?'<span style="color:var(--t3)">· '+u.dept+'</span>':''}</td>
+            <td style="padding:14px 20px">${roleBadge}</td>
+            <td style="padding:14px 20px;text-align:right;white-space:nowrap">
+              <button onclick="openEditUsuarioModal(${u.id},'${u.name.replace(/'/g,"\'")}','${(u.username||'').replace(/'/g,"\'")}','${(u.cargo||'').replace(/'/g,"\'")}','${(u.dept||'').replace(/'/g,"\'")}','${(u.email||'').replace(/'/g,"\'")}','${u.role||'user'}')"
+                style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:#60a5fa;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;transition:all .2s"
+                onmouseover="this.style.background='rgba(59,130,246,.25)'" onmouseout="this.style.background='rgba(59,130,246,.1)'">
+                ✎ Editar
+              </button>
+              ${!isMe ? `
+              <button onclick="deleteUsuario(${u.id},'${u.name.replace(/'/g,"\'")}')"
+                style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s"
+                onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">
+                🗑 Remover
+              </button>` : ''}
+            </td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  el.innerHTML =
+    '<div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden">' +
+    _renderGroup(gc, '👥 Gestores de Contrato', '#38bdf8') +
+    _renderGroup(gu, '🏢 Gestores de Unidade', '#a78bfa') +
+    '</div>';
 }
 
 function openNovoUsuarioModal(){
@@ -12927,33 +13091,58 @@ function openNovoUsuarioModal(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div style="grid-column:1/-1">
         <label class="fl">Nome Completo</label>
-        <input class="fi" id="nu-name" placeholder="Nome do usuário" type="text">
+        <input class="fi" id="nu-name" placeholder="Nome do usuário" type="text" spellcheck="false">
+      </div>
+      <div style="grid-column:1/-1">
+        <label class="fl">Tipo de Gestor</label>
+        <select class="fi" id="nu-tipo" onchange="toggleNuCampos()">
+          <option value="">— Selecione o tipo —</option>
+          <option value="gestor_contrato">👥 Gestor de Contrato</option>
+          <option value="gestor_unidade">🏢 Gestor de Unidade</option>
+        </select>
+      </div>
+      <div id="nu-campo-unidade" style="grid-column:1/-1;display:none">
+        <label class="fl">Unidade</label>
+        <input class="fi" id="nu-unidade" placeholder="ex: UEN-300" type="text" spellcheck="false">
       </div>
       <div>
-        <label class="fl">Login (username)</label>
-        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text">
+        <label class="fl">Username</label>
+        <input class="fi" id="nu-username" placeholder="ex: joao.silva" type="text" spellcheck="false">
       </div>
       <div>
-        <label class="fl">Senha</label>
-        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password">
+        <label class="fl">E-mail (para login)</label>
+        <input class="fi" id="nu-email" placeholder="email@diefra.com.br" type="email" spellcheck="false">
       </div>
       <div>
-        <label class="fl">Cargo</label>
-        <input class="fi" id="nu-cargo" placeholder="ex: Supervisor de Campo" type="text">
+        <label class="fl">Senha inicial</label>
+        <input class="fi" id="nu-pass" placeholder="Mínimo 6 caracteres" type="password" spellcheck="false" autocomplete="new-password">
       </div>
       <div>
-        <label class="fl">Departamento</label>
-        <input class="fi" id="nu-dept" placeholder="ex: UEN-300" type="text">
+        <label class="fl">Perfil</label>
+        <select class="fi" id="nu-role">
+          <option value="user">Usuário</option>
+          <option value="admin">Administrador</option>
+        </select>
       </div>
       <div>
-        <label class="fl">Email</label>
-        <input class="fi" id="nu-email" placeholder="email@exemplo.com" type="email">
+        <label class="fl">Cargo / Função</label>
+        <input class="fi" id="nu-cargo" placeholder="ex: Supervisor de Campo" type="text" spellcheck="false">
+      </div>
+      <div>
+        <label class="fl">Departamento / UEN</label>
+        <input class="fi" id="nu-dept" placeholder="ex: UEN-300" type="text" spellcheck="false">
       </div>
     </div>`;
   document.getElementById('modal-footer').innerHTML = `
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
     <button class="btn btn-p" onclick="salvarNovoUsuario()">💾 Criar Usuário</button>`;
   openModal();
+}
+
+function toggleNuCampos(){
+  const tipo = document.getElementById('nu-tipo')?.value;
+  const campoUnidade = document.getElementById('nu-campo-unidade');
+  if(campoUnidade) campoUnidade.style.display = tipo === 'gestor_unidade' ? '' : 'none';
 }
 
 function toggleContractSelect(){
@@ -12963,86 +13152,151 @@ function toggleContractSelect(){
 }
 
 async function salvarNovoUsuario(){
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode criar usuários.','rd'); return; }
+  const tipo     = document.getElementById('nu-tipo')?.value;
   const name     = document.getElementById('nu-name')?.value.trim();
   const username = document.getElementById('nu-username')?.value.trim();
+  const email    = document.getElementById('nu-email')?.value.trim();
   const pass     = document.getElementById('nu-pass')?.value;
   const cargo    = document.getElementById('nu-cargo')?.value.trim();
   const dept     = document.getElementById('nu-dept')?.value.trim();
-  const email    = document.getElementById('nu-email')?.value.trim();
-  if(!name||!username||!pass){ showToast('⚠ Preencha nome, login e senha','rd'); return; }
-  if(pass.length < 6){ showToast('⚠ Senha deve ter pelo menos 6 caracteres','rd'); return; }
-  if(ST.participants.find(p=>p.username===username)){ showToast('⚠ Esse login já existe','rd'); return; }
-  const newP = {
-    id: ++ST.nextId,
-    name, username, password: pass,
-    cargo: cargo||'', dept: dept||'', email: email||'',
-    color: 'linear-gradient(135deg,#1e40af,#38bdf8)',
+  const role     = document.getElementById('nu-role')?.value || 'user';
+  const unidade  = document.getElementById('nu-unidade')?.value.trim() || '';
+
+  if(!tipo){ showToast('⚠ Selecione o tipo de gestor','rd'); return; }
+  if(!name||!username){ showToast('⚠ Preencha nome e username','rd'); return; }
+  if(!email){ showToast('⚠ Informe o e-mail para login','rd'); return; }
+  if(!pass||pass.length<6){ showToast('⚠ Senha deve ter pelo menos 6 caracteres','rd'); return; }
+
+  const color = 'linear-gradient(135deg,#1e40af,#38bdf8)';
+  const tabela = tipo === 'gestor_unidade' ? 'gestores_unidade' : 'gestores_contrato';
+
+  const registro = {
+    name, username, email,
+    cargo: cargo||'', dept: dept||'',
+    role, color, ativo: true,
+    ...(tipo === 'gestor_unidade' ? { unidade, phone: '' } : {}),
   };
-  ST.participants.push(newP);
-  scheduleAutoSync();
-  closeModal();
-  showToast('✅ Usuário criado com sucesso','bl');
-  renderUsuarios();
+
+  try {
+    const { data, error } = await _sb.from(tabela).insert([registro]).select().single();
+    if(error) throw error;
+    registro.id = data.id;
+
+    // Adiciona ao ST correto
+    if(tipo === 'gestor_unidade'){
+      if(!ST.gestoresUnidade) ST.gestoresUnidade = [];
+      ST.gestoresUnidade.push(registro);
+    } else {
+      ST.participants.push(registro);
+    }
+
+    closeModal();
+    renderUsuarios();
+    renderParticipants();
+    renderGestoresUnidade();
+    showToast('✅ ' + (tipo==='gestor_unidade'?'Gestor de Unidade':'Gestor de Contrato') + ' criado com sucesso!','gn');
+    showToast('ℹ️ Cadastre a senha no Supabase Auth → Authentication → Users → Add user','bl', 6000);
+  } catch(e){
+    showToast('⚠ Erro ao salvar: ' + e.message,'rd');
+  }
 }
 
-function openEditUsuarioModal(id, name, username, cargo, dept){
+function openEditUsuarioModal(id, name, username, cargo, dept, email, role){
   document.getElementById('modal-title').textContent = '✎ Editar Usuário';
   document.getElementById('modal-body').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div style="grid-column:1/-1">
         <label class="fl">Nome</label>
-        <input class="fi" id="eu-name" value="${name}" type="text">
+        <input class="fi" id="eu-name" value="${name}" type="text" spellcheck="false">
       </div>
       <div>
-        <label class="fl">Login (username)</label>
-        <input class="fi" id="eu-username" value="${username}" type="text">
+        <label class="fl">Username</label>
+        <input class="fi" id="eu-username" value="${username}" type="text" spellcheck="false">
       </div>
       <div>
-        <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(deixe vazio para manter)</span></label>
-        <input class="fi" id="eu-pass" placeholder="••••••" type="password">
+        <label class="fl">E-mail</label>
+        <input class="fi" id="eu-email" value="${email||''}" type="email" spellcheck="false">
+      </div>
+      <div>
+        <label class="fl">Nova Senha <span style="color:var(--t3);font-weight:400">(vazio = manter)</span></label>
+        <input class="fi" id="eu-pass" placeholder="••••••" type="password" spellcheck="false" autocomplete="new-password">
+      </div>
+      <div>
+        <label class="fl">Perfil</label>
+        <select class="fi" id="eu-role">
+          <option value="user" ${role!=='admin'?'selected':''}>Usuário</option>
+          <option value="admin" ${role==='admin'?'selected':''}>Administrador</option>
+        </select>
       </div>
       <div>
         <label class="fl">Cargo</label>
-        <input class="fi" id="eu-cargo" value="${cargo}" type="text">
+        <input class="fi" id="eu-cargo" value="${cargo}" type="text" spellcheck="false">
       </div>
       <div>
         <label class="fl">Departamento</label>
-        <input class="fi" id="eu-dept" value="${dept}" type="text">
+        <input class="fi" id="eu-dept" value="${dept}" type="text" spellcheck="false">
       </div>
     </div>`;
   document.getElementById('modal-footer').innerHTML = `
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-p" onclick="salvarEdicaoUsuario(${id})">💾 Salvar</button>`;
+    <button class="btn btn-p" onclick="salvarEdicaoUsuario(${JSON.stringify(id)})">💾 Salvar</button>`;
   openModal();
 }
 
 async function salvarEdicaoUsuario(id){
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode editar usuários.','rd'); return; }
   const p = ST.participants.find(x=>x.id===id);
   if(!p){ showToast('❌ Usuário não encontrado','rd'); return; }
   const name     = document.getElementById('eu-name')?.value.trim();
   const username = document.getElementById('eu-username')?.value.trim();
+  const email    = document.getElementById('eu-email')?.value.trim();
   const pass     = document.getElementById('eu-pass')?.value;
   const cargo    = document.getElementById('eu-cargo')?.value.trim();
   const dept     = document.getElementById('eu-dept')?.value.trim();
-  if(!name||!username){ showToast('⚠ Nome e login são obrigatórios','rd'); return; }
-  p.name     = name;
-  p.username = username;
-  p.cargo    = cargo;
-  p.dept     = dept;
+  const role     = document.getElementById('eu-role')?.value || 'user';
+  if(!name||!username){ showToast('⚠ Nome e username são obrigatórios','rd'); return; }
+
+  // Atualiza no Supabase
+  try {
+    const upd = { name, username, email, cargo, dept, role };
+    const { error } = await _sb.from('gestores_contrato').update(upd).eq('id', id);
+    if(error) throw error;
+
+    // Se informou nova senha → reseta via SQL (requer permissão)
+    if(pass && pass.length >= 6 && email){
+      await _sb.rpc('reset_user_password', { user_email: email, new_password: pass })
+        .then(({error:e})=>{ if(e) showToast('⚠ Dados salvos, mas redefinição de senha requer acesso admin no Supabase','or',4000); });
+    }
+  } catch(e){
+    showToast('⚠ Erro ao salvar: ' + e.message,'rd');
+  }
+
+  // Atualiza ST local
+  Object.assign(p, { name, username, email, cargo, dept, role });
   if(pass && pass.length >= 6) p.password = pass;
-  scheduleAutoSync();
   closeModal();
   showToast('✅ Usuário atualizado','bl');
   renderUsuarios();
 }
 
 async function deleteUsuario(id, name){
-  if(!confirm(`Remover o usuário "${name}"? Esta ação não pode ser desfeita.`)) return;
+  if(!_isAlex()){ showToast('⛔ Apenas o administrador pode remover usuários.','rd'); return; }
+  if(!confirm(`Remover o usuário "${name}"?\nEsta ação não pode ser desfeita.`)) return;
+
+  // Remove do Supabase
+  try {
+    const { error } = await _sb.from('gestores_contrato').update({ ativo: false }).eq('id', id);
+    if(error) throw error;
+  } catch(e){
+    showToast('⚠ Erro ao remover: ' + e.message,'rd'); return;
+  }
+
   ST.participants = ST.participants.filter(p=>p.id!==id);
-  scheduleAutoSync();
-  showToast('✅ Usuário removido','bl');
+  showToast(`✅ Usuário "${name}" removido`,'bl');
   renderUsuarios();
 }
+
 
 
 
@@ -14000,7 +14254,7 @@ function openFrotaModal(vid){
   const tabs=[{id:'ident',lbl:'1. Identificação'},{id:'operacao',lbl:'2. Operacional'},{id:'responsab',lbl:'3. Responsabilidade'},{id:'financeiro',lbl:'4. Financeiro'},{id:'manutencao',lbl:'5. Manutenção'},{id:'documentos',lbl:'6. Documentação'},{id:'seguranca',lbl:'7. Segurança'},{id:'foto',lbl:'8. Foto'}];
   const tabBar='<div class="frota-tab-bar">'+tabs.map(t=>'<button class="frota-tab'+(t.id==='ident'?' active':'')+'" onclick="switchFrotaTab(\''+t.id+'\')">'+t.lbl+'</button>').join('')+'</div>';
   const tipoGrid='<div class="vtype-grid" id="frota-tipo-grid">'+Object.keys(VTYPE_SVG).map(k=>'<div class="vtype-item'+(sv('tipoVeiculo','sedan')===k?' selected':'')+'" data-tipo="'+k+'" onclick="selectVTipo(\''+k+'\')">'+VTYPE_SVG[k]+'<div class="vtype-label">'+VTYPE_LABELS[k]+'</div></div>').join('')+'</div>';
-  const fi=(id,lbl,val,type,ph)=>'<div><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+(val||'')+'" placeholder="'+(ph||'')+'" class="fi"></div>';
+  const fi=(id,lbl,val,type,ph)=>'<div><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+(val||'')+'" placeholder="'+(ph||'')+'" class="fi" spellcheck="false"></div>';
   const fsel=(id,lbl,opts,val)=>'<div><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><select id="'+id+'" class="fi">'+opts.map(o=>'<option value="'+o.v+'"'+(o.v==val?' selected':'')+'>'+o.l+'</option>').join('')+'</select></div>';
   const fta=(id,lbl,val)=>'<div style="grid-column:1/-1"><label class="frota-form-lbl" style="font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:5px">'+lbl+'</label><textarea id="'+id+'" rows="3" class="fi" style="resize:vertical;text-transform:none">'+(val||'')+'</textarea></div>';
   const g2=(...a)=>'<div style="display:grid;grid-template-columns:'+('1fr '.repeat(a.length).trim())+';gap:14px;margin-bottom:14px">'+a.join('')+'</div>';
@@ -14345,7 +14599,7 @@ function openDPModal(id){
   const ctOpts=ST.contracts.map(ct=>`<option value="${ct.id}" ${ct.id==sv('contractId')?'selected':''}>${ct.name}</option>`).join('');
   const partOpts='<option value="">— Nenhum —</option>'+ST.participants.map(p=>`<option value="${p.name}" ${sv('responsavelDP')===p.name?'selected':''}>${p.name}</option>`).join('');
   // Helper de campo
-  const fi=(id,lbl,val,type='text',ph='',cls='')=>`<div class="fgrp ${cls}"><div class="flbl">${lbl}</div><input class="finp" id="${id}" type="${type}" value="${val}" placeholder="${ph}"></div>`;
+  const fi=(id,lbl,val,type='text',ph='',cls='')=>`<div class="fgrp ${cls}"><div class="flbl">${lbl}</div><input class="finp" id="${id}" type="${type}" value="${val}" placeholder="${ph}" spellcheck="false"></div>`;
   const fs=(id,lbl,opts,val)=>`<div class="fgrp"><div class="flbl">${lbl}</div><select class="fsel" id="${id}">${opts.map(o=>`<option value="${o.v}" ${val===o.v?'selected':''}>${o.l}</option>`).join('')}</select></div>`;
   const ft=(id,lbl,val,ph='',cls='')=>`<div class="fgrp ${cls}"><div class="flbl">${lbl}</div><textarea class="ftxa" id="${id}" placeholder="${ph}">${val}</textarea></div>`;
   const g2=(a,b)=>`<div class="fg">${a}${b}</div>`;
@@ -15205,7 +15459,7 @@ function fpOpenConfigImpostos(){
       ${fi2('fpc-salMinimo','Salário Mínimo (R$)',cfg.salMinimo)}
       <div class="fgrp" style="margin-bottom:0">
         <label class="flbl" style="font-size:10px">Referência Legal</label>
-        <input id="fpc-referencia" class="finp" type="text" value="${cfg.referencia}" style="padding:6px 10px;font-size:11px;height:34px">
+        <input id="fpc-referencia" class="finp" type="text" value="${cfg.referencia}" style="padding:6px 10px;font-size:11px;height:34px" spellcheck="false">
       </div>
     </div>
 
@@ -16028,11 +16282,11 @@ function _dpRenderFaltasModal(id, periodo){
         <select id="nf-motivo-sel" class="fsel" style="height:34px;font-size:11.5px;color-scheme:dark">
           ${ART473_MOTIVOS.map(m=>`<option value="${m.v}">${m.l}</option>`).join('')}
         </select>
-        <input id="nf-motivo-txt" class="finp" style="height:34px;font-size:12px;display:none" placeholder="Descreva o motivo">
+        <input id="nf-motivo-txt" class="finp" style="height:34px;font-size:12px;display:none" placeholder="Descreva o motivo" spellcheck="false">
       </div>
       <div class="fgrp" style="margin-bottom:0" id="nf-cid-grp">
         <label class="flbl" style="font-size:10px">CID (Atestado)</label>
-        <input id="nf-cid" class="finp" style="height:34px;font-size:12px" placeholder="Ex: J11, M54…">
+        <input id="nf-cid" class="finp" style="height:34px;font-size:12px" placeholder="Ex: J11, M54…" spellcheck="false">
       </div>
       <div class="fgrp" style="margin-bottom:0">
         <label class="flbl" style="font-size:10px">Comprovante Entregue?</label>
@@ -16046,7 +16300,7 @@ function _dpRenderFaltasModal(id, periodo){
     <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end">
       <div class="fgrp" style="margin-bottom:0">
         <label class="flbl" style="font-size:10px">Observação</label>
-        <input id="nf-obs" class="finp" style="height:34px;font-size:12px" placeholder="Observações adicionais…">
+        <input id="nf-obs" class="finp" style="height:34px;font-size:12px" placeholder="Observações adicionais…" spellcheck="false">
       </div>
       <button onclick="dpAdicionarFalta(${id})" class="btn btn-p" style="height:34px;white-space:nowrap;font-size:12px">
         ✚ Registrar Falta
@@ -16995,7 +17249,7 @@ function dpOpenFuncaoModal(id){
   const sv=(k,d='')=>f?f[k]||d:d;
   const ics=['🔧','👷','🏗','📐','🧪','💻','🚛','📋','💰','🔍','🎓','⚙️','🏢','📊','🔬','🌿','🚜','👔','🛡','📱'];
   document.getElementById('modal-title').textContent=f?'Editar Função':'Nova Função';
-  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div class="fgrp"><div class="flbl">Nome *</div><input class="finp" id="fn-nome" value="'+sv('nome')+'" placeholder="Ex: Técnico de Campo"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fgrp"><div class="flbl">CBO</div><input class="finp" id="fn-cbo" value="'+sv('cbo')+'" placeholder="Ex: 3114-05"></div><div class="fgrp"><div class="flbl">Categoria</div><input class="finp" id="fn-categoria" value="'+sv('categoria')+'" placeholder="Ex: Técnico"></div></div><div class="fgrp"><div class="flbl">Salário Referência (R$)</div><input class="finp" id="fn-salref" type="number" value="'+sv('salRef')+'" placeholder="0,00"></div><div class="fgrp"><div class="flbl">Descrição</div><textarea class="ftxa" id="fn-descricao" placeholder="Atividades principais…">'+sv('descricao')+'</textarea></div><div class="fgrp"><div class="flbl">Ícone</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ics.map(ic=>'<button type="button" onclick="document.getElementById(\'fn-icone\').value=\''+ic+'\';this.parentElement.querySelectorAll(\'button\').forEach(b=>b.style.background=\'transparent\');this.style.background=\'rgba(29,78,216,.3)\'" style="width:36px;height:36px;border:1px solid var(--b1);border-radius:8px;background:'+(sv('icone','🔧')===ic?'rgba(29,78,216,.3)':'transparent')+';cursor:pointer;font-size:18px">'+ic+'</button>').join('')+'<input id="fn-icone" value="'+sv('icone','🔧')+'" style="display:none"></div></div></div>';
+  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div class="fgrp"><div class="flbl">Nome *</div><input class="finp" id="fn-nome" value="'+sv('nome')+'" placeholder="Ex: Técnico de Campo" spellcheck="false"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fgrp"><div class="flbl">CBO</div><input class="finp" id="fn-cbo" value="'+sv('cbo')+'" placeholder="Ex: 3114-05" spellcheck="false"></div><div class="fgrp"><div class="flbl">Categoria</div><input class="finp" id="fn-categoria" value="'+sv('categoria')+'" placeholder="Ex: Técnico" spellcheck="false"></div></div><div class="fgrp"><div class="flbl">Salário Referência (R$)</div><input class="finp" id="fn-salref" type="number" value="'+sv('salRef')+'" placeholder="0,00"></div><div class="fgrp"><div class="flbl">Descrição</div><textarea class="ftxa" id="fn-descricao" placeholder="Atividades principais…">'+sv('descricao')+'</textarea></div><div class="fgrp"><div class="flbl">Ícone</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+ics.map(ic=>'<button type="button" onclick="document.getElementById(\'fn-icone\').value=\''+ic+'\';this.parentElement.querySelectorAll(\'button\').forEach(b=>b.style.background=\'transparent\');this.style.background=\'rgba(29,78,216,.3)\'" style="width:36px;height:36px;border:1px solid var(--b1);border-radius:8px;background:'+(sv('icone','🔧')===ic?'rgba(29,78,216,.3)':'transparent')+';cursor:pointer;font-size:18px">'+ic+'</button>').join('')+'<input id="fn-icone" value="'+sv('icone','🔧')+'" style="display:none" spellcheck="false"></div></div></div>';
   document.getElementById('modal-footer').innerHTML='<button class="btn btn-s" onclick="closeModal()">Cancelar</button>'+(f?'<button class="btn btn-d" onclick="dpDeleteFuncao('+f.id+');closeModal()">🗑</button>':'')+'<button class="btn btn-p" onclick="dpSaveFuncao('+(f?f.id:0)+')">💾 Salvar</button>';
   openModal();
 }
@@ -17066,7 +17320,7 @@ function dpTransferirContrato(id){
   const c=(ST.dp||[]).find(x=>x.id===id);if(!c)return;
   const ctOpts=ST.contracts.map(ct=>'<option value="'+ct.id+'"'+(ct.id==c.contractId?' selected':'')+'>'+ct.name+'</option>').join('');
   document.getElementById('modal-title').textContent='🔄 Transferir Colaborador';
-  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(29,78,216,.08);border:1px solid rgba(29,78,216,.2);border-radius:12px"><div style="width:44px;height:44px;border-radius:12px;background:'+dpAvatarColor(c.nome||'?')+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;flex-shrink:0">'+dpInitials(c.nome)+'</div><div><div style="font-weight:700;font-size:14px">'+c.nome+'</div><div style="font-size:11px;color:var(--t2)">'+(c.cargo||'—')+(c.funcao?' · '+c.funcao:'')+'</div></div></div><div class="fgrp"><div class="flbl">Contrato atual</div><div style="background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--t2)">'+((ST.contracts.find(x=>x.id==c.contractId)||{}).name||'Não definido')+'</div></div><div class="fgrp"><div class="flbl">Transferir para *</div><select class="fsel" id="dp-transfer-ct">'+ctOpts+'</select></div><div class="fgrp"><div class="flbl">Motivo</div><input class="finp" id="dp-transfer-motivo" placeholder="Ex: Remanejamento…"></div></div>';
+  document.getElementById('modal-body').innerHTML='<div style="display:flex;flex-direction:column;gap:14px"><div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(29,78,216,.08);border:1px solid rgba(29,78,216,.2);border-radius:12px"><div style="width:44px;height:44px;border-radius:12px;background:'+dpAvatarColor(c.nome||'?')+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;flex-shrink:0">'+dpInitials(c.nome)+'</div><div><div style="font-weight:700;font-size:14px">'+c.nome+'</div><div style="font-size:11px;color:var(--t2)">'+(c.cargo||'—')+(c.funcao?' · '+c.funcao:'')+'</div></div></div><div class="fgrp"><div class="flbl">Contrato atual</div><div style="background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--t2)">'+((ST.contracts.find(x=>x.id==c.contractId)||{}).name||'Não definido')+'</div></div><div class="fgrp"><div class="flbl">Transferir para *</div><select class="fsel" id="dp-transfer-ct">'+ctOpts+'</select></div><div class="fgrp"><div class="flbl">Motivo</div><input class="finp" id="dp-transfer-motivo" placeholder="Ex: Remanejamento…" spellcheck="false"></div></div>';
   document.getElementById('modal-footer').innerHTML='<button class="btn btn-s" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="dpConfirmarTransferencia('+id+')">🔄 Confirmar</button>';
   openModal();
 }
@@ -17217,7 +17471,7 @@ function dpEnhanceModal(id){
         <div style="font-size:10.5px;color:var(--t2);margin-bottom:12px">Converte HH:MM para número decimal (folha, Excel, eSocial)</div>
         <div class="fgrp" style="margin-bottom:10px">
           <div class="flbl">Tempo (HH:MM)</div>
-          <input class="finp" id="hc-hhm" type="text" placeholder="Ex: 8:30" oninput="dpHorasToDecimal()">
+          <input class="finp" id="hc-hhm" type="text" placeholder="Ex: 8:30" oninput="dpHorasToDecimal()" spellcheck="false">
         </div>
         <div id="hc-dec-result" style="background:rgba(0,0,0,.2);border-radius:10px;padding:14px;text-align:center;min-height:64px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">
           <span style="font-size:10px;color:var(--t3)">Digite um horário para converter</span>
@@ -17246,7 +17500,7 @@ function dpEnhanceModal(id){
           <div class="fgrp"><div class="flbl">Intervalo (min)</div>
             <input class="finp" id="bh-intervalo" type="number" value="60" oninput="dpCalcBancoHoras()"></div>
           <div class="fgrp"><div class="flbl">Jornada Contratual</div>
-            <input class="finp" id="bh-jornada" type="text" value="8:00" placeholder="Ex: 8:48" oninput="dpCalcBancoHoras()"></div>
+            <input class="finp" id="bh-jornada" type="text" value="8:00" placeholder="Ex: 8:48" oninput="dpCalcBancoHoras()" spellcheck="false"></div>
         </div>
         <div id="bh-result" style="background:rgba(0,0,0,.2);border-radius:10px;padding:14px;min-height:72px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px">
           <span style="font-size:10px;color:var(--t3)">Preencha os horários para calcular</span>
@@ -17608,10 +17862,10 @@ function epiOpenItemModal(id){
       </select></div>
       <div class="fgrp"><div class="flbl">Categoria *</div><select class="finp" id="eim-cat"><option value="">Selecione…</option>${selCat}</select></div>
     </div>
-    <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A"></div>
+    <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A" spellcheck="false"></div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…"></div>
-      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus"></div>
+      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus" spellcheck="false"></div>
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Vida Útil (dias)</div><input class="finp" type="number" id="eim-vida" value="${sv('vidaUtilDias')}" placeholder="Ex: 180"></div>
@@ -17622,7 +17876,7 @@ function epiOpenItemModal(id){
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Contrato (opcional)</div><select class="finp" id="eim-ct"><option value="">Global — todos contratos</option>${ctSel}</select></div>
-      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…"></div>
+      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…" spellcheck="false"></div>
     </div>
   </div>
   <div id="eim-estoque" style="display:none">
@@ -17634,18 +17888,18 @@ function epiOpenItemModal(id){
       <div class="fgrp"><div class="flbl">Preço Unitário (R$)</div><input class="finp" type="number" id="eim-preco" value="${sv('precoUnit','')}" step="0.01" placeholder="0,00"></div>
       <div class="fgrp"><div class="flbl">Consumo Médio/Mês</div><input class="finp" type="number" id="eim-consumo" value="${sv('consumoMensal','')}" placeholder="Qtd/mês"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3"></div>
+    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3" spellcheck="false"></div>
   </div>
   <div id="eim-ca" style="display:none">
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">Nº do CA (Certificado de Aprovação)</div><input class="finp" id="eim-ca-num" value="${sv('ca')}" placeholder="Ex: 12345"></div>
+      <div class="fgrp"><div class="flbl">Nº do CA (Certificado de Aprovação)</div><input class="finp" id="eim-ca-num" value="${sv('ca')}" placeholder="Ex: 12345" spellcheck="false"></div>
       <div class="fgrp"><div class="flbl">Validade do CA</div><input class="finp" type="date" id="eim-ca-val" value="${sv('caValidade')}"></div>
     </div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…"></div>
-      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051"></div>
+      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051" spellcheck="false"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…"></div>
+    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…" spellcheck="false"></div>
     <div style="background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:11.5px;color:var(--t2)">
       💡 O <strong>CA</strong> (Certificado de Aprovação) é obrigatório para todos os EPIs conforme NR6. Mantenha sempre atualizado para conformidade em auditorias.
     </div>
@@ -17703,7 +17957,7 @@ function epiOpenEstoqueModal(itenId){
     </select></div>
     <div class="fgrp"><div class="flbl">Quantidade</div><input class="finp" type="number" id="em-qt" min="1" placeholder="0"></div>
   </div>
-  <div class="fgrp"><div class="flbl">Observação</div><input class="finp" id="em-obs" placeholder="Ex: NF 12345, ajuste de inventário…"></div>`,
+  <div class="fgrp"><div class="flbl">Observação</div><input class="finp" id="em-obs" placeholder="Ex: NF 12345, ajuste de inventário…" spellcheck="false"></div>`,
   `<button class="btn btn-s" onclick="closeModal()">Cancelar</button>
    <button class="btn btn-p" onclick="epiSaveEstoque('${itenId}')">✔ Confirmar</button>`);
 }
@@ -17741,28 +17995,28 @@ function epiOpenEntregaModal(id,preItemId){
         <option value="">Selecionar…</option>${colabSel}
       </select>
     </div>
-    <div class="fgrp"><div class="flbl">Ou digitar nome manualmente</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo"></div>
+    <div class="fgrp"><div class="flbl">Ou digitar nome manualmente</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo" spellcheck="false"></div>
   </div>
   <div class="fg2">
-    <div class="fgrp"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}"></div>
-    <div class="fgrp"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}"></div>
+    <div class="fgrp"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}" spellcheck="false"></div>
+    <div class="fgrp"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}" spellcheck="false"></div>
   </div>
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Quantidade</div><input class="finp" type="number" id="ee-qt" value="${sv('quantidade',1)}" min="1"></div>
-    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G"></div>
+    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G" spellcheck="false"></div>
   </div>
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Data de Entrega *</div><input class="finp" type="date" id="ee-dt" value="${sv('dtEntrega',new Date().toISOString().slice(0,10))}" onchange="epiEntCalcRenovacao()"></div>
     <div class="fgrp"><div class="flbl">Previsão de Renovação (auto)</div><input class="finp" type="date" id="ee-renov" value="${sv('dtRenovacao')}"></div>
   </div>
   <div class="fg2">
-    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel')}" placeholder="Nome de quem entregou"></div>
+    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel')}" placeholder="Nome de quem entregou" spellcheck="false"></div>
     <div class="fgrp"><div class="flbl">Exige Devolução?</div><select class="finp" id="ee-dev">
       <option value="nao" ${sv('exigeDevolucao','nao')==='nao'?'selected':''}>Não</option>
       <option value="sim" ${sv('exigeDevolucao')==='sim'?'selected':''}>Sim</option>
     </select></div>
   </div>
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição, nº série, lote…"></div>
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição, nº série, lote…" spellcheck="false"></div>
   <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:10px;padding:11px 13px;margin-top:12px;font-size:11px;color:var(--t2)">
     📋 O sistema calculará automaticamente a previsão de renovação com base na vida útil configurada no item e debitará do estoque.
   </div>`,
@@ -17834,7 +18088,7 @@ function epiDevolucao(entId){
     <option value="dano">Dano / Perda</option>
     <option value="outro">Outro</option>
   </select></div>
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ed-obs" placeholder="Condição, nº série…"></div>`,
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ed-obs" placeholder="Condição, nº série…" spellcheck="false"></div>`,
   `<button class="btn btn-s" onclick="closeModal()">Cancelar</button>
    <button class="btn btn-p" onclick="epiSaveDevolucao('${entId}')">↩ Confirmar Devolução</button>`);
 }
@@ -18060,12 +18314,12 @@ function epiOpenItemModal(id){
           </select></div>
           <div class="fgrp"><div class="flbl">Categoria *</div><select class="finp" id="eim-cat"><option value="">Selecione…</option>${selCat}</select></div>
         </div>
-        <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A"></div>
+        <div class="fgrp"><div class="flbl">Nome do Item *</div><input class="finp" id="eim-nome" value="${sv('nome')}" placeholder="Ex: Capacete de Segurança Classe A" spellcheck="false"></div>
       </div>
     </div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…"></div>
-      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus"></div>
+      <div class="fgrp"><div class="flbl">Fabricante</div><input class="finp" id="eim-fab" value="${sv('fabricante')}" placeholder="Ex: 3M, MSA…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Modelo / Referência</div><input class="finp" id="eim-modelo" value="${sv('modelo')}" placeholder="Ex: HH B Plus" spellcheck="false"></div>
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Vida Útil (dias)</div><input class="finp" type="number" id="eim-vida" value="${sv('vidaUtilDias')}" placeholder="Ex: 180" onchange="epiItemUpdateInfo()"></div>
@@ -18076,7 +18330,7 @@ function epiOpenItemModal(id){
     </div>
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Contrato (opcional)</div><select class="finp" id="eim-ct"><option value="">Global — todos contratos</option>${ctSel}</select></div>
-      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…"></div>
+      <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="eim-obs" value="${sv('obs')}" placeholder="Info adicional…" spellcheck="false"></div>
     </div>
     <div id="eim-info-vid" style="display:${sv('vidaUtilDias')?'block':'none'};background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:10px;padding:10px 13px;margin-top:4px;font-size:11.5px;color:var(--t2)">
       📅 Com vida útil de <strong>${sv('vidaUtilDias')} dias</strong>, a renovação será agendada automaticamente para <strong id="eim-renov-prev">—</strong> após a entrega.
@@ -18092,7 +18346,7 @@ function epiOpenItemModal(id){
       <div class="fgrp"><div class="flbl">Preço Unitário (R$)</div><input class="finp" type="number" id="eim-preco" value="${sv('precoUnit','')}" step="0.01" placeholder="0,00"></div>
       <div class="fgrp"><div class="flbl">Consumo Médio/Mês</div><input class="finp" type="number" id="eim-consumo" value="${sv('consumoMensal','')}" placeholder="Qtd/mês"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3"></div>
+    <div class="fgrp"><div class="flbl">Local de Armazenamento</div><input class="finp" id="eim-local" value="${sv('localArmazenamento')}" placeholder="Ex: Almoxarifado A, Prateleira 3" spellcheck="false"></div>
   </div>
   <!-- CA / Normas -->
   <div id="eim-ca" style="display:none">
@@ -18104,7 +18358,7 @@ function epiOpenItemModal(id){
         <div style="position:relative;flex:1">
           <input class="finp" id="eim-ca-search" placeholder="Digite o número do CA (ex: 43962)" value="${sv('ca')}"
             style="padding-left:36px;font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:1px"
-            oninput="epiCaValidateFormat(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();epiCaBuscar()}">
+            oninput="epiCaValidateFormat(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();epiCaBuscar()}" spellcheck="false">
           <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none">🔐</span>
           <span id="eim-ca-fmt-badge" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:800;display:none"></span>
         </div>
@@ -18129,15 +18383,15 @@ function epiOpenItemModal(id){
     <div class="fg2">
       <div class="fgrp"><div class="flbl">Nº do CA</div>
         <input class="finp" id="eim-ca-num" value="${sv('ca')}" placeholder="Ex: 43962"
-          style="font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:1px">
+          style="font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:1px" spellcheck="false">
       </div>
       <div class="fgrp"><div class="flbl">Validade do CA</div><input class="finp" type="date" id="eim-ca-val" value="${sv('caValidade')}"></div>
     </div>
     <div class="fg2">
-      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…"></div>
-      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051"></div>
+      <div class="fgrp"><div class="flbl">NR Aplicável</div><input class="finp" id="eim-nr" value="${sv('nr')}" placeholder="Ex: NR6, NR35, NR10…" spellcheck="false"></div>
+      <div class="fgrp"><div class="flbl">Norma Técnica</div><input class="finp" id="eim-norma" value="${sv('normaTecnica')}" placeholder="Ex: ABNT NBR 8051" spellcheck="false"></div>
     </div>
-    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…"></div>
+    <div class="fgrp"><div class="flbl">Risco Protegido</div><input class="finp" id="eim-risco" value="${sv('riscoProtegido')}" placeholder="Ex: Quedas, projeção de partículas, ruído…" spellcheck="false"></div>
 
     <!-- ── Indicador de validade ── -->
     <div id="eim-ca-validade-box" style="display:none;margin-top:12px;border-radius:10px;padding:11px 14px;font-size:11.5px"></div>
@@ -18232,22 +18486,22 @@ function epiOpenEntregaModal(id, preItemId){
       <input type="hidden" id="ee-colab-id" value="${sv('colaboradorId')}">
     </div>
     <div style="display:flex;gap:8px;margin-top:8px">
-      <div class="fgrp" style="flex:2;margin-bottom:0"><div class="flbl">Nome (auto ou manual)</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo"></div>
-      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}"></div>
-      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}"></div>
+      <div class="fgrp" style="flex:2;margin-bottom:0"><div class="flbl">Nome (auto ou manual)</div><input class="finp" id="ee-colab" value="${sv('colaborador')}" placeholder="Nome completo" spellcheck="false"></div>
+      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Matrícula</div><input class="finp" id="ee-mat" value="${sv('matricula')}" spellcheck="false"></div>
+      <div class="fgrp" style="flex:1;margin-bottom:0"><div class="flbl">Função</div><input class="finp" id="ee-func" value="${sv('funcao')}" spellcheck="false"></div>
     </div>
   </div>
 
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Quantidade</div><input class="finp" type="number" id="ee-qt" value="${sv('quantidade',1)}" min="1"></div>
-    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G"></div>
+    <div class="fgrp"><div class="flbl">Tamanho / Numeração</div><input class="finp" id="ee-tam" value="${sv('tamanho')}" placeholder="Ex: M, 42, G" spellcheck="false"></div>
   </div>
   <div class="fg2">
     <div class="fgrp"><div class="flbl">Data de Entrega *</div><input class="finp" type="date" id="ee-dt" value="${sv('dtEntrega',new Date().toISOString().slice(0,10))}" onchange="epiEntCalcRenovacao()"></div>
     <div class="fgrp"><div class="flbl">Previsão de Renovação (automático)</div><input class="finp" type="date" id="ee-renov" value="${sv('dtRenovacao')}"></div>
   </div>
   <div class="fg2">
-    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel',typeof currentUser!=='undefined'&&currentUser?currentUser.name||'':'')}" placeholder="Nome de quem entregou"></div>
+    <div class="fgrp"><div class="flbl">Responsável pela Entrega</div><input class="finp" id="ee-resp" value="${sv('responsavel',typeof currentUser!=='undefined'&&currentUser?currentUser.name||'':'')}" placeholder="Nome de quem entregou" spellcheck="false"></div>
     <div class="fgrp"><div class="flbl">Exige Devolução?</div><select class="finp" id="ee-dev">
       <option value="nao" ${sv('exigeDevolucao','nao')==='nao'?'selected':''}>Não</option>
       <option value="sim" ${sv('exigeDevolucao')==='sim'?'selected':''}>Sim</option>
@@ -18272,7 +18526,7 @@ function epiOpenEntregaModal(id, preItemId){
     </div>
   </div>
 
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição do EPI, nº série, lote, CA do item…"></div>`;
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ee-obs" value="${sv('obs')}" placeholder="Condição do EPI, nº série, lote, CA do item…" spellcheck="false"></div>`;
 
   document.getElementById('modal-footer').innerHTML=`
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
@@ -18349,7 +18603,7 @@ function epiOpenTransferModal(entId){
     <select class="finp" id="etr-ct">${ctsSel||'<option disabled>Nenhum outro contrato disponível</option>'}</select>
   </div>
   <div class="fgrp"><div class="flbl">Motivo da Transferência</div>
-    <input class="finp" id="etr-motivo" placeholder="Ex: Remanejamento de equipe, mudança de frente…">
+    <input class="finp" id="etr-motivo" placeholder="Ex: Remanejamento de equipe, mudança de frente…" spellcheck="false">
   </div>
   <div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 13px;margin-top:8px;font-size:11.5px;color:var(--t2)">
     ⚠️ A transferência mantém o histórico completo da entrega e registra o evento de forma rastreável.
@@ -18431,7 +18685,7 @@ function epiOpenBaixaModal(entId){
       <option value="perdido">Perdido / Não encontrado</option>
     </select></div>
   </div>
-  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ebx-obs" placeholder="Detalhes da ocorrência, número de boletim, etc."></div>
+  <div class="fgrp"><div class="flbl">Observações</div><input class="finp" id="ebx-obs" placeholder="Detalhes da ocorrência, número de boletim, etc." spellcheck="false"></div>
   <div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:11px;color:var(--t2)">
     🗂️ A baixa é registrada no histórico e o item <strong>não</strong> retorna ao estoque. Ação irreversível.
   </div>`;
@@ -19123,7 +19377,7 @@ function epiOpenFichaModal(){
     <!-- Busca rápida -->
     <input id="epi-ficha-busca" class="finp" placeholder="🔍 Filtrar por nome ou matrícula…"
       oninput="epiFilterFichaCards(this.value)"
-      style="margin-bottom:12px;width:100%">
+      style="margin-bottom:12px;width:100%" spellcheck="false">
     <!-- Grid de colaboradores -->
     <div id="epi-ficha-cards" style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;padding-right:4px">
       ${cards}
@@ -19929,7 +20183,7 @@ function _custoCapa() {
       '<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:3px">' + f.label + '</div>' +
       '<input class="fi" type="' + (f.tipo||'text') + '" value="' + (a[f.k]||'') + '"' +
       ' style="height:32px;font-size:12px;padding:6px 10px"' +
-      ' data-k="' + f.k + '" onchange="custoCapaSave(this.dataset.k,this.value)">' +
+      ' data-k="' + f.k + '" onchange="custoCapaSave(this.dataset.k,this.value)" spellcheck="false">' +
       '</div>';
   });
   form.innerHTML = fhtml;
@@ -19948,10 +20202,10 @@ function _custoCapa() {
       }).join('');
       var sc = 'custoPontoSave';
       ptbl += '<tr>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:70px" value="' + (p.item||'') + '" data-idx="' + i + '" data-key="item" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:110px" value="' + (p.acao||'') + '" data-idx="' + i + '" data-key="acao" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.resp||'') + '" data-idx="' + i + '" data-key="resp" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
-        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.period||'') + '" data-idx="' + i + '" data-key="period" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:70px" value="' + (p.item||'') + '" data-idx="' + i + '" data-key="item" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:110px" value="' + (p.acao||'') + '" data-idx="' + i + '" data-key="acao" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.resp||'') + '" data-idx="' + i + '" data-key="resp" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
+        '<td><input class="fi" style="height:26px;font-size:11px;min-width:90px" value="' + (p.period||'') + '" data-idx="' + i + '" data-key="period" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false"></td>' +
         '<td><select class="dp-ct-sel" style="height:26px;font-size:11px" data-idx="' + i + '" data-key="status" onchange="custoPontoSave(+this.dataset.idx,this.dataset.key,this.value)">' + statusOpts + '</select></td>' +
         '<td><button class="bic del" onclick="custoRemovePonto(' + i + ')">🗑</button></td>' +
         '</tr>';
@@ -19971,11 +20225,11 @@ function _custoCapa() {
       lhtml += '<div style="background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px 10px;margin-bottom:8px">' +
         '<div style="display:flex;gap:6px;align-items:center;margin-bottom:5px">' +
         '<span style="font-size:13px">🔗</span>' +
-        '<input class="fi" placeholder="Nome do link" style="height:26px;font-size:12px;font-weight:600;flex:1;border:none;background:transparent;padding:0 4px" value="' + (l.nome||'') + '" data-idx="' + i + '" data-key="nome" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)">' +
+        '<input class="fi" placeholder="Nome do link" style="height:26px;font-size:12px;font-weight:600;flex:1;border:none;background:transparent;padding:0 4px" value="' + (l.nome||'') + '" data-idx="' + i + '" data-key="nome" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false">' +
         (url ? '<a href="' + url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);border-radius:6px;color:var(--ac2);font-size:10px;font-weight:700;padding:3px 10px;text-decoration:none;white-space:nowrap">↗ Abrir</a>' : '<span style="font-size:10px;color:var(--t3)">sem URL</span>') +
         '<button class="bic del" onclick="custoRemoveLink(' + i + ')" title="Remover">✕</button>' +
         '</div>' +
-        '<input class="fi" placeholder="https://..." style="height:24px;font-size:11px;color:var(--t2);font-family:monospace" value="' + (l.url||'') + '" data-idx="' + i + '" data-key="url" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)">' +
+        '<input class="fi" placeholder="https://..." style="height:24px;font-size:11px;color:var(--t2);font-family:monospace" value="' + (l.url||'') + '" data-idx="' + i + '" data-key="url" onchange="custoLinkSave(+this.dataset.idx,this.dataset.key,this.value)" spellcheck="false">' +
         '</div>';
     });
     lw.innerHTML = lhtml;
@@ -19985,9 +20239,9 @@ function _custoCapa() {
   var gc = document.getElementById('custo-gestao-capa');
   if(gc) {
     gc.innerHTML =
-      '<input class="fi" placeholder="PCO" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pco||'') + '" data-key=\"pco\" onchange=\"custoCapaSave(this.dataset.key,this.value)\">' +
-      '<input class="fi" placeholder="PCE" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pce||'') + '" data-key=\"pce\" onchange=\"custoCapaSave(this.dataset.key,this.value)\">' +
-      '<input class="fi" placeholder="PR" style="height:28px;font-size:12px" value="' + (a.pr||'') + '" data-key=\"pr\" onchange=\"custoCapaSave(this.dataset.key,this.value)\">';
+      '<input class="fi" placeholder="PCO" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pco||'') + '" data-key=\"pco\" onchange=\"custoCapaSave(this.dataset.key,this.value)\" spellcheck="false">' +
+      '<input class="fi" placeholder="PCE" style="height:28px;font-size:12px;margin-bottom:8px" value="' + (a.pce||'') + '" data-key=\"pce\" onchange=\"custoCapaSave(this.dataset.key,this.value)\" spellcheck="false">' +
+      '<input class="fi" placeholder="PR" style="height:28px;font-size:12px" value="' + (a.pr||'') + '" data-key=\"pr\" onchange=\"custoCapaSave(this.dataset.key,this.value)\" spellcheck="false">';
   }
 
   // Resumo DRE
@@ -20390,8 +20644,8 @@ function _custoMemoria() {
     html+='<div class="tbl-wrap" style="margin-bottom:20px">'+
       '<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--b1)">'+
         '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3)">Conta</span>'+
-        '<input class="fi" style="height:28px;font-size:11px;width:100px" value="'+_esc(g.conta||'')+'" onchange="custoMemContaSave('+gi+',this.value)" placeholder="Código">'+
-        '<input class="fi" style="height:28px;font-size:13px;font-weight:700;font-family:var(--fh);flex:1;min-width:200px" value="'+_esc(g.titulo||cfg.titulo)+'" onchange="custoMemTituloSave('+gi+',this.value)" placeholder="Título do grupo">'+
+        '<input class="fi" style="height:28px;font-size:11px;width:100px" value="'+_esc(g.conta||'')+'" onchange="custoMemContaSave('+gi+',this.value)" placeholder="Código" spellcheck="false">'+
+        '<input class="fi" style="height:28px;font-size:13px;font-weight:700;font-family:var(--fh);flex:1;min-width:200px" value="'+_esc(g.titulo||cfg.titulo)+'" onchange="custoMemTituloSave('+gi+',this.value)" placeholder="Título do grupo" spellcheck="false">'+
         '<button class="btn btn-s btn-sm" onclick="custoAddMemLinha('+gi+')">＋ Linha</button>'+
         '<button class="bic del" onclick="custoRemoveGrupo('+gi+')" title="Excluir grupo">🗑</button>'+
       '</div>'+
@@ -20461,7 +20715,7 @@ function _custoMemoria() {
 
       // Conta
       html+='<tr>'+
-        '<td><input class="fi" style="height:26px;font-size:10px;width:92px" value="'+_esc(l.conta||'')+'" placeholder="—" onchange="custoMemSave('+gi+','+li+',\'conta\',this.value)"></td>';
+        '<td><input class="fi" style="height:26px;font-size:10px;width:92px" value="'+_esc(l.conta||'')+'" placeholder="—" onchange="custoMemSave('+gi+','+li+',\'conta\',this.value)" spellcheck="false"></td>';
 
       // Descrição — dropdown vinculado ou texto livre
       if(hasSrc){
@@ -20470,10 +20724,10 @@ function _custoMemoria() {
           '<option value="-1"'+(l.linkedIdx===-1?' selected':'')+'>✍ Digitar manualmente</option>';
         html+='<td style="padding:4px 6px">'+
           '<select class="dp-ct-sel" style="height:26px;font-size:11px;min-width:195px" onchange="custoMemLinkSelect('+gi+','+li+',this.value)">'+selOpts+'</select>'+
-          (l.linkedIdx===-1?'<br><input class="fi" style="height:24px;font-size:11px;min-width:195px;margin-top:3px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)">':'')+
+          (l.linkedIdx===-1?'<br><input class="fi" style="height:24px;font-size:11px;min-width:195px;margin-top:3px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)" spellcheck="false">':'')+
         '</td>';
       } else {
-        html+='<td><input class="fi" style="height:26px;font-size:11px;min-width:195px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)"></td>';
+        html+='<td><input class="fi" style="height:26px;font-size:11px;min-width:195px" value="'+_esc(l.desc||'')+'" placeholder="Descrição" onchange="custoMemSave('+gi+','+li+',\'desc\',this.value)" spellcheck="false"></td>';
       }
 
       // ORÇADO
@@ -20832,9 +21086,9 @@ function _custoMedicao() {
     var hideStyle = (_custoMedHideZeros && isZero) ? 'display:none' : '';
     tb += '<tr id="custo-med-row-'+i+'" style="background:'+rowBg+';'+hideStyle+'">' +
       '<td style="text-align:center;font-weight:700;color:var(--t3);padding:5px 4px">' + (i+1) + '</td>' +
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:90px;font-family:var(--fn);letter-spacing:.5px;' + roStyle + '" value="'+(it.cod||'').replace(/"/g,'&quot;')+'" placeholder="1.1.1.5"' + (ro?' readonly':' data-key="cod" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:90px;font-family:var(--fn);letter-spacing:.5px;' + roStyle + '" value="'+(it.cod||'').replace(/"/g,'&quot;')+'" placeholder="1.1.1.5"' + (ro?' readonly':' data-key="cod" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + ' spellcheck="false"></td>' +
       '<td><textarea class="fi" style="height:44px;font-size:11px;resize:none;padding:4px 8px;width:100%;min-width:260px;' + roStyle + '"' + (ro?' readonly':' data-key="desc" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '>'+(it.desc||'')+'</textarea></td>' +
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:52px;text-align:center;' + roStyle + '" value="'+(it.un||'vb')+'"' + (ro?' readonly':' data-key="un" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:52px;text-align:center;' + roStyle + '" value="'+(it.un||'vb')+'"' + (ro?' readonly':' data-key="un" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + ' spellcheck="false"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:72px;font-family:var(--fn);text-align:right;' + roStyle + '" value="'+(it.qtd||'')+'" placeholder="0"' + (ro?' readonly':' data-key="qtd" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:100px;font-family:var(--fn);text-align:right;' + roStyle + '" value="'+(it.vlUnit||'')+'" placeholder="0,00"' + (ro?' readonly':' data-key="vlUnit" onchange="custoMedSave('+i+',this.dataset.key,this.value)"') + '></td>' +
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;text-align:right;padding:5px 8px;' + (tot>0?'color:var(--gnl)':'color:var(--t2)') + '">' + _fmtBRL(tot) + '</td>' +
@@ -21253,8 +21507,8 @@ function _custoFuncoes() {
     var regBg = _fnRegimeBg(fn.regimeTrabalho||'adm');
 
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;width:54px;text-align:center" value="'+_esc(fn.cod||'')+'" placeholder="XXX" onchange="custoFnSave('+i+',\'cod\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:210px" value="'+_esc(fn.cargo||'')+'" placeholder="Cargo/Função" onchange="custoFnSave('+i+',\'cargo\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;width:54px;text-align:center" value="'+_esc(fn.cod||'')+'" placeholder="XXX" onchange="custoFnSave('+i+',\'cod\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:210px" value="'+_esc(fn.cargo||'')+'" placeholder="Cargo/Função" onchange="custoFnSave('+i+',\'cargo\',this.value)" spellcheck="false"></td>'+
       // Local/Alojado
       '<td style="background:'+laBg+';padding:3px 4px">'+
         '<select class="dp-ct-sel" style="height:28px;font-size:11px;width:84px;background:transparent" onchange="custoFnSave('+i+',\'localAlojado\',this.value)">'+
@@ -21439,7 +21693,7 @@ function _custoEPI() {
   a.epiItens.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||1)*(parseFloat(it.depPerc)||1);
     tb+='<tr>' +
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:200px" value="' + (it.desc||'') + '" data-key=\"desc\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:200px" value="' + (it.desc||'') + '" data-key=\"desc\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\" spellcheck="false"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:80px;font-family:var(--fn)" value="' + (it.vlUnit||'') + '" placeholder="0,00" data-key=\"vlUnit\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:50px;font-family:var(--fn)" value="' + (it.qtd||1) + '" min="0" data-key=\"qtd\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:65px;font-family:var(--fn)" step="0.01" min="0" max="1" value="' + (it.depPerc||1) + '" title="Fator depreciação: 1=sem depreciação" data-key=\"depPerc\" onchange=\"custoEPISave('+i+',this.dataset.key,this.value)\"></td>' +
@@ -21493,7 +21747,7 @@ function _custoEncargos(){
   var atb=document.getElementById('custo-aliq-tbody'); if(!atb)return;
   var ahtml='';
   a.aliquotas.forEach(function(al,i){
-    ahtml+='<tr><td><input class="fi" style="height:26px;font-size:11px" value="' + (al.imposto||'') + '" data-key=\"imposto\" onchange=\"custoAliqSave('+i+',this.dataset.key,this.value)\"></td>';
+    ahtml+='<tr><td><input class="fi" style="height:26px;font-size:11px" value="' + (al.imposto||'') + '" data-key=\"imposto\" onchange=\"custoAliqSave('+i+',this.dataset.key,this.value)\" spellcheck="false"></td>';
     ['eng','obras','outros'].forEach(function(k){
       ahtml+='<td><input type="number" class="fi" style="height:26px;font-size:11px;min-width:70px;font-family:var(--fn)" step="0.0001" value="' + ((al[k]||0).toFixed(4)) + '" data-idx="'+i+'" data-key="'+k+'" onchange="custoAliqSave(+this.dataset.idx,this.dataset.key,this.value)"></td>';
     });
@@ -21504,7 +21758,7 @@ function _custoEncargos(){
   var ehtml='';
   a.encargosSoc.forEach(function(e,i){
     ehtml+='<tr>' +
-      '<td><input class="fi" style="height:26px;font-size:11px" value="' + (e.modalidade||'') + '" data-key=\"modalidade\" onchange=\"custoEncSave('+i+',this.dataset.key,this.value)\"></td>' +
+      '<td><input class="fi" style="height:26px;font-size:11px" value="' + (e.modalidade||'') + '" data-key=\"modalidade\" onchange=\"custoEncSave('+i+',this.dataset.key,this.value)\" spellcheck="false"></td>' +
       '<td><input type="number" class="fi" style="height:26px;font-size:11px;min-width:80px;font-family:var(--fn)" step="0.0001" value="' + ((e.perc||0).toFixed(4)) + '" data-key=\"perc\" onchange=\"custoEncSave('+i+',this.dataset.key,this.value)\"></td>' +
       '<td style="font-size:11px;color:var(--t2)">' + ((e.perc||0)*100).toFixed(2) + '%</td>' +
       '<td><button class="bic ctx-btn" data-ctx-table="encargo" data-ctx-row="'+i+'" onclick="ctxOpen(event,this)" title="Opções" style="font-size:13px;padding:3px 7px;opacity:.3" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.3">⋮</button></td></tr>';
@@ -21529,8 +21783,8 @@ function _custoMateriais() {
   a.materiais.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:70px" value="'+(it.unidade||'')+'" placeholder="un, m, kg…" data-key="unidade" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoMatSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:70px" value="'+(it.unidade||'')+'" placeholder="un, m, kg…" data-key="unidade" onchange="custoMatSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoMatSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21569,8 +21823,8 @@ function _custoFerramentas() {
   a.ferramentas.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+(it.codigo||'')+'" placeholder="REF-001" data-key="codigo" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoFerSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+(it.codigo||'')+'" placeholder="REF-001" data-key="codigo" onchange="custoFerSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoFerSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21609,8 +21863,8 @@ function _custoInformatica() {
   a.informatica.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:120px" value="'+(it.marca||'')+'" placeholder="Dell XPS 15…" data-key="marca" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+(it.desc||'')+'" data-key="desc" onchange="custoInfSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:120px" value="'+(it.marca||'')+'" placeholder="Dell XPS 15…" data-key="marca" onchange="custoInfSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" data-key="vlUnit" onchange="custoInfSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21649,8 +21903,8 @@ function _custoVeiculos() {
   a.veiculos.forEach(function(it,i){
     var tot=(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:180px" value="'+(it.desc||'')+'" placeholder="Tipo/Descrição" data-key="desc" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:90px" value="'+(it.placa||'')+'" placeholder="ABC-1234" data-key="placa" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:180px" value="'+(it.desc||'')+'" placeholder="Tipo/Descrição" data-key="desc" onchange="custoVeiSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:90px" value="'+(it.placa||'')+'" placeholder="ABC-1234" data-key="placa" onchange="custoVeiSave('+i+',this.dataset.key,this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:60px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" data-key="qtd" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:100px;font-family:var(--fn)" value="'+(it.vlMensal||'')+'" placeholder="0,00" data-key="vlMensal" onchange="custoVeiSave('+i+',this.dataset.key,this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21693,7 +21947,7 @@ function _custoCursos(){
     var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
     var tot=(parseFloat(it.vlUnit)||0)*qtd;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoCurSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoCurSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoCurSave('+i+',\'funcaoIdx\',this.value)">'+
         '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
         (a.funcoes||[]).map(function(f,fi){return '<option value="'+fi+'"'+(it.funcaoIdx===fi?' selected':'')+'>'+_esc(f.cargo||'Função '+(fi+1))+'</option>';}).join('')+
@@ -21728,7 +21982,7 @@ function _custoExames(){
     var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
     var tot=(parseFloat(it.vlUnit)||0)*qtd;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoExaSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoExaSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoExaSave('+i+',\'funcaoIdx\',this.value)">'+
         '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
         (a.funcoes||[]).map(function(f,fi){return '<option value="'+fi+'"'+(it.funcaoIdx===fi?' selected':'')+'>'+_esc(f.cargo||'Função '+(fi+1))+'</option>';}).join('')+
@@ -21763,7 +22017,7 @@ function _custoSeguros(){
     var qtd=fn?parseInt(fn.headcount||1):parseInt(it.qtd||0);
     var tot=(parseFloat(it.vlUnit)||0)*qtd;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoSegSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoSegSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:110px" onchange="custoSegSave('+i+',\'tipo\',this.value)">'+tipos.map(function(t){return '<option value="'+t+'"'+(it.tipo===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:150px" onchange="custoSegSave('+i+',\'funcaoIdx\',this.value)">'+
         '<option value=""'+(!it.funcaoIdx&&it.funcaoIdx!==0?' selected':'')+'>— todos —</option>'+
@@ -21795,9 +22049,9 @@ function _custoEquipamentos(){
   a.equipamentos.forEach(function(it,i){
     var tot=(parseFloat(it.vlUnit)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoEqpSave('+i+',\'desc\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:105px" value="'+_esc(it.marca||'')+'" placeholder="Marca/Modelo" onchange="custoEqpSave('+i+',\'marca\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+_esc(it.serie||'')+'" placeholder="Nº Série" onchange="custoEqpSave('+i+',\'serie\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoEqpSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:105px" value="'+_esc(it.marca||'')+'" placeholder="Marca/Modelo" onchange="custoEqpSave('+i+',\'marca\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:100px" value="'+_esc(it.serie||'')+'" placeholder="Nº Série" onchange="custoEqpSave('+i+',\'serie\',this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;width:65px;font-family:var(--fn)" value="'+(it.qtd||0)+'" min="0" onchange="custoEqpSave('+i+',\'qtd\',this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlUnit||'')+'" placeholder="0,00" onchange="custoEqpSave('+i+',\'vlUnit\',this.value)"></td>'+
       '<td style="font-family:var(--fn);font-size:12px;font-weight:700;color:var(--gnl)">'+_fmtBRL(tot)+'</td>'+
@@ -21825,8 +22079,8 @@ function _custoAlugueis(){
   a.alugueis.forEach(function(it,i){
     var tot=(parseFloat(it.vlMensal)||0)*(parseFloat(it.qtd)||0);
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoAlgSave('+i+',\'desc\',this.value)"></td>'+
-      '<td><input class="fi" style="height:28px;font-size:11px;min-width:115px" value="'+_esc(it.ref||'')+'" placeholder="Endereço/Ref." onchange="custoAlgSave('+i+',\'ref\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoAlgSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:11px;min-width:115px" value="'+_esc(it.ref||'')+'" placeholder="Endereço/Ref." onchange="custoAlgSave('+i+',\'ref\',this.value)" spellcheck="false"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:90px" onchange="custoAlgSave('+i+',\'tipo\',this.value)">'+tipos.map(function(t){return '<option value="'+t+'"'+(it.tipo===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;width:65px;font-family:var(--fn)" value="'+(it.qtd||1)+'" min="0" onchange="custoAlgSave('+i+',\'qtd\',this.value)"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:95px;font-family:var(--fn)" value="'+(it.vlMensal||'')+'" placeholder="0,00" onchange="custoAlgSave('+i+',\'vlMensal\',this.value)"></td>'+
@@ -21871,7 +22125,7 @@ function _custoImpostos(){
     }
     var tot=baseVl*(parseFloat(it.aliquota)||0)/100;
     tb+='<tr>'+
-      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoImpSave('+i+',\'desc\',this.value)"></td>'+
+      '<td><input class="fi" style="height:28px;font-size:12px;min-width:200px" value="'+_esc(it.desc||'')+'" onchange="custoImpSave('+i+',\'desc\',this.value)" spellcheck="false"></td>'+
       '<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:88px;font-family:var(--fn)" value="'+(it.aliquota||'')+'" placeholder="0,00 %" step="0.01" onchange="custoImpSave('+i+',\'aliquota\',this.value)"></td>'+
       '<td><select class="dp-ct-sel" style="height:28px;font-size:11px;min-width:120px" onchange="custoImpSave('+i+',\'base\',this.value)">'+bases.map(function(b){return '<option value="'+b+'"'+(it.base===b?' selected':'')+'>'+b+'</option>';}).join('')+'</select></td>'+
       '<td style="font-family:var(--fn);font-size:12px;color:'+(it.base==='Base Personalizada'?'inherit':'var(--t3)')+'">'+(it.base==='Base Personalizada'?'<input type="number" class="fi" style="height:28px;font-size:12px;min-width:110px;font-family:var(--fn)" value="'+(it.baseVl||'')+'" placeholder="0,00" onchange="custoImpSave('+i+',\'baseVl\',this.value)">':_fmtBRL(baseVl)+' <span style="font-size:9px;opacity:.6">auto</span>')+'</td>'+
@@ -21915,7 +22169,7 @@ function _custoProjecoes(){
 
     cols.forEach(function(c){
       if(c.tipo==='txt'){
-        tb+='<td><input class="fi" style="height:28px;font-size:11px" value="' + (r[c.key]||'') + '" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoProjSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
+        tb+='<td><input class="fi" style="height:28px;font-size:11px" value="' + (r[c.key]||'') + '" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoProjSave(+this.dataset.ri,this.dataset.key,this.value)" spellcheck="false"></td>';
       } else {
         tb+='<td><input type="number" class="fi" style="height:28px;font-size:12px;min-width:90px;font-family:var(--fn)" value="' + (r[c.key]||'') + '" placeholder="0" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoProjSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
       }
@@ -22044,7 +22298,7 @@ function _custoRentab(){
         }).join('');
         tb+='<td style="padding:3px 5px"><select class="fi" style="height:26px;font-size:11px;padding:2px 5px;min-width:160px" data-ri="'+ri+'" onchange="custoRentabCat(+this.dataset.ri,this.value)">'+opts+'</select></td>';
       } else if(c.tipo==='txt'){
-        tb+='<td><input class="fi" style="height:26px;font-size:11px;min-width:140px" value="'+(v||'')+'" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoRentabSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
+        tb+='<td><input class="fi" style="height:26px;font-size:11px;min-width:140px" value="'+(v||'')+'" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoRentabSave(+this.dataset.ri,this.dataset.key,this.value)" spellcheck="false"></td>';
       } else {
         tb+='<td><input type="number" class="fi" style="height:26px;font-size:12px;min-width:90px;font-family:var(--fn);color:'+col+'" value="'+(v||'')+'" placeholder="0" data-ri="'+ri+'" data-key="'+c.key+'" onchange="custoRentabSave(+this.dataset.ri,this.dataset.key,this.value)"></td>';
       }
@@ -22725,7 +22979,7 @@ function _colInsertDRE(refCi,dir){
                padding:7px 10px;outline:none;transition:border-color .2s"
         onfocus="this.style.borderColor='rgba(16,185,129,.5)'"
         onblur="this.style.borderColor='var(--b1)'"
-        onkeydown="if(event.key==='Enter')applyUenCustom()">
+        onkeydown="if(event.key==='Enter')applyUenCustom()" spellcheck="false">
       <button onclick="applyUenCustom()"
         style="background:var(--gnl);border:none;border-radius:8px;color:#fff;
                font-size:11px;font-weight:800;padding:7px 16px;cursor:pointer;
@@ -22909,7 +23163,7 @@ function _colInsertDRE(refCi,dir){
             </div>
             <div>
               <label class="cfl">TAG / Código *</label>
-              <input id="ceq-tag" class="cfi" placeholder="Ex: LAB-001">
+              <input id="ceq-tag" class="cfi" placeholder="Ex: LAB-001" spellcheck="false">
             </div>
             <div>
               <label class="cfl">Status</label>
@@ -22927,23 +23181,23 @@ function _colInsertDRE(refCi,dir){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
           <div style="grid-column:1/-1">
             <label class="cfl">Nome do Equipamento *</label>
-            <input id="ceq-nome" class="cfi" placeholder="Ex: Balança Analítica">
+            <input id="ceq-nome" class="cfi" placeholder="Ex: Balança Analítica" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Fabricante</label>
-            <input id="ceq-fab" class="cfi" placeholder="Ex: Shimadzu, Mettler-Toledo">
+            <input id="ceq-fab" class="cfi" placeholder="Ex: Shimadzu, Mettler-Toledo" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Modelo / Referência</label>
-            <input id="ceq-modelo" class="cfi" placeholder="Ex: AY220">
+            <input id="ceq-modelo" class="cfi" placeholder="Ex: AY220" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Nº de Série</label>
-            <input id="ceq-nserie" class="cfi" placeholder="">
+            <input id="ceq-nserie" class="cfi" placeholder="" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Nº Patrimônio</label>
-            <input id="ceq-pat" class="cfi" placeholder="">
+            <input id="ceq-pat" class="cfi" placeholder="" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Data de Entrada</label>
@@ -22951,7 +23205,7 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Local Físico</label>
-            <input id="ceq-local" class="cfi" placeholder="Ex: Lab. Geotecnia, Campo, Almox.">
+            <input id="ceq-local" class="cfi" placeholder="Ex: Lab. Geotecnia, Campo, Almox." spellcheck="false">
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Observações</label>
@@ -22980,19 +23234,19 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Grandeza Metrológica</label>
-            <input id="ceq-grandeza" class="cfi" placeholder="Ex: Massa, Força, Temperatura">
+            <input id="ceq-grandeza" class="cfi" placeholder="Ex: Massa, Força, Temperatura" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Capacidade / Faixa</label>
-            <input id="ceq-cap" class="cfi" placeholder="Ex: 0–220 g, 0–50 kN">
+            <input id="ceq-cap" class="cfi" placeholder="Ex: 0–220 g, 0–50 kN" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Resolução / Divisão</label>
-            <input id="ceq-res" class="cfi" placeholder="Ex: 0,001 g, 0,1 kN">
+            <input id="ceq-res" class="cfi" placeholder="Ex: 0,001 g, 0,1 kN" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Norma de Referência</label>
-            <input id="ceq-norma" class="cfi" placeholder="Ex: ABNT NBR 9895, DNIT 049">
+            <input id="ceq-norma" class="cfi" placeholder="Ex: ABNT NBR 9895, DNIT 049" spellcheck="false">
           </div>
         </div>
       </div>
@@ -23012,7 +23266,7 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Laboratório Externo</label>
-            <input id="ceq-labext" class="cfi" placeholder="Nome do laboratório">
+            <input id="ceq-labext" class="cfi" placeholder="Nome do laboratório" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Periodicidade *</label>
@@ -23044,11 +23298,11 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Rastreabilidade Metrológica</label>
-            <input id="ceq-rastreab" class="cfi" placeholder="Ex: Inmetro → Lab. RBC Acreditado → Equipamento">
+            <input id="ceq-rastreab" class="cfi" placeholder="Ex: Inmetro → Lab. RBC Acreditado → Equipamento" spellcheck="false">
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Critério de Aceitação / Tolerância</label>
-            <input id="ceq-criterio" class="cfi" placeholder="Ex: Erro máx. ±0,1 g; Desvio ≤ 0,5% fs; conforme ABNT NBR 9895">
+            <input id="ceq-criterio" class="cfi" placeholder="Ex: Erro máx. ±0,1 g; Desvio ≤ 0,5% fs; conforme ABNT NBR 9895" spellcheck="false">
           </div>
         </div>
         <div class="cinfo-box cinfo-green" style="margin-top:14px">
@@ -23077,11 +23331,11 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div>
             <label class="cfl">Padrão de Verificação</label>
-            <input id="ceq-verif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g classe M1">
+            <input id="ceq-verif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g classe M1" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Critério Pass / Fail</label>
-            <input id="ceq-verif-crit" class="cfi" placeholder="Ex: Desvio ≤ 0,1 g; ±1°C; ±0,5 mm">
+            <input id="ceq-verif-crit" class="cfi" placeholder="Ex: Desvio ≤ 0,1 g; ±1°C; ±0,5 mm" spellcheck="false">
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Instrução de Verificação (resumida)</label>
@@ -23098,15 +23352,15 @@ function _colInsertDRE(refCi,dir){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
           <div>
             <label class="cfl">Código do POP</label>
-            <input id="ceq-pop-cod" class="cfi" placeholder="Ex: POP-CAL-001">
+            <input id="ceq-pop-cod" class="cfi" placeholder="Ex: POP-CAL-001" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Revisão</label>
-            <input id="ceq-pop-rev" class="cfi" placeholder="Ex: Rev. 02">
+            <input id="ceq-pop-rev" class="cfi" placeholder="Ex: Rev. 02" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Responsável Técnico</label>
-            <input id="ceq-pop-resp" class="cfi" placeholder="">
+            <input id="ceq-pop-resp" class="cfi" placeholder="" spellcheck="false">
           </div>
           <div>
             <label class="cfl">Data de Aprovação</label>
@@ -23114,7 +23368,7 @@ function _colInsertDRE(refCi,dir){
           </div>
           <div style="grid-column:1/-1">
             <label class="cfl">Normas Aplicáveis</label>
-            <input id="ceq-pop-normas" class="cfi" placeholder="Ex: ABNT NBR 9895, ISO 17025, VIM">
+            <input id="ceq-pop-normas" class="cfi" placeholder="Ex: ABNT NBR 9895, ISO 17025, VIM" spellcheck="false">
           </div>
         </div>
         <div>
@@ -23175,7 +23429,7 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Nº Certificado / Boletim</label>
-          <input id="creg-cert" class="cfi" placeholder="Ex: RBC-2024/001234">
+          <input id="creg-cert" class="cfi" placeholder="Ex: RBC-2024/001234" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Resultado *</label>
@@ -23187,42 +23441,42 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Laboratório Responsável</label>
-          <input id="creg-lab" class="cfi" placeholder="">
+          <input id="creg-lab" class="cfi" placeholder="" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Técnico Responsável</label>
-          <input id="creg-tec" class="cfi" placeholder="">
+          <input id="creg-tec" class="cfi" placeholder="" spellcheck="false">
         </div>
 
         <div class="cmodal-section-title" style="grid-column:1/-1">📐 Dados Técnicos</div>
 
         <div>
           <label class="cfl">Incerteza de Medição</label>
-          <input id="creg-incerteza" class="cfi" placeholder="Ex: ±0,002 g (k=2)">
+          <input id="creg-incerteza" class="cfi" placeholder="Ex: ±0,002 g (k=2)" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Grandeza Calibrada</label>
-          <input id="creg-grandeza" class="cfi" placeholder="Ex: Massa, Temperatura">
+          <input id="creg-grandeza" class="cfi" placeholder="Ex: Massa, Temperatura" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Desvio Antes do Ajuste</label>
-          <input id="creg-devant" class="cfi" placeholder="Ex: +0,05%">
+          <input id="creg-devant" class="cfi" placeholder="Ex: +0,05%" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Desvio Após o Ajuste</label>
-          <input id="creg-devpos" class="cfi" placeholder="Ex: ±0,01%">
+          <input id="creg-devpos" class="cfi" placeholder="Ex: ±0,01%" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Pontos Calibrados</label>
-          <input id="creg-pontos" class="cfi" placeholder="Ex: 10g, 50g, 100g, 200g">
+          <input id="creg-pontos" class="cfi" placeholder="Ex: 10g, 50g, 100g, 200g" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Condições Ambientais (T°, UR%)</label>
-          <input id="creg-amb" class="cfi" placeholder="Ex: 23°C, 55% UR">
+          <input id="creg-amb" class="cfi" placeholder="Ex: 23°C, 55% UR" spellcheck="false">
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">URL / Referência do Certificado</label>
-          <input id="creg-url" class="cfi" placeholder="Link ou caminho do arquivo do certificado">
+          <input id="creg-url" class="cfi" placeholder="Link ou caminho do arquivo do certificado" spellcheck="false">
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">Observações</label>
@@ -23271,26 +23525,26 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Padrão Utilizado</label>
-          <input id="cverif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g M1">
+          <input id="cverif-padrao" class="cfi" placeholder="Ex: Peso padrão 100 g M1" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Técnico</label>
-          <input id="cverif-tec" class="cfi" placeholder="">
+          <input id="cverif-tec" class="cfi" placeholder="" spellcheck="false">
         </div>
 
         <div class="cmodal-section-title" style="grid-column:1/-1">📐 Medição</div>
 
         <div>
           <label class="cfl">Valor de Referência</label>
-          <input id="cverif-ref" class="cfi" placeholder="Ex: 100,000 g">
+          <input id="cverif-ref" class="cfi" placeholder="Ex: 100,000 g" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Valor Medido</label>
-          <input id="cverif-medido" class="cfi" placeholder="Ex: 100,012 g" oninput="calibVerifCalcDesvio()">
+          <input id="cverif-medido" class="cfi" placeholder="Ex: 100,012 g" oninput="calibVerifCalcDesvio()" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Desvio (calculado)</label>
-          <input id="cverif-desvio" class="cfi" readonly style="opacity:.7">
+          <input id="cverif-desvio" class="cfi" readonly style="opacity:.7" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Resultado *</label>
@@ -23302,7 +23556,7 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">Condições Ambientais</label>
-          <input id="cverif-amb" class="cfi" placeholder="Ex: 23°C, 58% UR">
+          <input id="cverif-amb" class="cfi" placeholder="Ex: 23°C, 58% UR" spellcheck="false">
         </div>
         <div style="grid-column:1/-1">
           <label class="cfl">Observações</label>
@@ -23363,7 +23617,7 @@ function _colInsertDRE(refCi,dir){
         </div>
         <div>
           <label class="cfl">Responsável</label>
-          <input id="cnc-resp" class="cfi" placeholder="">
+          <input id="cnc-resp" class="cfi" placeholder="" spellcheck="false">
         </div>
         <div>
           <label class="cfl">Data de Fechamento</label>
@@ -23871,7 +24125,7 @@ function _renderCalibEquips(){
 
   // Filtros
   var filtHtml='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">'
-    +'<input id="calib-f-busca" class="fi" placeholder="🔍 Buscar TAG, nome, série…" style="width:200px;height:32px;font-size:12px" oninput="_filterCalibEquips()">'
+    +'<input id="calib-f-busca" class="fi" placeholder="🔍 Buscar TAG, nome, série…" style="width:200px;height:32px;font-size:12px" oninput="_filterCalibEquips()" spellcheck="false">'
     +'<div style="display:flex;gap:4px;flex-wrap:wrap" id="calib-f-status">'
     +'<button class="calib-fbtn active" onclick="calibFiltroStatus(this,\'\')" data-s="">Todos</button>'
     +'<button class="calib-fbtn" onclick="calibFiltroStatus(this,\'ok\')" data-s="ok" style="color:#22c55e">✅ OK</button>'
@@ -25433,7 +25687,7 @@ function _dreAbrirModalSenha(mode, mes, callback) {
       +'<div id="dre-pass-title" style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:6px">🔐 Autenticação</div>'
       +'<div id="dre-pass-sub" style="font-size:12px;color:var(--t2);margin-bottom:18px"></div>'
       +'<div style="font-size:10px;color:var(--t3);margin-bottom:6px">Usuário: <strong id="dre-pass-user" style="color:var(--tx)"></strong></div>'
-      +'<input id="dre-pass-inp" type="password" class="fi" placeholder="Senha" style="width:100%;box-sizing:border-box;font-size:14px;padding:10px 14px" onkeydown="if(event.key===\'Enter\')drePassConfirm()">'
+      +'<input id="dre-pass-inp" type="password" class="fi" placeholder="Senha" style="width:100%;box-sizing:border-box;font-size:14px;padding:10px 14px" onkeydown="if(event.key===\'Enter\')drePassConfirm()" spellcheck="false" autocomplete="new-password">'
       +'<div id="dre-pass-err" style="font-size:11px;color:#f87171;margin-top:6px;min-height:16px"></div>'
       +'<div style="display:flex;gap:10px;margin-top:18px">'
         +'<button onclick="drePassCancel()" class="btn btn-s" style="flex:1">Cancelar</button>'
@@ -25725,5 +25979,10 @@ window.drePassConfirm = async function() {
   </div>
 </div>
 
+<!-- Tooltip de presença -->
+<div id="pr-tooltip">
+  <div class="pr-tt-title">Usuários Online</div>
+  <div id="pr-tt-list"></div>
+</div>
 </body>
 </html>
