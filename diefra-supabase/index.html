@@ -10281,11 +10281,16 @@ async function pullFromSheets(silent){
     // Desserializa custoAnalises — dados completos no campo 'dados'
     var _rawCusto = _merge(remote.custoAnalises, ST.custoAnalises);
     ST.custoAnalises = (_rawCusto||[]).map(function(a){
+      var parsed = a;
       if(a.dados && typeof a.dados === 'string'){
-        try { return JSON.parse(a.dados); } catch(e){ return a; }
+        try { parsed = JSON.parse(a.dados); } catch(e){ parsed = a; }
+      } else if(a.dados && typeof a.dados === 'object'){
+        parsed = a.dados;
       }
-      if(a.dados && typeof a.dados === 'object') return a.dados;
-      return a;
+      // Garante contractId correto mesmo sem campo dados
+      if(!parsed.contractId && a.contrato_id) parsed.contractId = a.contrato_id;
+      if(!parsed.contractId && a.id) parsed.contractId = a.id;
+      return parsed;
     });
 
     recalcAllContracts();
@@ -20185,7 +20190,9 @@ var _custoDreCollapsed = {}; // { 'conta': true/false } — persiste durante a s
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function _custoAnalise() {
-  return (ST.custoAnalises||[]).find(function(a){ return a.contractId === _custoCtId; }) || null;
+  return (ST.custoAnalises||[]).find(function(a){
+    return String(a.contractId||a.contrato_id) === String(_custoCtId);
+  }) || null;
 }
 function _fmtBRL(v) {
   return 'R$\u00a0' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -20230,7 +20237,7 @@ function renderCusto() {
   if(!ST.custoAnalises) ST.custoAnalises = [];
   // Garante análise para cada contrato
   (ST.contracts||[]).forEach(function(ct) {
-    if(!ST.custoAnalises.find(function(a){ return a.contractId===ct.id; })) {
+    if(!ST.custoAnalises.find(function(a){ return String(a.contractId||a.contrato_id)===String(ct.id); })) {
       ST.custoAnalises.push(_custoNewAnalise(ct.id));
     }
   });
