@@ -10142,8 +10142,37 @@ async function pullFromSheets(silent){
 
     function _merge(r,local){ return (Array.isArray(r)&&r.length>0)?r:(local&&local.length>0?local:r||[]); }
 
-    ST.contracts       = _merge(remote.contracts,       ST.contracts);
-    ST.tasks           = _merge(remote.tasks,           ST.tasks);
+    // Normaliza campos do banco (português) para o formato JS (inglês)
+    function _normContract(c){
+      return Object.assign({}, c, {
+        name:               c.name  || c.nome  || '',
+        code:               c.code  || c.numero || c.cc || '',
+        client:             c.client|| c.cliente|| '',
+        start:              c.start || c.data_inicio || '',
+        end:                c.end   || c.data_fim    || '',
+        location:           c.location || c.local   || '',
+        corA:               c.corA  || c.cor_a  || '#1d4ed8',
+        corB:               c.corB  || c.cor_b  || '#38bdf8',
+        valorTotal:         c.valorTotal || c.valor_total || 0,
+        uen:                c.uen   || c.dept   || '',
+        gestorTecnico:      c.gestorTecnico   || c.gestor_tecnico   || '',
+        gestorAdministrativo: c.gestorAdministrativo || c.gestor_adm || '',
+        responsible:        c.responsible || c.gestorTecnico || c.gestor_tecnico || '',
+        cc:                 c.cc    || c.numero || c.code || '',
+      });
+    }
+    function _normTask(t){
+      return Object.assign({}, t, {
+        contractId: t.contractId || t.contrato_id,
+        title:      t.title  || t.titulo  || '',
+        description:t.description || t.descricao || '',
+        dueDate:    t.dueDate || t.data_venc || '',
+        priority:   t.priority || t.prioridade || 'media',
+      });
+    }
+
+    ST.contracts       = _merge(remote.contracts,       ST.contracts).map(_normContract);
+    ST.tasks           = _merge(remote.tasks,           ST.tasks).map(_normTask);
     ST.participants    = _merge(remote.participants,     ST.participants);
     ST.gestoresUnidade = _merge(remote.gestoresUnidade,  ST.gestoresUnidade);
     ST.vacations       = _merge(remote.vacations,       ST.vacations);
