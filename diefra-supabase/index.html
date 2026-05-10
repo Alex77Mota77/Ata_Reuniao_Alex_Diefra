@@ -4342,6 +4342,15 @@ const SUPABASE_KEY = 'sb_publishable_7pVK9eZfSi3EMQ8ft83o3w_WI3gPfmi';
 
 const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Inicia presença quando sessão Auth confirmar (resolve timing issues)
+_sb.auth.onAuthStateChange(function(event, session){
+  if(session && currentUser && !_presenceKey){
+    _initPresence();
+  } else if(!session && _presenceKey){
+    _stopPresence();
+  }
+});
+
 // Mantidas para compatibilidade com código que as referencia
 const API_CFG = { autoSync: true, syncInterval: 60 };
 let _syncTimer  = null;
@@ -12771,15 +12780,17 @@ async function _upsertPresence(){
     var secao = activeBtn
       ? (activeBtn.textContent||'').trim().replace(/^[^a-zA-Z]+/,'').split(' ').slice(0,2).join(' ')
       : 'Sistema';
-    await _sb.from('presenca_online').upsert({
+    var payload = {
       id:         _presenceKey,
       name:       currentUser.name     || currentUser.username || 'Usuário',
       username:   currentUser.username || '',
       color:      currentUser.color    || '#7c3aed',
       secao:      secao,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'id' });
-  } catch(e){ console.warn('Presence upsert:', e.message); }
+    };
+    var res = await _sb.from('presenca_online').upsert(payload, { onConflict: 'id' });
+    if(res.error) console.warn('Presence upsert error:', res.error.message, res.error.code);
+  } catch(e){ console.warn('Presence upsert exception:', e.message); }
 }
 
 async function _pollPresence(){
