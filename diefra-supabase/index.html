@@ -12757,8 +12757,10 @@ function linkBtn(url, label){
 // ════════════════════════════════════════════════════════════
 //  PRESENÇA EM TEMPO REAL — via tabela presenca_online
 // ════════════════════════════════════════════════════════════
-let _presenceTimer = null;
-let _presenceKey   = null;
+let _presenceTimer  = null;
+let _presenceKey    = null;
+let _countdownTimer = null;
+let _pollCountdown  = 60;
 
 function _initPresence(){
   if(!currentUser || !_sb) return;
