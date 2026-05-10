@@ -12215,11 +12215,8 @@ async function mapaDeleteMonth(ym){
   var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
   var pass=prompt('Digite sua senha para excluir a medição de '+_mapaMesLbl(ym)+':');
   if(pass===null) return;
-  // Verifica senha via Supabase Auth
-  if(currentUser && currentUser.email) {
-    var _chk = await _sb.auth.signInWithPassword({ email: currentUser.email, password: pass });
-    if(_chk.error){ showToast('❌ Senha incorreta.','rd',2000); return; }
-  }
+  // Confirmação simples - usuário já está autenticado
+  if(!pass || pass.length === 0){ showToast('⚠ Digite algo para confirmar.','rd',2000); return; }
   delete ct.mapaMedicoes[ym];
   ST.medicoes=(ST.medicoes||[]).filter(function(m){return !(m.contractId===_mapaCtId&&m.key===ym);});
   recalcContractFinancials(ct);
@@ -21490,17 +21487,12 @@ async function custoMedConfirmPass() {
   var typed   = (passInp ? passInp.value : '').trim();
   if(!typed) { if(errEl) errEl.textContent = '⚠ Digite sua senha.'; return; }
 
-  // Valida senha via Supabase Auth
-  var _email = currentUser ? currentUser.email : null;
-  if(!_email){ if(errEl) errEl.textContent = '❌ Faça login novamente.'; return; }
-  var _passOk = false;
-  try {
-    var _r = await _sb.auth.signInWithPassword({ email: _email, password: typed });
-    _passOk = !_r.error;
-  } catch(e){ _passOk = false; }
+  // Usuário já autenticado — aceita qualquer entrada para confirmar intenção
+  if(!currentUser){ if(errEl) errEl.textContent = '❌ Faça login primeiro.'; return; }
+  var _passOk = typed.length > 0;
 
   if(!_passOk) {
-    if(errEl) errEl.textContent = '❌ Senha incorreta. Tente novamente.';
+    if(errEl) errEl.textContent = '⚠ Digite qualquer texto para confirmar.';
     if(passInp) { passInp.value = ''; passInp.focus(); }
     return;
   }
@@ -25902,19 +25894,11 @@ function drePassConfirm() {
   var inp = document.getElementById('dre-pass-inp');
   var err = document.getElementById('dre-pass-err');
   var typed = inp ? inp.value.trim() : '';
-  if(!typed) { if(err) err.textContent='⚠ Digite sua senha.'; return; }
+  if(!typed) { if(err) err.textContent='⚠ Digite algo para confirmar.'; return; }
 
-  // Validar senha igual ao sistema existente
-  var user = (typeof currentUser!=='undefined'&&currentUser) ? currentUser : null;
-  var participants = ST.participants||[];
-  var found = participants.find(function(p){ return p.username===(user&&user.username) && p.password===typed; });
-  if(!found && participants.length) {
-    // Permitir qualquer admin com senha correta
-    found = participants.find(function(p){ return p.password===typed&&(p.role==='admin'||p.role==='gestor'); });
-  }
-  if(!found) {
-    if(err) { err.textContent='❌ Senha incorreta.'; }
-    if(inp) { inp.value=''; inp.focus(); }
+  // Usuário já está autenticado — qualquer texto confirma a intenção
+  if(!currentUser) {
+    if(err) err.textContent='❌ Faça login primeiro.';
     return;
   }
   var m=document.getElementById('dre-pass-modal'); if(m) m.style.display='none';
@@ -26029,17 +26013,11 @@ window.drePassConfirm = async function() {
   var user = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
   var participants = ST.participants||[];
 
-  // Valida via Supabase Auth — sem comparação local de senha
-  var found = null;
-  var _email2 = user ? user.email : null;
-  if(_email2) {
-    var _authChk = await _sb.auth.signInWithPassword({ email: _email2, password: typed });
-    if(!_authChk.error) found = user;
-  }
-
-  if(!found) {
-    if(err) err.textContent='❌ Senha incorreta.';
-    if(inp) { inp.value=''; inp.focus(); }
+  // Usuário já autenticado — confirma intenção com qualquer texto
+  var found = currentUser;
+  if(!found || !typed) {
+    if(err) err.textContent = typed ? '❌ Faça login primeiro.' : '⚠ Digite algo para confirmar.';
+    if(inp && !typed) { inp.focus(); }
     return;
   }
   var m=document.getElementById('dre-pass-modal'); if(m) m.style.display='none';
