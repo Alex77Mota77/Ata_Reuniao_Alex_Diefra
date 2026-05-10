@@ -12211,13 +12211,15 @@ function mapaHistJump(ym){
   if(_mapaHistOpen) mapaHistToggle();
   renderMapaMedicoes();
 }
-function mapaDeleteMonth(ym){
+async function mapaDeleteMonth(ym){
   var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
   var pass=prompt('Digite sua senha para excluir a medição de '+_mapaMesLbl(ym)+':');
   if(pass===null) return;
-  var uid=typeof currentUser!=='undefined'&&currentUser?currentUser.id:null;
-  var p=uid?(ST.participants||[]).find(function(x){return x.id===uid;}):(ST.participants||[]).find(function(x){return x.role==='admin';});
-  if(!p||pass!==p.password){ showToast('❌ Senha incorreta.','rd',2000); return; }
+  // Verifica senha via Supabase Auth
+  if(currentUser && currentUser.email) {
+    var _chk = await _sb.auth.signInWithPassword({ email: currentUser.email, password: pass });
+    if(_chk.error){ showToast('❌ Senha incorreta.','rd',2000); return; }
+  }
   delete ct.mapaMedicoes[ym];
   ST.medicoes=(ST.medicoes||[]).filter(function(m){return !(m.contractId===_mapaCtId&&m.key===ym);});
   recalcContractFinancials(ct);
@@ -21481,25 +21483,23 @@ function custoMedClosePassModal() {
   _custoMedDeleteTarget = null;
 }
 
-function custoMedConfirmPass() {
+async function custoMedConfirmPass() {
   var modal   = document.getElementById('custo-med-pass-modal');
   var passInp = document.getElementById('custo-med-pass-inp');
   var errEl   = document.getElementById('custo-med-pass-err');
   var typed   = (passInp ? passInp.value : '').trim();
   if(!typed) { if(errEl) errEl.textContent = '⚠ Digite sua senha.'; return; }
 
-  // Valida senha
-  var uid = typeof currentUser !== 'undefined' && currentUser ? currentUser.id : null;
-  var participant = uid ? (ST.participants||[]).find(function(p){ return p.id === uid; }) : null;
-  var valid = false;
-  if(participant && participant.password) {
-    valid = typed === participant.password;
-  } else {
-    var admin = (ST.participants||[]).find(function(p){ return p.role==='admin'; });
-    valid = admin && typed === admin.password;
-  }
+  // Valida senha via Supabase Auth
+  var _email = currentUser ? currentUser.email : null;
+  if(!_email){ if(errEl) errEl.textContent = '❌ Faça login novamente.'; return; }
+  var _passOk = false;
+  try {
+    var _r = await _sb.auth.signInWithPassword({ email: _email, password: typed });
+    _passOk = !_r.error;
+  } catch(e){ _passOk = false; }
 
-  if(!valid) {
+  if(!_passOk) {
     if(errEl) errEl.textContent = '❌ Senha incorreta. Tente novamente.';
     if(passInp) { passInp.value = ''; passInp.focus(); }
     return;
@@ -26029,20 +26029,12 @@ window.drePassConfirm = async function() {
   var user = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
   var participants = ST.participants||[];
 
+  // Valida via Supabase Auth — sem comparação local de senha
   var found = null;
-  for(var i=0; i<participants.length; i++) {
-    var p = participants[i];
-    var isCurrentUser = user && (p.username === user.username || p.id === user.id);
-    var isAdmin = (p.role==='admin'||p.role==='gestor');
-    if(!isCurrentUser && !isAdmin) continue;
-
-    var ok = false;
-    if(p.password && p.password.length === 64) {
-      ok = await _secValidatePassword(typed, p.password);
-    } else {
-      ok = (p.password === typed);
-    }
-    if(ok) { found = p; break; }
+  var _email2 = user ? user.email : null;
+  if(_email2) {
+    var _authChk = await _sb.auth.signInWithPassword({ email: _email2, password: typed });
+    if(!_authChk.error) found = user;
   }
 
   if(!found) {
