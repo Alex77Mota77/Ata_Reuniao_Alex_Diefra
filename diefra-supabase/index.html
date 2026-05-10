@@ -10198,6 +10198,16 @@ function scheduleAutoSync(){
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
 }
 
+function _updateCountdownPill(){
+  const pill = document.getElementById('sync-pill');
+  if(!pill) return;
+  if(_pollCountdown > 0){
+    _pollCountdown--;
+    const txt = pill.querySelector('.sync-txt');
+    if(txt && _pollCountdown <= 10) txt.textContent = 'Sync em ' + _pollCountdown + 's';
+  }
+}
+
 function startSyncPolling(){
   const interval = API_CFG.syncInterval || 60;
   _pollCountdown = interval;
