@@ -20190,8 +20190,10 @@ var _custoDreCollapsed = {}; // { 'conta': true/false } — persiste durante a s
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function _custoAnalise() {
+  var cid = parseInt(_custoCtId)||_custoCtId;
   return (ST.custoAnalises||[]).find(function(a){
-    return String(a.contractId||a.contrato_id) === String(_custoCtId);
+    return parseInt(a.contractId||a.contrato_id) === cid ||
+           String(a.contractId||a.contrato_id) === String(cid);
   }) || null;
 }
 function _fmtBRL(v) {
@@ -20235,15 +20237,23 @@ function _custoNewAnalise(contractId) {
 // ─── Entrada principal ───────────────────────────────────────────────
 function renderCusto() {
   if(!ST.custoAnalises) ST.custoAnalises = [];
-  // Garante análise para cada contrato
+  // Garante análise para cada contrato — usando comparação solta
   (ST.contracts||[]).forEach(function(ct) {
     if(!ST.custoAnalises.find(function(a){ return String(a.contractId||a.contrato_id)===String(ct.id); })) {
       ST.custoAnalises.push(_custoNewAnalise(ct.id));
     }
   });
+  // Normaliza contractId em todas as análises para número inteiro
+  ST.custoAnalises.forEach(function(a){
+    if(a.contractId) a.contractId = parseInt(a.contractId)||a.contractId;
+    if(a.contrato_id && !a.contractId) a.contractId = parseInt(a.contrato_id)||a.contrato_id;
+  });
+  // Seleciona primeiro contrato se nenhum selecionado
   if(!_custoCtId && ST.contracts && ST.contracts.length > 0) {
     _custoCtId = ST.contracts[0].id;
   }
+  // Normaliza _custoCtId também
+  if(_custoCtId) _custoCtId = parseInt(_custoCtId)||_custoCtId;
   _custoRenderNav();
   _custoRenderKPIs();
   _custoRenderTab(_custoTabAtv);
@@ -20268,7 +20278,7 @@ function _custoRenderNav() {
   if(next) next.disabled = idx >= (ST.contracts||[]).length - 1;
 }
 function custoSelectCt(id) {
-  _custoCtId = id;
+  _custoCtId = parseInt(id)||id;
   _custoRenderNav();
   _custoRenderKPIs();
   _custoRenderTab(_custoTabAtv);
