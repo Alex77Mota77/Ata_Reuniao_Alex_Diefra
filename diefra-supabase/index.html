@@ -8830,19 +8830,25 @@ function openChangePassModal(pid){
   openModal();
 }
 
-function saveChangePass(pid){
+async function saveChangePass(pid){
   const p=ST.participants.find(x=>x.id===pid);
-  const old=document.getElementById('cp-old').value;
   const nw=document.getElementById('cp-new').value;
   const cf=document.getElementById('cp-conf').value;
   const err=document.getElementById('cp-err');
-  if(old!==p.password){err.textContent='Senha atual incorreta.';return}
-  if(nw.length<6){err.textContent='A nova senha deve ter pelo menos 6 caracteres.';return}
-  if(nw!==cf){err.textContent='As senhas não coincidem.';return}
-  p.password=nw;
-  closeModal();renderParticipants();
-  // toast
-  showToast('✅ Senha alterada com sucesso!','gn');
+  if(nw.length<6){err.textContent='A nova senha deve ter pelo menos 6 caracteres.';return;}
+  if(nw!==cf){err.textContent='As senhas não coincidem.';return;}
+  if(!p||!p.email){err.textContent='E-mail do usuário não encontrado.';return;}
+  try{
+    const btn=document.querySelector('[onclick*="saveChangePass"]');
+    if(btn){btn.textContent='Aguarde…';btn.disabled=true;}
+    await _api('POST','/api/auth/change-password',{email:p.email, newPassword:nw});
+    p.password=nw;
+    closeModal();renderParticipants();
+    showToast('✅ Senha alterada com sucesso no sistema!','gn');
+  }catch(e){
+    if(err) err.textContent='Erro: '+e.message;
+    showToast('⚠ Não foi possível alterar a senha: '+e.message,'rd');
+  }
 }
 
 function checkPassStrength(v){
@@ -10043,7 +10049,10 @@ async function pushToSheets(silent){
       calibEquips:     ST.calibEquips,
       calibNCs:        ST.calibNCs,
       calibRegistros:  ST.calibRegistros,
-      custoAnalises:   ST.custoAnalises,
+      custoAnalises:   (ST.custoAnalises||[]).map(function(a){ return {
+        id: a.id, contrato_id: a.contractId||a.contrato_id||a.id,
+        dados: JSON.stringify(a)
+      };}),
     });
     setSyncStatus('ok');
     _lastSyncAt = new Date();
@@ -10142,7 +10151,7 @@ async function pullFromSheets(silent){
 
     function _merge(r,local){ return (Array.isArray(r)&&r.length>0)?r:(local&&local.length>0?local:r||[]); }
 
-    // Normaliza campos do banco (português) para o formato JS (inglês)
+    // ── Normalizadores: banco (snake_case) → JS (camelCase) ──────────────
     function _normContract(c){
       return Object.assign({}, c, {
         name:               c.name  || c.nome  || '',
@@ -10163,30 +10172,121 @@ async function pullFromSheets(silent){
     }
     function _normTask(t){
       return Object.assign({}, t, {
+        contractId:  t.contractId  || t.contrato_id,
+        title:       t.title       || t.titulo     || '',
+        description: t.description || t.descricao  || '',
+        dueDate:     t.dueDate     || t.data_venc  || '',
+        priority:    t.priority    || t.prioridade || 'media',
+      });
+    }
+    function _normVacation(v){
+      return Object.assign({}, v, {
+        contractId:        v.contractId  || v.contrato_id,
+        managerId:         v.managerId   || v.manager_id   || v.participant_id,
+        substitutoId:      v.substitutoId|| v.substituto_id,
+        inicioFérias:      v.inicioFérias|| v.inicio_ferias|| v.data_ini || v.startDate || '',
+        retorno:           v.retorno     || v.data_fim     || v.endDate  || '',
+        periodoAquisitivo: v.periodoAquisitivo || v.periodo_aquisitivo || '',
+      });
+    }
+    function _normTrip(t){
+      return Object.assign({}, t, {
         contractId: t.contractId || t.contrato_id,
-        title:      t.title  || t.titulo  || '',
-        description:t.description || t.descricao || '',
-        dueDate:    t.dueDate || t.data_venc || '',
-        priority:   t.priority || t.prioridade || 'media',
+        startDate:  t.startDate  || t.data_ini  || t.data_inicio || '',
+        endDate:    t.endDate    || t.data_fim   || '',
+        origin:     t.origin     || t.origem     || '',
+        destination:t.destination|| t.destino    || '',
+        motorista:  t.motorista  || t.driver     || '',
+      });
+    }
+    function _normCalibEquip(e){
+      return Object.assign({}, e, {
+        contractId:  e.contractId  || e.contrato_id,
+        freqDias:    e.freqDias    || e.freq_dias     || 365,
+        ultimaCalib: e.ultimaCalib || e.ultima_calib  || '',
+        proxCalib:   e.proxCalib   || e.prox_calib    || '',
+      });
+    }
+    function _normCalibNC(n){
+      return Object.assign({}, n, {
+        contractId:    n.contractId    || n.contrato_id,
+        equipId:       n.equipId       || n.equip_id,
+        dtAbertura:    n.dtAbertura    || n.dt_abertura    || '',
+        dtFechamento:  n.dtFechamento  || n.dt_fechamento  || '',
+      });
+    }
+    function _normCalibReg(r){
+      return Object.assign({}, r, {
+        contractId: r.contractId || r.contrato_id,
+        equipId:    r.equipId    || r.equip_id,
+      });
+    }
+    function _normEpiItem(e){
+      return Object.assign({}, e, {
+        contractId: e.contractId || e.contrato_id,
+      });
+    }
+    function _normEpiEntrega(e){
+      return Object.assign({}, e, {
+        contractId:  e.contractId  || e.contrato_id,
+        participantId: e.participantId || e.participant_id,
+        dataEntrega: e.dataEntrega || e.data_entrega || '',
+        dataVenc:    e.dataVenc    || e.data_venc    || '',
+      });
+    }
+    function _normMedicao(m){
+      return Object.assign({}, m, {
+        contractId: m.contractId || m.contrato_id,
       });
     }
 
-    ST.contracts       = _merge(remote.contracts,       ST.contracts).map(_normContract);
+    function _normFrota(v){
+      return Object.assign({}, v, {
+        contractId: v.contractId || v.contrato_id,
+        anoFab:     v.anoFab     || v.ano_fab     || v.ano || '',
+        anoMod:     v.anoMod     || v.ano_mod     || '',
+      });
+    }
+    function _normAudit(a){
+      return Object.assign({}, a, {
+        contractId: a.contractId || a.contrato_id,
+        data:       a.data       || a.data_audit  || '',
+        pontos:     Array.isArray(a.pontos) ? a.pontos : [],
+      });
+    }
+    function _normEntregavel(e){
+      return Object.assign({}, e, {
+        contractId:  e.contractId  || e.contrato_id,
+        prazo:       e.prazo       || e.data_prazo  || e.dueDate || '',
+        titulo:      e.titulo      || e.title       || '',
+        responsavel: e.responsavel || e.responsible || '',
+      });
+    }
+
+    ST.contracts       = _merge(remote.contracts,      ST.contracts).map(_normContract);
     ST.tasks           = _merge(remote.tasks,           ST.tasks).map(_normTask);
     ST.participants    = _merge(remote.participants,     ST.participants);
-    ST.gestoresUnidade = _merge(remote.gestoresUnidade,  ST.gestoresUnidade);
-    ST.vacations       = _merge(remote.vacations,       ST.vacations);
-    ST.trips           = _merge(remote.trips,           ST.trips);
-    ST.frota           = _merge(remote.frota,           ST.frota);
-    ST.audits          = _merge(remote.audits,          ST.audits);
-    ST.entregaveis     = _merge(remote.entregaveis,     ST.entregaveis);
-    ST.medicoes        = _merge(remote.medicoes,        ST.medicoes);
-    ST.epiItens        = _merge(remote.epiItens,        ST.epiItens);
-    ST.epiEntregas     = _merge(remote.epiEntregas,     ST.epiEntregas);
-    ST.calibEquips     = _merge(remote.calibEquips,     ST.calibEquips);
-    ST.calibRegistros  = _merge(remote.calibRegistros,  ST.calibRegistros);
-    ST.calibNCs        = _merge(remote.calibNCs,        ST.calibNCs);
-    ST.custoAnalises   = _merge(remote.custoAnalises,   ST.custoAnalises);
+    ST.gestoresUnidade = _merge(remote.gestoresUnidade, ST.gestoresUnidade);
+    ST.vacations       = _merge(remote.vacations,       ST.vacations).map(_normVacation);
+    ST.trips           = _merge(remote.trips,           ST.trips).map(_normTrip);
+    ST.frota           = _merge(remote.frota,           ST.frota).map(_normFrota);
+    ST.audits          = _merge(remote.audits,          ST.audits).map(_normAudit);
+    ST.entregaveis     = _merge(remote.entregaveis,     ST.entregaveis).map(_normEntregavel);
+    ST.medicoes        = _merge(remote.medicoes,        ST.medicoes).map(_normMedicao);
+    ST.epiItens        = _merge(remote.epiItens,        ST.epiItens).map(_normEpiItem);
+    ST.epiEntregas     = _merge(remote.epiEntregas,     ST.epiEntregas).map(_normEpiEntrega);
+    ST.calibEquips     = _merge(remote.calibEquips,     ST.calibEquips).map(_normCalibEquip);
+    ST.calibRegistros  = _merge(remote.calibRegistros,  ST.calibRegistros).map(_normCalibReg);
+    ST.calibNCs        = _merge(remote.calibNCs,        ST.calibNCs).map(_normCalibNC);
+    // Desserializa custoAnalises — dados completos no campo 'dados'
+    var _rawCusto = _merge(remote.custoAnalises, ST.custoAnalises);
+    ST.custoAnalises = (_rawCusto||[]).map(function(a){
+      if(a.dados && typeof a.dados === 'string'){
+        try { return JSON.parse(a.dados); } catch(e){ return a; }
+      }
+      if(a.dados && typeof a.dados === 'object') return a.dados;
+      return a;
+    });
 
     recalcAllContracts();
     window._vcLastCtId = null;
@@ -11332,6 +11432,65 @@ window.addEventListener('DOMContentLoaded',()=>{
   _initUenPicker();
 });
 
+// ── Navegação de contrato no mapa ──────────────────────────────────────
+var _mapaCtId   = null;
+var _mapaMesKey = null;
+var _mapaPickerYear = new Date().getFullYear();
+var _MES_NOMES_MAPA = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+var _mapaExtraCols  = [];
+
+function _mapaYM(){
+  var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function _mapaMesLbl(ym){
+  if(!ym) return '—';
+  var p=ym.split('-');
+  return (_MES_NOMES_MAPA[parseInt(p[1],10)-1]||p[1])+'/'+p[0];
+}
+
+function _mapaRenderNav(){
+  var scroll=document.getElementById('mapa-nav-scroll'); if(!scroll) return;
+  var cts=ST.contracts||[];
+  scroll.innerHTML=cts.map(function(c){
+    var active=c.id===_mapaCtId?' active':'';
+    var label=(c.name||c.nome||'Contrato').split(' ').slice(0,3).join(' ');
+    var code=c.code||c.numero||c.cc||'';
+    return '<button class="fin-pill'+active+'" onclick="mapaSelectCt('+JSON.stringify(c.id)+')" title="'+(c.name||c.nome||'')+'">'+
+      label+(code?'<span class="fp-code">'+code+'</span>':'')+'</button>';
+  }).join('');
+  // Atualiza arrows
+  var idx=cts.findIndex(function(c){return c.id===_mapaCtId;});
+  var prev=document.getElementById('mapa-nav-prev');
+  var next=document.getElementById('mapa-nav-next');
+  if(prev) prev.disabled=idx<=0;
+  if(next) next.disabled=idx<0||idx>=cts.length-1;
+}
+
+function mapaSelectCt(id){
+  _mapaCtId=id;
+  _mapaRenderNav();
+  renderMapaMedicoes();
+}
+
+function mapaCtShift(dir){
+  var cts=ST.contracts||[];
+  var idx=cts.findIndex(function(c){return c.id===_mapaCtId;});
+  var n=Math.max(0,Math.min(cts.length-1,idx+dir));
+  if(cts[n]) mapaSelectCt(cts[n].id);
+}
+
+function _mapaGetLinhas(ym){
+  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var linhas=ct.linhasMedicao||[];
+  return linhas.filter(function(l){return l.mesRef===ym||!l.mesRef;});
+}
+function _mapaGetRec(ctId,ym){
+  return (ST.medicoes||[]).find(function(m){
+    return (m.contractId===ctId||m.contrato_id===ctId)&&(m.key===ym||m.competencia===ym);
+  })||null;
+}
+
+
 // ── Navegação de mês ───────────────────────────────────────────────────
 function mapaMesShift(dir){
   var ym=_mapaMesKey||_mapaYM();
@@ -12075,6 +12234,7 @@ function _initMapaMedicoes(){
   if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
   if(!_mapaMesKey) _mapaMesKey=_mapaYM();
   _mapaExtraCols=[];
+  _mapaRenderNav();
   renderMapaMedicoes();
 }
 
@@ -13284,10 +13444,14 @@ async function salvarEdicaoUsuario(id){
     const { error } = await _sb.from('gestores_contrato').update(upd).eq('id', id);
     if(error) throw error;
 
-    // Se informou nova senha → reseta via SQL (requer permissão)
+    // Altera senha via servidor Node.js
     if(pass && pass.length >= 6 && email){
-      await _sb.rpc('reset_user_password', { user_email: email, new_password: pass })
-        .then(({error:e})=>{ if(e) showToast('⚠ Dados salvos, mas redefinição de senha requer acesso admin no Supabase','or',4000); });
+      try {
+        await _api('POST', '/api/auth/change-password', { email: email, newPassword: pass });
+        showToast('✅ Senha alterada! Usuário deve fazer login novamente.','gn', 5000);
+      } catch(e2){
+        showToast('⚠ Senha não alterada: ' + (e2.message||e2),'or',4000);
+      }
     }
   } catch(e){
     showToast('⚠ Erro ao salvar: ' + e.message,'rd');
