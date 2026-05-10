@@ -20190,10 +20190,11 @@ var _custoDreCollapsed = {}; // { 'conta': true/false } — persiste durante a s
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function _custoAnalise() {
-  var cid = parseInt(_custoCtId)||_custoCtId;
+  if(_custoCtId === null || _custoCtId === undefined) return null;
+  // usa == (loose) para compatibilidade number/string
   return (ST.custoAnalises||[]).find(function(a){
-    return parseInt(a.contractId||a.contrato_id) === cid ||
-           String(a.contractId||a.contrato_id) === String(cid);
+    return (a.contractId != null && a.contractId == _custoCtId) ||
+           (a.contrato_id != null && a.contrato_id == _custoCtId);
   }) || null;
 }
 function _fmtBRL(v) {
@@ -20239,21 +20240,27 @@ function renderCusto() {
   if(!ST.custoAnalises) ST.custoAnalises = [];
   // Garante análise para cada contrato — usando comparação solta
   (ST.contracts||[]).forEach(function(ct) {
-    if(!ST.custoAnalises.find(function(a){ return String(a.contractId||a.contrato_id)===String(ct.id); })) {
+    if(!ST.custoAnalises.find(function(a){
+      return (a.contractId != null && a.contractId == ct.id) ||
+             (a.contrato_id != null && a.contrato_id == ct.id);
+    })) {
       ST.custoAnalises.push(_custoNewAnalise(ct.id));
     }
   });
-  // Normaliza contractId em todas as análises para número inteiro
+  // Normaliza contractId — converte tudo para String para comparação uniforme
   ST.custoAnalises.forEach(function(a){
-    if(a.contractId) a.contractId = parseInt(a.contractId)||a.contractId;
-    if(a.contrato_id && !a.contractId) a.contractId = parseInt(a.contrato_id)||a.contrato_id;
+    var cid = a.contractId || a.contrato_id;
+    if(cid !== undefined && cid !== null) a.contractId = String(cid);
+    else if(a.id) a.contractId = String(a.id);
   });
-  // Seleciona primeiro contrato se nenhum selecionado
-  if(!_custoCtId && ST.contracts && ST.contracts.length > 0) {
-    _custoCtId = ST.contracts[0].id;
+  // Força seleção de contrato — sempre seleciona o primeiro se não houver seleção válida
+  var _ctsList = ST.contracts || [];
+  if(_ctsList.length > 0) {
+    var _ctFound = _custoCtId && _ctsList.find(function(c){ return String(c.id) === String(_custoCtId); });
+    if(!_ctFound) _custoCtId = _ctsList[0].id;
   }
-  // Normaliza _custoCtId também
-  if(_custoCtId) _custoCtId = parseInt(_custoCtId)||_custoCtId;
+  // Converte _custoCtId para String também
+  if(_custoCtId !== null && _custoCtId !== undefined) _custoCtId = String(_custoCtId);
   _custoRenderNav();
   _custoRenderKPIs();
   _custoRenderTab(_custoTabAtv);
@@ -20267,7 +20274,7 @@ function _custoRenderNav() {
   if(!scroll) return;
   var html = '';
   (ST.contracts||[]).forEach(function(c) {
-    html += '<button class="fin-pill' + (c.id===_custoCtId?' active':'') + '" onclick="custoSelectCt(' + c.id + ')">' +
+    html += '<button class="fin-pill' + (String(c.id)===String(_custoCtId)?' active':'') + '" onclick="custoSelectCt(' + c.id + ')">' +
       c.name + '<span class="fp-code">' + (c.cc||c.id) + '</span></button>';
   });
   scroll.innerHTML = html;
@@ -20278,7 +20285,7 @@ function _custoRenderNav() {
   if(next) next.disabled = idx >= (ST.contracts||[]).length - 1;
 }
 function custoSelectCt(id) {
-  _custoCtId = parseInt(id)||id;
+  _custoCtId = id;
   _custoRenderNav();
   _custoRenderKPIs();
   _custoRenderTab(_custoTabAtv);
@@ -20295,7 +20302,7 @@ function _custoRenderKPIs() {
   var wrap = document.getElementById('custo-kpis');
   if(!wrap) return;
   var a = _custoAnalise();
-  var ct = (ST.contracts||[]).find(function(c){ return c.id===_custoCtId; });
+  var ct = (ST.contracts||[]).find(function(c){ return c.id == _custoCtId; });
   if(!a||!ct) { wrap.innerHTML='<div style="color:var(--t3);padding:16px;font-size:13px">Nenhum contrato selecionado.</div>'; return; }
   var recRow = a.dreContas.find(function(c){ return c.conta==='81'; })||{};
   var despRow = a.dreContas.find(function(c){ return c.conta==='82'; })||{};
@@ -20510,7 +20517,12 @@ function custoEstudoCen(cen, btn) {
   _custoEstudo();
 }
 function _custoEstudo() {
-  var a = _custoAnalise(); if(!a) return;
+  if(!_dreMesAtivo || _dreMesAtivo === '' || _dreMesAtivo.indexOf('NaN') > -1) _dreMesAtivo = _dreYM(0);
+  var a = _custoAnalise(); if(!a) {
+    var el = document.getElementById('custo-dre-wrap')||document.getElementById('custosec-estudo');
+    if(el) el.innerHTML = '<div style="color:var(--t3);padding:20px;text-align:center">Clique no contrato acima para carregar a análise.</div>';
+    return;
+  }
   var thead = document.getElementById('custo-estudo-thead');
   var tbody = document.getElementById('custo-estudo-tbody');
   if(!thead||!tbody) return;
@@ -25674,7 +25686,7 @@ window._custoRenderKPIs = function(){
    ══════════════════════════════════════════════════════════════════ */
 
 // ── Estado DRE mensal ───────────────────────────────────────────────
-var _dreMesAtivo = '';   // 'YYYY-MM'
+var _dreMesAtivo = (function(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2); })();   // 'YYYY-MM'
 var _dreHistOpen  = false;
 
 function _dreYM(offset) {
@@ -25682,10 +25694,13 @@ function _dreYM(offset) {
   return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);
 }
 function _dreMesLbl(ym) {
-  if(!ym) return '—';
-  var p=ym.split('-');
+  if(!ym || ym === 'undefined' || ym === 'NaN') return '—';
+  var p = String(ym).split('-');
+  if(p.length < 2 || !p[0] || !p[1]) return ym||'—';
   var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  return meses[parseInt(p[1])-1]+'/'+p[0];
+  var m = parseInt(p[1], 10);
+  if(isNaN(m) || m < 1 || m > 12) return ym;
+  return meses[m-1]+'/'+p[0];
 }
 
 // ── Inicializar mês ao abrir Estudo ────────────────────────────────
@@ -25694,9 +25709,11 @@ function _dreMesLbl(ym) {
   window.custoTab = function(tab, btn) {
     if(_origCustoTabDre) _origCustoTabDre.apply(this, arguments);
     if(tab === 'estudo') {
-      if(!_dreMesAtivo) _dreMesAtivo = _dreYM(0);
+      if(!_dreMesAtivo || _dreMesAtivo === '' || _dreMesAtivo.indexOf('undefined') > -1 || _dreMesAtivo.indexOf('NaN') > -1) {
+        _dreMesAtivo = _dreYM(0);
+      }
       _dreAtualizaMesUI();
-      setTimeout(function(){ custoVincularDRE(false); }, 120);
+      setTimeout(function(){ if(_custoAnalise()) custoVincularDRE(false); }, 120);
     }
   };
 })();
@@ -25773,6 +25790,7 @@ function _dreSalvarSnapshot(mes) {
 
 // ── Carregar snapshot de mês anterior ───────────────────────────────
 function dreCarregarMes(mes) {
+  if(!mes || mes.indexOf('undefined') > -1 || mes.indexOf('NaN') > -1) mes = _dreYM(0);
   var a = _custoAnalise(); if(!a) return;
   var snap = a.dreHistorico && a.dreHistorico[mes];
   if(snap) {
