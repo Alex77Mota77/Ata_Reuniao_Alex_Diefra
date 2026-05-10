@@ -2269,7 +2269,7 @@ body.sec-medicoes .cont,
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="diefra-client.js"></script><!-- DIEFRA Client v2 -->
 </head>
 <body>
 <!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
@@ -4337,12 +4337,11 @@ let deleteCallback = null;
 //  Substitua os dois valores abaixo com os do seu projeto:
 //  Supabase → Settings → API → Project URL e anon public key
 // ══════════════════════════════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://nrawjzopaqrxeqxtmluk.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_7pVK9eZfSi3EMQ8ft83o3w_WI3gPfmi';
+// ── Configuração migrada para diefra-client.js ──────────────
+// _sb é injetado pelo diefra-client.js (sem keys expostas)
+const SUPABASE_URL = 'https://nrawjzopaqrxeqxtmluk.supabase.co'; // mantido para referências no UI
 
-const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// Inicia presença quando sessão Auth confirmar (resolve timing issues)
+// Inicia presença quando sessão Auth confirmar
 _sb.auth.onAuthStateChange(function(event, session){
   if(session && currentUser && !_presenceKey){
     _initPresence();
@@ -10030,10 +10029,35 @@ function manualSync(){
 }
 
 // ── Push: salva ST no Supabase ────────────────────────────────────────────────
+async function pushToSheets_OLD_UNUSED(){}
 async function pushToSheets(silent){
   if(!silent) setSyncStatus('syncing');
   try {
-    // Salva todas as entidades em paralelo via upsert
+    // Uma única chamada ao servidor (mais eficiente)
+    await _syncPush({
+      contracts:       ST.contracts,
+      tasks:           ST.tasks,
+      participants:    ST.participants,
+      gestoresUnidade: ST.gestoresUnidade,
+      medicoes:        ST.medicoes,
+      calibEquips:     ST.calibEquips,
+      calibNCs:        ST.calibNCs,
+      calibRegistros:  ST.calibRegistros,
+      custoAnalises:   ST.custoAnalises,
+    });
+    setSyncStatus('ok');
+    _lastSyncAt = new Date();
+    return;
+  } catch(err){
+    setSyncStatus('err');
+    if(!silent) showToast('⚠ Erro ao sincronizar: '+err.message,'rd');
+    return;
+  }
+}
+async function _pushToSheets_LEGACY(silent){
+  // mantido como fallback — não usado normalmente
+  if(!silent) setSyncStatus('syncing');
+  try {
     const ops = [];
     if(ST.contracts?.length)      ops.push(_sb.from('contratos').upsert(ST.contracts.map(c=>({
       id:c.id,numero:c.numero,nome:c.nome||c.name,cliente:c.cliente||c.client,
@@ -10113,49 +10137,27 @@ async function pushToSheets(silent){
 async function pullFromSheets(silent){
   if(!silent) setSyncStatus('syncing','Carregando…');
   try {
-    const [
-      {data:contratos},  {data:tarefas},     {data:participantes},  {data:gestoresUnidadeDB},
-      {data:medicoes},   {data:entregaveis}, {data:auditorias},
-      {data:frota},      {data:viagens},     {data:ferias},
-      {data:epiItens},   {data:epiEntregas}, {data:calibEquips},
-      {data:calibRegs},  {data:calibNCs},    {data:custoAnalises},
-    ] = await Promise.all([
-      _sb.from('contratos').select('*').order('criado_em',{ascending:false}),
-      _sb.from('tarefas').select('*'),
-      _sb.from('gestores_contrato').select('*').eq('ativo',true),
-      _sb.from('gestores_unidade').select('*').eq('ativo',true),
-      _sb.from('medicoes').select('*'),
-      _sb.from('entregaveis').select('*'),
-      _sb.from('auditorias').select('*'),
-      _sb.from('frota').select('*'),
-      _sb.from('viagens').select('*'),
-      _sb.from('ferias').select('*'),
-      _sb.from('epi_itens').select('*'),
-      _sb.from('epi_entregas').select('*'),
-      _sb.from('calib_equipamentos').select('*'),
-      _sb.from('calib_registros').select('*'),
-      _sb.from('calib_ncs').select('*'),
-      _sb.from('custo_analises').select('*'),
-    ]);
+    // Uma única chamada ao servidor (mais eficiente que 16 paralelas)
+    const remote = await _syncPull();
 
-    function _merge(remote,local){ return (Array.isArray(remote)&&remote.length>0)?remote:(local&&local.length>0?local:remote||[]); }
+    function _merge(r,local){ return (Array.isArray(r)&&r.length>0)?r:(local&&local.length>0?local:r||[]); }
 
-    ST.contracts       = _merge(contratos,      ST.contracts);
-    ST.tasks           = _merge(tarefas,         ST.tasks);
-    ST.participants    = _merge(participantes,      ST.participants);
-    ST.gestoresUnidade = _merge(gestoresUnidadeDB, ST.gestoresUnidade);
-    ST.vacations       = _merge(ferias,          ST.vacations);
-    ST.trips           = _merge(viagens,         ST.trips);
-    ST.frota           = _merge(frota,           ST.frota);
-    ST.audits          = _merge(auditorias,      ST.audits);
-    ST.entregaveis     = _merge(entregaveis,     ST.entregaveis);
-    ST.medicoes        = _merge(medicoes,        ST.medicoes);
-    ST.epiItens        = _merge(epiItens,        ST.epiItens);
-    ST.epiEntregas     = _merge(epiEntregas,     ST.epiEntregas);
-    ST.calibEquips     = _merge(calibEquips,     ST.calibEquips);
-    ST.calibRegistros  = _merge(calibRegs,       ST.calibRegistros);
-    ST.calibNCs        = _merge(calibNCs,        ST.calibNCs);
-    ST.custoAnalises   = _merge(custoAnalises,   ST.custoAnalises);
+    ST.contracts       = _merge(remote.contracts,       ST.contracts);
+    ST.tasks           = _merge(remote.tasks,           ST.tasks);
+    ST.participants    = _merge(remote.participants,     ST.participants);
+    ST.gestoresUnidade = _merge(remote.gestoresUnidade,  ST.gestoresUnidade);
+    ST.vacations       = _merge(remote.vacations,       ST.vacations);
+    ST.trips           = _merge(remote.trips,           ST.trips);
+    ST.frota           = _merge(remote.frota,           ST.frota);
+    ST.audits          = _merge(remote.audits,          ST.audits);
+    ST.entregaveis     = _merge(remote.entregaveis,     ST.entregaveis);
+    ST.medicoes        = _merge(remote.medicoes,        ST.medicoes);
+    ST.epiItens        = _merge(remote.epiItens,        ST.epiItens);
+    ST.epiEntregas     = _merge(remote.epiEntregas,     ST.epiEntregas);
+    ST.calibEquips     = _merge(remote.calibEquips,     ST.calibEquips);
+    ST.calibRegistros  = _merge(remote.calibRegistros,  ST.calibRegistros);
+    ST.calibNCs        = _merge(remote.calibNCs,        ST.calibNCs);
+    ST.custoAnalises   = _merge(remote.custoAnalises,   ST.custoAnalises);
 
     recalcAllContracts();
     window._vcLastCtId = null;
@@ -12776,32 +12778,20 @@ function _initPresence(){
 }
 
 async function _upsertPresence(){
-  if(!currentUser || !_sb || !_presenceKey) return;
+  if(!currentUser || !_presenceKey) return;
   try {
     var activeBtn = document.querySelector('.nb.active');
     var secao = activeBtn
       ? (activeBtn.textContent||'').trim().replace(/^[^a-zA-Z]+/,'').split(' ').slice(0,2).join(' ')
       : 'Sistema';
-    var payload = {
-      id:         _presenceKey,
-      name:       currentUser.name     || currentUser.username || 'Usuário',
-      username:   currentUser.username || '',
-      color:      currentUser.color    || '#7c3aed',
-      secao:      secao,
-      updated_at: new Date().toISOString(),
-    };
-    var res = await _sb.from('presenca_online').upsert(payload, { onConflict: 'id' });
-    if(res.error) console.warn('Presence upsert error:', res.error.message, res.error.code);
-  } catch(e){ console.warn('Presence upsert exception:', e.message); }
+    await _presencaUpsert(secao);
+  } catch(e){ console.warn('Presence upsert:', e.message); }
 }
 
 async function _pollPresence(){
-  if(!_sb) return;
   try {
-    var cutoff = new Date(Date.now() - 45000).toISOString();
-    var res = await _sb.from('presenca_online').select('*').gte('updated_at', cutoff);
-    if(res.error) throw res.error;
-    _renderPresence(res.data || []);
+    var users = await _presencaPoll();
+    _renderPresence(users || []);
   } catch(e){ console.warn('Presence poll:', e.message); }
 }
 
@@ -12867,9 +12857,7 @@ function _hidePrTooltip(){
 async function _stopPresence(){
   clearInterval(_presenceTimer);
   _presenceTimer = null;
-  if(_presenceKey && _sb){
-    try { await _sb.from('presenca_online').delete().eq('id', _presenceKey); } catch(e){}
-  }
+  await _presencaRemover();
   _presenceKey = null;
   var bar = document.getElementById('presence-bar');
   if(bar) bar.style.display = 'none';
