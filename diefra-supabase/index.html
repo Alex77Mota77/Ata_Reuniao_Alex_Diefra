@@ -10292,12 +10292,20 @@ async function pullFromSheets(silent){
       var parsed = a;
       if(a.dados && typeof a.dados === 'string'){
         try { parsed = JSON.parse(a.dados); } catch(e){ parsed = a; }
-      } else if(a.dados && typeof a.dados === 'object'){
+      } else if(a.dados && typeof a.dados === 'object' && a.dados !== null){
         parsed = a.dados;
       }
-      // Garante contractId correto mesmo sem campo dados
-      if(!parsed.contractId && a.contrato_id) parsed.contractId = a.contrato_id;
-      if(!parsed.contractId && a.id) parsed.contractId = a.id;
+      // Garante contractId correto
+      if(!parsed.contractId) parsed.contractId = a.contrato_id || a.id;
+      // Garante estrutura mínima
+      if(!parsed.dreContas || !Array.isArray(parsed.dreContas)){
+        var template = _custoNewAnalise(parsed.contractId);
+        parsed.dreContas  = template.dreContas;
+        parsed.funcoes    = parsed.funcoes    || template.funcoes;
+        parsed.projecoes  = parsed.projecoes  || template.projecoes;
+        parsed.medicao    = parsed.medicao    || template.medicao;
+        parsed.memoria    = parsed.memoria    || template.memoria;
+      }
       return parsed;
     });
 
@@ -20312,6 +20320,7 @@ function _custoRenderKPIs() {
   var a = _custoAnalise();
   var ct = (ST.contracts||[]).find(function(c){ return c.id == _custoCtId; });
   if(!a||!ct) { wrap.innerHTML='<div style="color:var(--t3);padding:16px;font-size:13px">Nenhum contrato selecionado.</div>'; return; }
+  if(!a.dreContas) a.dreContas = _custoNewAnalise(_custoCtId).dreContas;
   var recRow = a.dreContas.find(function(c){ return c.conta==='81'; })||{};
   var despRow = a.dreContas.find(function(c){ return c.conta==='82'; })||{};
   var rec = recRow.estudo||recRow.orcado||0;
@@ -20548,6 +20557,10 @@ function _custoEstudo() {
 
   /* ── TOTAIS para % ─────────────────────────────────────── */
   var totRec={}, totDesp={};
+  if(!a.dreContas) a.dreContas = _custoNewAnalise(_custoCtId).dreContas;
+  if(!a.funcoes) a.funcoes = [];
+  if(!a.projecoes) a.projecoes = [];
+  if(!a.medicao) a.medicao = {estudo:[],orcado:[],history:{}};
   cens.forEach(function(cn,cni){
     var r = a.dreContas.find(function(c){return c.conta==='81';})||{};
     var d = a.dreContas.find(function(c){return c.conta==='82';})||{};
