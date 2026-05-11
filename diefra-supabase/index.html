@@ -5046,7 +5046,7 @@ function _renderFinDashMonthBar(){
   const yr   = String(d.getFullYear()).slice(-2);
   // Dot if the current contract has a medição for this period
   const hasMed = _finCtId && (ST.medicoes||[]).some(
-    m=>m.contractId===_finCtId && m.key===_finDashPeriod && (m.realizado!=null||m.previsto!=null||m.custo!=null));
+    m=>String(m.contractId)===String(_finCtId) && m.key===_finDashPeriod && (m.realizado!=null||m.previsto!=null||m.custo!=null));
   const dot = hasMed
     ? `<span style="width:6px;height:6px;border-radius:50%;background:#34d399;flex-shrink:0;display:inline-block"></span>`
     : '';
@@ -10263,7 +10263,11 @@ async function pullFromSheets(silent){
       });
     }
 
-    ST.contracts       = _merge(remote.contracts,      ST.contracts).map(_normContract);
+    ST.contracts       = _merge(remote.contracts,      ST.contracts).map(_normContract).map(function(c){
+      // Normaliza id do contrato para String
+      if(c.id !== undefined) c.id = String(c.id);
+      return c;
+    });
     ST.tasks           = _merge(remote.tasks,           ST.tasks).map(_normTask);
     ST.participants    = _merge(remote.participants,     ST.participants);
     ST.gestoresUnidade = _merge(remote.gestoresUnidade, ST.gestoresUnidade);
@@ -10272,7 +10276,11 @@ async function pullFromSheets(silent){
     ST.frota           = _merge(remote.frota,           ST.frota).map(_normFrota);
     ST.audits          = _merge(remote.audits,          ST.audits).map(_normAudit);
     ST.entregaveis     = _merge(remote.entregaveis,     ST.entregaveis).map(_normEntregavel);
-    ST.medicoes        = _merge(remote.medicoes,        ST.medicoes).map(_normMedicao);
+    ST.medicoes        = _merge(remote.medicoes,        ST.medicoes).map(_normMedicao).map(function(m){
+      if(m.contractId) m.contractId = String(m.contractId);
+      if(m.contrato_id) m.contrato_id = String(m.contrato_id);
+      return m;
+    });
     ST.epiItens        = _merge(remote.epiItens,        ST.epiItens).map(_normEpiItem);
     ST.epiEntregas     = _merge(remote.epiEntregas,     ST.epiEntregas).map(_normEpiEntrega);
     ST.calibEquips     = _merge(remote.calibEquips,     ST.calibEquips).map(_normCalibEquip);
@@ -11457,14 +11465,14 @@ function _mapaRenderNav(){
   var scroll=document.getElementById('mapa-nav-scroll'); if(!scroll) return;
   var cts=ST.contracts||[];
   scroll.innerHTML=cts.map(function(c){
-    var active=c.id===_mapaCtId?' active':'';
+    var active=String(c.id)===String(_mapaCtId)?' active':'';
     var label=(c.name||c.nome||'Contrato').split(' ').slice(0,3).join(' ');
     var code=c.code||c.numero||c.cc||'';
     return '<button class="fin-pill'+active+'" onclick="mapaSelectCt('+JSON.stringify(c.id)+')" title="'+(c.name||c.nome||'')+'">'+
       label+(code?'<span class="fp-code">'+code+'</span>':'')+'</button>';
   }).join('');
   // Atualiza arrows
-  var idx=cts.findIndex(function(c){return c.id===_mapaCtId;});
+  var idx=cts.findIndex(function(c){return String(c.id)===String(_mapaCtId);});
   var prev=document.getElementById('mapa-nav-prev');
   var next=document.getElementById('mapa-nav-next');
   if(prev) prev.disabled=idx<=0;
@@ -11472,20 +11480,20 @@ function _mapaRenderNav(){
 }
 
 function mapaSelectCt(id){
-  _mapaCtId=id;
+  _mapaCtId=String(id);
   _mapaRenderNav();
   renderMapaMedicoes();
 }
 
 function mapaCtShift(dir){
   var cts=ST.contracts||[];
-  var idx=cts.findIndex(function(c){return c.id===_mapaCtId;});
+  var idx=cts.findIndex(function(c){return String(c.id)===String(_mapaCtId);});
   var n=Math.max(0,Math.min(cts.length-1,idx+dir));
   if(cts[n]) mapaSelectCt(cts[n].id);
 }
 
 function _mapaGetLinhas(ym){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var linhas=ct.linhasMedicao||[];
   return linhas.filter(function(l){return l.mesRef===ym||!l.mesRef;});
 }
@@ -11523,7 +11531,7 @@ function mapaPickerYear(dir,e){
 function _mapaPickerRender(){
   var yr=document.getElementById('mapa-picker-year'); if(yr) yr.textContent=_mapaPickerYear;
   var grid=document.getElementById('mapa-picker-grid'); if(!grid) return;
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var hasMed=ct.mapaMedicoes||{};
   var html='';
   _MES_NOMES_MAPA.forEach(function(mn,idx){
@@ -11553,7 +11561,7 @@ function _mapaUpdateStatus(){
   if(badge){ badge.textContent=_mapaMesLbl(_mapaMesKey); }
   var st=document.getElementById('mapa-status'); if(!st) return;
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
   if(linhas.length===0){
     st.innerHTML='⚠ Sem linhas de medição para <strong>'+_mapaMesLbl(_mapaMesKey)+'</strong>. Cadastre na aba 📐 Linhas Medição e salve o mês.';
@@ -11571,7 +11579,7 @@ function _mapaSavedStr(iso){
 // ── Render info do contrato ────────────────────────────────────────────
 function _mapaRenderCtInfo(){
   var el=document.getElementById('mapa-ct-info'); if(!el) return;
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;});
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);});
   if(!ct){ el.innerHTML='<div style="color:var(--t3);font-size:12px">Nenhum contrato selecionado.</div>'; return; }
   var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||0;
   var execPct=vg>0?Math.min(100,(ct._totalFaturado||0)/vg*100).toFixed(1):'0.0';
@@ -11591,7 +11599,7 @@ function _mapaRenderCtInfo(){
 // ── KPIs ───────────────────────────────────────────────────────────────
 function _mapaRenderKPIs(){
   var el=document.getElementById('mapa-kpis'); if(!el) return;
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
   var linhas=_mapaGetLinhas(_mapaMesKey);
   // Compute totals from measurement record
@@ -11641,7 +11649,7 @@ var _mapaExtraCols = [];  // [{key, label}]
 function _mapaRenderTable(){
   var tbl=document.getElementById('mapa-tbl'); if(!tbl) return;
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var rec=ct.mapaMedicoes[_mapaMesKey];
 
@@ -11853,7 +11861,7 @@ function _mapaRenderTable(){
 
 // ── Atualiza células calculadas em tempo real (sem re-render) ──────────
 function mapaLinhaChange(i, field, val){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(!draft||!draft.linhas||!draft.linhas[i]) return;
@@ -11933,7 +11941,7 @@ function mapaToggleZeros(){
            btn.style.background=_mapaHideZeros?'rgba(56,189,248,.15)':'rgba(255,255,255,.06)';
            btn.style.borderColor=_mapaHideZeros?'rgba(56,189,248,.4)':'rgba(255,255,255,.1)'; }
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   linhas.forEach(function(it,i){
     var row=document.getElementById('mapa-row-'+i); if(!row) return;
@@ -11950,7 +11958,7 @@ function mapaAddExtraCol(){
   var key='col_'+Date.now();
   _mapaExtraCols.push({key:key,label:label.trim()});
   // Salva no draft
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
@@ -11959,7 +11967,7 @@ function mapaAddExtraCol(){
 function mapaRemoveExtraCol(key){
   if(!confirm('Remover a coluna "'+(_mapaExtraCols.find(function(e){return e.key===key;})||{}).label+'"?')) return;
   _mapaExtraCols=_mapaExtraCols.filter(function(e){return e.key!==key;});
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
   _mapaRenderTable();
@@ -12001,27 +12009,27 @@ function mapaRowCtx(e, i){
 
 var _mapaCtxClipboard=null;
 function mapaCtxCopy(i){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   _mapaCtxClipboard=JSON.parse(JSON.stringify(draft.linhas[i]||{}));
   showToast('📋 Linha copiada!','gn',1800);
 }
 function mapaCtxPaste(i){
   if(!_mapaCtxClipboard){ showToast('Nada copiado ainda.','go'); return; }
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   draft.linhas.splice(i+1,0,JSON.parse(JSON.stringify(_mapaCtxClipboard)));
   _mapaRenderTable(); showToast('📌 Linha colada!','gn',1800);
 }
 function mapaInsertRow(i,dir){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   var at=dir==='above'?i:i+1;
   draft.linhas.splice(at,0,{previsto:0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}});
   _mapaRenderTable(); showToast('Linha inserida!','gn',1800);
 }
 function mapaRemoveRow(i){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   if(!confirm('Remover esta linha da medição?')) return;
   draft.linhas.splice(i,1);
@@ -12079,7 +12087,7 @@ function _colInsertMapa(refCi, dir){
   // ci negativo = coluna fixa do G3 → insere no início das extra cols
   var at = refCi < 0 ? 0 : (dir==='left' ? refCi : refCi+1);
   _mapaExtraCols.splice(at,0,{key:key,label:label.trim()});
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
@@ -12090,14 +12098,14 @@ function _colDeleteMapa(ci){
   if(!col) return;
   if(!confirm('Remover a coluna "'+col.label+'"?')) return;
   _mapaExtraCols.splice(ci,1);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
   _mapaRenderTable(); setTimeout(_mapaSyncScrollBars,80);
 }
 
 function _mapaUpdateTotals(){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   var linhas=_mapaGetLinhas(_mapaMesKey);
   if(!draft||!linhas.length) return;
@@ -12108,7 +12116,7 @@ function _mapaUpdateTotals(){
 
 // ── Salvar medição ────────────────────────────────────────────────────
 function mapaSave(){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   var linhas=_mapaGetLinhas(_mapaMesKey);
@@ -12133,7 +12141,7 @@ function mapaSave(){
 
   // Update ST.medicoes for dashboard compatibility
   if(!ST.medicoes) ST.medicoes=[];
-  var mIdx=ST.medicoes.findIndex(function(m){return m.contractId===_mapaCtId&&m.key===_mapaMesKey;});
+  var mIdx=ST.medicoes.findIndex(function(m){return String(m.contractId)===String(_mapaCtId)&&m.key===_mapaMesKey;});
   var mRec={contractId:_mapaCtId,key:_mapaMesKey,previsto:totalPrev,realizado:totalMed};
   if(mIdx>=0) Object.assign(ST.medicoes[mIdx],mRec); else ST.medicoes.push(mRec);
   recalcContractFinancials(ct);
@@ -12156,7 +12164,7 @@ function mapaHistToggle(){
   if(_mapaHistOpen) _mapaRenderHist();
 }
 function _mapaRenderHist(){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var mapa=ct.mapaMedicoes||{};
   var keys=Object.keys(mapa).filter(function(k){return k.indexOf('__draft__')<0&&mapa[k]&&mapa[k].savedAt;}).sort();
 
@@ -12217,13 +12225,13 @@ function mapaHistJump(ym){
   renderMapaMedicoes();
 }
 async function mapaDeleteMonth(ym){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var pass=prompt('Digite sua senha para excluir a medição de '+_mapaMesLbl(ym)+':');
   if(pass===null) return;
   // Confirmação simples - usuário já está autenticado
   if(!pass || pass.length === 0){ showToast('⚠ Digite algo para confirmar.','rd',2000); return; }
   delete ct.mapaMedicoes[ym];
-  ST.medicoes=(ST.medicoes||[]).filter(function(m){return !(m.contractId===_mapaCtId&&m.key===ym);});
+  ST.medicoes=(ST.medicoes||[]).filter(function(m){return !(String(m.contractId)===String(_mapaCtId)&&m.key===ym);});
   recalcContractFinancials(ct);
   scheduleAutoSync();
   if(_mapaMesKey===ym) _mapaMesKey=_mapaYM();
@@ -12235,7 +12243,7 @@ function mapaOvToggle(){ /* seção removida */ }
 
 // ── Hook: quando a seção abre ─────────────────────────────────────────
 function _initMapaMedicoes(){
-  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
+  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=String(ST.contracts[0].id);
   if(!_mapaMesKey) _mapaMesKey=_mapaYM();
   _mapaExtraCols=[];
   _mapaRenderNav();
@@ -13962,7 +13970,7 @@ function _vcFull(n){
 }
 
 function renderViradasChart(){
-  const ct = ST.contracts.find(c=>c.id===_finCtId);
+  const ct = ST.contracts.find(c=>String(c.id)===String(_finCtId));
   if(!ct){ const el=document.getElementById('virada-subtitle'); if(el) el.textContent='Nenhum contrato selecionado'; return; }
 
   // ── Wiring única de todos os inputs (executada apenas uma vez) ──────────
