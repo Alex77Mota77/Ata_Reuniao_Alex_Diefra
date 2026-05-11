@@ -10151,8 +10151,6 @@ async function pullFromSheets(silent){
     const remote = await _syncPull();
 
     function _merge(r,local){ return (Array.isArray(r)&&r.length>0)?r:(local&&local.length>0?local:r||[]); }
-    // Guard: se houve push há menos de 5s, prefere dados locais para custoAnalises e contracts
-    var _pullGuardOk = !window._lastPushAt || (Date.now() - window._lastPushAt) > 5000;
 
     // ── Normalizadores: banco (snake_case) → JS (camelCase) ──────────────
     function _normContract(c){
@@ -10266,16 +10264,15 @@ async function pullFromSheets(silent){
       });
     }
 
-    // Merge inteligente de contracts — preserva mapaMedicoes local se mais novo
-    var _remoteContracts = Array.isArray(remote.contracts) && remote.contracts.length > 0 ? remote.contracts : ST.contracts;
-    ST.contracts = _remoteContracts.map(_normContract).map(function(c){
+    ST.contracts = _merge(remote.contracts, ST.contracts).map(_normContract).map(function(c){
       if(c.id !== undefined) c.id = String(c.id);
-      // Preserva mapaMedicoes local se o push foi recente (< 30s)
-      var _localCt = (ST.contracts||[]).find(function(lc){ return String(lc.id)===String(c.id); });
-      var _pushRecente = window._lastPushAt && (Date.now() - window._lastPushAt) < 30000;
-      if(_localCt && _localCt.mapaMedicoes && _pushRecente) {
-        // Merge: mantém chaves locais que o remoto pode não ter ainda
-        c.mapaMedicoes = Object.assign({}, c.mapaMedicoes||{}, _localCt.mapaMedicoes);
+      // Se houve push recente, preserva mapaMedicoes local (evita race condition)
+      var _lc=(ST.contracts||[]).find(function(x){return String(x.id)===String(c.id);});
+      if(_lc && _lc.mapaMedicoes) {
+        c.mapaMedicoes = Object.assign({}, c.mapaMedicoes||{}, _lc.mapaMedicoes);
+      }
+      if(_lc && _lc.linhasMedicao && (!c.linhasMedicao||!c.linhasMedicao.length)) {
+        c.linhasMedicao = _lc.linhasMedicao;
       }
       return c;
     });
@@ -10314,11 +10311,9 @@ async function pullFromSheets(silent){
         parsed.dreContas  = template.dreContas;
         parsed.funcoes    = parsed.funcoes    || template.funcoes;
         parsed.projecoes  = parsed.projecoes  || template.projecoes;
-        // Preserva medicao.history ao aplicar template — NÃO sobrescrever com vazio
-        if(!parsed.medicao) {
+        if(!parsed.medicao){
           parsed.medicao = template.medicao;
         } else {
-          // Garante que history existe mas não perde dados existentes
           if(!parsed.medicao.history) parsed.medicao.history = {};
         }
         parsed.memoria    = parsed.memoria    || template.memoria;
@@ -10381,14 +10376,10 @@ function startSyncPolling(){
   if(_countdownTimer) clearInterval(_countdownTimer);
   _countdownTimer = setInterval(()=>{ _updateCountdownPill(); }, 1000);
   setInterval(()=>{
-    // Não faz pull se houve push nos últimos 10s (evita sobrescrever dados locais)
-    var _agora = Date.now();
-    var _pushRecente = window._lastPushAt && (_agora - window._lastPushAt) < 10000;
-    if(!_pushRecente) {
+    var _pushH = window._lastPushAt && (Date.now()-window._lastPushAt)<15000;
+    if(!_pushH){
       pullFromSheets(true).then(()=>{ _pollCountdown = interval; });
-    } else {
-      _pollCountdown = interval;
-    }
+    } else { _pollCountdown = interval; }
   }, interval * 1000);
 
   // Tempo real — atualiza automaticamente quando outro usuário salva
@@ -11778,12 +11769,7 @@ function _mapaRenderTable(){
     var qtd=parseFloat(it.qtd)||0;
     var vlUnit=parseFloat(it.vlUnit)||0;
     var vlTot=parseFloat(it.vlTot)||(qtd*vlUnit);
-    // Garante que vlUnit seja coerente com vlTot quando qtd > 0
     if(vlUnit===0 && vlTot>0 && qtd>0) vlUnit=vlTot/qtd;
-
-    // Medição: previsto/medido são índices × vlUnit (= qtd × % de execução)
-    // Fórmula: prevR = prev × vlUnit   (ex: prev=4, vlUnit=17530 → R$70.121)
-    //          medR  = med  × vlUnit   (ex: med=3.87, vlUnit=17530 → R$67.842)
     var prev=parseFloat(rl.previsto)||0;
     var med=parseFloat(rl.medido)||0;
     var prevR=prev*vlUnit;
@@ -11915,10 +11901,10 @@ function mapaLinhaChange(i, field, val){
   // Atualiza células R$ calculadas
   var linhas=_mapaGetLinhas(_mapaMesKey);
   var it=linhas[i]; if(!it) return;
-  var qtd2=parseFloat(it.qtd)||0;
+  var _q=parseFloat(it.qtd)||0;
   var vlUnit=parseFloat(it.vlUnit)||0;
-  var vlTot2=parseFloat(it.vlTot)||(qtd2*vlUnit);
-  if(vlUnit===0 && vlTot2>0 && qtd2>0) vlUnit=vlTot2/qtd2;
+  var _vt=parseFloat(it.vlTot)||(_q*vlUnit);
+  if(vlUnit===0 && _vt>0 && _q>0) vlUnit=_vt/_q;
   var prev=parseFloat(rl.previsto)||0;
   var med=parseFloat(rl.medido)||0;
   var prevR=prev*vlUnit;
@@ -11952,10 +11938,10 @@ function _mapaUpdateFooter(draft, linhas){
 
   (draft.linhas||[]).forEach(function(rl,i){
     var it=linhas[i]; if(!it) return;
-    var _qtd=parseFloat(it.qtd)||0;
+    var _qq=parseFloat(it.qtd)||0;
     var vu=parseFloat(it.vlUnit)||0;
-    var _vlTot=parseFloat(it.vlTot)||(_qtd*vu);
-    if(vu===0 && _vlTot>0 && _qtd>0) vu=_vlTot/_qtd;
+    var _vvt=parseFloat(it.vlTot)||(_qq*vu);
+    if(vu===0 && _vvt>0 && _qq>0) vu=_vvt/_qq;
     var pr=(parseFloat(rl.previsto)||0)*vu;
     var me=(parseFloat(rl.medido)||0)*vu;
     tp+=pr; tm+=me; td+=(pr-me);
@@ -12169,10 +12155,10 @@ function mapaSave(){
   var totalPrev=0,totalMed=0;
   draft.linhas.forEach(function(rl,i){
     var it=linhas[i]; if(!it) return;
-    var _q=parseFloat(it.qtd)||0;
+    var _sq=parseFloat(it.qtd)||0;
     var vu=parseFloat(it.vlUnit)||0;
-    var _vt=parseFloat(it.vlTot)||(_q*vu);
-    if(vu===0 && _vt>0 && _q>0) vu=_vt/_q; // fallback
+    var _st=parseFloat(it.vlTot)||(_sq*vu);
+    if(vu===0&&_st>0&&_sq>0) vu=_st/_sq;
     totalPrev+=(parseFloat(rl.previsto)||0)*vu;
     totalMed +=(parseFloat(rl.medido)||0)*vu;
   });
@@ -12193,9 +12179,9 @@ function mapaSave(){
 
   // Bloquear edição após salvar
   _mapaLockedKeys[_mapaMesKey] = true;
-  // Push imediato — não aguardar o timer de 1.5s para evitar que o
-  // polling automático sobrescreva mapaMedicoes antes do push terminar
+  // Push imediato sem delay — mapaMedicoes precisa chegar ao banco ANTES do próximo pull
   window._lastPushAt = Date.now();
+  clearTimeout(_syncTimer);
   pushToSheets(true);
   renderMapaMedicoes();
   try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
@@ -21691,34 +21677,21 @@ function custoSaveMedicao() {
   if(!a.medicao.history) a.medicao.history={};
   if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
   a.medicao.history[_custoMedMes].savedAt = new Date().toISOString();
-  _custoMedReadOnly = true; // re-bloqueia após salvar
-
-  // ── Sincroniza linhasMedicao no contrato para o Mapa de Medições ────────
-  // Copia os itens do mês salvo para ct.linhasMedicao (com mesRef = _custoMedMes)
-  var ct = (ST.contracts||[]).find(function(c){ return String(c.id) == String(_custoCtId); });
-  if(ct) {
+  _custoMedReadOnly = true;
+  // Sincroniza linhasMedicao no contrato para o Mapa de Medições
+  var ct = (ST.contracts||[]).find(function(c){ return String(c.id)==String(_custoCtId); });
+  if(ct){
     var items = a.medicao.history[_custoMedMes].items || [];
-    // Remove linhas deste mês e re-insere atualizadas
-    var outrasMeses = (ct.linhasMedicao||[]).filter(function(l){ return l.mesRef !== _custoMedMes; });
-    var novasLinhas = items.map(function(it){
-      var qtd    = parseFloat(it.qtd)    || 0;
-      var vlUnit = parseFloat(it.vlUnit) || 0;
-      return {
-        cod:    it.cod    || '',
-        desc:   it.desc   || '',
-        un:     it.un     || 'vb',
-        qtd:    qtd,
-        vlUnit: vlUnit,
-        vlTot:  qtd * vlUnit,   // ← pré-calculado para garantir que nunca seja 0
-        mesRef: _custoMedMes
-      };
+    var outras = (ct.linhasMedicao||[]).filter(function(l){ return l.mesRef !== _custoMedMes; });
+    var novas  = items.map(function(it){
+      var qtd=parseFloat(it.qtd)||0, vu=parseFloat(it.vlUnit)||0;
+      return { cod:it.cod||'', desc:it.desc||'', un:it.un||'vb',
+               qtd:qtd, vlUnit:vu, vlTot:qtd*vu, mesRef:_custoMedMes };
     });
-    ct.linhasMedicao = outrasMeses.concat(novasLinhas);
-    // Também atualiza no ST.contracts para que o Mapa de Medições enxergue imediatamente
-    var ctIdx = ST.contracts.findIndex(function(c){ return String(c.id) == String(_custoCtId); });
-    if(ctIdx >= 0) ST.contracts[ctIdx] = ct;
+    ct.linhasMedicao = outras.concat(novas);
+    var ctIdx=(ST.contracts||[]).findIndex(function(c){return String(c.id)==String(_custoCtId);});
+    if(ctIdx>=0) ST.contracts[ctIdx]=ct;
   }
-
   scheduleAutoSync();
   _custoMedicao();
   showToast('💾 ' + _custoMedMesLbl(_custoMedMes) + ' salvo com sucesso!','gn',2200);
