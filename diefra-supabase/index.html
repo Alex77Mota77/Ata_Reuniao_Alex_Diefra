@@ -11672,7 +11672,7 @@ function _mapaRenderTable(){
 
   // Sync / init record
   if(!rec){
-    rec={linhas:linhas.map(function(it){return{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};}),extraCols:_mapaExtraCols.slice()};
+    rec={linhas:linhas.map(function(it){return{previsto:parseFloat(it.qtd)||0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};}),extraCols:_mapaExtraCols.slice()};
   } else {
     if(!rec.linhas||rec.linhas.length!==linhas.length){
       var old=rec.linhas||[];
@@ -11760,11 +11760,15 @@ function _mapaRenderTable(){
   linhas.forEach(function(it,i){
     var rl=rec.linhas[i]||{previsto:parseFloat(it.qtd)||0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};
     if(!rl.extra) rl.extra={};
-    var vlUnit=parseFloat(it.vlUnit)||0;
     var qtd=parseFloat(it.qtd)||0;
-    var vlTot=qtd*vlUnit;
+    var vlUnit=parseFloat(it.vlUnit)||0;
+    var vlTot=parseFloat(it.vlTot)||(qtd*vlUnit);
+    // Garante que vlUnit seja coerente com vlTot quando qtd > 0
+    if(vlUnit===0 && vlTot>0 && qtd>0) vlUnit=vlTot/qtd;
 
-    // Medição: previsto/medido são índices multiplicados por vlUnit
+    // Medição: previsto/medido são índices × vlUnit (= qtd × % de execução)
+    // Fórmula: prevR = prev × vlUnit   (ex: prev=4, vlUnit=17530 → R$70.121)
+    //          medR  = med  × vlUnit   (ex: med=3.87, vlUnit=17530 → R$67.842)
     var prev=parseFloat(rl.previsto)||0;
     var med=parseFloat(rl.medido)||0;
     var prevR=prev*vlUnit;
@@ -11896,7 +11900,10 @@ function mapaLinhaChange(i, field, val){
   // Atualiza células R$ calculadas
   var linhas=_mapaGetLinhas(_mapaMesKey);
   var it=linhas[i]; if(!it) return;
+  var qtd2=parseFloat(it.qtd)||0;
   var vlUnit=parseFloat(it.vlUnit)||0;
+  var vlTot2=parseFloat(it.vlTot)||(qtd2*vlUnit);
+  if(vlUnit===0 && vlTot2>0 && qtd2>0) vlUnit=vlTot2/qtd2;
   var prev=parseFloat(rl.previsto)||0;
   var med=parseFloat(rl.medido)||0;
   var prevR=prev*vlUnit;
@@ -11930,7 +11937,10 @@ function _mapaUpdateFooter(draft, linhas){
 
   (draft.linhas||[]).forEach(function(rl,i){
     var it=linhas[i]; if(!it) return;
+    var _qtd=parseFloat(it.qtd)||0;
     var vu=parseFloat(it.vlUnit)||0;
+    var _vlTot=parseFloat(it.vlTot)||(_qtd*vu);
+    if(vu===0 && _vlTot>0 && _qtd>0) vu=_vlTot/_qtd;
     var pr=(parseFloat(rl.previsto)||0)*vu;
     var me=(parseFloat(rl.medido)||0)*vu;
     tp+=pr; tm+=me; td+=(pr-me);
@@ -21664,20 +21674,28 @@ function custoSaveMedicao() {
 
   // ── Sincroniza linhasMedicao no contrato para o Mapa de Medições ────────
   // Copia os itens do mês salvo para ct.linhasMedicao (com mesRef = _custoMedMes)
-  var ct = (ST.contracts||[]).find(function(c){ return c.id == _custoCtId; });
+  var ct = (ST.contracts||[]).find(function(c){ return String(c.id) == String(_custoCtId); });
   if(ct) {
     var items = a.medicao.history[_custoMedMes].items || [];
     // Remove linhas deste mês e re-insere atualizadas
     var outrasMeses = (ct.linhasMedicao||[]).filter(function(l){ return l.mesRef !== _custoMedMes; });
-    var novasLinhas = items.map(function(it){ return {
-      cod:    it.cod    || '',
-      desc:   it.desc   || '',
-      un:     it.un     || 'vb',
-      qtd:    parseFloat(it.qtd)    || 0,
-      vlUnit: parseFloat(it.vlUnit) || 0,
-      mesRef: _custoMedMes
-    }; });
+    var novasLinhas = items.map(function(it){
+      var qtd    = parseFloat(it.qtd)    || 0;
+      var vlUnit = parseFloat(it.vlUnit) || 0;
+      return {
+        cod:    it.cod    || '',
+        desc:   it.desc   || '',
+        un:     it.un     || 'vb',
+        qtd:    qtd,
+        vlUnit: vlUnit,
+        vlTot:  qtd * vlUnit,   // ← pré-calculado para garantir que nunca seja 0
+        mesRef: _custoMedMes
+      };
+    });
     ct.linhasMedicao = outrasMeses.concat(novasLinhas);
+    // Também atualiza no ST.contracts para que o Mapa de Medições enxergue imediatamente
+    var ctIdx = ST.contracts.findIndex(function(c){ return String(c.id) == String(_custoCtId); });
+    if(ctIdx >= 0) ST.contracts[ctIdx] = ct;
   }
 
   scheduleAutoSync();
