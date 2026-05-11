@@ -21114,6 +21114,7 @@ function _custoMedMesLbl(ym) {
 // ── Acesso aos itens do mês ativo ─────────────────────────────────────
 function _custoMedItems() {
   var a = _custoAnalise(); if(!a) return [];
+  if(!a.medicao) a.medicao = {estudo:[],orcado:[],history:{}};
   if(!a.medicao.history) a.medicao.history = {};
   var snap = a.medicao.history[_custoMedMes];
   return snap ? snap.items||[] : [];
@@ -21633,8 +21634,9 @@ function custoMedSave(i,k,v) {
 }
 function custoAddMedicaoItem() {
   if(_custoMedReadOnly) { showToast('🔒 Desbloqueie o mês para adicionar itens.','go'); return; }
-  var a=_custoAnalise(); if(!a)return;
+  var a=_custoAnalise(); if(!a){ showToast('⚠ Selecione um contrato primeiro.','rd'); return; }
   if(!_custoMedMes) { _custoMedMes = _custoYM(); }
+  if(!a.medicao) a.medicao = {estudo:[],orcado:[],history:{}};
   if(!a.medicao.history) a.medicao.history={};
   if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
   a.medicao.history[_custoMedMes].items.push({cod:'',desc:'',qtd:0,un:'vb',vlUnit:0});
@@ -21647,7 +21649,8 @@ function custoRemoveMedItem(i) {
 }
 function custoSaveMedicao() {
   if(!_custoMedMes) { _custoMedMes = _custoYM(); }
-  var a=_custoAnalise(); if(!a)return;
+  var a=_custoAnalise(); if(!a){ showToast('⚠ Selecione um contrato primeiro.','rd'); return; }
+  if(!a.medicao) a.medicao = {estudo:[],orcado:[],history:{}};
   if(!a.medicao.history) a.medicao.history={};
   if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
   a.medicao.history[_custoMedMes].savedAt = new Date().toISOString();
