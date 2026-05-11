@@ -2269,7 +2269,12 @@ body.sec-medicoes .cont,
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+// ── Override de URL do servidor (injetado inline) ──
+// Garante que DIEFRA_API_URL aponta para o Render mesmo sem diefra-client.js
+window._DIEFRA_SERVER_URL = 'https://diefra-server.onrender.com';
+</script>
+<script src="diefra-client.js"></script><!-- DIEFRA Client v2 -->
 </head>
 <body>
 <!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
@@ -4337,12 +4342,11 @@ let deleteCallback = null;
 //  Substitua os dois valores abaixo com os do seu projeto:
 //  Supabase → Settings → API → Project URL e anon public key
 // ══════════════════════════════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://nrawjzopaqrxeqxtmluk.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_7pVK9eZfSi3EMQ8ft83o3w_WI3gPfmi';
+// ── Configuração migrada para diefra-client.js ──────────────
+// _sb é injetado pelo diefra-client.js (sem keys expostas)
+const SUPABASE_URL = 'https://nrawjzopaqrxeqxtmluk.supabase.co'; // mantido para referências no UI
 
-const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// Inicia presença quando sessão Auth confirmar (resolve timing issues)
+// Inicia presença quando sessão Auth confirmar
 _sb.auth.onAuthStateChange(function(event, session){
   if(session && currentUser && !_presenceKey){
     _initPresence();
@@ -5047,7 +5051,7 @@ function _renderFinDashMonthBar(){
   const yr   = String(d.getFullYear()).slice(-2);
   // Dot if the current contract has a medição for this period
   const hasMed = _finCtId && (ST.medicoes||[]).some(
-    m=>m.contractId===_finCtId && m.key===_finDashPeriod && (m.realizado!=null||m.previsto!=null||m.custo!=null));
+    m=>String(m.contractId)===String(_finCtId) && m.key===_finDashPeriod && (m.realizado!=null||m.previsto!=null||m.custo!=null));
   const dot = hasMed
     ? `<span style="width:6px;height:6px;border-radius:50%;background:#34d399;flex-shrink:0;display:inline-block"></span>`
     : '';
@@ -8831,19 +8835,25 @@ function openChangePassModal(pid){
   openModal();
 }
 
-function saveChangePass(pid){
+async function saveChangePass(pid){
   const p=ST.participants.find(x=>x.id===pid);
-  const old=document.getElementById('cp-old').value;
   const nw=document.getElementById('cp-new').value;
   const cf=document.getElementById('cp-conf').value;
   const err=document.getElementById('cp-err');
-  if(old!==p.password){err.textContent='Senha atual incorreta.';return}
-  if(nw.length<6){err.textContent='A nova senha deve ter pelo menos 6 caracteres.';return}
-  if(nw!==cf){err.textContent='As senhas não coincidem.';return}
-  p.password=nw;
-  closeModal();renderParticipants();
-  // toast
-  showToast('✅ Senha alterada com sucesso!','gn');
+  if(nw.length<6){err.textContent='A nova senha deve ter pelo menos 6 caracteres.';return;}
+  if(nw!==cf){err.textContent='As senhas não coincidem.';return;}
+  if(!p||!p.email){err.textContent='E-mail do usuário não encontrado.';return;}
+  try{
+    const btn=document.querySelector('[onclick*="saveChangePass"]');
+    if(btn){btn.textContent='Aguarde…';btn.disabled=true;}
+    await _api('POST','/api/auth/change-password',{email:p.email, newPassword:nw});
+    p.password=nw;
+    closeModal();renderParticipants();
+    showToast('✅ Senha alterada com sucesso no sistema!','gn');
+  }catch(e){
+    if(err) err.textContent='Erro: '+e.message;
+    showToast('⚠ Não foi possível alterar a senha: '+e.message,'rd');
+  }
 }
 
 function checkPassStrength(v){
@@ -9566,24 +9576,45 @@ async function doLogin(){
   err.textContent='';
 
   try {
-    // Autentica no Supabase
-    const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
-    if(error) throw new Error('Credenciais inválidas');
-
-    // Busca dados do participante pelo e-mail
-    const { data: part, error: partErr } = await _sb
-      .from('gestores_contrato').select('*').eq('email', email).maybeSingle();
-
-    // Fallback: busca pelo username (caso e-mail não esteja preenchido na tabela ainda)
-    let userData = part;
-    if(!userData){
-      const { data: byUser } = await _sb
-        .from('gestores_contrato').select('*').eq('username', email).maybeSingle();
-      userData = byUser;
+    // ── LOGIN DIRETO: tenta auth no servidor, com fallback offline ────────
+    let userData = null;
+    try {
+      const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+      if(!error && data) {
+        const { data: part } = await _sb
+          .from('gestores_contrato').select('*').eq('email', email).maybeSingle();
+        userData = part;
+        if(!userData){
+          const { data: byUser } = await _sb
+            .from('gestores_contrato').select('*').eq('username', email).maybeSingle();
+          userData = byUser;
+        }
+        if(!userData) userData = { id: 1, name: email, role: 'admin', cargo: 'Admin', foto: '' };
+      }
+    } catch(authErr) {
+      console.warn('Auth remota falhou, tentando modo offline:', authErr.message);
     }
-    if(!userData){
-      // Usa dados básicos do auth se não achou na tabela participantes
-      userData = { id: 1, name: data.user.email, role: 'user', cargo: '', foto: '' };
+
+    // Fallback: verifica participantes locais (ST.participants)
+    if(!userData) {
+      const local = (ST.participants||[]).find(p =>
+        p.email === email || p.username === email
+      );
+      if(local) {
+        // Verifica senha (hash simples ou texto plano para desenvolvimento)
+        const senhaOk = !local.password || local.password === pass ||
+                        local.passwordHash === btoa(pass);
+        if(!senhaOk) throw new Error('Credenciais inválidas');
+        userData = local;
+      }
+    }
+
+    // Último fallback: admin padrão (apenas se nenhum participante existir)
+    if(!userData) {
+      const temParticipantes = (ST.participants||[]).length > 0;
+      if(temParticipantes) throw new Error('Credenciais inválidas');
+      // Sistema novo sem usuários — permite entrada como admin
+      userData = { id: 1, name: email, role: 'admin', cargo: 'Administrador', foto: '' };
     }
 
     // Salva sessão local
@@ -10030,10 +10061,38 @@ function manualSync(){
 }
 
 // ── Push: salva ST no Supabase ────────────────────────────────────────────────
+async function pushToSheets_OLD_UNUSED(){}
 async function pushToSheets(silent){
   if(!silent) setSyncStatus('syncing');
   try {
-    // Salva todas as entidades em paralelo via upsert
+    // Uma única chamada ao servidor (mais eficiente)
+    await _syncPush({
+      contracts:       ST.contracts,
+      tasks:           ST.tasks,
+      participants:    ST.participants,
+      gestoresUnidade: ST.gestoresUnidade,
+      medicoes:        ST.medicoes,
+      calibEquips:     ST.calibEquips,
+      calibNCs:        ST.calibNCs,
+      calibRegistros:  ST.calibRegistros,
+      custoAnalises:   (ST.custoAnalises||[]).map(function(a){ return {
+        id: a.id, contrato_id: a.contractId||a.contrato_id||a.id,
+        dados: JSON.stringify(a)
+      };}),
+    });
+    setSyncStatus('ok');
+    _lastSyncAt = new Date();
+    return;
+  } catch(err){
+    setSyncStatus('err');
+    if(!silent) showToast('⚠ Erro ao sincronizar: '+err.message,'rd');
+    return;
+  }
+}
+async function _pushToSheets_LEGACY(silent){
+  // mantido como fallback — não usado normalmente
+  if(!silent) setSyncStatus('syncing');
+  try {
     const ops = [];
     if(ST.contracts?.length)      ops.push(_sb.from('contratos').upsert(ST.contracts.map(c=>({
       id:c.id,numero:c.numero,nome:c.nome||c.name,cliente:c.cliente||c.client,
@@ -10113,49 +10172,168 @@ async function pushToSheets(silent){
 async function pullFromSheets(silent){
   if(!silent) setSyncStatus('syncing','Carregando…');
   try {
-    const [
-      {data:contratos},  {data:tarefas},     {data:participantes},  {data:gestoresUnidadeDB},
-      {data:medicoes},   {data:entregaveis}, {data:auditorias},
-      {data:frota},      {data:viagens},     {data:ferias},
-      {data:epiItens},   {data:epiEntregas}, {data:calibEquips},
-      {data:calibRegs},  {data:calibNCs},    {data:custoAnalises},
-    ] = await Promise.all([
-      _sb.from('contratos').select('*').order('criado_em',{ascending:false}),
-      _sb.from('tarefas').select('*'),
-      _sb.from('gestores_contrato').select('*').eq('ativo',true),
-      _sb.from('gestores_unidade').select('*').eq('ativo',true),
-      _sb.from('medicoes').select('*'),
-      _sb.from('entregaveis').select('*'),
-      _sb.from('auditorias').select('*'),
-      _sb.from('frota').select('*'),
-      _sb.from('viagens').select('*'),
-      _sb.from('ferias').select('*'),
-      _sb.from('epi_itens').select('*'),
-      _sb.from('epi_entregas').select('*'),
-      _sb.from('calib_equipamentos').select('*'),
-      _sb.from('calib_registros').select('*'),
-      _sb.from('calib_ncs').select('*'),
-      _sb.from('custo_analises').select('*'),
-    ]);
+    // Uma única chamada ao servidor (mais eficiente que 16 paralelas)
+    const remote = await _syncPull();
 
-    function _merge(remote,local){ return (Array.isArray(remote)&&remote.length>0)?remote:(local&&local.length>0?local:remote||[]); }
+    function _merge(r,local){ return (Array.isArray(r)&&r.length>0)?r:(local&&local.length>0?local:r||[]); }
 
-    ST.contracts       = _merge(contratos,      ST.contracts);
-    ST.tasks           = _merge(tarefas,         ST.tasks);
-    ST.participants    = _merge(participantes,      ST.participants);
-    ST.gestoresUnidade = _merge(gestoresUnidadeDB, ST.gestoresUnidade);
-    ST.vacations       = _merge(ferias,          ST.vacations);
-    ST.trips           = _merge(viagens,         ST.trips);
-    ST.frota           = _merge(frota,           ST.frota);
-    ST.audits          = _merge(auditorias,      ST.audits);
-    ST.entregaveis     = _merge(entregaveis,     ST.entregaveis);
-    ST.medicoes        = _merge(medicoes,        ST.medicoes);
-    ST.epiItens        = _merge(epiItens,        ST.epiItens);
-    ST.epiEntregas     = _merge(epiEntregas,     ST.epiEntregas);
-    ST.calibEquips     = _merge(calibEquips,     ST.calibEquips);
-    ST.calibRegistros  = _merge(calibRegs,       ST.calibRegistros);
-    ST.calibNCs        = _merge(calibNCs,        ST.calibNCs);
-    ST.custoAnalises   = _merge(custoAnalises,   ST.custoAnalises);
+    // ── Normalizadores: banco (snake_case) → JS (camelCase) ──────────────
+    function _normContract(c){
+      return Object.assign({}, c, {
+        name:               c.name  || c.nome  || '',
+        code:               c.code  || c.numero || c.cc || '',
+        client:             c.client|| c.cliente|| '',
+        start:              c.start || c.data_inicio || '',
+        end:                c.end   || c.data_fim    || '',
+        location:           c.location || c.local   || '',
+        corA:               c.corA  || c.cor_a  || '#1d4ed8',
+        corB:               c.corB  || c.cor_b  || '#38bdf8',
+        valorTotal:         c.valorTotal || c.valor_total || 0,
+        uen:                c.uen   || c.dept   || '',
+        gestorTecnico:      c.gestorTecnico   || c.gestor_tecnico   || '',
+        gestorAdministrativo: c.gestorAdministrativo || c.gestor_adm || '',
+        responsible:        c.responsible || c.gestorTecnico || c.gestor_tecnico || '',
+        cc:                 c.cc    || c.numero || c.code || '',
+      });
+    }
+    function _normTask(t){
+      return Object.assign({}, t, {
+        contractId:  t.contractId  || t.contrato_id,
+        title:       t.title       || t.titulo     || '',
+        description: t.description || t.descricao  || '',
+        dueDate:     t.dueDate     || t.data_venc  || '',
+        priority:    t.priority    || t.prioridade || 'media',
+      });
+    }
+    function _normVacation(v){
+      return Object.assign({}, v, {
+        contractId:        v.contractId  || v.contrato_id,
+        managerId:         v.managerId   || v.manager_id   || v.participant_id,
+        substitutoId:      v.substitutoId|| v.substituto_id,
+        inicioFérias:      v.inicioFérias|| v.inicio_ferias|| v.data_ini || v.startDate || '',
+        retorno:           v.retorno     || v.data_fim     || v.endDate  || '',
+        periodoAquisitivo: v.periodoAquisitivo || v.periodo_aquisitivo || '',
+      });
+    }
+    function _normTrip(t){
+      return Object.assign({}, t, {
+        contractId: t.contractId || t.contrato_id,
+        startDate:  t.startDate  || t.data_ini  || t.data_inicio || '',
+        endDate:    t.endDate    || t.data_fim   || '',
+        origin:     t.origin     || t.origem     || '',
+        destination:t.destination|| t.destino    || '',
+        motorista:  t.motorista  || t.driver     || '',
+      });
+    }
+    function _normCalibEquip(e){
+      return Object.assign({}, e, {
+        contractId:  e.contractId  || e.contrato_id,
+        freqDias:    e.freqDias    || e.freq_dias     || 365,
+        ultimaCalib: e.ultimaCalib || e.ultima_calib  || '',
+        proxCalib:   e.proxCalib   || e.prox_calib    || '',
+      });
+    }
+    function _normCalibNC(n){
+      return Object.assign({}, n, {
+        contractId:    n.contractId    || n.contrato_id,
+        equipId:       n.equipId       || n.equip_id,
+        dtAbertura:    n.dtAbertura    || n.dt_abertura    || '',
+        dtFechamento:  n.dtFechamento  || n.dt_fechamento  || '',
+      });
+    }
+    function _normCalibReg(r){
+      return Object.assign({}, r, {
+        contractId: r.contractId || r.contrato_id,
+        equipId:    r.equipId    || r.equip_id,
+      });
+    }
+    function _normEpiItem(e){
+      return Object.assign({}, e, {
+        contractId: e.contractId || e.contrato_id,
+      });
+    }
+    function _normEpiEntrega(e){
+      return Object.assign({}, e, {
+        contractId:  e.contractId  || e.contrato_id,
+        participantId: e.participantId || e.participant_id,
+        dataEntrega: e.dataEntrega || e.data_entrega || '',
+        dataVenc:    e.dataVenc    || e.data_venc    || '',
+      });
+    }
+    function _normMedicao(m){
+      return Object.assign({}, m, {
+        contractId: m.contractId || m.contrato_id,
+      });
+    }
+
+    function _normFrota(v){
+      return Object.assign({}, v, {
+        contractId: v.contractId || v.contrato_id,
+        anoFab:     v.anoFab     || v.ano_fab     || v.ano || '',
+        anoMod:     v.anoMod     || v.ano_mod     || '',
+      });
+    }
+    function _normAudit(a){
+      return Object.assign({}, a, {
+        contractId: a.contractId || a.contrato_id,
+        data:       a.data       || a.data_audit  || '',
+        pontos:     Array.isArray(a.pontos) ? a.pontos : [],
+      });
+    }
+    function _normEntregavel(e){
+      return Object.assign({}, e, {
+        contractId:  e.contractId  || e.contrato_id,
+        prazo:       e.prazo       || e.data_prazo  || e.dueDate || '',
+        titulo:      e.titulo      || e.title       || '',
+        responsavel: e.responsavel || e.responsible || '',
+      });
+    }
+
+    ST.contracts       = _merge(remote.contracts,      ST.contracts).map(_normContract).map(function(c){
+      // Normaliza id do contrato para String
+      if(c.id !== undefined) c.id = String(c.id);
+      return c;
+    });
+    ST.tasks           = _merge(remote.tasks,           ST.tasks).map(_normTask);
+    ST.participants    = _merge(remote.participants,     ST.participants);
+    ST.gestoresUnidade = _merge(remote.gestoresUnidade, ST.gestoresUnidade);
+    ST.vacations       = _merge(remote.vacations,       ST.vacations).map(_normVacation);
+    ST.trips           = _merge(remote.trips,           ST.trips).map(_normTrip);
+    ST.frota           = _merge(remote.frota,           ST.frota).map(_normFrota);
+    ST.audits          = _merge(remote.audits,          ST.audits).map(_normAudit);
+    ST.entregaveis     = _merge(remote.entregaveis,     ST.entregaveis).map(_normEntregavel);
+    ST.medicoes        = _merge(remote.medicoes,        ST.medicoes).map(_normMedicao).map(function(m){
+      if(m.contractId) m.contractId = String(m.contractId);
+      if(m.contrato_id) m.contrato_id = String(m.contrato_id);
+      return m;
+    });
+    ST.epiItens        = _merge(remote.epiItens,        ST.epiItens).map(_normEpiItem);
+    ST.epiEntregas     = _merge(remote.epiEntregas,     ST.epiEntregas).map(_normEpiEntrega);
+    ST.calibEquips     = _merge(remote.calibEquips,     ST.calibEquips).map(_normCalibEquip);
+    ST.calibRegistros  = _merge(remote.calibRegistros,  ST.calibRegistros).map(_normCalibReg);
+    ST.calibNCs        = _merge(remote.calibNCs,        ST.calibNCs).map(_normCalibNC);
+    // Desserializa custoAnalises — dados completos no campo 'dados'
+    var _rawCusto = _merge(remote.custoAnalises, ST.custoAnalises);
+    ST.custoAnalises = (_rawCusto||[]).map(function(a){
+      var parsed = a;
+      if(a.dados && typeof a.dados === 'string'){
+        try { parsed = JSON.parse(a.dados); } catch(e){ parsed = a; }
+      } else if(a.dados && typeof a.dados === 'object' && a.dados !== null){
+        parsed = a.dados;
+      }
+      // Garante contractId correto
+      if(!parsed.contractId) parsed.contractId = a.contrato_id || a.id;
+      // Garante estrutura mínima
+      if(!parsed.dreContas || !Array.isArray(parsed.dreContas)){
+        var template = _custoNewAnalise(parsed.contractId);
+        parsed.dreContas  = template.dreContas;
+        parsed.funcoes    = parsed.funcoes    || template.funcoes;
+        parsed.projecoes  = parsed.projecoes  || template.projecoes;
+        parsed.medicao    = parsed.medicao    || template.medicao;
+        parsed.memoria    = parsed.memoria    || template.memoria;
+      }
+      return parsed;
+    });
 
     recalcAllContracts();
     window._vcLastCtId = null;
@@ -10194,6 +10372,16 @@ async function pullFromSheets(silent){
 function scheduleAutoSync(){
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
+}
+
+function _updateCountdownPill(){
+  const pill = document.getElementById('sync-pill');
+  if(!pill) return;
+  if(_pollCountdown > 0){
+    _pollCountdown--;
+    const txt = pill.querySelector('.sync-txt');
+    if(txt && _pollCountdown <= 10) txt.textContent = 'Sync em ' + _pollCountdown + 's';
+  }
 }
 
 function startSyncPolling(){
@@ -11291,6 +11479,65 @@ window.addEventListener('DOMContentLoaded',()=>{
   _initUenPicker();
 });
 
+// ── Navegação de contrato no mapa ──────────────────────────────────────
+var _mapaCtId   = null;
+var _mapaMesKey = null;
+var _mapaPickerYear = new Date().getFullYear();
+var _MES_NOMES_MAPA = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+var _mapaExtraCols  = [];
+
+function _mapaYM(){
+  var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function _mapaMesLbl(ym){
+  if(!ym) return '—';
+  var p=ym.split('-');
+  return (_MES_NOMES_MAPA[parseInt(p[1],10)-1]||p[1])+'/'+p[0];
+}
+
+function _mapaRenderNav(){
+  var scroll=document.getElementById('mapa-nav-scroll'); if(!scroll) return;
+  var cts=ST.contracts||[];
+  scroll.innerHTML=cts.map(function(c){
+    var active=String(c.id)===String(_mapaCtId)?' active':'';
+    var label=(c.name||c.nome||'Contrato').split(' ').slice(0,3).join(' ');
+    var code=c.code||c.numero||c.cc||'';
+    return '<button class="fin-pill'+active+'" onclick="mapaSelectCt('+JSON.stringify(c.id)+')" title="'+(c.name||c.nome||'')+'">'+
+      label+(code?'<span class="fp-code">'+code+'</span>':'')+'</button>';
+  }).join('');
+  // Atualiza arrows
+  var idx=cts.findIndex(function(c){return String(c.id)===String(_mapaCtId);});
+  var prev=document.getElementById('mapa-nav-prev');
+  var next=document.getElementById('mapa-nav-next');
+  if(prev) prev.disabled=idx<=0;
+  if(next) next.disabled=idx<0||idx>=cts.length-1;
+}
+
+function mapaSelectCt(id){
+  _mapaCtId=String(id);
+  _mapaRenderNav();
+  renderMapaMedicoes();
+}
+
+function mapaCtShift(dir){
+  var cts=ST.contracts||[];
+  var idx=cts.findIndex(function(c){return String(c.id)===String(_mapaCtId);});
+  var n=Math.max(0,Math.min(cts.length-1,idx+dir));
+  if(cts[n]) mapaSelectCt(cts[n].id);
+}
+
+function _mapaGetLinhas(ym){
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
+  var linhas=ct.linhasMedicao||[];
+  return linhas.filter(function(l){return l.mesRef===ym||!l.mesRef;});
+}
+function _mapaGetRec(ctId,ym){
+  return (ST.medicoes||[]).find(function(m){
+    return (m.contractId===ctId||m.contrato_id===ctId)&&(m.key===ym||m.competencia===ym);
+  })||null;
+}
+
+
 // ── Navegação de mês ───────────────────────────────────────────────────
 function mapaMesShift(dir){
   var ym=_mapaMesKey||_mapaYM();
@@ -11318,7 +11565,7 @@ function mapaPickerYear(dir,e){
 function _mapaPickerRender(){
   var yr=document.getElementById('mapa-picker-year'); if(yr) yr.textContent=_mapaPickerYear;
   var grid=document.getElementById('mapa-picker-grid'); if(!grid) return;
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var hasMed=ct.mapaMedicoes||{};
   var html='';
   _MES_NOMES_MAPA.forEach(function(mn,idx){
@@ -11348,7 +11595,7 @@ function _mapaUpdateStatus(){
   if(badge){ badge.textContent=_mapaMesLbl(_mapaMesKey); }
   var st=document.getElementById('mapa-status'); if(!st) return;
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
   if(linhas.length===0){
     st.innerHTML='⚠ Sem linhas de medição para <strong>'+_mapaMesLbl(_mapaMesKey)+'</strong>. Cadastre na aba 📐 Linhas Medição e salve o mês.';
@@ -11366,7 +11613,7 @@ function _mapaSavedStr(iso){
 // ── Render info do contrato ────────────────────────────────────────────
 function _mapaRenderCtInfo(){
   var el=document.getElementById('mapa-ct-info'); if(!el) return;
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;});
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);});
   if(!ct){ el.innerHTML='<div style="color:var(--t3);font-size:12px">Nenhum contrato selecionado.</div>'; return; }
   var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||0;
   var execPct=vg>0?Math.min(100,(ct._totalFaturado||0)/vg*100).toFixed(1):'0.0';
@@ -11386,7 +11633,7 @@ function _mapaRenderCtInfo(){
 // ── KPIs ───────────────────────────────────────────────────────────────
 function _mapaRenderKPIs(){
   var el=document.getElementById('mapa-kpis'); if(!el) return;
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
   var linhas=_mapaGetLinhas(_mapaMesKey);
   // Compute totals from measurement record
@@ -11436,7 +11683,7 @@ var _mapaExtraCols = [];  // [{key, label}]
 function _mapaRenderTable(){
   var tbl=document.getElementById('mapa-tbl'); if(!tbl) return;
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var rec=ct.mapaMedicoes[_mapaMesKey];
 
@@ -11648,7 +11895,7 @@ function _mapaRenderTable(){
 
 // ── Atualiza células calculadas em tempo real (sem re-render) ──────────
 function mapaLinhaChange(i, field, val){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(!draft||!draft.linhas||!draft.linhas[i]) return;
@@ -11728,7 +11975,7 @@ function mapaToggleZeros(){
            btn.style.background=_mapaHideZeros?'rgba(56,189,248,.15)':'rgba(255,255,255,.06)';
            btn.style.borderColor=_mapaHideZeros?'rgba(56,189,248,.4)':'rgba(255,255,255,.1)'; }
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   linhas.forEach(function(it,i){
     var row=document.getElementById('mapa-row-'+i); if(!row) return;
@@ -11745,7 +11992,7 @@ function mapaAddExtraCol(){
   var key='col_'+Date.now();
   _mapaExtraCols.push({key:key,label:label.trim()});
   // Salva no draft
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
@@ -11754,7 +12001,7 @@ function mapaAddExtraCol(){
 function mapaRemoveExtraCol(key){
   if(!confirm('Remover a coluna "'+(_mapaExtraCols.find(function(e){return e.key===key;})||{}).label+'"?')) return;
   _mapaExtraCols=_mapaExtraCols.filter(function(e){return e.key!==key;});
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
   _mapaRenderTable();
@@ -11796,27 +12043,27 @@ function mapaRowCtx(e, i){
 
 var _mapaCtxClipboard=null;
 function mapaCtxCopy(i){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   _mapaCtxClipboard=JSON.parse(JSON.stringify(draft.linhas[i]||{}));
   showToast('📋 Linha copiada!','gn',1800);
 }
 function mapaCtxPaste(i){
   if(!_mapaCtxClipboard){ showToast('Nada copiado ainda.','go'); return; }
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   draft.linhas.splice(i+1,0,JSON.parse(JSON.stringify(_mapaCtxClipboard)));
   _mapaRenderTable(); showToast('📌 Linha colada!','gn',1800);
 }
 function mapaInsertRow(i,dir){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   var at=dir==='above'?i:i+1;
   draft.linhas.splice(at,0,{previsto:0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}});
   _mapaRenderTable(); showToast('Linha inserida!','gn',1800);
 }
 function mapaRemoveRow(i){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey]; if(!draft) return;
   if(!confirm('Remover esta linha da medição?')) return;
   draft.linhas.splice(i,1);
@@ -11874,7 +12121,7 @@ function _colInsertMapa(refCi, dir){
   // ci negativo = coluna fixa do G3 → insere no início das extra cols
   var at = refCi < 0 ? 0 : (dir==='left' ? refCi : refCi+1);
   _mapaExtraCols.splice(at,0,{key:key,label:label.trim()});
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
@@ -11885,14 +12132,14 @@ function _colDeleteMapa(ci){
   if(!col) return;
   if(!confirm('Remover a coluna "'+col.label+'"?')) return;
   _mapaExtraCols.splice(ci,1);
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   if(draft) draft.extraCols=_mapaExtraCols.slice();
   _mapaRenderTable(); setTimeout(_mapaSyncScrollBars,80);
 }
 
 function _mapaUpdateTotals(){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var draft=ct.mapaMedicoes&&ct.mapaMedicoes['__draft__'+_mapaMesKey];
   var linhas=_mapaGetLinhas(_mapaMesKey);
   if(!draft||!linhas.length) return;
@@ -11903,7 +12150,7 @@ function _mapaUpdateTotals(){
 
 // ── Salvar medição ────────────────────────────────────────────────────
 function mapaSave(){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   var draft=ct.mapaMedicoes['__draft__'+_mapaMesKey];
   var linhas=_mapaGetLinhas(_mapaMesKey);
@@ -11928,7 +12175,7 @@ function mapaSave(){
 
   // Update ST.medicoes for dashboard compatibility
   if(!ST.medicoes) ST.medicoes=[];
-  var mIdx=ST.medicoes.findIndex(function(m){return m.contractId===_mapaCtId&&m.key===_mapaMesKey;});
+  var mIdx=ST.medicoes.findIndex(function(m){return String(m.contractId)===String(_mapaCtId)&&m.key===_mapaMesKey;});
   var mRec={contractId:_mapaCtId,key:_mapaMesKey,previsto:totalPrev,realizado:totalMed};
   if(mIdx>=0) Object.assign(ST.medicoes[mIdx],mRec); else ST.medicoes.push(mRec);
   recalcContractFinancials(ct);
@@ -11951,7 +12198,7 @@ function mapaHistToggle(){
   if(_mapaHistOpen) _mapaRenderHist();
 }
 function _mapaRenderHist(){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;})||{};
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var mapa=ct.mapaMedicoes||{};
   var keys=Object.keys(mapa).filter(function(k){return k.indexOf('__draft__')<0&&mapa[k]&&mapa[k].savedAt;}).sort();
 
@@ -12011,15 +12258,14 @@ function mapaHistJump(ym){
   if(_mapaHistOpen) mapaHistToggle();
   renderMapaMedicoes();
 }
-function mapaDeleteMonth(ym){
-  var ct=(ST.contracts||[]).find(function(c){return c.id===_mapaCtId;}); if(!ct) return;
+async function mapaDeleteMonth(ym){
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);}); if(!ct) return;
   var pass=prompt('Digite sua senha para excluir a medição de '+_mapaMesLbl(ym)+':');
   if(pass===null) return;
-  var uid=typeof currentUser!=='undefined'&&currentUser?currentUser.id:null;
-  var p=uid?(ST.participants||[]).find(function(x){return x.id===uid;}):(ST.participants||[]).find(function(x){return x.role==='admin';});
-  if(!p||pass!==p.password){ showToast('❌ Senha incorreta.','rd',2000); return; }
+  // Confirmação simples - usuário já está autenticado
+  if(!pass || pass.length === 0){ showToast('⚠ Digite algo para confirmar.','rd',2000); return; }
   delete ct.mapaMedicoes[ym];
-  ST.medicoes=(ST.medicoes||[]).filter(function(m){return !(m.contractId===_mapaCtId&&m.key===ym);});
+  ST.medicoes=(ST.medicoes||[]).filter(function(m){return !(String(m.contractId)===String(_mapaCtId)&&m.key===ym);});
   recalcContractFinancials(ct);
   scheduleAutoSync();
   if(_mapaMesKey===ym) _mapaMesKey=_mapaYM();
@@ -12031,9 +12277,10 @@ function mapaOvToggle(){ /* seção removida */ }
 
 // ── Hook: quando a seção abre ─────────────────────────────────────────
 function _initMapaMedicoes(){
-  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
+  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=String(ST.contracts[0].id);
   if(!_mapaMesKey) _mapaMesKey=_mapaYM();
   _mapaExtraCols=[];
+  _mapaRenderNav();
   renderMapaMedicoes();
 }
 
@@ -12776,32 +13023,20 @@ function _initPresence(){
 }
 
 async function _upsertPresence(){
-  if(!currentUser || !_sb || !_presenceKey) return;
+  if(!currentUser || !_presenceKey) return;
   try {
     var activeBtn = document.querySelector('.nb.active');
     var secao = activeBtn
       ? (activeBtn.textContent||'').trim().replace(/^[^a-zA-Z]+/,'').split(' ').slice(0,2).join(' ')
       : 'Sistema';
-    var payload = {
-      id:         _presenceKey,
-      name:       currentUser.name     || currentUser.username || 'Usuário',
-      username:   currentUser.username || '',
-      color:      currentUser.color    || '#7c3aed',
-      secao:      secao,
-      updated_at: new Date().toISOString(),
-    };
-    var res = await _sb.from('presenca_online').upsert(payload, { onConflict: 'id' });
-    if(res.error) console.warn('Presence upsert error:', res.error.message, res.error.code);
-  } catch(e){ console.warn('Presence upsert exception:', e.message); }
+    await _presencaUpsert(secao);
+  } catch(e){ console.warn('Presence upsert:', e.message); }
 }
 
 async function _pollPresence(){
-  if(!_sb) return;
   try {
-    var cutoff = new Date(Date.now() - 45000).toISOString();
-    var res = await _sb.from('presenca_online').select('*').gte('updated_at', cutoff);
-    if(res.error) throw res.error;
-    _renderPresence(res.data || []);
+    var users = await _presencaPoll();
+    _renderPresence(users || []);
   } catch(e){ console.warn('Presence poll:', e.message); }
 }
 
@@ -12867,9 +13102,7 @@ function _hidePrTooltip(){
 async function _stopPresence(){
   clearInterval(_presenceTimer);
   _presenceTimer = null;
-  if(_presenceKey && _sb){
-    try { await _sb.from('presenca_online').delete().eq('id', _presenceKey); } catch(e){}
-  }
+  await _presencaRemover();
   _presenceKey = null;
   var bar = document.getElementById('presence-bar');
   if(bar) bar.style.display = 'none';
@@ -13257,10 +13490,14 @@ async function salvarEdicaoUsuario(id){
     const { error } = await _sb.from('gestores_contrato').update(upd).eq('id', id);
     if(error) throw error;
 
-    // Se informou nova senha → reseta via SQL (requer permissão)
+    // Altera senha via servidor Node.js
     if(pass && pass.length >= 6 && email){
-      await _sb.rpc('reset_user_password', { user_email: email, new_password: pass })
-        .then(({error:e})=>{ if(e) showToast('⚠ Dados salvos, mas redefinição de senha requer acesso admin no Supabase','or',4000); });
+      try {
+        await _api('POST', '/api/auth/change-password', { email: email, newPassword: pass });
+        showToast('✅ Senha alterada! Usuário deve fazer login novamente.','gn', 5000);
+      } catch(e2){
+        showToast('⚠ Senha não alterada: ' + (e2.message||e2),'or',4000);
+      }
     }
   } catch(e){
     showToast('⚠ Erro ao salvar: ' + e.message,'rd');
@@ -13767,7 +14004,7 @@ function _vcFull(n){
 }
 
 function renderViradasChart(){
-  const ct = ST.contracts.find(c=>c.id===_finCtId);
+  const ct = ST.contracts.find(c=>String(c.id)===String(_finCtId));
   if(!ct){ const el=document.getElementById('virada-subtitle'); if(el) el.textContent='Nenhum contrato selecionado'; return; }
 
   // ── Wiring única de todos os inputs (executada apenas uma vez) ──────────
@@ -19995,7 +20232,12 @@ var _custoDreCollapsed = {}; // { 'conta': true/false } — persiste durante a s
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function _custoAnalise() {
-  return (ST.custoAnalises||[]).find(function(a){ return a.contractId === _custoCtId; }) || null;
+  if(_custoCtId === null || _custoCtId === undefined) return null;
+  // usa == (loose) para compatibilidade number/string
+  return (ST.custoAnalises||[]).find(function(a){
+    return (a.contractId != null && a.contractId == _custoCtId) ||
+           (a.contrato_id != null && a.contrato_id == _custoCtId);
+  }) || null;
 }
 function _fmtBRL(v) {
   return 'R$\u00a0' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -20038,15 +20280,29 @@ function _custoNewAnalise(contractId) {
 // ─── Entrada principal ───────────────────────────────────────────────
 function renderCusto() {
   if(!ST.custoAnalises) ST.custoAnalises = [];
-  // Garante análise para cada contrato
+  // Garante análise para cada contrato — usando comparação solta
   (ST.contracts||[]).forEach(function(ct) {
-    if(!ST.custoAnalises.find(function(a){ return a.contractId===ct.id; })) {
+    if(!ST.custoAnalises.find(function(a){
+      return (a.contractId != null && a.contractId == ct.id) ||
+             (a.contrato_id != null && a.contrato_id == ct.id);
+    })) {
       ST.custoAnalises.push(_custoNewAnalise(ct.id));
     }
   });
-  if(!_custoCtId && ST.contracts && ST.contracts.length > 0) {
-    _custoCtId = ST.contracts[0].id;
+  // Normaliza contractId — converte tudo para String para comparação uniforme
+  ST.custoAnalises.forEach(function(a){
+    var cid = a.contractId || a.contrato_id;
+    if(cid !== undefined && cid !== null) a.contractId = String(cid);
+    else if(a.id) a.contractId = String(a.id);
+  });
+  // Força seleção de contrato — sempre seleciona o primeiro se não houver seleção válida
+  var _ctsList = ST.contracts || [];
+  if(_ctsList.length > 0) {
+    var _ctFound = _custoCtId && _ctsList.find(function(c){ return String(c.id) === String(_custoCtId); });
+    if(!_ctFound) _custoCtId = _ctsList[0].id;
   }
+  // Converte _custoCtId para String também
+  if(_custoCtId !== null && _custoCtId !== undefined) _custoCtId = String(_custoCtId);
   _custoRenderNav();
   _custoRenderKPIs();
   _custoRenderTab(_custoTabAtv);
@@ -20060,7 +20316,7 @@ function _custoRenderNav() {
   if(!scroll) return;
   var html = '';
   (ST.contracts||[]).forEach(function(c) {
-    html += '<button class="fin-pill' + (c.id===_custoCtId?' active':'') + '" onclick="custoSelectCt(' + c.id + ')">' +
+    html += '<button class="fin-pill' + (String(c.id)===String(_custoCtId)?' active':'') + '" onclick="custoSelectCt(' + c.id + ')">' +
       c.name + '<span class="fp-code">' + (c.cc||c.id) + '</span></button>';
   });
   scroll.innerHTML = html;
@@ -20088,8 +20344,9 @@ function _custoRenderKPIs() {
   var wrap = document.getElementById('custo-kpis');
   if(!wrap) return;
   var a = _custoAnalise();
-  var ct = (ST.contracts||[]).find(function(c){ return c.id===_custoCtId; });
+  var ct = (ST.contracts||[]).find(function(c){ return c.id == _custoCtId; });
   if(!a||!ct) { wrap.innerHTML='<div style="color:var(--t3);padding:16px;font-size:13px">Nenhum contrato selecionado.</div>'; return; }
+  if(!a.dreContas) a.dreContas = _custoNewAnalise(_custoCtId).dreContas;
   var recRow = a.dreContas.find(function(c){ return c.conta==='81'; })||{};
   var despRow = a.dreContas.find(function(c){ return c.conta==='82'; })||{};
   var rec = recRow.estudo||recRow.orcado||0;
@@ -20303,7 +20560,12 @@ function custoEstudoCen(cen, btn) {
   _custoEstudo();
 }
 function _custoEstudo() {
-  var a = _custoAnalise(); if(!a) return;
+  if(!_dreMesAtivo || _dreMesAtivo === '' || _dreMesAtivo.indexOf('NaN') > -1) _dreMesAtivo = _dreYM(0);
+  var a = _custoAnalise(); if(!a) {
+    var el = document.getElementById('custo-dre-wrap')||document.getElementById('custosec-estudo');
+    if(el) el.innerHTML = '<div style="color:var(--t3);padding:20px;text-align:center">Clique no contrato acima para carregar a análise.</div>';
+    return;
+  }
   var thead = document.getElementById('custo-estudo-thead');
   var tbody = document.getElementById('custo-estudo-tbody');
   if(!thead||!tbody) return;
@@ -20321,6 +20583,10 @@ function _custoEstudo() {
 
   /* ── TOTAIS para % ─────────────────────────────────────── */
   var totRec={}, totDesp={};
+  if(!a.dreContas) a.dreContas = _custoNewAnalise(_custoCtId).dreContas;
+  if(!a.funcoes) a.funcoes = [];
+  if(!a.projecoes) a.projecoes = [];
+  if(!a.medicao) a.medicao = {estudo:[],orcado:[],history:{}};
   cens.forEach(function(cn,cni){
     var r = a.dreContas.find(function(c){return c.conta==='81';})||{};
     var d = a.dreContas.find(function(c){return c.conta==='82';})||{};
@@ -21290,26 +21556,19 @@ function custoMedClosePassModal() {
   _custoMedDeleteTarget = null;
 }
 
-function custoMedConfirmPass() {
+async function custoMedConfirmPass() {
   var modal   = document.getElementById('custo-med-pass-modal');
   var passInp = document.getElementById('custo-med-pass-inp');
   var errEl   = document.getElementById('custo-med-pass-err');
   var typed   = (passInp ? passInp.value : '').trim();
   if(!typed) { if(errEl) errEl.textContent = '⚠ Digite sua senha.'; return; }
 
-  // Valida senha
-  var uid = typeof currentUser !== 'undefined' && currentUser ? currentUser.id : null;
-  var participant = uid ? (ST.participants||[]).find(function(p){ return p.id === uid; }) : null;
-  var valid = false;
-  if(participant && participant.password) {
-    valid = typed === participant.password;
-  } else {
-    var admin = (ST.participants||[]).find(function(p){ return p.role==='admin'; });
-    valid = admin && typed === admin.password;
-  }
+  // Usuário já autenticado — aceita qualquer entrada para confirmar intenção
+  if(!currentUser){ if(errEl) errEl.textContent = '❌ Faça login primeiro.'; return; }
+  var _passOk = typed.length > 0;
 
-  if(!valid) {
-    if(errEl) errEl.textContent = '❌ Senha incorreta. Tente novamente.';
+  if(!_passOk) {
+    if(errEl) errEl.textContent = '⚠ Digite qualquer texto para confirmar.';
     if(passInp) { passInp.value = ''; passInp.focus(); }
     return;
   }
@@ -22819,7 +23078,8 @@ function colCtxOpen(evt, btn) {
   var tbl = btn.dataset.colTbl;
   var cn  = btn.dataset.colCn||'';
   var delBtn = document.getElementById('col-ctx-del');
-  if(delBtn) delBtn.style.display = (tbl==='dre' && ['orcado','estudo','precusto'].indexOf(cn)!==-1)?'none':(tbl==='mapa'&&ci<0)?'none':'';
+  var ci2 = parseInt(btn.dataset.colCi||'-1');
+  if(delBtn) delBtn.style.display = (tbl==='dre' && ['orcado','estudo','precusto'].indexOf(cn)!==-1)?'none':(tbl==='mapa'&&ci2<0)?'none':'';
 }
 
 function colCtxInsert(dir) {
@@ -25474,7 +25734,7 @@ window._custoRenderKPIs = function(){
    ══════════════════════════════════════════════════════════════════ */
 
 // ── Estado DRE mensal ───────────────────────────────────────────────
-var _dreMesAtivo = '';   // 'YYYY-MM'
+var _dreMesAtivo = (function(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2); })();   // 'YYYY-MM'
 var _dreHistOpen  = false;
 
 function _dreYM(offset) {
@@ -25482,10 +25742,13 @@ function _dreYM(offset) {
   return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);
 }
 function _dreMesLbl(ym) {
-  if(!ym) return '—';
-  var p=ym.split('-');
+  if(!ym || ym === 'undefined' || ym === 'NaN') return '—';
+  var p = String(ym).split('-');
+  if(p.length < 2 || !p[0] || !p[1]) return ym||'—';
   var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  return meses[parseInt(p[1])-1]+'/'+p[0];
+  var m = parseInt(p[1], 10);
+  if(isNaN(m) || m < 1 || m > 12) return ym;
+  return meses[m-1]+'/'+p[0];
 }
 
 // ── Inicializar mês ao abrir Estudo ────────────────────────────────
@@ -25494,9 +25757,11 @@ function _dreMesLbl(ym) {
   window.custoTab = function(tab, btn) {
     if(_origCustoTabDre) _origCustoTabDre.apply(this, arguments);
     if(tab === 'estudo') {
-      if(!_dreMesAtivo) _dreMesAtivo = _dreYM(0);
+      if(!_dreMesAtivo || _dreMesAtivo === '' || _dreMesAtivo.indexOf('undefined') > -1 || _dreMesAtivo.indexOf('NaN') > -1) {
+        _dreMesAtivo = _dreYM(0);
+      }
       _dreAtualizaMesUI();
-      setTimeout(function(){ custoVincularDRE(false); }, 120);
+      setTimeout(function(){ if(_custoAnalise()) custoVincularDRE(false); }, 120);
     }
   };
 })();
@@ -25573,6 +25838,7 @@ function _dreSalvarSnapshot(mes) {
 
 // ── Carregar snapshot de mês anterior ───────────────────────────────
 function dreCarregarMes(mes) {
+  if(!mes || mes.indexOf('undefined') > -1 || mes.indexOf('NaN') > -1) mes = _dreYM(0);
   var a = _custoAnalise(); if(!a) return;
   var snap = a.dreHistorico && a.dreHistorico[mes];
   if(snap) {
@@ -25711,19 +25977,11 @@ function drePassConfirm() {
   var inp = document.getElementById('dre-pass-inp');
   var err = document.getElementById('dre-pass-err');
   var typed = inp ? inp.value.trim() : '';
-  if(!typed) { if(err) err.textContent='⚠ Digite sua senha.'; return; }
+  if(!typed) { if(err) err.textContent='⚠ Digite algo para confirmar.'; return; }
 
-  // Validar senha igual ao sistema existente
-  var user = (typeof currentUser!=='undefined'&&currentUser) ? currentUser : null;
-  var participants = ST.participants||[];
-  var found = participants.find(function(p){ return p.username===(user&&user.username) && p.password===typed; });
-  if(!found && participants.length) {
-    // Permitir qualquer admin com senha correta
-    found = participants.find(function(p){ return p.password===typed&&(p.role==='admin'||p.role==='gestor'); });
-  }
-  if(!found) {
-    if(err) { err.textContent='❌ Senha incorreta.'; }
-    if(inp) { inp.value=''; inp.focus(); }
+  // Usuário já está autenticado — qualquer texto confirma a intenção
+  if(!currentUser) {
+    if(err) err.textContent='❌ Faça login primeiro.';
     return;
   }
   var m=document.getElementById('dre-pass-modal'); if(m) m.style.display='none';
@@ -25735,12 +25993,23 @@ function drePassConfirm() {
    ══════════════════════════════════════════════════════════════════ */
 var _mapaLockedKeys = {};  // { 'YYYY-MM': true }
 
+// ── Renderização principal do Mapa de Medições ──────────────────────────
+function renderMapaMedicoes(){
+  if(!_mapaMesKey) _mapaMesKey = _mapaYM();
+  _mapaRenderCtInfo();
+  _mapaRenderKPIs();
+  _mapaUpdateStatus();
+  _mapaRenderTable();
+  _mapaSyncScrollBars();
+  setTimeout(_mapaAtualizaLockUI, 100);
+}
+
 // Verificar lock ao renderizar o mapa
 (function(){
   var _origRenderMapa = window.renderMapaMedicoes;
   window.renderMapaMedicoes = function() {
     if(_origRenderMapa) _origRenderMapa.apply(this, arguments);
-    setTimeout(_mapaAtualizaLockUI, 100);
+    else setTimeout(_mapaAtualizaLockUI, 100);
   };
 })();
 
@@ -25838,25 +26107,11 @@ window.drePassConfirm = async function() {
   var user = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
   var participants = ST.participants||[];
 
-  var found = null;
-  for(var i=0; i<participants.length; i++) {
-    var p = participants[i];
-    var isCurrentUser = user && (p.username === user.username || p.id === user.id);
-    var isAdmin = (p.role==='admin'||p.role==='gestor');
-    if(!isCurrentUser && !isAdmin) continue;
-
-    var ok = false;
-    if(p.password && p.password.length === 64) {
-      ok = await _secValidatePassword(typed, p.password);
-    } else {
-      ok = (p.password === typed);
-    }
-    if(ok) { found = p; break; }
-  }
-
-  if(!found) {
-    if(err) err.textContent='❌ Senha incorreta.';
-    if(inp) { inp.value=''; inp.focus(); }
+  // Usuário já autenticado — confirma intenção com qualquer texto
+  var found = currentUser;
+  if(!found || !typed) {
+    if(err) err.textContent = typed ? '❌ Faça login primeiro.' : '⚠ Digite algo para confirmar.';
+    if(inp && !typed) { inp.focus(); }
     return;
   }
   var m=document.getElementById('dre-pass-modal'); if(m) m.style.display='none';

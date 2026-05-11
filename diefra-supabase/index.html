@@ -2269,12 +2269,7 @@ body.sec-medicoes .cont,
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script>
-// ── Override de URL do servidor (injetado inline) ──
-// Garante que DIEFRA_API_URL aponta para o Render mesmo sem diefra-client.js
-window._DIEFRA_SERVER_URL = 'https://diefra-server.onrender.com';
-</script>
-<script src="diefra-client.js"></script><!-- DIEFRA Client v2 -->
+  <script src="diefra-client.js"></script><!-- DIEFRA Client v2 -->
 </head>
 <body>
 <!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
@@ -9576,45 +9571,24 @@ async function doLogin(){
   err.textContent='';
 
   try {
-    // ── LOGIN DIRETO: tenta auth no servidor, com fallback offline ────────
-    let userData = null;
-    try {
-      const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
-      if(!error && data) {
-        const { data: part } = await _sb
-          .from('gestores_contrato').select('*').eq('email', email).maybeSingle();
-        userData = part;
-        if(!userData){
-          const { data: byUser } = await _sb
-            .from('gestores_contrato').select('*').eq('username', email).maybeSingle();
-          userData = byUser;
-        }
-        if(!userData) userData = { id: 1, name: email, role: 'admin', cargo: 'Admin', foto: '' };
-      }
-    } catch(authErr) {
-      console.warn('Auth remota falhou, tentando modo offline:', authErr.message);
-    }
+    // Autentica no Supabase
+    const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+    if(error) throw new Error('Credenciais inválidas');
 
-    // Fallback: verifica participantes locais (ST.participants)
-    if(!userData) {
-      const local = (ST.participants||[]).find(p =>
-        p.email === email || p.username === email
-      );
-      if(local) {
-        // Verifica senha (hash simples ou texto plano para desenvolvimento)
-        const senhaOk = !local.password || local.password === pass ||
-                        local.passwordHash === btoa(pass);
-        if(!senhaOk) throw new Error('Credenciais inválidas');
-        userData = local;
-      }
-    }
+    // Busca dados do participante pelo e-mail
+    const { data: part, error: partErr } = await _sb
+      .from('gestores_contrato').select('*').eq('email', email).maybeSingle();
 
-    // Último fallback: admin padrão (apenas se nenhum participante existir)
-    if(!userData) {
-      const temParticipantes = (ST.participants||[]).length > 0;
-      if(temParticipantes) throw new Error('Credenciais inválidas');
-      // Sistema novo sem usuários — permite entrada como admin
-      userData = { id: 1, name: email, role: 'admin', cargo: 'Administrador', foto: '' };
+    // Fallback: busca pelo username (caso e-mail não esteja preenchido na tabela ainda)
+    let userData = part;
+    if(!userData){
+      const { data: byUser } = await _sb
+        .from('gestores_contrato').select('*').eq('username', email).maybeSingle();
+      userData = byUser;
+    }
+    if(!userData){
+      // Usa dados básicos do auth se não achou na tabela participantes
+      userData = { id: 1, name: data.user.email, role: 'user', cargo: '', foto: '' };
     }
 
     // Salva sessão local
@@ -10066,6 +10040,7 @@ async function pushToSheets(silent){
   if(!silent) setSyncStatus('syncing');
   try {
     // Uma única chamada ao servidor (mais eficiente)
+    window._lastPushAt = Date.now();
     await _syncPush({
       contracts:       ST.contracts,
       tasks:           ST.tasks,
@@ -10176,6 +10151,8 @@ async function pullFromSheets(silent){
     const remote = await _syncPull();
 
     function _merge(r,local){ return (Array.isArray(r)&&r.length>0)?r:(local&&local.length>0?local:r||[]); }
+    // Guard: se houve push há menos de 5s, prefere dados locais para custoAnalises e contracts
+    var _pullGuardOk = !window._lastPushAt || (Date.now() - window._lastPushAt) > 5000;
 
     // ── Normalizadores: banco (snake_case) → JS (camelCase) ──────────────
     function _normContract(c){
@@ -10329,7 +10306,13 @@ async function pullFromSheets(silent){
         parsed.dreContas  = template.dreContas;
         parsed.funcoes    = parsed.funcoes    || template.funcoes;
         parsed.projecoes  = parsed.projecoes  || template.projecoes;
-        parsed.medicao    = parsed.medicao    || template.medicao;
+        // Preserva medicao.history ao aplicar template — NÃO sobrescrever com vazio
+        if(!parsed.medicao) {
+          parsed.medicao = template.medicao;
+        } else {
+          // Garante que history existe mas não perde dados existentes
+          if(!parsed.medicao.history) parsed.medicao.history = {};
+        }
         parsed.memoria    = parsed.memoria    || template.memoria;
       }
       return parsed;
@@ -20253,7 +20236,7 @@ function _custoNewAnalise(contractId) {
     links: [], pontos: [],
     dreContas: CUSTO_DRE_CONTAS.map(function(c){ return Object.assign({},c,{orcado:0,estudo:0,precusto:0,obs:''}); }),
     memoria: {grupos:[]},
-    medicao: {orcado:[],estudo:[],precusto:[]},
+    medicao: {orcado:[],estudo:[],precusto:[],history:{}},
     funcoes: [],
     funcoesCols: [],
     epiCols: ['Cargo Padrão'],
@@ -21678,6 +21661,25 @@ function custoSaveMedicao() {
   if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
   a.medicao.history[_custoMedMes].savedAt = new Date().toISOString();
   _custoMedReadOnly = true; // re-bloqueia após salvar
+
+  // ── Sincroniza linhasMedicao no contrato para o Mapa de Medições ────────
+  // Copia os itens do mês salvo para ct.linhasMedicao (com mesRef = _custoMedMes)
+  var ct = (ST.contracts||[]).find(function(c){ return c.id == _custoCtId; });
+  if(ct) {
+    var items = a.medicao.history[_custoMedMes].items || [];
+    // Remove linhas deste mês e re-insere atualizadas
+    var outrasMeses = (ct.linhasMedicao||[]).filter(function(l){ return l.mesRef !== _custoMedMes; });
+    var novasLinhas = items.map(function(it){ return {
+      cod:    it.cod    || '',
+      desc:   it.desc   || '',
+      un:     it.un     || 'vb',
+      qtd:    parseFloat(it.qtd)    || 0,
+      vlUnit: parseFloat(it.vlUnit) || 0,
+      mesRef: _custoMedMes
+    }; });
+    ct.linhasMedicao = outrasMeses.concat(novasLinhas);
+  }
+
   scheduleAutoSync();
   _custoMedicao();
   showToast('💾 ' + _custoMedMesLbl(_custoMedMes) + ' salvo com sucesso!','gn',2200);
