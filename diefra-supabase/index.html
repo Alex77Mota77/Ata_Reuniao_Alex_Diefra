@@ -25953,12 +25953,23 @@ function drePassConfirm() {
    ══════════════════════════════════════════════════════════════════ */
 var _mapaLockedKeys = {};  // { 'YYYY-MM': true }
 
+// ── Renderização principal do Mapa de Medições ──────────────────────────
+function renderMapaMedicoes(){
+  if(!_mapaMesKey) _mapaMesKey = _mapaYM();
+  _mapaRenderCtInfo();
+  _mapaRenderKPIs();
+  _mapaUpdateStatus();
+  _mapaRenderTable();
+  _mapaSyncScrollBars();
+  setTimeout(_mapaAtualizaLockUI, 100);
+}
+
 // Verificar lock ao renderizar o mapa
 (function(){
   var _origRenderMapa = window.renderMapaMedicoes;
   window.renderMapaMedicoes = function() {
     if(_origRenderMapa) _origRenderMapa.apply(this, arguments);
-    setTimeout(_mapaAtualizaLockUI, 100);
+    else setTimeout(_mapaAtualizaLockUI, 100);
   };
 })();
 
