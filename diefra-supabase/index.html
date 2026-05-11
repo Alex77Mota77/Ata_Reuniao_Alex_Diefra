@@ -10266,9 +10266,17 @@ async function pullFromSheets(silent){
       });
     }
 
-    ST.contracts       = _merge(remote.contracts,      ST.contracts).map(_normContract).map(function(c){
-      // Normaliza id do contrato para String
+    // Merge inteligente de contracts — preserva mapaMedicoes local se mais novo
+    var _remoteContracts = Array.isArray(remote.contracts) && remote.contracts.length > 0 ? remote.contracts : ST.contracts;
+    ST.contracts = _remoteContracts.map(_normContract).map(function(c){
       if(c.id !== undefined) c.id = String(c.id);
+      // Preserva mapaMedicoes local se o push foi recente (< 30s)
+      var _localCt = (ST.contracts||[]).find(function(lc){ return String(lc.id)===String(c.id); });
+      var _pushRecente = window._lastPushAt && (Date.now() - window._lastPushAt) < 30000;
+      if(_localCt && _localCt.mapaMedicoes && _pushRecente) {
+        // Merge: mantém chaves locais que o remoto pode não ter ainda
+        c.mapaMedicoes = Object.assign({}, c.mapaMedicoes||{}, _localCt.mapaMedicoes);
+      }
       return c;
     });
     ST.tasks           = _merge(remote.tasks,           ST.tasks).map(_normTask);
@@ -10373,7 +10381,14 @@ function startSyncPolling(){
   if(_countdownTimer) clearInterval(_countdownTimer);
   _countdownTimer = setInterval(()=>{ _updateCountdownPill(); }, 1000);
   setInterval(()=>{
-    pullFromSheets(true).then(()=>{ _pollCountdown = interval; });
+    // Não faz pull se houve push nos últimos 10s (evita sobrescrever dados locais)
+    var _agora = Date.now();
+    var _pushRecente = window._lastPushAt && (_agora - window._lastPushAt) < 10000;
+    if(!_pushRecente) {
+      pullFromSheets(true).then(()=>{ _pollCountdown = interval; });
+    } else {
+      _pollCountdown = interval;
+    }
   }, interval * 1000);
 
   // Tempo real — atualiza automaticamente quando outro usuário salva
@@ -12154,7 +12169,10 @@ function mapaSave(){
   var totalPrev=0,totalMed=0;
   draft.linhas.forEach(function(rl,i){
     var it=linhas[i]; if(!it) return;
+    var _q=parseFloat(it.qtd)||0;
     var vu=parseFloat(it.vlUnit)||0;
+    var _vt=parseFloat(it.vlTot)||(_q*vu);
+    if(vu===0 && _vt>0 && _q>0) vu=_vt/_q; // fallback
     totalPrev+=(parseFloat(rl.previsto)||0)*vu;
     totalMed +=(parseFloat(rl.medido)||0)*vu;
   });
@@ -12175,7 +12193,10 @@ function mapaSave(){
 
   // Bloquear edição após salvar
   _mapaLockedKeys[_mapaMesKey] = true;
-  scheduleAutoSync();
+  // Push imediato — não aguardar o timer de 1.5s para evitar que o
+  // polling automático sobrescreva mapaMedicoes antes do push terminar
+  window._lastPushAt = Date.now();
+  pushToSheets(true);
   renderMapaMedicoes();
   try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
   showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva e bloqueada! Use 🔓 para editar.','gn',3000);
