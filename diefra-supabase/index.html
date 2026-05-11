@@ -23052,7 +23052,8 @@ function colCtxOpen(evt, btn) {
   var tbl = btn.dataset.colTbl;
   var cn  = btn.dataset.colCn||'';
   var delBtn = document.getElementById('col-ctx-del');
-  if(delBtn) delBtn.style.display = (tbl==='dre' && ['orcado','estudo','precusto'].indexOf(cn)!==-1)?'none':(tbl==='mapa'&&ci<0)?'none':'';
+  var ci2 = parseInt(btn.dataset.colCi||'-1');
+  if(delBtn) delBtn.style.display = (tbl==='dre' && ['orcado','estudo','precusto'].indexOf(cn)!==-1)?'none':(tbl==='mapa'&&ci2<0)?'none':'';
 }
 
 function colCtxInsert(dir) {
