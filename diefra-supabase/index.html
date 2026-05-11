@@ -3365,7 +3365,7 @@ let deleteCallback = null;
 //  2. O SYNC_TOKEN deve ser igual ao definido no Apps Script
 // ══════════════════════════════════════════════════════════════════════════════
 const API_CFG = {
-  url:          localStorage.getItem('diefra_gs_url') || 'https://diefra-server.onrender.com',
+  url:          localStorage.getItem('diefra_gs_url') || 'https://diefra-server.onrender.com/api/sync',
   syncToken:    localStorage.getItem('diefra_gs_token') || 'diefra_sync_2026',
   autoSync:     true,
   syncInterval: 60,   // segundos entre pulls automáticos
@@ -9007,15 +9007,15 @@ function openGSheetsConfig(){
     <div style="display:flex;flex-direction:column;gap:16px">
       <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:14px;font-size:13px;color:var(--t2);line-height:1.6">
         <strong style="color:#60a5fa;display:block;margin-bottom:6px">📋 Como configurar:</strong>
-        1. Servidor: <strong>https://diefra-server.onrender.com</strong><br>
+        1. Servidor: <strong>https://diefra-server.onrender.com/api/sync</strong><br>
         2. Token padrão: <strong>diefra_sync_2026</strong> (definido nas env vars do Render)<br>
         3. Cole a URL do servidor e o token abaixo<br>
         4. Clique em <strong>Testar conexão</strong> antes de salvar
       </div>
       <div>
-        <label class="fl">URL do Servidor Supabase <span style="color:var(--t3);font-weight:400">(ex: https://diefra-server.onrender.com)</span></label>
+        <label class="fl">URL do Servidor Supabase <span style="color:var(--t3);font-weight:400">(ex: https://diefra-server.onrender.com/api/sync)</span></label>
         <input class="fi" id="gs-url-input" type="text"
-          placeholder="https://diefra-server.onrender.com"
+          placeholder="https://diefra-server.onrender.com/api/sync"
           value="${API_CFG.url}">
       </div>
       <div>
