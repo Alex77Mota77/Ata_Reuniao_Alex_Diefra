@@ -10153,6 +10153,12 @@ async function pullFromSheets(silent){
 
     // ── Normalizadores: banco (snake_case) → JS (camelCase) ──────────────
     function _normContract(c){
+      // Se tem campo 'dados', deserializa primeiro
+      if(c.dados && typeof c.dados === 'string'){
+        try { c = Object.assign({}, JSON.parse(c.dados), {id:c.id}); } catch(e){}
+      } else if(c.dados && typeof c.dados === 'object'){
+        c = Object.assign({}, c.dados, {id:c.id});
+      }
       return Object.assign({}, c, {
         name:               c.name  || c.nome  || '',
         code:               c.code  || c.numero || c.cc || '',
