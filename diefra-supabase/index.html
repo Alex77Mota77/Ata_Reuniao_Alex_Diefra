@@ -11623,27 +11623,58 @@ function _mapaRenderCtInfo(){
 function _mapaRenderKPIs(){
   var el=document.getElementById('mapa-kpis'); if(!el) return;
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
-  var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  // Compute totals from measurement record
+  var mapa=ct.mapaMedicoes||{};
+
+  // ── Lê o registro salvo OU o draft atual para os KPIs do mês ──────────
+  // Prioridade: draft (edição em curso) > salvo > nenhum
+  var mapaRec = mapa['__draft__'+_mapaMesKey] || mapa[_mapaMesKey] || null;
+
+  // ── Calcula totalPrev e totalMed do mês atual ─────────────────────────
   var totalPrev=0, totalMed=0;
-  if(rec&&rec.linhas){
-    rec.linhas.forEach(function(rl,i){
+  if(mapaRec && mapaRec.linhas && mapaRec.linhas.length > 0){
+    mapaRec.linhas.forEach(function(rl,i){
       var it=linhas[i]; if(!it) return;
-      var vlTot=(parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0);
-      totalPrev+=parseFloat(rl.previsto||0)*parseFloat(it.vlUnit||0);
-      totalMed +=parseFloat(rl.medido||0)*parseFloat(it.vlUnit||0);
+      var _q=parseFloat(it.qtd)||0;
+      var vu=parseFloat(it.vlUnit)||0;
+      var _vt=parseFloat(it.vlTot)||(_q*vu);
+      if(vu===0&&_vt>0&&_q>0) vu=_vt/_q;
+      totalPrev+=(parseFloat(rl.previsto)||0)*vu;
+      totalMed +=(parseFloat(rl.medido)||0)*vu;
     });
-  } else if(linhas.length>0){
+  } else {
+    // Sem registro ainda: previsto = soma dos preços totais
     linhas.forEach(function(it){
-      totalPrev+=(parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0);
+      var _q=parseFloat(it.qtd)||0;
+      var vu=parseFloat(it.vlUnit)||0;
+      var _vt=parseFloat(it.vlTot)||(_q*vu);
+      if(vu===0&&_vt>0&&_q>0) vu=_vt/_q;
+      totalPrev+=_q*vu;
     });
   }
+
+  // ── Se mês salvo, usa os totais já computados no mapaSave ─────────────
+  if(mapa[_mapaMesKey] && mapa[_mapaMesKey].totalMedido !== undefined && !mapa['__draft__'+_mapaMesKey]){
+    totalPrev = mapa[_mapaMesKey].totalPrevisto || totalPrev;
+    totalMed  = mapa[_mapaMesKey].totalMedido  || 0;
+  }
+
   var difVal=totalPrev-totalMed;
-  var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'—';
-  var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||0;
-  var histKeys=Object.keys(ct.mapaMedicoes||{});
-  var totalAcum=histKeys.reduce(function(s,k){ var r=ct.mapaMedicoes[k]; return s+(r?r.totalMedido||0:0); },0);
+  var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'0.0';
+
+  // ── Valor global do contrato ──────────────────────────────────────────
+  var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||ct.valorGlobal||0;
+
+  // ── Histórico: apenas meses únicos com savedAt (ignora drafts) ────────
+  var histKeys=Object.keys(mapa).filter(function(k){
+    return k.indexOf('__draft__')<0 && mapa[k] && mapa[k].savedAt;
+  });
+  // Garante unicidade de meses (YYYY-MM) — evita contagem duplicada
+  var mesesUnicos=[...new Set(histKeys)];
+
+  var totalAcum=mesesUnicos.reduce(function(s,k){
+    var r=mapa[k]; return s+(r?parseFloat(r.totalMedido)||0:0);
+  },0);
   var saldo=vg-totalAcum;
 
   function kpi(icon,lbl,val,cor,sub){
@@ -11653,12 +11684,16 @@ function _mapaRenderKPIs(){
       (sub?'<div style="font-size:10px;color:var(--t2);margin-top:2px">'+sub+'</div>':'')+
       '</div>';
   }
+  var _nMeses=mesesUnicos.length;
+  var _lblMeses=_nMeses===0?'Nenhum mês salvo':(_nMeses===1?'1 mês salvo':_nMeses+' meses salvos');
+  var _lblSaldo=vg?fmtBRL(vg)+' valor global':'Valor global não informado';
+  var _lblMed=mapa[_mapaMesKey]&&mapa[_mapaMesKey].savedAt?'✅ Salvo · '+pctEx+'% do previsto':pctEx+'% do previsto';
   el.innerHTML=
-    kpi('📋','Previsto '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalPrev), 'var(--gl)', linhas.length+' linhas')  +
-    kpi('✅','Medido '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalMed), 'var(--gnl)', pctEx+'% do previsto') +
-    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0?'#f87171':'#10b981', difVal>0?'A medir / justificar':'Sem diferença') +
-    kpi('📊','Total Acumulado Medido', fmtBRL(totalAcum), 'var(--ac2)', histKeys.length+' meses registrados') +
-    kpi('💵','Saldo do Contrato', fmtBRL(saldo), saldo>=0?'#10b981':'#ef4444', vg?'':'Valor global não informado');
+    kpi('📋','Previsto '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalPrev), 'var(--gl)', linhas.length+' linha'+(linhas.length!==1?'s':''))  +
+    kpi('✅','Medido '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalMed), 'var(--gnl)', _lblMed) +
+    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0.01?'#f87171':'#10b981', difVal>0.01?'A medir / justificar':'Dentro do previsto') +
+    kpi('📊','Total Acumulado Medido', fmtBRL(totalAcum), 'var(--ac2)', _lblMeses) +
+    kpi('💵','Saldo do Contrato', fmtBRL(saldo), saldo>=0?'#10b981':'#ef4444', _lblSaldo);
 }
 
 // ── Render da tabela principal ─────────────────────────────────────────
@@ -11878,6 +11913,8 @@ function _mapaRenderTable(){
     setTimeout(_mapaSyncScrollBars, 30);
     // Resize all obs textareas para mostrar conteúdo completo
     setTimeout(function(){ _resizeObsTAs('mapa-tbody'); }, 40);
+    // Atualiza KPIs após render da tabela
+    setTimeout(function(){ _mapaRenderKPIs(); }, 50);
   });
 }
 
@@ -12179,11 +12216,13 @@ function mapaSave(){
 
   // Bloquear edição após salvar
   _mapaLockedKeys[_mapaMesKey] = true;
-  // Push imediato sem delay — mapaMedicoes precisa chegar ao banco ANTES do próximo pull
+  // Push imediato sem delay
   window._lastPushAt = Date.now();
   clearTimeout(_syncTimer);
   pushToSheets(true);
   renderMapaMedicoes();
+  // Atualiza KPIs imediatamente com valores salvos
+  setTimeout(function(){ _mapaRenderKPIs(); }, 100);
   try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
   showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva e bloqueada! Use 🔓 para editar.','gn',3000);
 }
