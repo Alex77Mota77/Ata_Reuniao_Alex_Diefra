@@ -2269,7 +2269,137 @@ body.sec-medicoes .cont,
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script src="diefra-client.js"></script><!-- DIEFRA Client v2 -->
+  <!-- DIEFRA Client v2 — embutido inline -->
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  diefra-client.js v2.0 — Cliente do servidor DIEFRA
+//  Substitui o SDK do Supabase no index.html
+//  A service_role key NUNCA chega ao browser
+// ═══════════════════════════════════════════════════════════════
+
+// ── URL do servidor Node.js ──────────────────────────────────
+// Substitua pela URL do Railway/Render após o deploy
+const DIEFRA_API_URL = 'https://diefra-server.onrender.com';
+
+// ── Token JWT armazenado localmente ─────────────────────────
+let _apiToken = localStorage.getItem('diefra_api_token') || null;
+
+// ── Chamada HTTP ao servidor ─────────────────────────────────
+async function _api(method, path, body) {
+  const opts = {
+    method,
+    headers: Object.assign({'Content-Type':'application/json'},
+      _apiToken ? {'Authorization':'Bearer '+_apiToken} : {})
+  };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const res  = await fetch(DIEFRA_API_URL + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.erro || 'HTTP '+res.status);
+  return data;
+}
+
+// ── Query builder — imita _sb.from(table) do Supabase ────────
+function _sbFrom(table) {
+  var s = {
+    table:table, op:null, cols:'*', payload:null,
+    filters:[], ord:null, sngl:false, mSngl:false, conflict:'id'
+  };
+
+  function _exec() {
+    return _api('POST', '/api/db', s).catch(function(e){
+      return {data:null, error:{message:e.message}};
+    });
+  }
+
+  var c = {
+    select:   function(cols)      { s.op='select'; s.cols=cols||'*'; return c; },
+    insert:   function(rows)      { s.op='insert'; s.payload=rows; return c; },
+    update:   function(data)      { s.op='update'; s.payload=data; return c; },
+    upsert:   function(rows,opts) { s.op='upsert'; s.payload=rows; if(opts&&opts.onConflict) s.conflict=opts.onConflict; return c; },
+    delete:   function()          { s.op='delete'; return c; },
+    eq:       function(col,val)   { s.filters.push({t:'eq', col:col, val:val}); return c; },
+    gte:      function(col,val)   { s.filters.push({t:'gte',col:col, val:val}); return c; },
+    lte:      function(col,val)   { s.filters.push({t:'lte',col:col, val:val}); return c; },
+    neq:      function(col,val)   { s.filters.push({t:'neq',col:col, val:val}); return c; },
+    order:    function(col,opts)  { s.ord={col:col,asc:opts&&opts.ascending!==false}; return c; },
+    maybeSingle: function()       { s.mSngl=true; return _exec(); },
+    single:      function()       { s.sngl=true; return _exec(); },
+    then: function(res,rej)       { _exec().then(res,rej); }
+  };
+  return c;
+}
+
+// ── Auth — imita _sb.auth do Supabase ────────────────────────
+var _authCbs = [];
+var _sbAuth = {
+  signInWithPassword: async function(creds) {
+    try {
+      var data = await _api('POST', '/api/auth/login', creds);
+      _apiToken = data.token;
+      localStorage.setItem('diefra_api_token', _apiToken);
+      var sess = {access_token:_apiToken, user:{email:creds.email, id:data.usuario&&data.usuario.id}};
+      _authCbs.forEach(function(cb){ cb('SIGNED_IN', sess); });
+      return {data:{user:data.usuario, session:sess}, error:null};
+    } catch(e) {
+      return {data:null, error:{message:e.message||'Credenciais inválidas'}};
+    }
+  },
+  signOut: async function() {
+    try { await _api('POST', '/api/auth/logout'); } catch(e){}
+    _apiToken = null;
+    localStorage.removeItem('diefra_api_token');
+    _authCbs.forEach(function(cb){ cb('SIGNED_OUT', null); });
+    return {error:null};
+  },
+  getSession: async function() {
+    if(!_apiToken) return {data:{session:null}, error:null};
+    return {data:{session:{access_token:_apiToken}}, error:null};
+  },
+  onAuthStateChange: function(cb) {
+    _authCbs.push(cb);
+    if(_apiToken) setTimeout(function(){ cb('SIGNED_IN',{access_token:_apiToken}); }, 50);
+    return {data:{subscription:{unsubscribe:function(){ _authCbs = _authCbs.filter(function(x){return x!==cb;}); }}}};
+  },
+  resetPasswordForEmail: async function(email) {
+    try { await _api('POST', '/api/auth/reset-password', {email:email}); return {error:null}; }
+    catch(e) { return {error:{message:e.message}}; }
+  }
+};
+
+// ── _sb global — DROP-IN replacement do Supabase SDK ─────────
+var _sb = {
+  from:    function(t){ return _sbFrom(t); },
+  auth:    _sbAuth,
+  channel: function(){ return {on:function(){return this;}, subscribe:function(){return Promise.resolve('SUBSCRIBED');}, untrack:function(){return Promise.resolve();}}; },
+  removeChannel: function(){ return Promise.resolve(); },
+  rpc: function(fn,params){ return {then:function(r,rej){ _api('POST','/api/rpc/'+fn,params).then(r,rej); }}; }
+};
+
+// ── Sync otimizado — 1 request ao invés de 16 ────────────────
+async function _syncPull() {
+  return await _api('GET', '/api/sync');
+}
+async function _syncPush(st) {
+  return await _api('POST', '/api/sync', {data:st});
+}
+
+// ── Presença via servidor ─────────────────────────────────────
+async function _presencaUpsert(secao) {
+  if(!_apiToken) return;
+  try { await _api('PUT', '/api/presenca', {secao:secao||'Sistema'}); } catch(e){}
+}
+async function _presencaPoll() {
+  if(!_apiToken) return [];
+  try { return await _api('GET', '/api/presenca'); } catch(e){ return []; }
+}
+async function _presencaRemover() {
+  if(!_apiToken) return;
+  try { await _api('DELETE', '/api/presenca'); } catch(e){}
+}
+
+console.log('[DIEFRA] Client v2 carregado. Servidor:', DIEFRA_API_URL);
+
+</script>
 </head>
 <body>
 <!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
@@ -11515,15 +11645,27 @@ function mapaCtShift(dir){
   if(cts[n]) mapaSelectCt(cts[n].id);
 }
 
+// ── Vínculo direto com Análise de Custo (como na versão funcional) ────────
+function _mapaGetAnalise(){
+  return (ST.custoAnalises||[]).find(function(a){
+    return String(a.contractId)===String(_mapaCtId);
+  })||null;
+}
 function _mapaGetLinhas(ym){
+  // Fonte primária: custoAnalises[].medicao.history[mes].items (vínculo direto)
+  var a=_mapaGetAnalise();
+  if(a && a.medicao && a.medicao.history && a.medicao.history[ym] && a.medicao.history[ym].items){
+    return a.medicao.history[ym].items;
+  }
+  // Fallback: ct.linhasMedicao (compatibilidade)
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var linhas=ct.linhasMedicao||[];
   return linhas.filter(function(l){return l.mesRef===ym||!l.mesRef;});
 }
 function _mapaGetRec(ctId,ym){
-  return (ST.medicoes||[]).find(function(m){
-    return (m.contractId===ctId||m.contrato_id===ctId)&&(m.key===ym||m.competencia===ym);
-  })||null;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(ctId);}); if(!ct) return null;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  return ct.mapaMedicoes[ym]||null;
 }
 
 
@@ -11623,58 +11765,35 @@ function _mapaRenderCtInfo(){
 function _mapaRenderKPIs(){
   var el=document.getElementById('mapa-kpis'); if(!el) return;
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
+  // rec = registro do mapa (draft em edição ou salvo) — exatamente como versão funcional
+  var rec=ct.mapaMedicoes&&(ct.mapaMedicoes['__draft__'+_mapaMesKey]||ct.mapaMedicoes[_mapaMesKey])||null;
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  var mapa=ct.mapaMedicoes||{};
-
-  // ── Lê o registro salvo OU o draft atual para os KPIs do mês ──────────
-  // Prioridade: draft (edição em curso) > salvo > nenhum
-  var mapaRec = mapa['__draft__'+_mapaMesKey] || mapa[_mapaMesKey] || null;
-
-  // ── Calcula totalPrev e totalMed do mês atual ─────────────────────────
+  // Compute totals from current record (draft ou salvo)
   var totalPrev=0, totalMed=0;
-  if(mapaRec && mapaRec.linhas && mapaRec.linhas.length > 0){
-    mapaRec.linhas.forEach(function(rl,i){
+  if(rec&&rec.linhas){
+    rec.linhas.forEach(function(rl,i){
       var it=linhas[i]; if(!it) return;
-      var _q=parseFloat(it.qtd)||0;
       var vu=parseFloat(it.vlUnit)||0;
-      var _vt=parseFloat(it.vlTot)||(_q*vu);
-      if(vu===0&&_vt>0&&_q>0) vu=_vt/_q;
+      // vlUnit fallback via vlTot (compatibilidade com itens salvos sem vlUnit)
+      if(vu===0){ var _vt=parseFloat(it.vlTot)||0; var _q=parseFloat(it.qtd)||0; if(_vt>0&&_q>0) vu=_vt/_q; }
       totalPrev+=(parseFloat(rl.previsto)||0)*vu;
       totalMed +=(parseFloat(rl.medido)||0)*vu;
     });
-  } else {
-    // Sem registro ainda: previsto = soma dos preços totais
+  } else if(linhas.length>0){
     linhas.forEach(function(it){
-      var _q=parseFloat(it.qtd)||0;
       var vu=parseFloat(it.vlUnit)||0;
-      var _vt=parseFloat(it.vlTot)||(_q*vu);
-      if(vu===0&&_vt>0&&_q>0) vu=_vt/_q;
-      totalPrev+=_q*vu;
+      if(vu===0){ var _vt=parseFloat(it.vlTot)||0; var _q=parseFloat(it.qtd)||0; if(_vt>0&&_q>0) vu=_vt/_q; }
+      totalPrev+=(parseFloat(it.qtd)||0)*vu;
     });
   }
-
-  // ── Se mês salvo, usa os totais já computados no mapaSave ─────────────
-  if(mapa[_mapaMesKey] && mapa[_mapaMesKey].totalMedido !== undefined && !mapa['__draft__'+_mapaMesKey]){
-    totalPrev = mapa[_mapaMesKey].totalPrevisto || totalPrev;
-    totalMed  = mapa[_mapaMesKey].totalMedido  || 0;
-  }
-
   var difVal=totalPrev-totalMed;
-  var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'0.0';
-
-  // ── Valor global do contrato ──────────────────────────────────────────
+  var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'—';
   var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||ct.valorGlobal||0;
-
-  // ── Histórico: apenas meses únicos com savedAt (ignora drafts) ────────
-  var histKeys=Object.keys(mapa).filter(function(k){
-    return k.indexOf('__draft__')<0 && mapa[k] && mapa[k].savedAt;
+  // histKeys: apenas meses reais salvos (sem drafts) — exatamente como versão funcional
+  var histKeys=Object.keys(ct.mapaMedicoes||{}).filter(function(k){
+    return k.indexOf('__draft__')<0 && ct.mapaMedicoes[k] && ct.mapaMedicoes[k].savedAt;
   });
-  // Garante unicidade de meses (YYYY-MM) — evita contagem duplicada
-  var mesesUnicos=[...new Set(histKeys)];
-
-  var totalAcum=mesesUnicos.reduce(function(s,k){
-    var r=mapa[k]; return s+(r?parseFloat(r.totalMedido)||0:0);
-  },0);
+  var totalAcum=histKeys.reduce(function(s,k){ var r=ct.mapaMedicoes[k]; return s+(r?r.totalMedido||0:0); },0);
   var saldo=vg-totalAcum;
 
   function kpi(icon,lbl,val,cor,sub){
@@ -11684,16 +11803,12 @@ function _mapaRenderKPIs(){
       (sub?'<div style="font-size:10px;color:var(--t2);margin-top:2px">'+sub+'</div>':'')+
       '</div>';
   }
-  var _nMeses=mesesUnicos.length;
-  var _lblMeses=_nMeses===0?'Nenhum mês salvo':(_nMeses===1?'1 mês salvo':_nMeses+' meses salvos');
-  var _lblSaldo=vg?fmtBRL(vg)+' valor global':'Valor global não informado';
-  var _lblMed=mapa[_mapaMesKey]&&mapa[_mapaMesKey].savedAt?'✅ Salvo · '+pctEx+'% do previsto':pctEx+'% do previsto';
   el.innerHTML=
-    kpi('📋','Previsto '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalPrev), 'var(--gl)', linhas.length+' linha'+(linhas.length!==1?'s':''))  +
-    kpi('✅','Medido '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalMed), 'var(--gnl)', _lblMed) +
-    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0.01?'#f87171':'#10b981', difVal>0.01?'A medir / justificar':'Dentro do previsto') +
-    kpi('📊','Total Acumulado Medido', fmtBRL(totalAcum), 'var(--ac2)', _lblMeses) +
-    kpi('💵','Saldo do Contrato', fmtBRL(saldo), saldo>=0?'#10b981':'#ef4444', _lblSaldo);
+    kpi('📋','Previsto '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalPrev), 'var(--gl)', linhas.length+' linhas')  +
+    kpi('✅','Medido '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalMed), 'var(--gnl)', pctEx+'% do previsto') +
+    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0?'#f87171':'#10b981', difVal>0?'A medir / justificar':'Sem diferença') +
+    kpi('📊','Total Acumulado Medido', fmtBRL(totalAcum), 'var(--ac2)', histKeys.length+' meses registrados') +
+    kpi('💵','Saldo do Contrato', fmtBRL(saldo), saldo>=0?'#10b981':'#ef4444', vg?'':'Valor global não informado');
 }
 
 // ── Render da tabela principal ─────────────────────────────────────────
@@ -11709,19 +11824,19 @@ function _mapaRenderTable(){
   var linhas=_mapaGetLinhas(_mapaMesKey);
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  // Lê o registro salvo do mês — exatamente como versão funcional
   var rec=ct.mapaMedicoes[_mapaMesKey];
 
-  // Sync / init record
+  // Sync / init record — idêntico à versão funcional
   if(!rec){
-    rec={linhas:linhas.map(function(it){return{previsto:parseFloat(it.qtd)||0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};}),extraCols:_mapaExtraCols.slice()};
+    rec={linhas:linhas.map(function(it){return{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};}),extraCols:_mapaExtraCols.slice()};
   } else {
     if(!rec.linhas||rec.linhas.length!==linhas.length){
-      var old=rec.linhas||[];
+      var _oldLinhas=rec.linhas||[];
       rec.linhas=linhas.map(function(it,i){
-        return old[i]||{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};
+        return _oldLinhas[i]||{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};
       });
     }
-    // Sync extra cols from record
     if(rec.extraCols) _mapaExtraCols=rec.extraCols;
   }
   ct.mapaMedicoes['__draft__'+_mapaMesKey]=rec;
@@ -12188,14 +12303,12 @@ function mapaSave(){
   if(!draft){
     showToast('⚠ Nenhum dado para salvar.','go'); return;
   }
-  // Compute totals
+  // Compute totals — com vlUnit fallback via vlTot
   var totalPrev=0,totalMed=0;
   draft.linhas.forEach(function(rl,i){
     var it=linhas[i]; if(!it) return;
-    var _sq=parseFloat(it.qtd)||0;
     var vu=parseFloat(it.vlUnit)||0;
-    var _st=parseFloat(it.vlTot)||(_sq*vu);
-    if(vu===0&&_st>0&&_sq>0) vu=_st/_sq;
+    if(vu===0){ var _vt=parseFloat(it.vlTot)||0; var _q=parseFloat(it.qtd)||0; if(_vt>0&&_q>0) vu=_vt/_q; }
     totalPrev+=(parseFloat(rl.previsto)||0)*vu;
     totalMed +=(parseFloat(rl.medido)||0)*vu;
   });
@@ -21717,20 +21830,8 @@ function custoSaveMedicao() {
   if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
   a.medicao.history[_custoMedMes].savedAt = new Date().toISOString();
   _custoMedReadOnly = true;
-  // Sincroniza linhasMedicao no contrato para o Mapa de Medições
-  var ct = (ST.contracts||[]).find(function(c){ return String(c.id)==String(_custoCtId); });
-  if(ct){
-    var items = a.medicao.history[_custoMedMes].items || [];
-    var outras = (ct.linhasMedicao||[]).filter(function(l){ return l.mesRef !== _custoMedMes; });
-    var novas  = items.map(function(it){
-      var qtd=parseFloat(it.qtd)||0, vu=parseFloat(it.vlUnit)||0;
-      return { cod:it.cod||'', desc:it.desc||'', un:it.un||'vb',
-               qtd:qtd, vlUnit:vu, vlTot:qtd*vu, mesRef:_custoMedMes };
-    });
-    ct.linhasMedicao = outras.concat(novas);
-    var ctIdx=(ST.contracts||[]).findIndex(function(c){return String(c.id)==String(_custoCtId);});
-    if(ctIdx>=0) ST.contracts[ctIdx]=ct;
-  }
+  // O Mapa de Medições lê direto de a.medicao.history[mes].items via _mapaGetLinhas
+  // Não precisa copiar para ct.linhasMedicao — vínculo direto como versão funcional
   scheduleAutoSync();
   _custoMedicao();
   showToast('💾 ' + _custoMedMesLbl(_custoMedMes) + ' salvo com sucesso!','gn',2200);
