@@ -2269,7 +2269,137 @@ body.sec-medicoes .cont,
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script src="diefra-client.js"></script><!-- DIEFRA Client v2 -->
+  <!-- DIEFRA Client v2 — embutido inline -->
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  diefra-client.js v2.0 — Cliente do servidor DIEFRA
+//  Substitui o SDK do Supabase no index.html
+//  A service_role key NUNCA chega ao browser
+// ═══════════════════════════════════════════════════════════════
+
+// ── URL do servidor Node.js ──────────────────────────────────
+// Substitua pela URL do Railway/Render após o deploy
+const DIEFRA_API_URL = 'https://diefra-server.onrender.com';
+
+// ── Token JWT armazenado localmente ─────────────────────────
+let _apiToken = localStorage.getItem('diefra_api_token') || null;
+
+// ── Chamada HTTP ao servidor ─────────────────────────────────
+async function _api(method, path, body) {
+  const opts = {
+    method,
+    headers: Object.assign({'Content-Type':'application/json'},
+      _apiToken ? {'Authorization':'Bearer '+_apiToken} : {})
+  };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const res  = await fetch(DIEFRA_API_URL + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.erro || 'HTTP '+res.status);
+  return data;
+}
+
+// ── Query builder — imita _sb.from(table) do Supabase ────────
+function _sbFrom(table) {
+  var s = {
+    table:table, op:null, cols:'*', payload:null,
+    filters:[], ord:null, sngl:false, mSngl:false, conflict:'id'
+  };
+
+  function _exec() {
+    return _api('POST', '/api/db', s).catch(function(e){
+      return {data:null, error:{message:e.message}};
+    });
+  }
+
+  var c = {
+    select:   function(cols)      { s.op='select'; s.cols=cols||'*'; return c; },
+    insert:   function(rows)      { s.op='insert'; s.payload=rows; return c; },
+    update:   function(data)      { s.op='update'; s.payload=data; return c; },
+    upsert:   function(rows,opts) { s.op='upsert'; s.payload=rows; if(opts&&opts.onConflict) s.conflict=opts.onConflict; return c; },
+    delete:   function()          { s.op='delete'; return c; },
+    eq:       function(col,val)   { s.filters.push({t:'eq', col:col, val:val}); return c; },
+    gte:      function(col,val)   { s.filters.push({t:'gte',col:col, val:val}); return c; },
+    lte:      function(col,val)   { s.filters.push({t:'lte',col:col, val:val}); return c; },
+    neq:      function(col,val)   { s.filters.push({t:'neq',col:col, val:val}); return c; },
+    order:    function(col,opts)  { s.ord={col:col,asc:opts&&opts.ascending!==false}; return c; },
+    maybeSingle: function()       { s.mSngl=true; return _exec(); },
+    single:      function()       { s.sngl=true; return _exec(); },
+    then: function(res,rej)       { _exec().then(res,rej); }
+  };
+  return c;
+}
+
+// ── Auth — imita _sb.auth do Supabase ────────────────────────
+var _authCbs = [];
+var _sbAuth = {
+  signInWithPassword: async function(creds) {
+    try {
+      var data = await _api('POST', '/api/auth/login', creds);
+      _apiToken = data.token;
+      localStorage.setItem('diefra_api_token', _apiToken);
+      var sess = {access_token:_apiToken, user:{email:creds.email, id:data.usuario&&data.usuario.id}};
+      _authCbs.forEach(function(cb){ cb('SIGNED_IN', sess); });
+      return {data:{user:data.usuario, session:sess}, error:null};
+    } catch(e) {
+      return {data:null, error:{message:e.message||'Credenciais inválidas'}};
+    }
+  },
+  signOut: async function() {
+    try { await _api('POST', '/api/auth/logout'); } catch(e){}
+    _apiToken = null;
+    localStorage.removeItem('diefra_api_token');
+    _authCbs.forEach(function(cb){ cb('SIGNED_OUT', null); });
+    return {error:null};
+  },
+  getSession: async function() {
+    if(!_apiToken) return {data:{session:null}, error:null};
+    return {data:{session:{access_token:_apiToken}}, error:null};
+  },
+  onAuthStateChange: function(cb) {
+    _authCbs.push(cb);
+    if(_apiToken) setTimeout(function(){ cb('SIGNED_IN',{access_token:_apiToken}); }, 50);
+    return {data:{subscription:{unsubscribe:function(){ _authCbs = _authCbs.filter(function(x){return x!==cb;}); }}}};
+  },
+  resetPasswordForEmail: async function(email) {
+    try { await _api('POST', '/api/auth/reset-password', {email:email}); return {error:null}; }
+    catch(e) { return {error:{message:e.message}}; }
+  }
+};
+
+// ── _sb global — DROP-IN replacement do Supabase SDK ─────────
+var _sb = {
+  from:    function(t){ return _sbFrom(t); },
+  auth:    _sbAuth,
+  channel: function(){ return {on:function(){return this;}, subscribe:function(){return Promise.resolve('SUBSCRIBED');}, untrack:function(){return Promise.resolve();}}; },
+  removeChannel: function(){ return Promise.resolve(); },
+  rpc: function(fn,params){ return {then:function(r,rej){ _api('POST','/api/rpc/'+fn,params).then(r,rej); }}; }
+};
+
+// ── Sync otimizado — 1 request ao invés de 16 ────────────────
+async function _syncPull() {
+  return await _api('GET', '/api/sync');
+}
+async function _syncPush(st) {
+  return await _api('POST', '/api/sync', {data:st});
+}
+
+// ── Presença via servidor ─────────────────────────────────────
+async function _presencaUpsert(secao) {
+  if(!_apiToken) return;
+  try { await _api('PUT', '/api/presenca', {secao:secao||'Sistema'}); } catch(e){}
+}
+async function _presencaPoll() {
+  if(!_apiToken) return [];
+  try { return await _api('GET', '/api/presenca'); } catch(e){ return []; }
+}
+async function _presencaRemover() {
+  if(!_apiToken) return;
+  try { await _api('DELETE', '/api/presenca'); } catch(e){}
+}
+
+console.log('[DIEFRA] Client v2 carregado. Servidor:', DIEFRA_API_URL);
+
+</script>
 </head>
 <body>
 <!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
@@ -10039,8 +10169,10 @@ async function pushToSheets_OLD_UNUSED(){}
 async function pushToSheets(silent){
   if(!silent) setSyncStatus('syncing');
   try {
-    // Uma única chamada ao servidor (mais eficiente)
     window._lastPushAt = Date.now();
+    // Backup local ANTES do push (garante persistência mesmo se falhar)
+    try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
+
     await _syncPush({
       contracts:       ST.contracts,
       tasks:           ST.tasks,
@@ -10050,10 +10182,13 @@ async function pushToSheets(silent){
       calibEquips:     ST.calibEquips,
       calibNCs:        ST.calibNCs,
       calibRegistros:  ST.calibRegistros,
+      // custoAnalises: envia objeto COMPLETO serializado (preserva medicao.history)
       custoAnalises:   (ST.custoAnalises||[]).map(function(a){ return {
-        id: a.id, contrato_id: a.contractId||a.contrato_id||a.id,
-        dados: JSON.stringify(a)
+        id: a.id,
+        contrato_id: a.contractId||a.contrato_id||a.id,
+        dados: JSON.stringify(a)  // serialização completa — inclui medicao.history
       };}),
+      nextId:          ST.nextId,
     });
     setSyncStatus('ok');
     _lastSyncAt = new Date();
@@ -10264,15 +10399,15 @@ async function pullFromSheets(silent){
       });
     }
 
-    ST.contracts = _merge(remote.contracts, ST.contracts).map(_normContract).map(function(c){
+    var _prevContracts = ST.contracts||[];
+    ST.contracts = _merge(remote.contracts, _prevContracts).map(_normContract).map(function(c){
       if(c.id !== undefined) c.id = String(c.id);
-      // Se houve push recente, preserva mapaMedicoes local (evita race condition)
-      var _lc=(ST.contracts||[]).find(function(x){return String(x.id)===String(c.id);});
-      if(_lc && _lc.mapaMedicoes) {
+      // Merge SEMPRE de mapaMedicoes local — preserva medições salvas localmente
+      // O servidor retorna mapaMedicoes dentro de dados.JSONB, mas pode estar desatualizado
+      var _lc=_prevContracts.find(function(x){return String(x.id)===String(c.id);});
+      if(_lc && _lc.mapaMedicoes && Object.keys(_lc.mapaMedicoes).length>0){
+        // Merge: local prevalece sobre remoto chave a chave (local é mais recente)
         c.mapaMedicoes = Object.assign({}, c.mapaMedicoes||{}, _lc.mapaMedicoes);
-      }
-      if(_lc && _lc.linhasMedicao && (!c.linhasMedicao||!c.linhasMedicao.length)) {
-        c.linhasMedicao = _lc.linhasMedicao;
       }
       return c;
     });
@@ -10295,9 +10430,11 @@ async function pullFromSheets(silent){
     ST.calibRegistros  = _merge(remote.calibRegistros,  ST.calibRegistros).map(_normCalibReg);
     ST.calibNCs        = _merge(remote.calibNCs,        ST.calibNCs).map(_normCalibNC);
     // Desserializa custoAnalises — dados completos no campo 'dados'
-    var _rawCusto = _merge(remote.custoAnalises, ST.custoAnalises);
+    var _prevCusto = ST.custoAnalises || [];
+    var _rawCusto = _merge(remote.custoAnalises, _prevCusto);
     ST.custoAnalises = (_rawCusto||[]).map(function(a){
       var parsed = a;
+      // Desserializa campo dados (JSON string ou objeto)
       if(a.dados && typeof a.dados === 'string'){
         try { parsed = JSON.parse(a.dados); } catch(e){ parsed = a; }
       } else if(a.dados && typeof a.dados === 'object' && a.dados !== null){
@@ -10305,17 +10442,36 @@ async function pullFromSheets(silent){
       }
       // Garante contractId correto
       if(!parsed.contractId) parsed.contractId = a.contrato_id || a.id;
-      // Garante estrutura mínima
+
+      // ── MERGE CRÍTICO: preserva medicao.history local ──────────────────
+      // O servidor pode retornar dados desatualizados — local é fonte de verdade
+      var _lc = _prevCusto.find(function(x){
+        return (x.contractId==parsed.contractId || x.id==parsed.id);
+      });
+      if(_lc && _lc.medicao && _lc.medicao.history &&
+         Object.keys(_lc.medicao.history).length > 0){
+        if(!parsed.medicao) parsed.medicao = {orcado:[],estudo:[],precusto:[],history:{}};
+        if(!parsed.medicao.history) parsed.medicao.history = {};
+        // Merge chave a chave: local prevalece (é mais recente)
+        Object.keys(_lc.medicao.history).forEach(function(mes){
+          var localSnap = _lc.medicao.history[mes];
+          var remoteSnap = parsed.medicao.history[mes];
+          // Usa local se: não existe no remoto, ou local tem savedAt mais recente
+          if(!remoteSnap || !remoteSnap.savedAt ||
+             (localSnap.savedAt && localSnap.savedAt > remoteSnap.savedAt)){
+            parsed.medicao.history[mes] = localSnap;
+          }
+        });
+      }
+
+      // Garante estrutura mínima sem sobrescrever dados existentes
       if(!parsed.dreContas || !Array.isArray(parsed.dreContas)){
         var template = _custoNewAnalise(parsed.contractId);
         parsed.dreContas  = template.dreContas;
         parsed.funcoes    = parsed.funcoes    || template.funcoes;
         parsed.projecoes  = parsed.projecoes  || template.projecoes;
-        if(!parsed.medicao){
-          parsed.medicao = template.medicao;
-        } else {
-          if(!parsed.medicao.history) parsed.medicao.history = {};
-        }
+        if(!parsed.medicao) parsed.medicao = template.medicao;
+        else if(!parsed.medicao.history) parsed.medicao.history = {};
         parsed.memoria    = parsed.memoria    || template.memoria;
       }
       return parsed;
@@ -11515,15 +11671,29 @@ function mapaCtShift(dir){
   if(cts[n]) mapaSelectCt(cts[n].id);
 }
 
+// ── Vínculo direto com Análise de Custo (como na versão funcional) ────────
+function _mapaGetAnalise(){
+  // usa == (loose) para compatibilidade number/string — igual ao _custoAnalise()
+  return (ST.custoAnalises||[]).find(function(a){
+    return (a.contractId!=null && a.contractId==_mapaCtId) ||
+           (a.contrato_id!=null && a.contrato_id==_mapaCtId);
+  })||null;
+}
 function _mapaGetLinhas(ym){
+  // Fonte primária: custoAnalises[].medicao.history[mes].items (vínculo direto)
+  var a=_mapaGetAnalise();
+  if(a && a.medicao && a.medicao.history && a.medicao.history[ym] && a.medicao.history[ym].items){
+    return a.medicao.history[ym].items;
+  }
+  // Fallback: ct.linhasMedicao (compatibilidade)
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var linhas=ct.linhasMedicao||[];
   return linhas.filter(function(l){return l.mesRef===ym||!l.mesRef;});
 }
 function _mapaGetRec(ctId,ym){
-  return (ST.medicoes||[]).find(function(m){
-    return (m.contractId===ctId||m.contrato_id===ctId)&&(m.key===ym||m.competencia===ym);
-  })||null;
+  var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(ctId);}); if(!ct) return null;
+  if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  return ct.mapaMedicoes[ym]||null;
 }
 
 
@@ -11623,26 +11793,34 @@ function _mapaRenderCtInfo(){
 function _mapaRenderKPIs(){
   var el=document.getElementById('mapa-kpis'); if(!el) return;
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
-  var rec=_mapaGetRec(_mapaCtId,_mapaMesKey);
+  // rec = registro do mapa (draft em edição ou salvo) — exatamente como versão funcional
+  var rec=ct.mapaMedicoes&&(ct.mapaMedicoes['__draft__'+_mapaMesKey]||ct.mapaMedicoes[_mapaMesKey])||null;
   var linhas=_mapaGetLinhas(_mapaMesKey);
-  // Compute totals from measurement record
+  // Compute totals from current record (draft ou salvo)
   var totalPrev=0, totalMed=0;
   if(rec&&rec.linhas){
     rec.linhas.forEach(function(rl,i){
       var it=linhas[i]; if(!it) return;
-      var vlTot=(parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0);
-      totalPrev+=parseFloat(rl.previsto||0)*parseFloat(it.vlUnit||0);
-      totalMed +=parseFloat(rl.medido||0)*parseFloat(it.vlUnit||0);
+      var vu=parseFloat(it.vlUnit)||0;
+      // vlUnit fallback via vlTot (compatibilidade com itens salvos sem vlUnit)
+      if(vu===0){ var _vt=parseFloat(it.vlTot)||0; var _q=parseFloat(it.qtd)||0; if(_vt>0&&_q>0) vu=_vt/_q; }
+      totalPrev+=(parseFloat(rl.previsto)||0)*vu;
+      totalMed +=(parseFloat(rl.medido)||0)*vu;
     });
   } else if(linhas.length>0){
     linhas.forEach(function(it){
-      totalPrev+=(parseFloat(it.qtd)||0)*(parseFloat(it.vlUnit)||0);
+      var vu=parseFloat(it.vlUnit)||0;
+      if(vu===0){ var _vt=parseFloat(it.vlTot)||0; var _q=parseFloat(it.qtd)||0; if(_vt>0&&_q>0) vu=_vt/_q; }
+      totalPrev+=(parseFloat(it.qtd)||0)*vu;
     });
   }
-  var difVal=totalPrev-totalMed;
+  var difVal=totalMed-totalPrev;  // Medido - Previsto
   var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'—';
-  var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||0;
-  var histKeys=Object.keys(ct.mapaMedicoes||{});
+  var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||ct.valorGlobal||0;
+  // histKeys: apenas meses reais salvos (sem drafts) — exatamente como versão funcional
+  var histKeys=Object.keys(ct.mapaMedicoes||{}).filter(function(k){
+    return k.indexOf('__draft__')<0 && ct.mapaMedicoes[k] && ct.mapaMedicoes[k].savedAt;
+  });
   var totalAcum=histKeys.reduce(function(s,k){ var r=ct.mapaMedicoes[k]; return s+(r?r.totalMedido||0:0); },0);
   var saldo=vg-totalAcum;
 
@@ -11656,7 +11834,7 @@ function _mapaRenderKPIs(){
   el.innerHTML=
     kpi('📋','Previsto '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalPrev), 'var(--gl)', linhas.length+' linhas')  +
     kpi('✅','Medido '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalMed), 'var(--gnl)', pctEx+'% do previsto') +
-    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0?'#f87171':'#10b981', difVal>0?'A medir / justificar':'Sem diferença') +
+    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0?'#10b981':difVal<0?'#f87171':'var(--t3)', difVal>0?'Acima do previsto':difVal<0?'A medir / justificar':'Sem diferença') +
     kpi('📊','Total Acumulado Medido', fmtBRL(totalAcum), 'var(--ac2)', histKeys.length+' meses registrados') +
     kpi('💵','Saldo do Contrato', fmtBRL(saldo), saldo>=0?'#10b981':'#ef4444', vg?'':'Valor global não informado');
 }
@@ -11674,19 +11852,19 @@ function _mapaRenderTable(){
   var linhas=_mapaGetLinhas(_mapaMesKey);
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
+  // Lê o registro salvo do mês — exatamente como versão funcional
   var rec=ct.mapaMedicoes[_mapaMesKey];
 
-  // Sync / init record
+  // Sync / init record — idêntico à versão funcional
   if(!rec){
     rec={linhas:linhas.map(function(it){return{previsto:parseFloat(it.qtd)||0,medido:0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};}),extraCols:_mapaExtraCols.slice()};
   } else {
     if(!rec.linhas||rec.linhas.length!==linhas.length){
-      var old=rec.linhas||[];
+      var _oldLinhas=rec.linhas||[];
       rec.linhas=linhas.map(function(it,i){
-        return old[i]||{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};
+        return _oldLinhas[i]||{previsto:parseFloat(it.qtd)||0,medido:parseFloat(it.qtd)||0,atestados:0,faltas:0,ferias:0,mobDesmob:0,divergPreCusto:0,obs:'',extra:{}};
       });
     }
-    // Sync extra cols from record
     if(rec.extraCols) _mapaExtraCols=rec.extraCols;
   }
   ct.mapaMedicoes['__draft__'+_mapaMesKey]=rec;
@@ -11774,8 +11952,8 @@ function _mapaRenderTable(){
     var med=parseFloat(rl.medido)||0;
     var prevR=prev*vlUnit;
     var medR=med*vlUnit;
-    var difIdx=prev-med;
-    var difR=prevR-medR;
+    var difIdx=med-prev;   // Medido - Previsto (positivo=acima, negativo=abaixo)
+    var difR=medR-prevR;
 
     totalVlTot+=vlTot;
     totalPrev+=prevR; totalMed+=medR; totalDif+=difR;
@@ -11785,9 +11963,11 @@ function _mapaRenderTable(){
     _mapaExtraCols.forEach(function(ec){ totalExtra[ec.key]+=(parseFloat((rl.extra||{})[ec.key])||0); });
 
     var hasDif=Math.abs(difR)>0.009;
+    var difPositivo=difR>0.009;   // Medido > Previsto = verde (acima do previsto)
+    var difNegativo=difR<-0.009;  // Medido < Previsto = vermelho (abaixo)
     var isZero=med===0&&prev===0&&vlTot===0;
     var hide=_mapaHideZeros&&isZero?'display:none;':'';
-    var rowBg=hasDif?'rgba(245,158,11,.05)':'transparent';
+    var rowBg=difPositivo?'rgba(16,185,129,.04)':difNegativo?'rgba(239,68,68,.04)':'transparent';
     var brd='border-bottom:1px solid rgba(255,255,255,.05);';
 
     function td(c,ex){ return '<td style="padding:5px 7px;'+brd+(ex||'')+'">'+(c||'')+'</td>'; }
@@ -11821,15 +12001,16 @@ function _mapaRenderTable(){
     rows+=td('<span style="font-size:11px;font-family:var(--fn);color:var(--t2)">'+fmtBRL(vlUnit)+'</span>','text-align:right;width:105px');
     rows+=td('<span id="mapa-vtot-'+i+'" style="font-size:12px;font-family:var(--fn);font-weight:700;color:var(--gnl)">'+fmtBRL(vlTot)+'</span>','text-align:right;width:115px');
     // G2 — editável + calculado em tempo real
-    rows+=td(numInp(prev,'previsto','0','border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.06);'),'width:72px;text-align:center');
-    rows+=td(numInp(med,'medido','0','border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.06);'),'width:72px;text-align:center');
+    rows+=td(numInp(parseFloat(prev).toFixed(2),'previsto','0.00','border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.06);font-family:var(--fn);'),'width:80px;text-align:center');
+    rows+=td(numInp(parseFloat(med).toFixed(2),'medido','0.00','border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.06);font-family:var(--fn);'),'width:80px;text-align:center');
     rows+=calcCell('mapa-prevR-'+i, prevR, 'var(--gl)','11px');
     rows+=calcCell('mapa-medR-'+i,  medR,  '#10b981','12px');
     // Diferença índice
     rows+='<td style="padding:4px 8px;text-align:right;vertical-align:middle;'+brd+'">';
-    rows+='<span id="mapa-difIdx-'+i+'" style="font-family:var(--fn);font-size:11px;font-weight:700;color:'+(hasDif?'#f87171':'var(--t3)')+'">'+
-      (difIdx!==0?(difIdx>0?'+':'')+difIdx.toFixed(3).replace(/\.?0+$/, ''):'—')+'</span></td>';
-    rows+=calcCell('mapa-difR-'+i,  difR,  hasDif?'#f87171':'var(--t3)','11px');
+    // Diferença% = Medido% - Previsto% com 2 casas decimais e sinal
+    rows+='<span id="mapa-difIdx-'+i+'" style="font-family:var(--fn);font-size:11px;font-weight:700;color:'+(difPositivo?'#10b981':difNegativo?'#f87171':'var(--t3)')+'">'+
+      (Math.abs(difIdx)>0.001?(difIdx>0?'+':'')+parseFloat(difIdx).toFixed(2).replace(/\.?0+$/, ''):'—')+'</span></td>';
+    rows+=calcCell('mapa-difR-'+i,  difR,  difPositivo?'#10b981':difNegativo?'#f87171':'var(--t3)','11px');
     // G3 — justificativas (editável)
     rows+=td(numInp(at||'','atestados','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
     rows+=td(numInp(fa||'','faltas','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
@@ -11878,6 +12059,8 @@ function _mapaRenderTable(){
     setTimeout(_mapaSyncScrollBars, 30);
     // Resize all obs textareas para mostrar conteúdo completo
     setTimeout(function(){ _resizeObsTAs('mapa-tbody'); }, 40);
+    // Atualiza KPIs após render da tabela
+    setTimeout(function(){ _mapaRenderKPIs(); }, 50);
   });
 }
 
@@ -11909,9 +12092,13 @@ function mapaLinhaChange(i, field, val){
   var med=parseFloat(rl.medido)||0;
   var prevR=prev*vlUnit;
   var medR=med*vlUnit;
-  var difIdx=prev-med;
-  var difR=prevR-medR;
+  var difIdx=med-prev;   // Medido - Previsto
+  var difR=medR-prevR;
   var hasDif=Math.abs(difR)>0.009;
+  var difPos=difR>0.009;
+  var difNeg=difR<-0.009;
+  var corDif=difPos?'#10b981':difNeg?'#f87171':'var(--t3)';
+  var bgRow=difPos?'rgba(16,185,129,.04)':difNeg?'rgba(239,68,68,.04)':'transparent';
 
   var setPrev=document.getElementById('mapa-prevR-'+i);
   var setMed =document.getElementById('mapa-medR-'+i);
@@ -11921,10 +12108,10 @@ function mapaLinhaChange(i, field, val){
 
   if(setPrev) setPrev.textContent=fmtBRL(prevR);
   if(setMed)  setMed.textContent=fmtBRL(medR);
-  if(setDifI){ setDifI.textContent=difIdx!==0?(difIdx>0?'+':'')+difIdx.toFixed(3).replace(/\.?0+$/,''):'—';
-               setDifI.style.color=hasDif?'#f87171':'var(--t3)'; }
-  if(setDifR){ setDifR.textContent=fmtBRL(difR); setDifR.style.color=hasDif?'#f87171':'var(--t3)'; }
-  if(row)     row.style.background=hasDif?'rgba(245,158,11,.05)':'transparent';
+  if(setDifI){ setDifI.textContent=Math.abs(difIdx)>0.001?(difIdx>0?'+':'')+difIdx.toFixed(2):'—';
+               setDifI.style.color=corDif; }
+  if(setDifR){ setDifR.textContent=fmtBRL(difR); setDifR.style.color=corDif; }
+  if(row)     row.style.background=bgRow;
 
   // Atualiza totais do rodapé
   _mapaUpdateFooter(draft, linhas);
@@ -11944,7 +12131,7 @@ function _mapaUpdateFooter(draft, linhas){
     if(vu===0 && _vvt>0 && _qq>0) vu=_vvt/_qq;
     var pr=(parseFloat(rl.previsto)||0)*vu;
     var me=(parseFloat(rl.medido)||0)*vu;
-    tp+=pr; tm+=me; td+=(pr-me);
+    tp+=pr; tm+=me; td+=(me-pr);  // Medido - Previsto
     at+=parseFloat(rl.atestados)||0; fa+=parseFloat(rl.faltas)||0;
     fe+=parseFloat(rl.ferias)||0;    mo+=parseFloat(rl.mobDesmob)||0;
     di+=parseFloat(rl.divergPreCusto)||0;
@@ -12151,14 +12338,12 @@ function mapaSave(){
   if(!draft){
     showToast('⚠ Nenhum dado para salvar.','go'); return;
   }
-  // Compute totals
+  // Compute totals — com vlUnit fallback via vlTot
   var totalPrev=0,totalMed=0;
   draft.linhas.forEach(function(rl,i){
     var it=linhas[i]; if(!it) return;
-    var _sq=parseFloat(it.qtd)||0;
     var vu=parseFloat(it.vlUnit)||0;
-    var _st=parseFloat(it.vlTot)||(_sq*vu);
-    if(vu===0&&_st>0&&_sq>0) vu=_st/_sq;
+    if(vu===0){ var _vt=parseFloat(it.vlTot)||0; var _q=parseFloat(it.qtd)||0; if(_vt>0&&_q>0) vu=_vt/_q; }
     totalPrev+=(parseFloat(rl.previsto)||0)*vu;
     totalMed +=(parseFloat(rl.medido)||0)*vu;
   });
@@ -12179,11 +12364,18 @@ function mapaSave(){
 
   // Bloquear edição após salvar
   _mapaLockedKeys[_mapaMesKey] = true;
-  // Push imediato sem delay — mapaMedicoes precisa chegar ao banco ANTES do próximo pull
+
+  // Salva no localStorage imediatamente (antes do push ao servidor)
+  // Garante que mapaMedicoes não se perde se o push falhar
+  try{ saveLocal(); }catch(e){}
+
+  // Push imediato ao servidor
   window._lastPushAt = Date.now();
   clearTimeout(_syncTimer);
   pushToSheets(true);
+
   renderMapaMedicoes();
+  setTimeout(function(){ _mapaRenderKPIs(); }, 100);
   try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
   showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva e bloqueada! Use 🔓 para editar.','gn',3000);
 }
@@ -21655,7 +21847,13 @@ function custoMedSave(i,k,v) {
   var a=_custoAnalise(); if(!a)return;
   var items=_custoMedItems();
   var numFields=['qtd','vlUnit'];
-  if(items&&items[i]){ items[i][k]=numFields.indexOf(k)>=0?parseFloat(v)||0:v; _custoMedicao(); scheduleAutoSync(); }
+  if(items&&items[i]){
+    items[i][k]=numFields.indexOf(k)>=0?parseFloat(v)||0:v;
+    _custoMedicao();
+    // Backup local imediato — previne perda ao trocar aba
+    try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
+    scheduleAutoSync();
+  }
 }
 function custoAddMedicaoItem() {
   if(_custoMedReadOnly) { showToast('🔒 Desbloqueie o mês para adicionar itens.','go'); return; }
@@ -21678,20 +21876,9 @@ function custoSaveMedicao() {
   if(!a.medicao.history[_custoMedMes]) a.medicao.history[_custoMedMes]={items:[],reajPct:0};
   a.medicao.history[_custoMedMes].savedAt = new Date().toISOString();
   _custoMedReadOnly = true;
-  // Sincroniza linhasMedicao no contrato para o Mapa de Medições
-  var ct = (ST.contracts||[]).find(function(c){ return String(c.id)==String(_custoCtId); });
-  if(ct){
-    var items = a.medicao.history[_custoMedMes].items || [];
-    var outras = (ct.linhasMedicao||[]).filter(function(l){ return l.mesRef !== _custoMedMes; });
-    var novas  = items.map(function(it){
-      var qtd=parseFloat(it.qtd)||0, vu=parseFloat(it.vlUnit)||0;
-      return { cod:it.cod||'', desc:it.desc||'', un:it.un||'vb',
-               qtd:qtd, vlUnit:vu, vlTot:qtd*vu, mesRef:_custoMedMes };
-    });
-    ct.linhasMedicao = outras.concat(novas);
-    var ctIdx=(ST.contracts||[]).findIndex(function(c){return String(c.id)==String(_custoCtId);});
-    if(ctIdx>=0) ST.contracts[ctIdx]=ct;
-  }
+  // O Mapa de Medições lê direto de a.medicao.history[mes].items via _mapaGetLinhas
+  // Backup local imediato antes de enviar ao servidor
+  try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
   scheduleAutoSync();
   _custoMedicao();
   showToast('💾 ' + _custoMedMesLbl(_custoMedMes) + ' salvo com sucesso!','gn',2200);
