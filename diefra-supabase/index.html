@@ -10394,15 +10394,15 @@ async function pullFromSheets(silent){
       });
     }
 
-    ST.contracts = _merge(remote.contracts, ST.contracts).map(_normContract).map(function(c){
+    var _prevContracts = ST.contracts||[];
+    ST.contracts = _merge(remote.contracts, _prevContracts).map(_normContract).map(function(c){
       if(c.id !== undefined) c.id = String(c.id);
-      // Se houve push recente, preserva mapaMedicoes local (evita race condition)
-      var _lc=(ST.contracts||[]).find(function(x){return String(x.id)===String(c.id);});
-      if(_lc && _lc.mapaMedicoes) {
+      // Merge SEMPRE de mapaMedicoes local — preserva medições salvas localmente
+      // O servidor retorna mapaMedicoes dentro de dados.JSONB, mas pode estar desatualizado
+      var _lc=_prevContracts.find(function(x){return String(x.id)===String(c.id);});
+      if(_lc && _lc.mapaMedicoes && Object.keys(_lc.mapaMedicoes).length>0){
+        // Merge: local prevalece sobre remoto chave a chave (local é mais recente)
         c.mapaMedicoes = Object.assign({}, c.mapaMedicoes||{}, _lc.mapaMedicoes);
-      }
-      if(_lc && _lc.linhasMedicao && (!c.linhasMedicao||!c.linhasMedicao.length)) {
-        c.linhasMedicao = _lc.linhasMedicao;
       }
       return c;
     });
@@ -11647,8 +11647,10 @@ function mapaCtShift(dir){
 
 // ── Vínculo direto com Análise de Custo (como na versão funcional) ────────
 function _mapaGetAnalise(){
+  // usa == (loose) para compatibilidade number/string — igual ao _custoAnalise()
   return (ST.custoAnalises||[]).find(function(a){
-    return String(a.contractId)===String(_mapaCtId);
+    return (a.contractId!=null && a.contractId==_mapaCtId) ||
+           (a.contrato_id!=null && a.contrato_id==_mapaCtId);
   })||null;
 }
 function _mapaGetLinhas(ym){
@@ -11786,7 +11788,7 @@ function _mapaRenderKPIs(){
       totalPrev+=(parseFloat(it.qtd)||0)*vu;
     });
   }
-  var difVal=totalPrev-totalMed;
+  var difVal=totalMed-totalPrev;  // Medido - Previsto
   var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'—';
   var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||ct.valorGlobal||0;
   // histKeys: apenas meses reais salvos (sem drafts) — exatamente como versão funcional
@@ -11806,7 +11808,7 @@ function _mapaRenderKPIs(){
   el.innerHTML=
     kpi('📋','Previsto '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalPrev), 'var(--gl)', linhas.length+' linhas')  +
     kpi('✅','Medido '+_mapaMesLbl(_mapaMesKey), fmtBRL(totalMed), 'var(--gnl)', pctEx+'% do previsto') +
-    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0?'#f87171':'#10b981', difVal>0?'A medir / justificar':'Sem diferença') +
+    kpi('⚠','Diferença do Período', fmtBRL(difVal), difVal>0?'#10b981':difVal<0?'#f87171':'var(--t3)', difVal>0?'Acima do previsto':difVal<0?'A medir / justificar':'Sem diferença') +
     kpi('📊','Total Acumulado Medido', fmtBRL(totalAcum), 'var(--ac2)', histKeys.length+' meses registrados') +
     kpi('💵','Saldo do Contrato', fmtBRL(saldo), saldo>=0?'#10b981':'#ef4444', vg?'':'Valor global não informado');
 }
@@ -11924,8 +11926,8 @@ function _mapaRenderTable(){
     var med=parseFloat(rl.medido)||0;
     var prevR=prev*vlUnit;
     var medR=med*vlUnit;
-    var difIdx=prev-med;
-    var difR=prevR-medR;
+    var difIdx=med-prev;   // Medido - Previsto (positivo=acima, negativo=abaixo)
+    var difR=medR-prevR;
 
     totalVlTot+=vlTot;
     totalPrev+=prevR; totalMed+=medR; totalDif+=difR;
@@ -11935,9 +11937,11 @@ function _mapaRenderTable(){
     _mapaExtraCols.forEach(function(ec){ totalExtra[ec.key]+=(parseFloat((rl.extra||{})[ec.key])||0); });
 
     var hasDif=Math.abs(difR)>0.009;
+    var difPositivo=difR>0.009;   // Medido > Previsto = verde (acima do previsto)
+    var difNegativo=difR<-0.009;  // Medido < Previsto = vermelho (abaixo)
     var isZero=med===0&&prev===0&&vlTot===0;
     var hide=_mapaHideZeros&&isZero?'display:none;':'';
-    var rowBg=hasDif?'rgba(245,158,11,.05)':'transparent';
+    var rowBg=difPositivo?'rgba(16,185,129,.04)':difNegativo?'rgba(239,68,68,.04)':'transparent';
     var brd='border-bottom:1px solid rgba(255,255,255,.05);';
 
     function td(c,ex){ return '<td style="padding:5px 7px;'+brd+(ex||'')+'">'+(c||'')+'</td>'; }
@@ -11977,9 +11981,9 @@ function _mapaRenderTable(){
     rows+=calcCell('mapa-medR-'+i,  medR,  '#10b981','12px');
     // Diferença índice
     rows+='<td style="padding:4px 8px;text-align:right;vertical-align:middle;'+brd+'">';
-    rows+='<span id="mapa-difIdx-'+i+'" style="font-family:var(--fn);font-size:11px;font-weight:700;color:'+(hasDif?'#f87171':'var(--t3)')+'">'+
+    rows+='<span id="mapa-difIdx-'+i+'" style="font-family:var(--fn);font-size:11px;font-weight:700;color:'+(difPositivo?'#10b981':difNegativo?'#f87171':'var(--t3)')+'">'+
       (difIdx!==0?(difIdx>0?'+':'')+difIdx.toFixed(3).replace(/\.?0+$/, ''):'—')+'</span></td>';
-    rows+=calcCell('mapa-difR-'+i,  difR,  hasDif?'#f87171':'var(--t3)','11px');
+    rows+=calcCell('mapa-difR-'+i,  difR,  difPositivo?'#10b981':difNegativo?'#f87171':'var(--t3)','11px');
     // G3 — justificativas (editável)
     rows+=td(numInp(at||'','atestados','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
     rows+=td(numInp(fa||'','faltas','0','border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.08);'),'width:72px;text-align:center');
@@ -12061,9 +12065,13 @@ function mapaLinhaChange(i, field, val){
   var med=parseFloat(rl.medido)||0;
   var prevR=prev*vlUnit;
   var medR=med*vlUnit;
-  var difIdx=prev-med;
-  var difR=prevR-medR;
+  var difIdx=med-prev;   // Medido - Previsto
+  var difR=medR-prevR;
   var hasDif=Math.abs(difR)>0.009;
+  var difPos=difR>0.009;
+  var difNeg=difR<-0.009;
+  var corDif=difPos?'#10b981':difNeg?'#f87171':'var(--t3)';
+  var bgRow=difPos?'rgba(16,185,129,.04)':difNeg?'rgba(239,68,68,.04)':'transparent';
 
   var setPrev=document.getElementById('mapa-prevR-'+i);
   var setMed =document.getElementById('mapa-medR-'+i);
@@ -12074,9 +12082,9 @@ function mapaLinhaChange(i, field, val){
   if(setPrev) setPrev.textContent=fmtBRL(prevR);
   if(setMed)  setMed.textContent=fmtBRL(medR);
   if(setDifI){ setDifI.textContent=difIdx!==0?(difIdx>0?'+':'')+difIdx.toFixed(3).replace(/\.?0+$/,''):'—';
-               setDifI.style.color=hasDif?'#f87171':'var(--t3)'; }
-  if(setDifR){ setDifR.textContent=fmtBRL(difR); setDifR.style.color=hasDif?'#f87171':'var(--t3)'; }
-  if(row)     row.style.background=hasDif?'rgba(245,158,11,.05)':'transparent';
+               setDifI.style.color=corDif; }
+  if(setDifR){ setDifR.textContent=fmtBRL(difR); setDifR.style.color=corDif; }
+  if(row)     row.style.background=bgRow;
 
   // Atualiza totais do rodapé
   _mapaUpdateFooter(draft, linhas);
@@ -12096,7 +12104,7 @@ function _mapaUpdateFooter(draft, linhas){
     if(vu===0 && _vvt>0 && _qq>0) vu=_vvt/_qq;
     var pr=(parseFloat(rl.previsto)||0)*vu;
     var me=(parseFloat(rl.medido)||0)*vu;
-    tp+=pr; tm+=me; td+=(pr-me);
+    tp+=pr; tm+=me; td+=(me-pr);  // Medido - Previsto
     at+=parseFloat(rl.atestados)||0; fa+=parseFloat(rl.faltas)||0;
     fe+=parseFloat(rl.ferias)||0;    mo+=parseFloat(rl.mobDesmob)||0;
     di+=parseFloat(rl.divergPreCusto)||0;
@@ -12329,12 +12337,17 @@ function mapaSave(){
 
   // Bloquear edição após salvar
   _mapaLockedKeys[_mapaMesKey] = true;
-  // Push imediato sem delay
+
+  // Salva no localStorage imediatamente (antes do push ao servidor)
+  // Garante que mapaMedicoes não se perde se o push falhar
+  try{ saveLocal(); }catch(e){}
+
+  // Push imediato ao servidor
   window._lastPushAt = Date.now();
   clearTimeout(_syncTimer);
   pushToSheets(true);
+
   renderMapaMedicoes();
-  // Atualiza KPIs imediatamente com valores salvos
   setTimeout(function(){ _mapaRenderKPIs(); }, 100);
   try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
   showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva e bloqueada! Use 🔓 para editar.','gn',3000);
