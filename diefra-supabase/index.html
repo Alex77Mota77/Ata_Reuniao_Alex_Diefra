@@ -9747,7 +9747,19 @@ async function doLogin(){
       if(btnU) btnU.style.display = '';
     }
 
-    // Carrega dados do Supabase e inicia polling
+    // Restaura backup local primeiro (proteção contra pull vazio)
+    try {
+      var _bk = JSON.parse(localStorage.getItem('diefra_backup') || '{}');
+      if((_bk.contracts||[]).length > 0){
+        ST.contracts    = _bk.contracts;
+        ST.custoAnalises= _bk.custoAnalises || ST.custoAnalises;
+        ST.tasks        = _bk.tasks        || ST.tasks;
+        ST.medicoes     = _bk.medicoes     || ST.medicoes;
+        ST.nextId       = _bk.nextId       || ST.nextId;
+      }
+    } catch(e){}
+
+    // Agora busca do servidor (merge inteligente não vai sobrescrever se vazio)
     await pullFromSheets(true);
     startSyncPolling();
     // Mostra botões de admin apenas para Alex Mota
@@ -10167,6 +10179,9 @@ function manualSync(){
 // ── Push: salva ST no Supabase ────────────────────────────────────────────────
 async function pushToSheets_OLD_UNUSED(){}
 async function pushToSheets(silent){
+  // CRÍTICO: não faz push sem autenticação
+  var _tok = _apiToken || localStorage.getItem('diefra_api_token');
+  if(!_tok){ setSyncStatus('idle'); return; }
   if(!silent) setSyncStatus('syncing');
   try {
     window._lastPushAt = Date.now();
@@ -10280,12 +10295,26 @@ async function _pushToSheets_LEGACY(silent){
 
 // ── Pull: carrega ST do Supabase ──────────────────────────────────────────────
 async function pullFromSheets(silent){
+  // CRÍTICO: não faz pull sem autenticação — evita sobrescrever dados locais
+  var _tok = _apiToken || localStorage.getItem('diefra_api_token');
+  if(!_tok){
+    if(!silent) showToast('⚠ Faça login para sincronizar.','rd',2500);
+    setSyncStatus('idle');
+    return;
+  }
   if(!silent) setSyncStatus('syncing','Carregando…');
   try {
     // Uma única chamada ao servidor (mais eficiente que 16 paralelas)
     const remote = await _syncPull();
 
-    function _merge(r,local){ return (Array.isArray(r)&&r.length>0)?r:(local&&local.length>0?local:r||[]); }
+    // Merge inteligente: nunca sobrescreve dados locais com remoto vazio ou menor
+    function _merge(r,local){
+      var remArr = Array.isArray(r) ? r : [];
+      var locArr = Array.isArray(local) ? local : [];
+      if(remArr.length >= locArr.length && remArr.length > 0) return remArr;
+      if(locArr.length > 0) return locArr;
+      return remArr;
+    }
 
     // ── Normalizadores: banco (snake_case) → JS (camelCase) ──────────────
     function _normContract(c){
@@ -10512,6 +10541,8 @@ async function pullFromSheets(silent){
 
 // ── Auto-sync após cada mutação ───────────────────────────────────────────────
 function scheduleAutoSync(){
+  // Backup local imediato — independente do servidor
+  try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
 }
@@ -10527,6 +10558,9 @@ function _updateCountdownPill(){
 }
 
 function startSyncPolling(){
+  // Só inicia polling se autenticado
+  var _tok = _apiToken || localStorage.getItem('diefra_api_token');
+  if(!_tok) return;
   const interval = API_CFG.syncInterval || 60;
   _pollCountdown = interval;
   if(_countdownTimer) clearInterval(_countdownTimer);
