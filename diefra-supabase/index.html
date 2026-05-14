@@ -3678,7 +3678,7 @@ console.log('[DIEFRA] Client v2 carregado. Servidor:', DIEFRA_API_URL);
       <button class="btn btn-s btn-sm" onclick="custoAddContaCusto()">＋ Linha</button>
       <button class="btn btn-s btn-sm" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--ac2)" onclick="custoAddColuna()">＋ Coluna</button>
       <button class="btn btn-s btn-sm" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--gl)" onclick="custoRecalcEstudo()">🔄 Recalc</button>
-      <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#10b981;font-weight:800" onclick="custoVincularDRE(true)" title="Sincroniza Receita da Linhas de Medição + Custos da Memória na DRE">⚡ Vincular DRE</button>
+      <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#10b981;font-weight:800" onclick="custoVincularDRE(true)" title="Vincula SOMENTE o Pré-Custo: Receita do Mapa de Medições + Custos da Memória de Cálculo. Orçado e Estudo ficam para digitação manual.">⚡ Vincular Pré-Custo</button>
       <button class="btn btn-s btn-sm" style="background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.4);color:#c4b5fd;font-weight:700" onclick="dreSalvarMes()" title="Salvar snapshot mensal da DRE e bloquear edição">💾 Salvar Mês</button>
       <div id="custo-dre-lock-badge" style="display:none;font-size:10px;font-weight:700;color:#f87171;letter-spacing:.5px;padding:3px 8px;border:1px solid rgba(239,68,68,.3);border-radius:8px;background:rgba(239,68,68,.08)">🔒 BLOQUEADO</div>
       <div id="custo-dre-vinc-status" style="font-size:10px;color:rgba(16,185,129,.7);letter-spacing:.5px"></div>
@@ -11707,10 +11707,10 @@ function mapaCtShift(dir){
 
 // ── Vínculo direto com Análise de Custo (como na versão funcional) ────────
 function _mapaGetAnalise(){
-  // usa == (loose) para compatibilidade number/string — igual ao _custoAnalise()
+  if(!_mapaCtId) return null;
+  var _id = String(_mapaCtId);
   return (ST.custoAnalises||[]).find(function(a){
-    return (a.contractId!=null && a.contractId==_mapaCtId) ||
-           (a.contrato_id!=null && a.contrato_id==_mapaCtId);
+    return String(a.contractId)===_id || String(a.contrato_id)===_id || String(a.id)===_id;
   })||null;
 }
 function _mapaGetLinhas(ym){
@@ -11887,7 +11887,13 @@ var _mapaExtraCols = [];  // [{key, label}]
 function _mapaRenderTable(){
   var tbl=document.getElementById('mapa-tbl'); if(!tbl) return;
   var linhas=_mapaGetLinhas(_mapaMesKey);
+  // Garantir _mapaCtId como String
+  if(_mapaCtId) _mapaCtId = String(_mapaCtId);
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
+  if(!ct.id && ST.contracts && ST.contracts.length>0){
+    ct = ST.contracts[0];
+    _mapaCtId = String(ct.id);
+  }
   if(!ct.mapaMedicoes) ct.mapaMedicoes={};
   // Lê o registro salvo do mês — exatamente como versão funcional
   var rec=ct.mapaMedicoes[_mapaMesKey];
@@ -20654,7 +20660,14 @@ function _custoRenderTab(tab) {
   if(tab==='capa')     _custoCapa();
   if(tab==='estudo')   _custoEstudo();
   if(tab==='memoria')  _custoMemoria();
-  if(tab==='medicao')  { if(!_custoMedMes) { _custoMedMes = _custoYM(); _custoMedReadOnly = _custoMedIsSaved(_custoMedMes); } _custoMedicao(); }
+  if(tab==='medicao')  {
+    // Sincroniza mês com o Mapa de Medições se ainda não foi selecionado
+    if(!_custoMedMes || _custoMedMes===''){
+      _custoMedMes = (_mapaMesKey && _mapaMesKey!=='') ? _mapaMesKey : _custoYM();
+    }
+    _custoMedReadOnly = _custoMedIsSaved(_custoMedMes);
+    _custoMedicao();
+  }
   if(tab==='funcoes')  { _custoFuncoes(); _refreshMemoriaIfOpen(); _refreshRentabIfOpen(); }
   if(tab==='epi')      _custoEPI();
   if(tab==='encargos') _custoEncargos();
@@ -21561,7 +21574,11 @@ function custoMedScrollSync(src) {
 function _custoMedicao() {
   var a = _custoAnalise(); if(!a) return;
   // Garante que temos um mês selecionado
-  if(!_custoMedMes) { _custoMedMes = _custoYM(); _custoMedReadOnly = _custoMedIsSaved(_custoMedMes); }
+  // Se o Mapa de Medições tem um mês ativo, sincroniza com ele
+  if(!_custoMedMes) {
+    _custoMedMes = (_mapaMesKey && _mapaMesKey !== '') ? _mapaMesKey : _custoYM();
+    _custoMedReadOnly = _custoMedIsSaved(_custoMedMes);
+  }
   var tbody = document.getElementById('custo-medicao-tbody'); if(!tbody) return;
 
   // Badge de mês
@@ -25841,29 +25858,28 @@ var CUSTO_SEC_DRE_MAP = {
 // ── Função principal de vinculação ──────────────────────────────────────────
 function custoVincularDRE(showMsg) {
   var a = _custoAnalise(); if(!a) return;
-  var cenarios = ['orcado','estudo','precusto'];
+  // ── REGRA: Vincular DRE afeta SOMENTE o cenário "pré-custo" ──────────────
+  // Orçado e Estudo são de digitação MANUAL pelo usuário
+  // Pré-Custo é o cenário real vinculado às medições e à memória de cálculo
+  var cenarios = ['precusto'];
 
-  // ── PASSO 1: RECEITA ← Medição do mês ativo na DRE ─────────────────────
-  // Cada DRE representa 1 mês — usa o Medido R$ do mapa para aquele mês
+  // ── PASSO 1: RECEITA ← Mapa de Medições do mês ativo ────────────────────
+  // Usa o valor MEDIDO do mapa (não previsto) como receita do mês
   var _mesRef = _dreMesAtivo || _dreYM(0);
-  cenarios.forEach(function(cn) {
-    // Tenta pegar receita do mapa de medições do mês ativo
-    var _ctDRE = (ST.contracts||[]).find(function(c){
-      return String(c.id)==String(_custoCtId)||String(c.id)==String(a.contractId);
-    });
-    var _mapaRec = _ctDRE && _ctDRE.mapaMedicoes && _ctDRE.mapaMedicoes[_mesRef];
-    var medTotal = 0;
-    if(_mapaRec && _mapaRec.totalMedido > 0){
-      // Usa o valor medido real do mapa
-      medTotal = _mapaRec.totalMedido;
-    } else {
-      // Fallback: soma qtd × vlUnit das linhas do mês
-      medTotal = _dreGetReceitaMed(a, cn);
-    }
-    _dreSetConta(a, '8101011111', cn, medTotal);
+  var _ctDRE = (ST.contracts||[]).find(function(c){
+    return String(c.id)==String(_custoCtId)||String(c.id)==String(a.contractId);
   });
+  var _mapaRec = _ctDRE && _ctDRE.mapaMedicoes && _ctDRE.mapaMedicoes[_mesRef];
+  var medTotal = 0;
+  if(_mapaRec && (_mapaRec.totalMedido||0) > 0){
+    medTotal = _mapaRec.totalMedido;
+  } else {
+    // Fallback: soma das linhas de medição do mês
+    medTotal = _dreGetReceitaMed(a, 'precusto');
+  }
+  _dreSetConta(a, '8101011111', 'precusto', medTotal);
 
-  // ── PASSO 2: CUSTOS ← Memória (grupos por tipo) ────────────────────────
+  // ── PASSO 2: CUSTOS ← Memória de Cálculo (somente pré-custo) ────────────
   // Zerar primeiro as contas que serão auto-preenchidas
   var contasAutomatic = [
     '8202022221','8202052251','8202062266','8202062267','8202062268',
@@ -26301,8 +26317,9 @@ var _mapaLockedKeys = {};  // { 'YYYY-MM': true }
 
 // ── Renderização principal do Mapa de Medições ──────────────────────────
 function renderMapaMedicoes(){
-  // Init de contrato e mês — igual à versão funcional
-  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=ST.contracts[0].id;
+  // Init de contrato e mês
+  if(!_mapaCtId && ST.contracts && ST.contracts.length>0) _mapaCtId=String(ST.contracts[0].id);
+  if(_mapaCtId) _mapaCtId = String(_mapaCtId);
   if(!_mapaMesKey) _mapaMesKey = _mapaYM();
   _mapaRenderNav();
   _mapaRenderCtInfo();
