@@ -11851,15 +11851,15 @@ function _mapaRenderKPIs(){
   var difVal=totalMed-totalPrev;  // Medido - Previsto
   var pctEx=totalPrev>0?(totalMed/totalPrev*100).toFixed(1):'—';
   var vg=(ct.valorGlobalOriginal||0)+(ct.ultimoAditivo||0)||ct.saldoGlobal||ct.valorGlobal||0;
-  // histKeys: meses ÚNICOS salvos (sem drafts, sem contar edições repetidas)
-  // Formato YYYY-MM garante que o mesmo mês editado N vezes conta apenas 1 vez
-  var _todosKeys=Object.keys(ct.mapaMedicoes||{}).filter(function(k){
-    return k.indexOf('__draft__')<0 && ct.mapaMedicoes[k] && ct.mapaMedicoes[k].savedAt;
-  });
-  // Garante unicidade (Set) — mesmo que haja chaves duplicadas por qualquer motivo
-  var histKeys=[...new Set(_todosKeys)].sort();
-  var totalAcum=histKeys.reduce(function(s,k){ var r=ct.mapaMedicoes[k]; return s+(r?parseFloat(r.totalMedido)||0:0); },0);
-  var saldo=vg-totalAcum;
+  // histKeys: meses reais salvos (sem drafts, únicos por YYYY-MM)
+  var _mapaHistObj = ct.mapaMedicoes || {};
+  var histKeys = [...new Set(Object.keys(_mapaHistObj).filter(function(k){
+    return k.indexOf('__draft__') < 0 && _mapaHistObj[k] && _mapaHistObj[k].savedAt;
+  }))].sort();
+  var totalAcum = histKeys.reduce(function(s,k){
+    return s + (parseFloat((_mapaHistObj[k]||{}).totalMedido)||0);
+  },0);
+  var saldo = vg - totalAcum;
 
   function kpi(icon,lbl,val,cor,sub){
     return '<div style="background:linear-gradient(145deg,rgba(0,0,0,.42),rgba(0,0,0,.22));border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 16px">'+
@@ -12414,9 +12414,24 @@ function mapaSave(){
   renderMapaMedicoes();
   setTimeout(function(){
     _mapaRenderKPIs();
-    _mapaRenderHist();  // força atualização do badge após salvar
+    _mapaRenderHist();
   }, 100);
   try{ renderMedicoes(); renderFinanceiro(); renderDashboard(); }catch(e){}
+
+  // ── Sugerir vincular DRE se o mês ainda não tem snapshot ─────────────
+  setTimeout(function(){
+    var _an = (ST.custoAnalises||[]).find(function(a){
+      return String(a.contractId)==String(_mapaCtId)||String(a.contrato_id)==String(_mapaCtId);
+    });
+    var _dreExiste = _an && _an.dreHistorico && _an.dreHistorico[_mapaMesKey];
+    if(!_dreExiste && _an){
+      showToast(
+        '💡 Medição salva! Vá em Análise de Custo → Estudo (DRE) → ⚡ Vincular DRE para registrar a receita do mês.',
+        'go', 6000
+      );
+    }
+  }, 500);
+
   showToast('💾 Medição de '+_mapaMesLbl(_mapaMesKey)+' salva e bloqueada! Use 🔓 para editar.','gn',3000);
 }
 
@@ -12432,7 +12447,11 @@ function mapaHistToggle(){
 function _mapaRenderHist(){
   var ct=(ST.contracts||[]).find(function(c){return String(c.id)===String(_mapaCtId);})||{};
   var mapa=ct.mapaMedicoes||{};
-  // Meses únicos salvos (sem drafts, sem contar edições repetidas)
+  // Análise vinculada — para verificar DRE
+  var _anHist = _mapaGetAnalise();
+  var _dreHist = (_anHist && _anHist.dreHistorico) || {};
+
+  // Meses únicos salvos (sem drafts) — fonte: mapaMedicoes
   var keys=[...new Set(Object.keys(mapa).filter(function(k){
     return k.indexOf('__draft__')<0 && mapa[k] && mapa[k].savedAt;
   }))].sort();
@@ -12452,39 +12471,51 @@ function _mapaRenderHist(){
   });
 
   if(filt.length===0){
-    el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">'+(q?'Nenhum resultado para "'+q+'"':'📝 Nenhuma medição salva ainda.')+'</div>';
+    el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">'+(q?'Nenhum resultado para "'+q+'"':'📝 Nenhuma medição salva ainda.<br>Preencha os dados e clique em 💾 Salvar.')+'</div>';
   } else {
     var html='';
     filt.forEach(function(ym){
-      var r=mapa[ym];
+      var r=mapa[ym]; if(!r) return;
       var isAct=ym===_mapaMesKey;
       var bg=isAct?'rgba(56,189,248,.07)':'transparent';
       var nLinhas=r.linhas?r.linhas.length:0;
-      var difVal=(r.totalMedido||0)-(r.totalPrevisto||0); // Medido - Previsto
+      var difVal=(r.totalMedido||0)-(r.totalPrevisto||0);
       var hasDif=Math.abs(difVal)>0.01;
       var savedStr=_mapaSavedStr(r.savedAt||'');
       var lbl=_mapaMesLbl(ym);
-      html+='<div style="display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;background:'+bg+'"';
+      // Badge DRE — verde se tem snapshot, amarelo se não tem
+      var _temDRE = !!_dreHist[ym];
+      var _dreBadge = _temDRE
+        ? '<span style="font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(124,58,237,.15);color:#c4b5fd;border:1px solid rgba(124,58,237,.25);white-space:nowrap">📊 DRE ✅</span>'
+        : '<span onclick="event.stopPropagation();custoTab(\'estudo\',null)" title="Ir para DRE e vincular" style="font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(245,158,11,.1);color:#fbbf24;border:1px solid rgba(245,158,11,.2);cursor:pointer;white-space:nowrap">⚡ Vincular DRE</span>';
+
+      html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;background:'+bg+'"';
       html+=' onmouseover="this.style.background=\'rgba(255,255,255,.04)\'"';
       html+=' onmouseout="this.style.background=\''+bg+'\'">';
-      html+='<div onclick="mapaHistJump(\''+ym+'\')" style="min-width:88px;padding:5px 10px;border-radius:8px;text-align:center;font-size:12px;font-weight:800;font-family:var(--fn);cursor:pointer;';
+      // Mês — clicável para navegar
+      html+='<div onclick="mapaHistJump(\''+ym+'\')" style="min-width:84px;padding:5px 10px;border-radius:8px;text-align:center;font-size:12px;font-weight:800;font-family:var(--fn);cursor:pointer;';
       html+=(isAct?'background:rgba(56,189,248,.2);color:var(--ac2);border:1.5px solid rgba(56,189,248,.5)':'background:rgba(16,185,129,.1);color:var(--gnl);border:1px solid rgba(16,185,129,.22)')+'">';
       html+=lbl+'</div>';
+      // Dados financeiros
       html+='<div onclick="mapaHistJump(\''+ym+'\')" style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;min-width:0">';
-      html+='<div style="min-width:64px;font-size:11px;color:var(--t2)">'+nLinhas+' linhas</div>';
-      html+='<div style="flex:1"><div style="font-family:var(--fn);font-size:13px;font-weight:700;color:var(--gnl)">'+fmtBRL(r.totalMedido||0)+'</div>';
-      html+='<div style="font-size:9px;color:var(--t3)">previsto: '+fmtBRL(r.totalPrevisto||0)+'</div></div>';
+      html+='<div style="min-width:56px;font-size:10px;color:var(--t2)">'+nLinhas+' linha'+(nLinhas!==1?'s':'')+'</div>';
+      html+='<div style="flex:1">';
+      html+='<div style="font-family:var(--fn);font-size:13px;font-weight:700;color:var(--gnl)">'+fmtBRL(r.totalMedido||0)+'</div>';
+      html+='<div style="font-size:9px;color:var(--t3)">previsto: '+fmtBRL(r.totalPrevisto||0)+'</div>';
+      html+='</div>';
+      // Diferença
       if(hasDif){
         var _isDifPos=difVal>0;
-        var _difBg=_isDifPos?'rgba(16,185,129,.1)':'rgba(239,68,68,.1)';
-        var _difBrd=_isDifPos?'rgba(16,185,129,.22)':'rgba(239,68,68,.22)';
-        var _difCor=_isDifPos?'#10b981':'#f87171';
-        var _difIco=_isDifPos?'▲':'▼';
-        html+='<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:'+_difBg+';color:'+_difCor+';border:1px solid '+_difBrd+';white-space:nowrap">'+_difIco+' '+fmtBRL(Math.abs(difVal))+'</span>';
-      } else html+='<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,.1);color:var(--gnl);white-space:nowrap">✅ OK</span>';
+        html+='<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:'+(_isDifPos?'rgba(16,185,129,.1)':'rgba(239,68,68,.1)')+';color:'+(_isDifPos?'#10b981':'#f87171')+';border:1px solid '+(_isDifPos?'rgba(16,185,129,.22)':'rgba(239,68,68,.22)')+';white-space:nowrap">'+(_isDifPos?'▲':'▼')+' '+fmtBRL(Math.abs(difVal))+'</span>';
+      } else {
+        html+='<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,.1);color:var(--gnl);white-space:nowrap">✅ OK</span>';
+      }
+      // Badge DRE
+      html+=_dreBadge;
       if(savedStr) html+='<span style="font-size:9px;color:var(--t3);white-space:nowrap">'+savedStr+'</span>';
       if(isAct) html+='<span style="font-size:10px;font-weight:800;color:var(--ac2);white-space:nowrap">← aberto</span>';
-      html+='<span style="font-size:14px;color:var(--t3)">›</span></div>';
+      html+='<span style="font-size:14px;color:var(--t3)">›</span>';
+      html+='</div>';
       html+='<button onclick="event.stopPropagation();mapaDeleteMonth(\''+ym+'\')" style="padding:4px 9px;border-radius:7px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.07);color:#f87171;font-size:10px;cursor:pointer">🗑</button>';
       html+='</div>';
     });
@@ -25812,10 +25843,23 @@ function custoVincularDRE(showMsg) {
   var a = _custoAnalise(); if(!a) return;
   var cenarios = ['orcado','estudo','precusto'];
 
-  // ── PASSO 1: RECEITA ← Linhas de Medição ───────────────────────────────
-  // Para cada cenário, somar qtd × vlUnit das linhas de medição
+  // ── PASSO 1: RECEITA ← Medição do mês ativo na DRE ─────────────────────
+  // Cada DRE representa 1 mês — usa o Medido R$ do mapa para aquele mês
+  var _mesRef = _dreMesAtivo || _dreYM(0);
   cenarios.forEach(function(cn) {
-    var medTotal = _dreGetReceitaMed(a, cn);
+    // Tenta pegar receita do mapa de medições do mês ativo
+    var _ctDRE = (ST.contracts||[]).find(function(c){
+      return String(c.id)==String(_custoCtId)||String(c.id)==String(a.contractId);
+    });
+    var _mapaRec = _ctDRE && _ctDRE.mapaMedicoes && _ctDRE.mapaMedicoes[_mesRef];
+    var medTotal = 0;
+    if(_mapaRec && _mapaRec.totalMedido > 0){
+      // Usa o valor medido real do mapa
+      medTotal = _mapaRec.totalMedido;
+    } else {
+      // Fallback: soma qtd × vlUnit das linhas do mês
+      medTotal = _dreGetReceitaMed(a, cn);
+    }
     _dreSetConta(a, '8101011111', cn, medTotal);
   });
 
@@ -26082,7 +26126,11 @@ function _dreSalvarSnapshot(mes) {
   };
   scheduleAutoSync();
   _dreAtualizaMesUI();
+  // Atualiza badge do histórico
+  var _cnt = document.getElementById('dre-hist-count');
+  if(_cnt) _cnt.textContent = '('+Object.keys(a.dreHistorico||{}).length+' meses)';
   if(_dreHistOpen) dreHistRender();
+  else { dreHistToggle(); } // Abre automaticamente após salvar
   showToast('💾 DRE de '+_dreMesLbl(mes)+' salva e bloqueada por '+user,'gn',3500);
 }
 
@@ -26127,8 +26175,11 @@ function dreHistRender() {
   html += '<th style="text-align:right;padding:4px 8px">Despesa</th>';
   html += '<th style="text-align:right;padding:4px 8px">Resultado</th>';
   html += '<th style="text-align:right;padding:4px 8px">Margem%</th>';
+  html += '<th style="text-align:right;padding:4px 8px">Acumulado</th>';
   html += '<th style="text-align:left;padding:4px 8px">Salvo por</th>';
   html += '<th style="padding:4px 4px"></th></tr></thead><tbody>';
+  // Calcular acumulado progressivo
+  var _acumRec=0, _acumDesp=0, _acumRes=0;
 
   keys.forEach(function(mes) {
     var s = hist[mes];
@@ -26143,6 +26194,11 @@ function dreHistRender() {
     html += '<td style="padding:6px 8px;text-align:right;font-family:monospace;color:#f87171">'+_fmtBRL(s.despesa)+'</td>';
     html += '<td style="padding:6px 8px;text-align:right;font-family:monospace;color:'+color+';font-weight:700">'+_fmtBRL(s.resultado)+'</td>';
     html += '<td style="padding:6px 8px;text-align:right;color:'+color+'">'+pct+'</td>';
+    _acumRec  += (s.receita||0);
+    _acumDesp += (s.despesa||0);
+    _acumRes  += (s.resultado||0);
+    var _pctAcum = _acumRec>0?((_acumRes/_acumRec)*100).toFixed(1)+'%':'—';
+    html += '<td style="padding:6px 8px;text-align:right;font-family:monospace;font-size:10px;color:'+(_acumRes>=0?'#10b981':'#f87171')+'">'+_fmtBRL(_acumRes)+'<br><span style="font-size:9px;opacity:.7">'+_pctAcum+'</span></td>';
     html += '<td style="padding:6px 8px;color:var(--t3)">'+s.savedBy+'<br><span style="font-size:9px;opacity:.6">'+dt+'</span></td>';
     html += '<td style="padding:4px 4px;text-align:center">';
     html += '<button onclick="event.stopPropagation();dreUnlockMes(\''+mes+'\')" title="Desbloquear para editar" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:6px;color:var(--gl);font-size:10px;cursor:pointer;padding:2px 6px">🔓</button> ';
