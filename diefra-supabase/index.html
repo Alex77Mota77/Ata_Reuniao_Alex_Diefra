@@ -10182,11 +10182,22 @@ async function pushToSheets(silent){
       contracts:       ST.contracts,
       tasks:           ST.tasks,
       participants:    ST.participants,
-      gestoresUnidade: ST.gestoresUnidade,
+      managers:        ST.managers        || [],
+      vacations:       ST.vacations       || [],
+      trips:           ST.trips           || [],
+      frota:           (ST.frota||[]).map(function(v){ var r=Object.assign({},v); delete r.foto; return r; }),
+      dp:              (ST.dp||[]).map(function(p){ var r=Object.assign({},p); delete r.foto; return r; }),
+      funcoes:         ST.funcoes         || [],
+      audits:          ST.audits          || [],
+      auditsGestao:    ST.auditsGestao    || [],
+      entregaveis:     ST.entregaveis     || [],
+      epiItens:        ST.epiItens        || [],
+      epiEntregas:     ST.epiEntregas     || [],
       medicoes:        ST.medicoes,
       calibEquips:     ST.calibEquips,
       calibNCs:        ST.calibNCs,
       calibRegistros:  ST.calibRegistros,
+      calibVerifs:     ST.calibVerifs     || [],
       // custoAnalises: envia objeto COMPLETO serializado (preserva medicao.history)
       custoAnalises:   (ST.custoAnalises||[]).map(function(a){ return {
         id: a.id,
@@ -10448,6 +10459,11 @@ async function pullFromSheets(silent){
     ST.calibEquips     = _merge(remote.calibEquips,     ST.calibEquips).map(_normCalibEquip);
     ST.calibRegistros  = _merge(remote.calibRegistros,  ST.calibRegistros).map(_normCalibReg);
     ST.calibNCs        = _merge(remote.calibNCs,        ST.calibNCs).map(_normCalibNC);
+    ST.calibVerifs     = _merge(remote.calibVerifs,     ST.calibVerifs     || []);
+    ST.auditsGestao    = _merge(remote.auditsGestao,    ST.auditsGestao    || []);
+    ST.dp              = _merge(remote.dp,              ST.dp              || []);
+    ST.funcoes         = _merge(remote.funcoes,         ST.funcoes         || []);
+    ST.managers        = _merge(remote.managers,        ST.managers        || []);
     // Desserializa custoAnalises — dados completos no campo 'dados'
     var _prevCusto = ST.custoAnalises || [];
     var _rawCusto = _merge(remote.custoAnalises, _prevCusto);
@@ -10504,6 +10520,7 @@ async function pullFromSheets(silent){
       if(me && av) _updateNavAvatar(av, me);
     }
     _aplicarPermissoes(); // garante botões corretos após carregar dados
+    recalcAllContracts(); // CRÍTICO: recalcula _totalFaturado, _totalCusto, etc. antes dos renders
     renderDashboard(); renderContracts(); renderFinanceiro();
     renderTasks(); renderManagers(); renderVacations(); renderParticipants();
     if(document.getElementById('agenda')?.classList.contains('active'))      renderAgenda();
@@ -10513,6 +10530,8 @@ async function pullFromSheets(silent){
     if(document.getElementById('medicoes')?.classList.contains('active'))    renderMedicoes();
     if(document.getElementById('frota')?.classList.contains('active'))       renderFrota();
     if(document.getElementById('epi')?.classList.contains('active'))         renderEPI();
+    if(document.getElementById('dp')?.classList.contains('active'))          renderDPCards && renderDPCards();
+    if(document.getElementById('gestores-unidade')?.classList.contains('active')) renderManagers && renderManagers();
 
     _lastSyncAt = new Date();
     if(!silent) setSyncStatus('ok', _lastSyncAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
@@ -10552,15 +10571,34 @@ function loadLocal(){
     if(!raw) return false;
     var bk = JSON.parse(raw);
     if(!bk || typeof bk !== 'object') return false;
-    // Só restaura se o backup tiver dados
-    if((bk.contracts||[]).length === 0 && (bk.custoAnalises||[]).length === 0) return false;
+    // Só restaura se o backup tiver dados relevantes
+    var hasData = (bk.contracts||[]).length > 0 || (bk.custoAnalises||[]).length > 0
+      || (bk.audits||[]).length > 0 || (bk.auditsGestao||[]).length > 0
+      || (bk.entregaveis||[]).length > 0 || (bk.tasks||[]).length > 0;
+    if(!hasData) return false;
     ST.contracts     = bk.contracts     || ST.contracts;
     ST.custoAnalises = bk.custoAnalises || ST.custoAnalises;
     ST.tasks         = bk.tasks         || ST.tasks;
     ST.medicoes      = bk.medicoes      || ST.medicoes;
     ST.participants  = bk.participants  || ST.participants;
+    ST.managers      = bk.managers      || ST.managers;
+    ST.vacations     = bk.vacations     || ST.vacations;
+    ST.trips         = bk.trips         || ST.trips;
+    ST.frota         = bk.frota         || ST.frota;
+    ST.dp            = bk.dp            || ST.dp;
+    ST.funcoes       = bk.funcoes       || ST.funcoes;
+    ST.audits        = bk.audits        || ST.audits;
+    ST.auditsGestao  = bk.auditsGestao  || ST.auditsGestao;
+    ST.entregaveis   = bk.entregaveis   || ST.entregaveis;
+    ST.epiItens      = bk.epiItens      || ST.epiItens;
+    ST.epiEntregas   = bk.epiEntregas   || ST.epiEntregas;
+    ST.calibEquips   = bk.calibEquips   || ST.calibEquips;
+    ST.calibRegistros= bk.calibRegistros|| ST.calibRegistros;
+    ST.calibVerifs   = bk.calibVerifs   || ST.calibVerifs;
+    ST.calibNCs      = bk.calibNCs      || ST.calibNCs;
     ST.nextId        = bk.nextId        || ST.nextId;
-    console.log('[DIEFRA] loadLocal: restaurados', (ST.contracts||[]).length, 'contratos');
+    console.log('[DIEFRA] loadLocal: restaurados', (ST.contracts||[]).length, 'contratos,',
+      (ST.audits||[]).length, 'audits,', (ST.entregaveis||[]).length, 'entregaveis');
     return true;
   } catch(e){
     console.warn('[DIEFRA] loadLocal falhou:', e.message);
@@ -10569,7 +10607,8 @@ function loadLocal(){
 }
 
 function scheduleAutoSync(){
-  saveLocal(); // backup local imediato antes de agendar push
+  recalcAllContracts(); // atualiza campos derivados (_totalFaturado, etc)
+  saveLocal();          // backup local completo após recalc
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
 }

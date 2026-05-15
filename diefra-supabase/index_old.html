@@ -9748,16 +9748,7 @@ async function doLogin(){
     }
 
     // Restaura backup local primeiro (proteção contra pull vazio)
-    try {
-      var _bk = JSON.parse(localStorage.getItem('diefra_backup') || '{}');
-      if((_bk.contracts||[]).length > 0){
-        ST.contracts    = _bk.contracts;
-        ST.custoAnalises= _bk.custoAnalises || ST.custoAnalises;
-        ST.tasks        = _bk.tasks        || ST.tasks;
-        ST.medicoes     = _bk.medicoes     || ST.medicoes;
-        ST.nextId       = _bk.nextId       || ST.nextId;
-      }
-    } catch(e){}
+    loadLocal();
 
     // Agora busca do servidor (merge inteligente não vai sobrescrever se vazio)
     await pullFromSheets(true);
@@ -10185,8 +10176,7 @@ async function pushToSheets(silent){
   if(!silent) setSyncStatus('syncing');
   try {
     window._lastPushAt = Date.now();
-    // Backup local ANTES do push (garante persistência mesmo se falhar)
-    try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
+    saveLocal(); // garante persistência mesmo se o push falhar
 
     await _syncPush({
       contracts:       ST.contracts,
@@ -10540,9 +10530,46 @@ async function pullFromSheets(silent){
 }
 
 // ── Auto-sync após cada mutação ───────────────────────────────────────────────
+// ── Persistência local ────────────────────────────────────────────────────
+// Salva o estado completo no localStorage como backup offline
+// Chamado antes de qualquer push ao servidor e ao salvar dados críticos
+function saveLocal(){
+  try{
+    var snapshot = JSON.stringify(ST);
+    localStorage.setItem('diefra_backup', snapshot);
+    localStorage.setItem('diefra_state_ts', Date.now().toString());
+    return true;
+  } catch(e){
+    console.warn('[DIEFRA] saveLocal falhou:', e.message);
+    return false;
+  }
+}
+
+// Restaura do backup local — chamado no login antes do pull
+function loadLocal(){
+  try{
+    var raw = localStorage.getItem('diefra_backup') || localStorage.getItem('diefra_state');
+    if(!raw) return false;
+    var bk = JSON.parse(raw);
+    if(!bk || typeof bk !== 'object') return false;
+    // Só restaura se o backup tiver dados
+    if((bk.contracts||[]).length === 0 && (bk.custoAnalises||[]).length === 0) return false;
+    ST.contracts     = bk.contracts     || ST.contracts;
+    ST.custoAnalises = bk.custoAnalises || ST.custoAnalises;
+    ST.tasks         = bk.tasks         || ST.tasks;
+    ST.medicoes      = bk.medicoes      || ST.medicoes;
+    ST.participants  = bk.participants  || ST.participants;
+    ST.nextId        = bk.nextId        || ST.nextId;
+    console.log('[DIEFRA] loadLocal: restaurados', (ST.contracts||[]).length, 'contratos');
+    return true;
+  } catch(e){
+    console.warn('[DIEFRA] loadLocal falhou:', e.message);
+    return false;
+  }
+}
+
 function scheduleAutoSync(){
-  // Backup local imediato — independente do servidor
-  try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
+  saveLocal(); // backup local imediato antes de agendar push
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
 }
@@ -12409,9 +12436,8 @@ function mapaSave(){
   // Bloquear edição após salvar
   _mapaLockedKeys[_mapaMesKey] = true;
 
-  // Salva no localStorage imediatamente (antes do push ao servidor)
-  // Garante que mapaMedicoes não se perde se o push falhar
-  try{ saveLocal(); }catch(e){}
+  // Salva localmente antes do push — garante dados mesmo se servidor falhar
+  saveLocal();
 
   // Push imediato ao servidor
   window._lastPushAt = Date.now();
@@ -21948,8 +21974,7 @@ function custoMedSave(i,k,v) {
   if(items&&items[i]){
     items[i][k]=numFields.indexOf(k)>=0?parseFloat(v)||0:v;
     _custoMedicao();
-    // Backup local imediato — previne perda ao trocar aba
-    try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
+    saveLocal(); // previne perda ao trocar aba
     scheduleAutoSync();
   }
 }
@@ -21975,8 +22000,7 @@ function custoSaveMedicao() {
   a.medicao.history[_custoMedMes].savedAt = new Date().toISOString();
   _custoMedReadOnly = true;
   // O Mapa de Medições lê direto de a.medicao.history[mes].items via _mapaGetLinhas
-  // Backup local imediato antes de enviar ao servidor
-  try{ localStorage.setItem('diefra_backup', JSON.stringify(ST)); }catch(e){}
+  saveLocal(); // backup antes de enviar ao servidor
   scheduleAutoSync();
   _custoMedicao();
   showToast('💾 ' + _custoMedMesLbl(_custoMedMes) + ' salvo com sucesso!','gn',2200);
