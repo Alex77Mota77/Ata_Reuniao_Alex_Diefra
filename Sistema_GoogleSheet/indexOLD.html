@@ -4323,7 +4323,9 @@ const API_CFG = {
   autoSync:     true,
   syncInterval: 60,   // segundos entre pulls automáticos
 };
-let _syncTimer  = null;
+let _syncTimer      = null;
+let _countdownTimer = null;
+let _pollCountdown  = 0;
 let _lastSyncAt = null;
 let _syncEnabled = () => !!API_CFG.url;
 
