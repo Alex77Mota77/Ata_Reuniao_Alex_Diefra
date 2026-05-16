@@ -9358,18 +9358,23 @@ async function doLogin(){
   try {
     let userData = null;
 
-    if(_syncEnabled()){
-      // ── Valida via Google Apps Script ──────────────────────────────────
-      const res  = await fetch(_apiUrl({ action:'login', username:email, password:pass }));
-      const data = await res.json();
-      if(!data.ok) throw new Error(data.error || 'Credenciais inválidas');
-      userData = data.user;
-    } else {
-      // ── Validação local (sem sincronização configurada) ─────────────────
-      const p = ST.participants.find(x=>(x.username===email||x.email===email)&&x.password===pass);
-      if(!p) throw new Error('Credenciais inválidas');
-      userData = { id:p.id, name:p.name, cargo:p.cargo, role: p.role||'gestor', foto: p.foto||'' };
+    // ── SEMPRE valida localmente primeiro ─────────────────────────────────
+    const _fonte = (typeof _DEFAULT_PARTICIPANTS !== 'undefined' ? _DEFAULT_PARTICIPANTS : null)
+                   || ST.participants;
+    const _pp = _fonte.find(x => (x.username===email||x.email===email) && x.password===pass);
+    if(_pp){
+      userData = { id:_pp.id, name:_pp.name, cargo:_pp.cargo||'', dept:_pp.dept||'',
+                   color:_pp.color||'#1d4ed8', role:_pp.role||'user',
+                   foto:_pp.foto||'', permissoes:_pp.permissoes||[] };
+    } else if(_syncEnabled()){
+      // Fallback: Google Apps Script se não achou localmente
+      try {
+        const res  = await fetch(_apiUrl({ action:'login', username:email, password:pass }));
+        const data = await res.json();
+        if(data.ok) userData = data.user;
+      } catch(fe){ console.warn('Login remoto falhou:', fe.message); }
     }
+    if(!userData) throw new Error('Credenciais inválidas');
 
     // Salva sessão
     localStorage.setItem('diefra_user', JSON.stringify(userData));
