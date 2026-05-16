@@ -2405,8 +2405,9 @@ body.sec-medicoes .cont,
       <!-- UEN picker moved to body to escape overflow:hidden of header -->
     </div>
     <div class="hdr-stats">
-      <div class="sp"><div class="sl">Data e Hora</div><div class="sv" id="hdr-datetime" style="font-size:14px;font-weight:800;letter-spacing:.3px">--/--/---- --:--:--</div></div>
-      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">0</div></div>
+      <div class="sp"><div class="sl">Data da Reunião</div><input class="sv hdr-date-inp" type="date" id="hdr-date" value="2026-03-05" title="Clique para editar a data da reunião" onchange="updateReunionDate(this.value)"></div>
+      <div class="sp"><div class="sl">Participantes</div><div class="sv" id="hdr-part-count">10 pessoas</div></div>
+      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">12</div></div>
     </div>
   </div>
 
@@ -9357,14 +9358,16 @@ async function doLogin(){
   try {
     let userData = null;
 
-    // ── Valida localmente primeiro (sempre confiável) ──────────────────
-    const _fonte = (typeof _DEFAULT_PARTICIPANTS !== 'undefined' ? _DEFAULT_PARTICIPANTS : null) || ST.participants;
+    // ── SEMPRE valida localmente primeiro ─────────────────────────────────
+    const _fonte = (typeof _DEFAULT_PARTICIPANTS !== 'undefined' ? _DEFAULT_PARTICIPANTS : null)
+                   || ST.participants;
     const _pp = _fonte.find(x => (x.username===email||x.email===email) && x.password===pass);
     if(_pp){
       userData = { id:_pp.id, name:_pp.name, cargo:_pp.cargo||'', dept:_pp.dept||'',
                    color:_pp.color||'#1d4ed8', role:_pp.role||'user',
                    foto:_pp.foto||'', permissoes:_pp.permissoes||[] };
     } else if(_syncEnabled()){
+      // Fallback: Google Apps Script se não achou localmente
       try {
         const res  = await fetch(_apiUrl({ action:'login', username:email, password:pass }));
         const data = await res.json();
@@ -10197,6 +10200,7 @@ async function pullFromSheets(silent){
       ST.tasks        = _merge(data.tasks,        ST.tasks);
       ST.vacations    = _merge(data.vacations,    ST.vacations);
       ST.managers     = _merge(data.managers,     ST.managers);
+      // Participants: merge cuidadoso — preserva password, role e permissoes locais
       if(Array.isArray(data.participants) && data.participants.length > 0){
         ST.participants = ST.participants.map(function(local){
           var remote = data.participants.find(function(r){ return r.id===local.id; });
@@ -10272,24 +10276,6 @@ function scheduleAutoSync(){
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
 }
-
-function _startHeaderClock(){
-  function _tick(){
-    var el = document.getElementById('hdr-datetime');
-    if(!el) return;
-    var now = new Date();
-    var d   = String(now.getDate()).padStart(2,'0');
-    var m   = String(now.getMonth()+1).padStart(2,'0');
-    var y   = now.getFullYear();
-    var h   = String(now.getHours()).padStart(2,'0');
-    var min = String(now.getMinutes()).padStart(2,'0');
-    var s   = String(now.getSeconds()).padStart(2,'0');
-    el.textContent = d+'/'+m+'/'+y+'  '+h+':'+min+':'+s;
-  }
-  _tick();
-  setInterval(_tick, 1000);
-}
-_startHeaderClock();
 
 function startSyncPolling(){
   if(!_syncEnabled()) return;
@@ -13021,7 +13007,7 @@ function openMedModal(contractId, mesKey){
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
     ${(rec.previsto!=null||rec.realizado!=null)
       ? '<button class="btn" style="background:rgba(220,38,38,.1);color:var(--rdl);border:1px solid rgba(220,38,38,.2)"'
-        +' onclick="deleteMed('+contractId+',\''+mesKey+'\')">🗑 Excluir</button>' : ''}
+            +' onclick="deleteMed('+contractId+',\''+mesKey+'\')">🗑 Excluir</button>' : ''}
     <button class="btn btn-p" onclick="saveMed(${contractId},'${mesKey}')">💾 Salvar</button>`;
   openModal();
 }
