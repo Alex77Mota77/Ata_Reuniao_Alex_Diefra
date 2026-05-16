@@ -86,14 +86,13 @@ body{
 .sub-edit{background:none;border:none;border-bottom:1px dashed rgba(255,255,255,.18);color:var(--t2);font-family:var(--fb);font-size:12.5px;font-weight:400;outline:none;cursor:text;padding:0 2px;width:var(--sub-w,58px);min-width:20px;max-width:200px;transition:border-color .2s}
 .sub-edit:hover,.sub-edit:focus{border-bottom-color:var(--gnl);color:var(--tx)}
 .hdr-sub-sep{width:1px;height:13px;background:rgba(255,255,255,0.14);display:inline-block;margin:0 2px}
-.hdr-stats{display:flex;flex-direction:column;gap:10px}
+.hdr-stats{display:flex;flex-direction:column;gap:10px;margin-top:60px}
 .sp{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(0,0,0,0.52),rgba(0,0,0,0.28));border-radius:12px;padding:13px 22px;min-width:178px;border:1px solid rgba(0,0,0,0.68);box-shadow:inset 0 3px 10px rgba(0,0,0,0.68),inset 0 1px 3px rgba(0,0,0,0.85),inset 0 -1px 0 rgba(255,255,255,0.055),0 1px 0 rgba(255,255,255,0.09),0 2px 4px rgba(0,0,0,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .sp::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.28),transparent)}
 .sp::after{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:linear-gradient(180deg,rgba(16,185,129,0.55),rgba(16,185,129,0.04));border-radius:0 12px 12px 0}
 .sp .sl{font-size:8.5px;text-transform:uppercase;letter-spacing:2.2px;color:var(--t3);font-weight:800;margin-bottom:4px}
 .sp .sv{font-family:var(--fn);font-size:19px;font-weight:700;letter-spacing:-0.4px;text-shadow:0 0 20px rgba(16,185,129,0.14)}
-.hdr-date-inp{font-family:var(--fn);font-size:19px;font-weight:700;letter-spacing:-0.4px;background:none;border:none;color:var(--tx);cursor:pointer;width:100%;outline:none;padding:0;colorscheme:dark}
-.hdr-date-inp:hover{color:var(--gnl)}
+.hdr-date-inp{font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:.3px;background:none;border:none;color:var(--tx);width:100%;outline:none;padding:0}
 
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:200;background:linear-gradient(180deg,rgba(4,16,10,0.97) 0%,rgba(7,24,15,0.95) 100%);backdrop-filter:blur(32px) saturate(220%);-webkit-backdrop-filter:blur(32px) saturate(220%);border-bottom:1px solid rgba(16,185,129,0.22);padding:0;display:flex;align-items:center;box-shadow:0 6px 32px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.04) inset}
@@ -2405,9 +2404,8 @@ body.sec-medicoes .cont,
       <!-- UEN picker moved to body to escape overflow:hidden of header -->
     </div>
     <div class="hdr-stats">
-      <div class="sp"><div class="sl">Data da Reunião</div><input class="sv hdr-date-inp" type="date" id="hdr-date" value="2026-03-05" title="Clique para editar a data da reunião" onchange="updateReunionDate(this.value)"></div>
-      <div class="sp"><div class="sl">Participantes</div><div class="sv" id="hdr-part-count">10 pessoas</div></div>
-      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">12</div></div>
+      <div class="sp"><div class="sl">Data e Hora</div><div class="sv hdr-date-inp" id="hdr-datetime">--/--/----</div></div>
+      <div class="sp"><div class="sl">Contratos Monitorados</div><div class="sv" id="hdr-ct">0</div></div>
     </div>
   </div>
 
@@ -4440,8 +4438,8 @@ const _secScrollers = {
 };
 
 function showSec(id,btn){
-  // Verifica permissão antes de navegar
-  if(currentUser && id !== 'dashboard' && !temPermissao(id)){
+  // Verifica permissão — superadmin e admin têm acesso total
+  if(currentUser && !isSuperAdmin() && !isAdmin() && id !== 'dashboard' && !temPermissao(id)){
     showToast('⛔ Você não tem permissão para acessar esta seção.','rd',3000);
     return;
   }
@@ -8249,7 +8247,7 @@ function renderParticipants(){
   const totalPessoas = parts.length + (ST.gestoresUnidade||[]).length;
   document.getElementById('part-count').textContent =
     `— ${parts.length} gestor${parts.length!==1?'es':''}`;
-  const hdrPart = document.getElementById('hdr-part-count');
+  const hdrPart = null; // card removido
   if(hdrPart) hdrPart.textContent = `${totalPessoas} pessoas`;
 
   document.getElementById('participants-grid').innerHTML = parts.map(p=>{
@@ -9358,18 +9356,21 @@ async function doLogin(){
   try {
     let userData = null;
 
-    if(_syncEnabled()){
-      // ── Valida via Google Apps Script ──────────────────────────────────
-      const res  = await fetch(_apiUrl({ action:'login', username:email, password:pass }));
-      const data = await res.json();
-      if(!data.ok) throw new Error(data.error || 'Credenciais inválidas');
-      userData = data.user;
-    } else {
-      // ── Validação local (sem sincronização configurada) ─────────────────
-      const p = ST.participants.find(x=>(x.username===email||x.email===email)&&x.password===pass);
-      if(!p) throw new Error('Credenciais inválidas');
-      userData = { id:p.id, name:p.name, cargo:p.cargo, role: p.role||'gestor', foto: p.foto||'' };
+    // ── Valida localmente primeiro — sempre confiável ──────────────────
+    const _fonte = (typeof _DEFAULT_PARTICIPANTS!=='undefined'?_DEFAULT_PARTICIPANTS:null)||ST.participants;
+    const _pp = _fonte.find(x=>(x.username===email||x.email===email)&&x.password===pass);
+    if(_pp){
+      userData = { id:_pp.id, name:_pp.name, cargo:_pp.cargo||'', dept:_pp.dept||'',
+                   color:_pp.color||'#1d4ed8', role:_pp.role||'user',
+                   foto:_pp.foto||'', permissoes:_pp.permissoes||[] };
+    } else if(_syncEnabled()){
+      try {
+        const res  = await fetch(_apiUrl({ action:'login', username:email, password:pass }));
+        const data = await res.json();
+        if(data.ok) userData = data.user;
+      } catch(fe){ console.warn('Login remoto falhou:', fe.message); }
     }
+    if(!userData) throw new Error('Credenciais inválidas');
 
     // Salva sessão
     localStorage.setItem('diefra_user', JSON.stringify(userData));
@@ -9392,7 +9393,10 @@ async function doLogin(){
     screen.style.opacity = '0';
     setTimeout(()=>screen.classList.add('hidden'), 500);
     // Aplica permissões na nav
-    setTimeout(aplicarPermissoesNav, 200);
+    // Aplica permissões imediatamente (não com delay)
+    aplicarPermissoesNav();
+    // Dupla garantia após render
+    setTimeout(aplicarPermissoesNav, 500);
 
     // Restaura backup local antes do pull (proteção contra dados vazios)
     loadLocal();
@@ -9846,12 +9850,27 @@ var _TODAS_SECOES = [
 
 // Verifica se o usuário atual é superadmin
 function isSuperAdmin(){
-  return currentUser && currentUser.role === 'superadmin';
+  if(!currentUser) return false;
+  // Verifica username diretamente — alex.mota é sempre superadmin
+  if(currentUser.username === 'alex.mota') return true;
+  // Verifica role no _DEFAULT_PARTICIPANTS (imutável, não afetado pelo pull)
+  var dp = (typeof _DEFAULT_PARTICIPANTS!=='undefined'?_DEFAULT_PARTICIPANTS:[]);
+  var def = dp.find(function(x){ return x.id===currentUser.id; });
+  if(def && def.role === 'superadmin') return true;
+  // Verifica currentUser.role
+  if(currentUser.role === 'superadmin') return true;
+  // Verifica ST.participants
+  var p = (ST.participants||[]).find(function(x){ return x.id===currentUser.id; });
+  return !!(p && p.role === 'superadmin');
 }
 
 // Verifica se o usuário atual é admin ou superadmin
 function isAdmin(){
-  return currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin');
+  if(!currentUser) return false;
+  // Busca role atualizado do ST
+  var p = (ST.participants||[]).find(function(x){ return x.id===currentUser.id; });
+  var role = (p && p.role) || currentUser.role || 'user';
+  return role === 'superadmin' || role === 'admin';
 }
 
 // Verifica se o usuário atual tem acesso a uma seção
@@ -9871,16 +9890,26 @@ function temPermissao(secId){
 function aplicarPermissoesNav(){
   if(!currentUser) return;
 
-  // Seção Usuários: só superadmin
+  // Seção Usuários: só superadmin — forçar visibilidade
   var btnU = document.getElementById('nav-btn-usuarios');
   if(btnU) btnU.style.display = isSuperAdmin() ? '' : 'none';
 
-  // Demais seções
+  // Admin e superadmin veem todas as seções
+  if(isAdmin()){
+    _TODAS_SECOES.forEach(function(sec){
+      var btn = document.querySelector('.nb[data-sec="'+sec.id+'"]');
+      if(btn) btn.style.display = '';
+    });
+    // Reaplica visibilidade do botão Usuários após o loop
+    if(btnU) btnU.style.display = isSuperAdmin() ? '' : 'none';
+    return;
+  }
+
+  // User: mostra apenas seções com permissão
   _TODAS_SECOES.forEach(function(sec){
     var btn = document.querySelector('.nb[data-sec="'+sec.id+'"]');
     if(!btn) return;
-    var tem = temPermissao(sec.id);
-    btn.style.display = tem ? '' : 'none';
+    btn.style.display = temPermissao(sec.id) ? '' : 'none';
   });
 
   // Se a seção atual ficou inacessível, vai para dashboard
@@ -9906,8 +9935,11 @@ function openPermissoesModal(userId){
 
   var secoesHtml = _TODAS_SECOES.map(function(sec){
     var checked = temTudo || perms.indexOf(sec.id) >= 0;
-    return '<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:background .15s;border:1px solid '+(checked?'rgba(16,185,129,.3)':'var(--b1)')+';background:'+(checked?'rgba(16,185,129,.06)':'transparent')+'" onclick="this.style.background=this.style.background?'transparent':'rgba(16,185,129,.06)'">'
-           + '<input type="checkbox" id="perm-'+sec.id+'" '+(checked?'checked':'')+' style="width:16px;height:16px;accent-color:#10b981;cursor:pointer">'
+    var bg  = checked ? 'rgba(16,185,129,.06)' : 'transparent';
+    var brd = checked ? 'rgba(16,185,129,.3)'  : 'var(--b1)';
+    var chk = checked ? ' checked' : '';
+    return '<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;border:1px solid '+brd+';background:'+bg+'">'
+           + '<input type="checkbox" id="perm-'+sec.id+'"'+chk+' style="width:16px;height:16px;accent-color:#10b981;cursor:pointer">'
            + '<div><div style="font-size:13px;font-weight:700">'+sec.label+'</div>'
            + '<div style="font-size:11px;color:var(--t3)">'+sec.desc+'</div></div>'
            + '</label>';
@@ -10192,7 +10224,21 @@ async function pullFromSheets(silent){
       ST.tasks        = _merge(data.tasks,        ST.tasks);
       ST.vacations    = _merge(data.vacations,    ST.vacations);
       ST.managers     = _merge(data.managers,     ST.managers);
-      ST.participants      = _merge(data.participants,      ST.participants);
+      if(Array.isArray(data.participants)&&data.participants.length>0){
+        ST.participants=ST.participants.map(function(local){
+          var remote=data.participants.find(function(r){return r.id===local.id;});
+          if(!remote) return local;
+          return Object.assign({},remote,{
+            password:   local.password,
+            permissoes: local.permissoes||remote.permissoes||[],
+            role:       local.role||remote.role||'user'
+          });
+        });
+        data.participants.forEach(function(r){
+          if(!ST.participants.find(function(l){return l.id===r.id;}))
+            ST.participants.push(r);
+        });
+      }
       ST.gestoresUnidade   = _merge(data.gestoresUnidade,   ST.gestoresUnidade||[]);
       ST.trips        = _merge(data.trips,        ST.trips);
       ST.frota        = _merge(data.frota,        ST.frota);
@@ -10253,6 +10299,25 @@ function scheduleAutoSync(){
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>pushToSheets(false), 1500);
 }
+
+function _startHeaderClock(){
+  var _MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  function _tick(){
+    var el = document.getElementById('hdr-datetime');
+    if(!el) return;
+    var now = new Date();
+    var d   = String(now.getDate()).padStart(2,'0');
+    var m   = String(now.getMonth()+1).padStart(2,'0');
+    var y   = now.getFullYear();
+    var h   = String(now.getHours()).padStart(2,'0');
+    var mi  = String(now.getMinutes()).padStart(2,'0');
+    var s   = String(now.getSeconds()).padStart(2,'0');
+    el.textContent = d+'/'+m+'/'+y+'  '+h+':'+mi+':'+s;
+  }
+  _tick();
+  setInterval(_tick, 1000);
+}
+_startHeaderClock();
 
 function startSyncPolling(){
   if(!_syncEnabled()) return;
@@ -11510,7 +11575,8 @@ window.addEventListener('DOMContentLoaded',()=>{
         pill.style.display = 'flex';
       }
       // Aplica permissões ao restaurar sessão
-      setTimeout(aplicarPermissoesNav, 300);
+      aplicarPermissoesNav();
+      setTimeout(aplicarPermissoesNav, 600);
       // Inicia presença se tinha sessão salva
       presenceStart();
     }
@@ -12983,8 +13049,8 @@ function openMedModal(contractId, mesKey){
   document.getElementById('modal-footer').innerHTML = `
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
     ${(rec.previsto!=null||rec.realizado!=null)
-      ? `<button class="btn" style="background:rgba(220,38,38,.1);color:var(--rdl);border:1px solid rgba(220,38,38,.2)"
-            onclick="deleteMed(${contractId},'${mesKey}')">🗑 Excluir</button>` : ''}
+      ? '<button class="btn" style="background:rgba(220,38,38,.1);color:var(--rdl);border:1px solid rgba(220,38,38,.2)"'
+        +' onclick="deleteMed('+contractId+',\''+mesKey+'\')">🗑 Excluir</button>' : ''}
     <button class="btn btn-p" onclick="saveMed(${contractId},'${mesKey}')">💾 Salvar</button>`;
   openModal();
 }
