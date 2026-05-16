@@ -10192,7 +10192,22 @@ async function pullFromSheets(silent){
       ST.tasks        = _merge(data.tasks,        ST.tasks);
       ST.vacations    = _merge(data.vacations,    ST.vacations);
       ST.managers     = _merge(data.managers,     ST.managers);
-      ST.participants      = _merge(data.participants,      ST.participants);
+      // Participants: merge cuidadoso — preserva password, role e permissoes locais
+      if(Array.isArray(data.participants) && data.participants.length > 0){
+        ST.participants = ST.participants.map(function(local){
+          var remote = data.participants.find(function(r){ return r.id===local.id; });
+          if(!remote) return local;
+          return Object.assign({}, remote, {
+            password:   local.password,
+            permissoes: local.permissoes || remote.permissoes || [],
+            role:       local.role || remote.role || 'user'
+          });
+        });
+        data.participants.forEach(function(r){
+          if(!ST.participants.find(function(l){ return l.id===r.id; }))
+            ST.participants.push(r);
+        });
+      }
       ST.gestoresUnidade   = _merge(data.gestoresUnidade,   ST.gestoresUnidade||[]);
       ST.trips        = _merge(data.trips,        ST.trips);
       ST.frota        = _merge(data.frota,        ST.frota);
