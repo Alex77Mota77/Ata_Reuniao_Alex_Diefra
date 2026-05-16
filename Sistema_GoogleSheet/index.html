@@ -9906,8 +9906,11 @@ function openPermissoesModal(userId){
 
   var secoesHtml = _TODAS_SECOES.map(function(sec){
     var checked = temTudo || perms.indexOf(sec.id) >= 0;
-    return '<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:background .15s;border:1px solid '+(checked?'rgba(16,185,129,.3)':'var(--b1)')+';background:'+(checked?'rgba(16,185,129,.06)':'transparent')+'" onclick="this.style.background=this.style.background?'transparent':'rgba(16,185,129,.06)'">'
-           + '<input type="checkbox" id="perm-'+sec.id+'" '+(checked?'checked':'')+' style="width:16px;height:16px;accent-color:#10b981;cursor:pointer">'
+    var bg  = checked ? 'rgba(16,185,129,.06)' : 'transparent';
+    var brd = checked ? 'rgba(16,185,129,.3)'  : 'var(--b1)';
+    var chk = checked ? ' checked' : '';
+    return '<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;border:1px solid '+brd+';background:'+bg+'">'
+           + '<input type="checkbox" id="perm-'+sec.id+'"'+chk+' style="width:16px;height:16px;accent-color:#10b981;cursor:pointer">'
            + '<div><div style="font-size:13px;font-weight:700">'+sec.label+'</div>'
            + '<div style="font-size:11px;color:var(--t3)">'+sec.desc+'</div></div>'
            + '</label>';
@@ -12998,8 +13001,8 @@ function openMedModal(contractId, mesKey){
   document.getElementById('modal-footer').innerHTML = `
     <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
     ${(rec.previsto!=null||rec.realizado!=null)
-      ? `<button class="btn" style="background:rgba(220,38,38,.1);color:var(--rdl);border:1px solid rgba(220,38,38,.2)"
-            onclick="deleteMed(${contractId},'${mesKey}')">🗑 Excluir</button>` : ''}
+      ? '<button class="btn" style="background:rgba(220,38,38,.1);color:var(--rdl);border:1px solid rgba(220,38,38,.2)"'
+            +' onclick="deleteMed('+contractId+',\''+mesKey+'\')">🗑 Excluir</button>' : ''}
     <button class="btn btn-p" onclick="saveMed(${contractId},'${mesKey}')">💾 Salvar</button>`;
   openModal();
 }
