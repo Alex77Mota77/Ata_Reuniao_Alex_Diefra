@@ -66,7 +66,7 @@ body{
 /* Scanlines sutis */
 .hdr-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);animation:hdrScan 10s linear infinite}
 @keyframes hdrScan{0%{background-position:0 0}100%{background-position:0 100px}}
-.hdr-inner{display:grid;grid-template-columns:160px 1fr auto;align-items:center;gap:40px;padding:36px 60px;position:relative;z-index:2}
+.hdr-inner{display:grid;grid-template-columns:160px 1fr auto;align-items:center;gap:40px;padding:36px 60px 58px;position:relative;z-index:2}
 .hdr-logo{width:160px;height:130px;flex-shrink:0}
 .hdr-logo svg{width:100%;height:100%;filter:drop-shadow(0 0 20px rgba(37,99,235,.55)) drop-shadow(0 0 7px rgba(56,189,248,.40)) drop-shadow(0 5px 14px rgba(0,0,0,0.65));animation:logoPulse 3.5s ease-in-out infinite}
 @keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 18px rgba(37,99,235,.45)) drop-shadow(0 0 6px rgba(56,189,248,.35)) drop-shadow(0 5px 14px rgba(0,0,0,.65))}50%{filter:drop-shadow(0 0 32px rgba(37,99,235,.72)) drop-shadow(0 0 16px rgba(56,189,248,.58)) drop-shadow(0 5px 14px rgba(0,0,0,.65))}}
@@ -95,7 +95,7 @@ body{
 .hdr-date-inp{font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:.3px;background:none;border:none;color:var(--tx);width:100%;outline:none;padding:0}
 
 /* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:200;background:linear-gradient(180deg,rgba(4,16,10,0.97) 0%,rgba(7,24,15,0.95) 100%);backdrop-filter:blur(32px) saturate(220%);-webkit-backdrop-filter:blur(32px) saturate(220%);border-bottom:1px solid rgba(16,185,129,0.22);padding:0;display:flex;align-items:center;box-shadow:0 6px 32px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.04) inset}
+.nav{position:sticky;top:0;z-index:200;background:linear-gradient(180deg,rgba(4,16,10,0.97) 0%,rgba(7,24,15,0.95) 100%);backdrop-filter:blur(32px) saturate(220%);-webkit-backdrop-filter:blur(32px) saturate(220%);border-bottom:1px solid rgba(16,185,129,0.22);padding:0;display:flex;align-items:center;box-shadow:0 6px 32px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.04) inset}
 .nav-arr{flex-shrink:0;width:42px;height:100%;min-height:56px;border:none;background:none;color:rgba(16,185,129,.5);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:0;pointer-events:none}
 .nav-arr.show{opacity:1;pointer-events:auto;color:rgba(16,185,129,.7)}
 .nav-arr:hover{background:rgba(16,185,129,.07);color:var(--gnl)}
@@ -838,7 +838,7 @@ select option:hover,select option:focus,select option:checked{background:#1d4ed8
 /* ── Topbar de controles — dentro do header ────────────────────── */
 #user-topbar{
   position:absolute;
-  bottom:14px;left:20px;
+  bottom:16px;left:20px;
   z-index:200;
   display:flex;align-items:center;gap:8px;
   background:rgba(7,22,13,0.82);
@@ -1576,6 +1576,17 @@ html.lp .dp-risco-btn.sel-alto{background:rgba(220,38,38,.10)!important;border-c
 /* Dashboard EPI */
 .epi-dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:20px}
 .epi-dash-card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:18px}
+/* ── Meta Anual Cards ── */
+.kc-meta-ring{position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kc-meta-ring svg{transform:rotate(-90deg)}
+.kc-meta-ring .ring-val{position:absolute;font-family:var(--fn);font-size:11px;font-weight:800;text-align:center;line-height:1.2}
+.kc-meta-edit-btn{background:none;border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--t3);font-size:10px;font-weight:700;padding:3px 9px;cursor:pointer;transition:all .18s;white-space:nowrap;font-family:var(--fb)}
+.kc-meta-edit-btn:hover{border-color:rgba(56,189,248,.4);color:var(--ac2);background:rgba(56,189,248,.08)}
+.kc-meta-spark{height:3px;border-radius:100px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:6px}
+.kc-meta-spark-fill{height:100%;border-radius:100px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+#meta-row{display:grid;grid-template-columns:minmax(210px,1fr) minmax(210px,1fr) minmax(340px,3fr);gap:14px;margin-bottom:28px;align-items:stretch}
+@media(max-width:1100px){#meta-row{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){#meta-row{grid-template-columns:1fr}}
 .epi-dash-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:12px}
 
 /* Light palette overrides */
@@ -1892,12 +1903,7 @@ html { max-width:100%; }
 }
 
 /* ── Nav fixa — compensar no conteúdo ─────────────────────────── */
-/* A .nav agora é position:fixed, então .cont precisa de padding-top */
-.cont { padding-top: calc(56px + 28px) !important; }
-@media(max-width:1440px){ .cont { padding-top: calc(56px + 24px) !important; } }
-@media(max-width:1024px){ .cont { padding-top: calc(52px + 18px) !important; } }
-@media(max-width:768px) { .cont { padding-top: calc(50px + 14px) !important; } }
-@media(max-width:480px) { .cont { padding-top: calc(48px + 10px) !important; } }
+/* .nav está embutida no header — sem compensação de padding-top necessária */
 
 /* ── Textarea de observação — Mapa de Medições ──────────────────── */
 .mapa-obs-ta {
@@ -2470,6 +2476,7 @@ body.sec-medicoes .cont,
 </nav>
 
 
+
 <div class="cont">
 
 <!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════════ -->
@@ -2509,6 +2516,7 @@ body.sec-medicoes .cont,
   </div>
 
   <div class="kpi-g" id="kpi-g"></div>
+  <div id="meta-row" style="display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr) minmax(380px,3fr);gap:14px;margin-bottom:28px;align-items:stretch"></div>
   <div class="alert"><span class="ai">⚠️</span><span id="alert-txt"></span></div>
   <div class="dg" id="dash-charts"></div>
 
@@ -3495,7 +3503,10 @@ body.sec-medicoes .cont,
   <div id="custosec-capa">
     <div class="custo-grid-2">
       <div class="tbl-wrap" style="padding:20px;min-width:0">
-        <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:16px;color:var(--gnl)">📋 Identificação do Contrato</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div style="font-family:var(--fh);font-size:15px;font-weight:700;color:var(--gnl)">📋 Identificação do Contrato</div>
+          <button class="btn btn-s btn-sm" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--ac2);font-size:11px" onclick="custoCapaSyncAll()" title="Sincronizar todos os campos com os dados do contrato">🔗 Sincronizar Contrato</button>
+        </div>
         <div id="custo-capa-form"></div>
       </div>
       <div class="tbl-wrap" style="padding:20px;min-width:0">
@@ -3527,9 +3538,12 @@ body.sec-medicoes .cont,
       <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--t3);white-space:nowrap">Cenário:</div>
       <button class="epi-pill active" data-cen="orcado"   onclick="custoEstudoCen('orcado',this)">📋 Orçado</button>
       <button class="epi-pill"        data-cen="estudo"   onclick="custoEstudoCen('estudo',this)">🔬 Estudo</button>
-      <button class="epi-pill"        data-cen="precusto" onclick="custoEstudoCen('precusto',this)">💰 Pré-Custo</button>
-      <button class="epi-pill"        data-cen="todos"    onclick="custoEstudoCen('todos',this)">⚖️ Comparativo</button>
+      <button class="epi-pill"        data-cen="precusto"  onclick="custoEstudoCen('precusto',this)">💰 Pré-Custo</button>
+      <button class="epi-pill"        data-cen="realizado" onclick="custoEstudoCen('realizado',this)">📊 Realizado</button>
+      <button class="epi-pill"        data-cen="todos"     onclick="custoEstudoCen('todos',this)">⚖️ Comparativo</button>
       <div style="flex:1"></div>
+      <span style="font-size:9px;color:var(--t3);white-space:nowrap;font-weight:700">Ref.Realizado:</span>
+      <input type="month" id="custo-mes-ref" class="fi" style="height:28px;font-size:11px;width:130px;padding:3px 8px" title="Período de referência para Receita Realizado (Mapa de Medições)" onchange="custoSetMesRef(this.value)">
       <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:var(--gnl);font-size:11px" onclick="custoDreCollapseAll(false)" title="Expandir todos os grupos">⊞ Expandir</button>
       <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:var(--gnl);font-size:11px" onclick="custoDreCollapseAll(true)" title="Recolher todos os grupos">⊟ Recolher</button>
       <button class="btn btn-s btn-sm" onclick="custoAddContaCusto()">＋ Linha</button>
@@ -3537,6 +3551,7 @@ body.sec-medicoes .cont,
       <button class="btn btn-s btn-sm" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--gl)" onclick="custoRecalcEstudo()">🔄 Recalc</button>
       <button class="btn btn-s btn-sm" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#10b981;font-weight:800" onclick="custoVincularDRE(true)" title="Sincroniza Receita da Linhas de Medição + Custos da Memória na DRE">⚡ Vincular DRE</button>
       <button class="btn btn-s btn-sm" style="background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.4);color:#c4b5fd;font-weight:700" onclick="dreSalvarMes()" title="Salvar snapshot mensal da DRE e bloquear edição">💾 Salvar Mês</button>
+      <button class="btn btn-s btn-sm" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:#a78bfa;white-space:nowrap" onclick="custoCopiarParaMes()" title="Copia linhas para novo mês — Realizado zerado, Orçado/Estudo/Pré-Custo preservados">📅 Copiar Mês</button>
       <div id="custo-dre-lock-badge" style="display:none;font-size:10px;font-weight:700;color:#f87171;letter-spacing:.5px;padding:3px 8px;border:1px solid rgba(239,68,68,.3);border-radius:8px;background:rgba(239,68,68,.08)">🔒 BLOQUEADO</div>
       <div id="custo-dre-vinc-status" style="font-size:10px;color:rgba(16,185,129,.7);letter-spacing:.5px"></div>
     </div>
@@ -4306,7 +4321,12 @@ let ST = {
   calibVerifs:   [],
   calibNCs:      [],
   nextId: 1,
-  custoAnalises: []
+  custoAnalises: [],
+  dashMetas: {
+    metaAnualFat: 0,           // Meta Anual de Faturamento (R$)
+    metaAnualAno: new Date().getFullYear(), // Ano de referência
+    metaHistorico: []          // [{ano, meta, realizado, obs}]
+  }
 };
 
 let currentFilter = 'todos';
@@ -4475,6 +4495,397 @@ function showSec(id,btn){
 // ════════════════════════════════════════════════════════════
 //  DASHBOARD
 // ════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════
+//  META ANUAL DE FATURAMENTO — Dashboard Cards
+// ══════════════════════════════════════════════════════════════════════════════
+
+/** Garante que ST.dashMetas exista e tenha o ano correto */
+function _getMetaObj() {
+  if(!ST.dashMetas) ST.dashMetas = {metaAnualFat:0, metaAnualAno:new Date().getFullYear(), metaHistorico:[]};
+  if(!ST.dashMetas.metaHistorico) ST.dashMetas.metaHistorico = [];
+  return ST.dashMetas;
+}
+
+/** Retorna a meta do ano corrente (ou 0) */
+function _getMetaAno(ano) {
+  var m = _getMetaObj();
+  ano = ano || new Date().getFullYear();
+  // Tenta histórico primeiro, cai no campo direto se ano atual
+  var h = m.metaHistorico.find(function(x){ return x.ano === ano; });
+  if(h) return h.meta;
+  if(ano === m.metaAnualAno) return m.metaAnualFat || 0;
+  return 0;
+}
+
+/**
+ * Gera os dois KPI cards de Meta Anual:
+ *  1. Meta Anual — editável, com anel de progresso
+ *  2. Desvio da Meta — diferença colorida com trend indicator
+ */
+
+/** Gera o gráfico SVG de progresso da meta mensal */
+function _buildMetaProgressChart(totalRec) {
+  var m    = _getMetaObj();
+  var ano  = m.metaAnualAno || new Date().getFullYear();
+  var meta = _getMetaAno(ano);
+  var mesAtual = new Date().getMonth() + 1;
+
+  // ── Coleta realizados mensais do ano ─────────────────────────
+  var meses = [];
+  var mesesNomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var fatAcum = 0;
+  for(var mes = 1; mes <= 12; mes++) {
+    var key = ano + '-' + (mes<10?'0':'')+mes;
+    var realMes = ST.contracts.reduce(function(sum, c) {
+      var med = (ST.medicoes||[]).find(function(med){ return med.contractId===c.id && med.key===key; });
+      return sum + (med && med.realizado ? med.realizado : 0);
+    }, 0);
+    fatAcum += realMes;
+    var metaAcumMes = meta > 0 ? (meta / 12) * mes : 0;
+    meses.push({
+      mes: mes,
+      nome: mesesNomes[mes-1],
+      realizado: realMes,
+      acumulado: fatAcum,
+      metaAcum: metaAcumMes,
+      futuro: mes > mesAtual
+    });
+  }
+
+  // ── Dimensões ────────────────────────────────────────────────
+  var W = 580, H = 200;
+  var padL = 58, padR = 16, padT = 18, padB = 36;
+  var chartW = W - padL - padR;
+  var chartH = H - padT - padB;
+
+  // ── Escalas ──────────────────────────────────────────────────
+  var maxVal = Math.max(meta, totalRec, 1000);
+  maxVal = maxVal * 1.12; // 12% de respiro acima
+  function xPos(i) { return padL + (i / 11) * chartW; }
+  function yPos(v) { return padT + chartH - (v / maxVal) * chartH; }
+
+  // ── Gera pontos ──────────────────────────────────────────────
+  var metaPoints = '', realPoints = '', metaArea = '', realArea = '';
+  var tooltipCircles = '';
+  var mpArr = [], rpArr = [];
+
+  meses.forEach(function(d, i) {
+    var x = xPos(i).toFixed(1);
+    var ym = yPos(d.metaAcum).toFixed(1);
+    var yr = yPos(d.acumulado).toFixed(1);
+    mpArr.push(x+','+ym);
+    rpArr.push(x+','+yr);
+  });
+
+  metaPoints = mpArr.join(' ');
+  realPoints = rpArr.join(' ');
+
+  // Área sob a linha da meta (pontilhada)
+  metaArea = 'M'+padL+','+(padT+chartH)+' L'+mpArr.join(' L')+' L'+(padL+chartW)+','+(padT+chartH)+' Z';
+  // Área sob a linha realizado
+  realArea = 'M'+padL+','+(padT+chartH)+' L'+rpArr.join(' L')+' L'+(padL+chartW)+','+(padT+chartH)+' Z';
+
+  // ── Grid de fundo (5 linhas horizontais) ─────────────────────
+  var gridLines = '';
+  for(var gi = 0; gi <= 4; gi++) {
+    var gv = maxVal * (gi/4);
+    var gy = yPos(gv).toFixed(1);
+    var gLabel = gv >= 1e6 ? (gv/1e6).toFixed(1)+'M' : gv >= 1e3 ? (gv/1e3).toFixed(0)+'K' : gv.toFixed(0);
+    gridLines += '<line x1="'+padL+'" y1="'+gy+'" x2="'+(padL+chartW)+'" y2="'+gy+'" stroke="rgba(255,255,255,.06)" stroke-width="1"/>';
+    gridLines += '<text x="'+(padL-6)+'" y="'+(parseFloat(gy)+4)+'" text-anchor="end" font-size="9" fill="rgba(255,255,255,.28)" font-family="monospace">'+gLabel+'</text>';
+  }
+
+  // ── Labels eixo X ─────────────────────────────────────────────
+  var xLabels = '';
+  meses.forEach(function(d, i) {
+    var x = xPos(i).toFixed(1);
+    var isNow = d.mes === mesAtual;
+    xLabels += '<text x="'+x+'" y="'+(H-8)+'" text-anchor="middle" font-size="9"'
+      + ' fill="'+(isNow?'#38bdf8':'rgba(255,255,255,.35)')+'"'
+      + (isNow?' font-weight="800"':'')+' font-family="monospace">'+d.nome+'</text>';
+    if(isNow) {
+      xLabels += '<line x1="'+x+'" y1="'+padT+'" x2="'+x+'" y2="'+(padT+chartH)+'" stroke="rgba(56,189,248,.25)" stroke-width="1" stroke-dasharray="3,3"/>';
+    }
+  });
+
+  // ── Círculos de dado (realizado mensal) ──────────────────────
+  var dots = '';
+  meses.forEach(function(d, i) {
+    if(d.futuro || d.realizado === 0) return;
+    var x = xPos(i).toFixed(1);
+    var yr = yPos(d.acumulado).toFixed(1);
+    var pct = meta > 0 ? (d.acumulado/meta*100).toFixed(1) : '—';
+    var dotColor = d.acumulado >= d.metaAcum ? '#4ade80' : '#f87171';
+    dots += '<circle cx="'+x+'" cy="'+yr+'" r="3.5" fill="'+dotColor+'" stroke="rgba(15,25,20,1)" stroke-width="1.5">'
+      + '<title>'+d.nome+'/'+ano+': '+fmtBRL(d.acumulado)+' acum. ('+pct+'% meta)</title>'
+      + '</circle>';
+  });
+
+  // Ponto atual (último com dados)
+  var lastReal = meses.filter(function(d){ return !d.futuro && d.acumulado > 0; }).pop();
+  var lastDot = '';
+  if(lastReal) {
+    var lx = xPos(lastReal.mes-1).toFixed(1);
+    var ly = yPos(lastReal.acumulado).toFixed(1);
+    var pctLbl = meta > 0 ? (lastReal.acumulado/meta*100).toFixed(1)+'%' : '';
+    var lColor = lastReal.acumulado >= lastReal.metaAcum ? '#4ade80' : '#fb923c';
+    lastDot += '<circle cx="'+lx+'" cy="'+ly+'" r="6" fill="'+lColor+'" stroke="#0f1914" stroke-width="2"/>';
+    lastDot += '<circle cx="'+lx+'" cy="'+ly+'" r="10" fill="none" stroke="'+lColor+'" stroke-width="1" opacity=".35"/>';
+    if(pctLbl) {
+      lastDot += '<rect x="'+(parseFloat(lx)-20)+'" y="'+(parseFloat(ly)-22)+'" width="40" height="14" rx="4" fill="rgba(15,25,20,.85)" stroke="'+lColor+'" stroke-width=".8"/>';
+      lastDot += '<text x="'+lx+'" y="'+(parseFloat(ly)-12)+'" text-anchor="middle" font-size="9" font-weight="800" fill="'+lColor+'" font-family="monospace">'+pctLbl+'</text>';
+    }
+  }
+
+  // Linha horizontal da meta anual total
+  var metaLine = '';
+  if(meta > 0) {
+    var my = yPos(meta).toFixed(1);
+    metaLine = '<line x1="'+padL+'" y1="'+my+'" x2="'+(padL+chartW)+'" y2="'+my+'" stroke="#a78bfa" stroke-width="1" stroke-dasharray="5,3" opacity=".55"/>';
+    metaLine += '<text x="'+(padL+chartW-2)+'" y="'+(parseFloat(my)-4)+'" text-anchor="end" font-size="9" fill="#a78bfa" font-family="monospace" opacity=".8">META '+ano+'</text>';
+  }
+
+  // ── Legenda ──────────────────────────────────────────────────
+  var legend = ''
+    + '<rect x="'+(padL)+'" y="5" width="9" height="3" rx="1.5" fill="#38bdf8"/>'
+    + '<text x="'+(padL+12)+'" y="10" font-size="9" fill="rgba(255,255,255,.6)" font-family="monospace">Faturado Acum.</text>'
+    + '<rect x="'+(padL+100)+'" y="5" width="9" height="3" rx="1.5" fill="#a78bfa" rx="1.5"/>'
+    + '<text x="'+(padL+112)+'" y="10" font-size="9" fill="rgba(255,255,255,.6)" font-family="monospace">Meta Proporcional</text>'
+    + (meta>0?'<rect x="'+(padL+228)+'" y="3" width="9" height="7" rx="1.5" fill="none" stroke="#a78bfa" stroke-width="1" stroke-dasharray="3,2"/><text x="'+(padL+241)+'" y="10" font-size="9" fill="rgba(255,255,255,.6)" font-family="monospace">Meta Total</text>':'');
+
+  // ── Monta SVG ────────────────────────────────────────────────
+  var pctMeta = meta > 0 ? (totalRec/meta*100).toFixed(1) : null;
+  var statusColor = !pctMeta ? '#94a3b8'
+    : parseFloat(pctMeta)>=100 ? '#4ade80'
+    : parseFloat(pctMeta)>=50  ? '#facc15' : '#f87171';
+
+  var svg = '<svg width="100%" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block">'
+    + '<defs>'
+    + '<linearGradient id="gradReal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".22"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/></linearGradient>'
+    + '<linearGradient id="gradMeta" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a78bfa" stop-opacity=".08"/><stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/></linearGradient>'
+    + '</defs>'
+    + legend
+    + gridLines
+    + xLabels
+    + (meta > 0 ? '<path d="'+metaArea+'" fill="url(#gradMeta)"/>' : '')
+    + (meta > 0 ? '<polyline points="'+metaPoints+'" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3" opacity=".6"/>' : '')
+    + metaLine
+    + '<path d="'+realArea+'" fill="url(#gradReal)"/>'
+    + '<polyline points="'+realPoints+'" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>'
+    + dots
+    + lastDot
+    + '</svg>';
+
+  // Título e rodapé do card
+  var anoLabel = ano;
+  var fatLabel = fmtBRL(totalRec);
+  var metaLabel = meta > 0 ? fmtBRL(meta) : 'Meta não definida';
+  var pctLabel = pctMeta ? pctMeta+'%' : '—';
+
+  return '<div style="background:linear-gradient(135deg,rgba(15,30,20,.98),rgba(7,20,14,.99));border:1px solid rgba(56,189,248,.15);border-radius:16px;padding:16px 20px 12px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden">'
+    + '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#38bdf8,#a78bfa,#4ade80)"></div>'
+    + '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      + '<div>'
+        + '<div style="font-size:9px;font-weight:800;letter-spacing:2px;color:rgba(56,189,248,.8);text-transform:uppercase;margin-bottom:2px">📈 Progresso da Meta — '+anoLabel+'</div>'
+        + '<div style="font-size:11px;color:var(--t3)">Faturamento acumulado <strong style="color:#38bdf8">'+fatLabel+'</strong> · Meta <strong style="color:#a78bfa">'+metaLabel+'</strong></div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:10px">'
+        + '<div style="text-align:right">'
+          + '<div style="font-family:var(--fn);font-size:18px;font-weight:900;color:'+statusColor+'">'+pctLabel+'</div>'
+          + '<div style="font-size:9px;color:var(--t3)">da meta</div>'
+        + '</div>'
+        + '<button class="kc-meta-edit-btn" onclick="openMetaModal()" style="flex-shrink:0">🎯 Meta</button>'
+      + '</div>'
+    + '</div>'
+    + '<div style="flex:1;min-height:0">' + svg + '</div>'
+  + '</div>';
+}
+
+
+function _buildMetaAnualCard(totalRec) {
+  var m      = _getMetaObj();
+  var ano    = m.metaAnualAno || new Date().getFullYear();
+  var meta   = _getMetaAno(ano);
+  var fat    = totalRec || 0;
+  var desvio = fat - meta;
+  var pct    = meta > 0 ? Math.min(fat / meta * 100, 100) : 0;
+  var pctRaw = meta > 0 ? (fat / meta * 100) : 0;
+
+  // ── Cores dinâmicas por performance ──────────────────────────
+  var mainColor = pctRaw >= 100 ? '#4ade80'
+                : pctRaw >= 75  ? '#a3e635'
+                : pctRaw >= 50  ? '#facc15'
+                : pctRaw >= 25  ? '#fb923c'
+                : '#f87171';
+  var desvioColor = desvio >= 0 ? '#4ade80' : '#f87171';
+  var desvioIcon  = desvio >= 0 ? '▲' : '▼';
+  var gradMeta    = pctRaw >= 100 ? 'rgba(74,222,128,.14),rgba(74,222,128,.04)'
+                 : pctRaw >= 50  ? 'rgba(250,204,21,.14),rgba(250,204,21,.04)'
+                 : 'rgba(248,113,113,.14),rgba(248,113,113,.04)';
+  var borderMeta  = pctRaw >= 100 ? 'rgba(74,222,128,.3)'
+                 : pctRaw >= 50  ? 'rgba(250,204,21,.25)'
+                 : 'rgba(248,113,113,.2)';
+
+  // ── Anel SVG de progresso (64x64) ────────────────────────────
+  var R = 26, C = 32, circ = 2 * Math.PI * R;
+  var dash = (pct / 100 * circ).toFixed(1);
+  var ring = '<div class="kc-meta-ring" style="width:64px;height:64px">'
+    + '<svg width="64" height="64" viewBox="0 0 64 64">'
+    + '<circle cx="'+C+'" cy="'+C+'" r="'+R+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/>'
+    + '<circle cx="'+C+'" cy="'+C+'" r="'+R+'" fill="none" stroke="'+mainColor+'" stroke-width="5"'
+    + ' stroke-dasharray="'+dash+' '+(circ-parseFloat(dash))+'" stroke-linecap="round"/>'
+    + '</svg>'
+    + '<span class="ring-val" style="color:'+mainColor+'">'+pct.toFixed(0)+'%</span>'
+    + '</div>';
+
+  // ── Desvio anel ───────────────────────────────────────────────
+  var desvioGrad = desvio >= 0
+    ? 'rgba(74,222,128,.14),rgba(52,211,153,.04)'
+    : 'rgba(239,68,68,.14),rgba(248,113,113,.04)';
+  var desvioBorder = desvio >= 0 ? 'rgba(74,222,128,.28)' : 'rgba(239,68,68,.2)';
+
+  // Formato abreviado para valores grandes
+  function fmtShort(v) {
+    var abs = Math.abs(v);
+    if(abs >= 1e6) return (v/1e6).toFixed(2)+'M';
+    if(abs >= 1e3) return (v/1e3).toFixed(1)+'K';
+    return fmtBRL(v);
+  }
+
+  // Progresso mensal estimado (meta / 12 meses × meses corridos)
+  var mesAtual = new Date().getMonth() + 1; // 1-12
+  var metaMes  = meta > 0 ? meta / 12 : 0;
+  var metaEsperada = metaMes * mesAtual;
+  var vsBudget = fat - metaEsperada;
+  var vsBudgetColor = vsBudget >= 0 ? '#4ade80' : '#fb923c';
+  var vsBudgetTxt = (vsBudget >= 0 ? '+' : '') + fmtShort(vsBudget);
+
+  return ''
+  // ── CARD 1: META ANUAL ──────────────────────────────────────
+  + '<div class="kc" style="background:linear-gradient(135deg,'+gradMeta+');border-color:'+borderMeta+';position:relative;overflow:hidden">'
+    + '<div style="position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 0 0 80px;background:rgba(255,255,255,.02)"></div>'
+    + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">'
+      + '<div style="flex:1;min-width:0">'
+        + '<div class="kl" style="color:'+mainColor+';font-size:9px;letter-spacing:2px;margin-bottom:2px">🎯 META ANUAL '+ano+'</div>'
+        + '<div class="kv" style="color:'+mainColor+';font-size:14px;line-height:1.1">'+(meta > 0 ? fmtBRL(meta) : '<span style=\'color:rgba(255,255,255,.3);font-size:12px\'>Não definida</span>')+'</div>'
+        + '<div class="ks" style="margin-top:3px">'+(meta > 0 ? 'R$&nbsp;'+(meta/12/1000).toFixed(0)+'K/mês estimado' : 'Clique em ✎ para definir')+'</div>'
+      + '</div>'
+      + ring
+    + '</div>'
+    + '<div class="kc-meta-spark"><div class="kc-meta-spark-fill" style="width:'+pct.toFixed(1)+'%;background:'+mainColor+'"></div></div>'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">'
+      + '<span style="font-size:10px;font-weight:700;color:var(--t3)">Faturado: <strong style="color:'+mainColor+'">'+(meta>0?pct.toFixed(1)+'%':'—')+'</strong></span>'
+      + '<button class="kc-meta-edit-btn" onclick="openMetaModal()" title="Editar meta anual">✎ Editar Meta</button>'
+    + '</div>'
+  + '</div>'
+  // ── CARD 2: DESVIO DA META ─────────────────────────────────
+  + '<div class="kc" style="background:linear-gradient(135deg,'+desvioGrad+');border-color:'+desvioBorder+';position:relative;overflow:hidden">'
+    + '<div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(255,255,255,.012) 18px,rgba(255,255,255,.012) 19px)"></div>'
+    + '<div style="position:relative">'
+      + '<div class="kl" style="color:'+desvioColor+';font-size:9px;letter-spacing:2px;margin-bottom:4px">'+desvioIcon+' DESVIO DA META</div>'
+      + '<div class="kv" style="color:'+desvioColor+';font-size:13px;line-height:1.1">'+(meta > 0 ? (desvio >= 0 ? '+' : '') + fmtBRL(desvio) : '<span style=\'color:rgba(255,255,255,.3);font-size:12px\'>Meta não definida</span>')+'</div>'
+      + '<div class="ks" style="margin-top:3px">'+(meta > 0 ? (desvio >= 0 ? 'Acima da meta 🎉' : 'Abaixo da meta ⚠️') : 'Defina a meta anual')+'</div>'
+      + (meta > 0 ? ''
+          + '<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)">'
+            + '<div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px">vs. Budget do Mês '+mesAtual+'/12</div>'
+            + '<div style="font-family:var(--fn);font-size:12px;font-weight:800;color:'+vsBudgetColor+'">'+vsBudgetTxt+'</div>'
+            + '<div style="font-size:9px;color:var(--t3);margin-top:1px">Meta esperada acumulada: <strong style="color:var(--t2)">'+fmtBRL(metaEsperada)+'</strong></div>'
+          + '</div>'
+        : '')
+    + '</div>'
+  + '</div>';
+}
+
+/** Abre o modal de definição da Meta Anual */
+function openMetaModal() {
+  var m   = _getMetaObj();
+  var ano = m.metaAnualAno || new Date().getFullYear();
+  var meta = _getMetaAno(ano);
+
+  document.getElementById('modal-title').textContent = '🎯 Meta Anual de Faturamento';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="margin-bottom:20px">
+      <div style="background:linear-gradient(135deg,rgba(74,222,128,.1),rgba(52,211,153,.04));border:1px solid rgba(74,222,128,.25);border-radius:12px;padding:16px 20px;margin-bottom:20px">
+        <div style="font-size:11px;font-weight:800;color:#4ade80;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">📊 Faturamento Acumulado Atual</div>
+        <div style="font-family:var(--fn);font-size:24px;font-weight:900;color:#4ade80">${fmtBRL(ST.contracts.reduce((a,c)=>a+(c._totalFaturado||0),0))}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px">Σ realizados de todos os contratos · Mapa de Medições</div>
+      </div>
+    </div>
+    <div class="fg">
+      <div class="fgrp">
+        <div class="flbl">📅 Ano de Referência</div>
+        <select class="fsel" id="meta-ano">
+          ${[ano-1,ano,ano+1].map(y=>`<option value="${y}" ${y===ano?'selected':''}>${y}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fgrp">
+        <div class="flbl">🎯 Meta Anual (R$)</div>
+        <input class="finp" type="number" id="meta-valor" value="${meta||''}" placeholder="Ex: 5000000" step="1000"
+          oninput="document.getElementById('meta-preview-mes').textContent=fmtBRL((parseFloat(this.value)||0)/12)">
+      </div>
+      <div class="fgrp full">
+        <div class="flbl">💬 Observação</div>
+        <input class="finp" id="meta-obs" value="${(m.metaHistorico.find(x=>x.ano===ano)||{}).obs||''}" placeholder="Ex: Meta revisada em reunião de planejamento">
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:10px;padding:12px 16px;margin-top:8px">
+      <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Estimativa Mensal</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-family:var(--fn);font-size:18px;font-weight:800;color:var(--ac2)" id="meta-preview-mes">${fmtBRL((meta||0)/12)}</div>
+        <div style="font-size:11px;color:var(--t3)">/mês (meta ÷ 12)</div>
+      </div>
+    </div>
+    ${m.metaHistorico.length > 0 ? `
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--b1)">
+      <div style="font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">📜 Histórico de Metas</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${m.metaHistorico.slice(-5).reverse().map(h=>{
+          var pctH = h.realizado && h.meta ? (h.realizado/h.meta*100).toFixed(1) : null;
+          var color = !pctH ? '#94a3b8' : parseFloat(pctH)>=100?'#4ade80':parseFloat(pctH)>=75?'#facc15':'#f87171';
+          return `<div style="display:flex;align-items:center;gap:12px;padding:6px 10px;background:rgba(255,255,255,.03);border-radius:8px">
+            <span style="font-weight:800;color:var(--t2);min-width:36px">${h.ano}</span>
+            <span style="font-family:var(--fn);color:var(--tx)">${fmtBRL(h.meta)}</span>
+            ${h.realizado ? `<span style="font-family:var(--fn);font-size:10px;color:${color}">✦ ${fmtBRL(h.realizado)} (${pctH}%)</span>` : ''}
+            ${h.obs ? `<span style="font-size:10px;color:var(--t3);flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.obs}</span>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>` : ''}
+  `;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="saveMetaAnual()">💾 Salvar Meta</button>`;
+  openModal();
+}
+
+/** Salva a meta anual no ST e re-renderiza o dashboard */
+function saveMetaAnual() {
+  var m    = _getMetaObj();
+  var ano  = parseInt(document.getElementById('meta-ano').value) || new Date().getFullYear();
+  var meta = parseFloat(document.getElementById('meta-valor').value) || 0;
+  var obs  = (document.getElementById('meta-obs')||{}).value || '';
+
+  // Atualiza campo direto (ano corrente)
+  m.metaAnualFat = meta;
+  m.metaAnualAno = ano;
+
+  // Atualiza / cria entrada no histórico
+  var totalRec = ST.contracts.reduce(function(a,c){ return a+(c._totalFaturado||0); }, 0);
+  var existH   = m.metaHistorico.find(function(x){ return x.ano === ano; });
+  if(existH) {
+    existH.meta = meta;
+    existH.realizado = totalRec;
+    existH.obs  = obs;
+  } else {
+    m.metaHistorico.push({ano:ano, meta:meta, realizado:totalRec, obs:obs});
+  }
+
+  closeModal();
+  renderDashboard();
+  scheduleAutoSync();
+  showToast('🎯 Meta de R$\u00a0' + fmtBRL(meta) + ' salva para ' + ano + '.', 'gn', 3000);
+}
+
 function renderDashboard(){
   // Filtra contratos permitidos
   var _ctsDash = _filtrarContratos(ST.contracts||[]);
@@ -4523,6 +4934,10 @@ function renderDashboard(){
       <div class="kv" style="color:#a855f7">${(ST.frota||[]).length}</div>
       <div class="ks">Veículos cadastrados</div>
     </div>`;
+
+  // ── Meta row: 2 meta cards + chart ──────────────────────
+  var metaRow = document.getElementById('meta-row');
+  if(metaRow) metaRow.innerHTML = _buildMetaAnualCard(totalRec) + _buildMetaProgressChart(totalRec);
 
   const today=new Date(); today.setHours(0,0,0,0);
   const urgentes=ST.contracts.filter(c=>{const d=new Date(c.end);return(d-today)/(1000*86400)<120}).sort((a,b)=>new Date(a.end)-new Date(b.end));
@@ -4605,7 +5020,7 @@ function dashSearch(q) {
   var results = [];
 
   (ST.contracts||[]).forEach(function(c){
-    var text = [c.name,c.cc,c.gestorTecnico,c.gestorAdm,c.responsible,c.status,c.uen].join(' ').toLowerCase();
+    var text = [c.name,c.code,c.cc,c.gestorTecnico,c.gestorAdm,c.responsible,c.status,c.uen,c.objeto||""].join(' ').toLowerCase();
     if(text.indexOf(q)>=0) results.push({tipo:'Contrato',icon:'📋',titulo:c.name,sub:(c.cc||'—')+' · '+(c.gestorTecnico||c.responsible||'—')+' · '+(c.status||'—'),cor:c.status==='ativo'?'#10b981':c.status==='finalizado'?'#64748b':'#f59e0b',sec:'contratos'});
   });
   (ST.tasks||[]).forEach(function(t){
@@ -5273,7 +5688,7 @@ function _buildFatSection(c, ST, activePeriod){
     return m.contractId===c.id && (m.dtEntrega||m.dtAutFat||m.dtFatura||m.resumoFat);
   });
   var hasContratuaisCheck = c.periodoEntrega||c.periodoAnalise||c.periodoPagamento||c.dtInicioEntregaMed||c.dtFimEntregaMed||c.dtInicioAnalise||c.dtFimAnalise||c.dtPagamentoCliente;
-  if(!meds.length && !hasContratuaisCheck) return '';
+  // Sempre exibe a seção — mesmo sem dados configurados
   meds.sort(function(a,b){ return b.key.localeCompare(a.key); });
   // Usa o período do card se disponível, senão cai no mais recente
   var mf = {};
@@ -5360,7 +5775,13 @@ function _buildFatSection(c, ST, activePeriod){
     +'</div>';
   }
 
-  if(!hasContratuais && !hasDates) return '';
+  // Exibe placeholder quando sem dados configurados
+  if(!hasContratuais && !hasDates) {
+    contratuaisHTML = '<div style="background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;text-align:center">'
+      + '<div style="font-size:11px;color:var(--t3)">📋 Ciclo de faturamento não configurado</div>'
+      + '<button onclick="openContractModal('+c.id+');event.stopPropagation()" style="margin-top:8px;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:6px;color:var(--ac2);font-size:10px;font-weight:700;padding:4px 12px;cursor:pointer">⚙️ Configurar Períodos</button>'
+      + '</div>';
+  }
 
   var periodoMedBadge = c.periodoMedicao
     ? '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(56,189,248,0.10);border:1px solid rgba(56,189,248,0.30);border-radius:6px;padding:2px 9px">'
@@ -5555,6 +5976,25 @@ function _buildContractCard(c, tasks, pendT){
           ${c.telGestorAdm?`<span style="font-size:11px;color:var(--gl)"><a href="tel:${c.telGestorAdm}" onclick="event.stopPropagation()" style="color:var(--gl);text-decoration:none">📞 ${c.telGestorAdm}</a></span>`:''}
         </div>
       </div>`:''}
+    </div>
+
+    <!-- ══ OBJETO DO CONTRATO ══ -->
+    <div class="cc-section" style="padding:12px 18px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:5px">📄 Objeto do Contrato</div>
+          ${c.objeto
+            ? `<div style="font-size:12px;color:var(--t2);line-height:1.6;white-space:pre-wrap">${c.objeto}</div>`
+            : `<div style="font-size:11px;color:var(--t3);font-style:italic;display:flex;align-items:center;gap:8px">
+                <span>Não informado</span>
+                <button onclick="openContractModal(${c.id});event.stopPropagation()"
+                  style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:5px;color:var(--t3);font-size:9px;padding:2px 8px;cursor:pointer"
+                  onmouseover="this.style.borderColor='rgba(56,189,248,.3)';this.style.color='var(--ac2)'"
+                  onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='var(--t3)'">✎ Adicionar</button>
+               </div>`
+          }
+        </div>
+      </div>
     </div>
 
     <!-- ══ SEÇÃO 1: VALORES GLOBAIS ══ -->
@@ -5897,7 +6337,7 @@ function openContractModal(id){
     </div>
     <div class="fg">
       <div class="fgrp full"><div class="flbl">Nome do Contrato</div><input class="finp" id="ci-name" value="${c?c.name:''}" placeholder="Nome completo do contrato"></div>
-      <div class="fgrp"><div class="flbl">Centro de Custo</div><input class="finp" id="ci-code" value="${c?c.code:''}" placeholder="Ex: 230209301"></div>
+      <div class="fgrp"><div class="flbl">Centro de Custo (CC)</div><input class="finp" id="ci-code" value="${c?c.code:''}" placeholder="Ex: 230209301"></div>
       <div class="fgrp"><div class="flbl">Nº Obra</div><input class="finp" id="ci-nobra" value="${c?c.nObra||'':''}" placeholder="Ex: 2093"></div>
       <div class="fgrp"><div class="flbl">Status</div><select class="fsel" id="ci-status">
         <option value="ativo"          ${c&&c.status==='ativo'?          'selected':''}>Ativo</option>
@@ -5909,6 +6349,10 @@ function openContractModal(id){
       </select></div>
       <div class="fgrp"><div class="flbl">Data de Início</div><input class="finp" type="date" id="ci-start" value="${c?c.start:''}"></div>
       <div class="fgrp"><div class="flbl">Data de Término</div><input class="finp" type="date" id="ci-end" value="${c?c.end:''}"></div>
+      <div class="fgrp full" style="margin-top:4px">
+        <div class="flbl">📄 Objeto do Contrato</div>
+        <textarea class="finp" id="ci-objeto" rows="3" style="resize:vertical;min-height:72px;font-size:13px;line-height:1.5" placeholder="Descreva o objeto/escopo do contrato...">${c?c.objeto||'':'' }</textarea>
+      </div>
       <div class="fgrp full" style="border-top:1px solid var(--b1);padding-top:16px;margin-top:4px">
         <div class="flbl" style="font-family:var(--fh);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:12px;letter-spacing:.2px">👷 Gestores do Contrato</div>
       </div>
@@ -6411,6 +6855,7 @@ function saveContract(id){
       ? _pendingGestorAdmFoto
       : (id ? (getContract(id)||{}).fotoGestorAdm||'' : ''),
     nObra: document.getElementById('ci-nobra').value.trim(),
+    objeto: (document.getElementById('ci-objeto')||{value:''}).value.trim(),
     linkContrato: normalizeUrl(((document.getElementById('ci-link')||{}).value||'').trim()),
   };
   if(id){
@@ -10320,20 +10765,34 @@ function presenceRender(){
     var isMe     = function(u){ return currentUser && u.id===currentUser.id; };
 
     avDiv.innerHTML = shown.map(function(u){
-      var ini = u.name.split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
+      var _uname = u.name || (currentUser&&isMe(u)?currentUser.name:'?');
+      var ini = _uname.split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0]||'?';}).join('').toUpperCase()||'?';
       var brd = isMe(u) ? '2px solid #10b981' : '2px solid var(--s1)';
-      var tip = u.name + (u.cargo?' · '+u.cargo:'') + ' — '+_secLabel(u.secao)+(isMe(u)?' (você)':'');
+      var nome = u.name || (currentUser&&isMe(u)?currentUser.name:'?');
+      var tip = nome + (u.cargo?' · '+u.cargo:'') + ' — '+_secLabel(u.secao||'dashboard')+(isMe(u)?' (você)':'');
       return '<div class="ob-av" style="background:'+u.color+';border:'+brd+'" title="'+tip+'">'
            + ini
            + '<div class="ob-dot"></div>'
            + '</div>';
     }).join('');
 
-    cntEl.textContent = ativos.length === 1
-      ? '1 online'
-      : extra > 0
-        ? ativos.length + ' online (+' + extra + ')'
-        : ativos.length + ' online';
+    // Contador com nome do usuário atual em destaque
+    var meUser = ativos.find(function(u){ return currentUser && u.id === currentUser.id; });
+    if(ativos.length === 1 && meUser) {
+      cntEl.innerHTML = '<span style="font-weight:700;color:var(--tx)">'
+        + (meUser.name||'Você')
+        + '</span>'
+        + '<span style="font-size:9px;color:var(--t3);margin-left:4px">— '
+        + _secLabel(meUser.secao||'dashboard')
+        + '</span>';
+    } else {
+      var outrosNomes = ativos.filter(function(u){ return !currentUser||u.id!==currentUser.id; })
+                              .slice(0,2).map(function(u){ return u.name.split(' ')[0]; }).join(', ');
+      cntEl.innerHTML = '<span style="font-weight:700;color:var(--tx)">'
+        + ativos.length + ' online'
+        + '</span>'
+        + (outrosNomes ? '<span style="font-size:9px;color:var(--t3);margin-left:4px">— '+outrosNomes+(extra>0?' +'+extra:'')+'</span>' : '');
+    }
 
   } catch(e){ console.warn('[Presença]', e.message); }
 }
@@ -10382,7 +10841,35 @@ var _currentSection = 'dashboard';
 // ── Persistência local (backup offline independente do servidor) ────────────
 function saveLocal(){
   try{
-    localStorage.setItem('diefra_backup', JSON.stringify(ST));
+    // Snapshot completo do estado — inclui todos os campos v2026
+    var _snap = {
+      contracts:       ST.contracts,
+      custoAnalises:   ST.custoAnalises || [],
+      tasks:           ST.tasks,
+      medicoes:        ST.medicoes,
+      participants:    ST.participants,
+      gestoresUnidade: ST.gestoresUnidade || [],
+      managers:        ST.managers,
+      vacations:       ST.vacations,
+      trips:           ST.trips,
+      frota:           ST.frota || [],
+      dp:              ST.dp || [],
+      funcoes:         ST.funcoes || [],
+      audits:          ST.audits,
+      auditsGestao:    ST.auditsGestao,
+      entregaveis:     ST.entregaveis,
+      epiItens:        ST.epiItens || [],
+      epiEntregas:     ST.epiEntregas || [],
+      calibEquips:     ST.calibEquips || [],
+      calibRegistros:  ST.calibRegistros || [],
+      calibVerifs:     ST.calibVerifs || [],
+      calibNCs:        ST.calibNCs || [],
+      finRows:         ST.finRows,
+      nextId:          ST.nextId,
+      // ── NOVOS CAMPOS v2026 ──────────────────────────────────
+      dashMetas:       ST.dashMetas || {metaAnualFat:0, metaAnualAno:new Date().getFullYear(), metaHistorico:[]},
+    };
+    localStorage.setItem('diefra_backup', JSON.stringify(_snap));
     localStorage.setItem('diefra_state_ts', Date.now().toString());
     return true;
   } catch(e){ console.warn('[DIEFRA] saveLocal falhou:', e.message); return false; }
@@ -10394,13 +10881,37 @@ function loadLocal(){
     var bk = JSON.parse(raw);
     if(!bk || typeof bk !== 'object') return false;
     if((bk.contracts||[]).length === 0 && (bk.custoAnalises||[]).length === 0) return false;
-    ST.contracts     = bk.contracts     || ST.contracts;
-    ST.custoAnalises = bk.custoAnalises || ST.custoAnalises;
-    ST.tasks         = bk.tasks         || ST.tasks;
-    ST.medicoes      = bk.medicoes      || ST.medicoes;
-    ST.participants  = bk.participants  || ST.participants;
-    ST.nextId        = bk.nextId        || ST.nextId;
-    console.log('[DIEFRA] loadLocal: restaurados', (ST.contracts||[]).length, 'contratos');
+    // Campos principais
+    ST.contracts        = bk.contracts        || ST.contracts;
+    ST.custoAnalises    = bk.custoAnalises    || ST.custoAnalises;
+    ST.tasks            = bk.tasks            || ST.tasks;
+    ST.medicoes         = bk.medicoes         || ST.medicoes;
+    ST.participants     = bk.participants     || ST.participants;
+    ST.gestoresUnidade  = bk.gestoresUnidade  || ST.gestoresUnidade || [];
+    ST.managers         = bk.managers         || ST.managers;
+    ST.vacations        = bk.vacations        || ST.vacations;
+    ST.trips            = bk.trips            || ST.trips;
+    ST.frota            = bk.frota            || ST.frota || [];
+    ST.dp               = bk.dp               || ST.dp || [];
+    ST.funcoes          = bk.funcoes          || ST.funcoes || [];
+    ST.audits           = bk.audits           || ST.audits;
+    ST.auditsGestao     = bk.auditsGestao     || ST.auditsGestao;
+    ST.entregaveis      = bk.entregaveis      || ST.entregaveis;
+    ST.epiItens         = bk.epiItens         || ST.epiItens || [];
+    ST.epiEntregas      = bk.epiEntregas      || ST.epiEntregas || [];
+    ST.calibEquips      = bk.calibEquips      || ST.calibEquips || [];
+    ST.calibRegistros   = bk.calibRegistros   || ST.calibRegistros || [];
+    ST.calibVerifs      = bk.calibVerifs      || ST.calibVerifs || [];
+    ST.calibNCs         = bk.calibNCs         || ST.calibNCs || [];
+    if(bk.finRows)       ST.finRows = bk.finRows;
+    ST.nextId           = bk.nextId || ST.nextId;
+    // ── NOVOS CAMPOS v2026 ──────────────────────────────────
+    if(bk.dashMetas && typeof bk.dashMetas === 'object') {
+      ST.dashMetas = Object.assign({metaAnualFat:0, metaAnualAno:new Date().getFullYear(), metaHistorico:[]}, bk.dashMetas);
+    }
+    // Migra custoAnalises legadas ao carregar
+    if(ST.custoAnalises) ST.custoAnalises.forEach(function(a){ if(typeof _custoMigrateAnalise==='function') _custoMigrateAnalise(a); });
+    console.log('[DIEFRA] loadLocal v2026: restaurados', (ST.contracts||[]).length, 'contratos,', (ST.custoAnalises||[]).length, 'análises de custo');
     return true;
   } catch(e){ console.warn('[DIEFRA] loadLocal falhou:', e.message); return false; }
 }
@@ -10437,6 +10948,7 @@ async function pushToSheets(silent){
       calibVerifs:    ST.calibVerifs    || [],
       calibNCs:       ST.calibNCs       || [],
       custoAnalises:  ST.custoAnalises || [],
+      dashMetas:      ST.dashMetas || {metaAnualFat:0,metaAnualAno:new Date().getFullYear(),metaHistorico:[]},
     });
     const res = await fetch(_apiUrl({ action:'push' }), {
       method:  'POST',
@@ -10539,6 +11051,12 @@ async function pullFromSheets(silent){
       if(data.custoAnalises && data.custoAnalises.length > 0)
         ST.custoAnalises = data.custoAnalises;
       else if(!ST.custoAnalises) ST.custoAnalises = [];
+      // dashMetas — meta anual e histórico (objecto simples, não array)
+      if(data.dashMetas && typeof data.dashMetas === 'object') {
+        ST.dashMetas = Object.assign({metaAnualFat:0,metaAnualAno:new Date().getFullYear(),metaHistorico:[]}, data.dashMetas);
+      } else if(!ST.dashMetas) {
+        ST.dashMetas = {metaAnualFat:0, metaAnualAno:new Date().getFullYear(), metaHistorico:[]};
+      }
       if(data.logos)   _mergeLogosFromSheets(data.logos);
       recalcAllContracts();
       window._vcLastCtId = null;
@@ -20681,9 +21199,10 @@ function _custoNewAnalise(contractId) {
     gestorAdm:'', gestorTec:'', pco:'', pce:'',
     dtOrcamento:'', dtEstudo:'', dtPreCusto:'',
     links: [], pontos: [],
-    dreContas: CUSTO_DRE_CONTAS.map(function(c){ return Object.assign({},c,{orcado:0,estudo:0,precusto:0,obs:''}); }),
+    dreContas: CUSTO_DRE_CONTAS.map(function(c){ return Object.assign({},c,{orcado:0,estudo:0,precusto:0,realizado:0,obs:''}); }),
     memoria: {grupos:[]},
-    medicao: {orcado:[],estudo:[],precusto:[]},
+    medicao: {orcado:[],estudo:[],precusto:[],realizado:[]},
+    mesRealizadoRef: '',
     funcoes: [],
     funcoesCols: [],
     epiCols: ['Cargo Padrão'],
@@ -20716,6 +21235,8 @@ function renderCusto() {
       ST.custoAnalises.push(_custoNewAnalise(ct.id));
     }
   });
+  // Migra análises legadas (sem realizado, mesRealizadoRef etc.)
+  ST.custoAnalises.forEach(function(a){ _custoMigrateAnalise(a); });
   if(!_custoCtId && ST.contracts && ST.contracts.length > 0) {
     _custoCtId = ST.contracts[0].id;
   }
@@ -20744,6 +21265,7 @@ function _custoRenderNav() {
 }
 function custoSelectCt(id) {
   _custoCtId = id;
+  var _amig = _custoAnalise(); if(_amig) _custoMigrateAnalise(_amig);
   _custoRenderNav();
   _custoRenderKPIs();
   _custoRenderTab(_custoTabAtv);
@@ -20762,25 +21284,36 @@ function _custoRenderKPIs() {
   var a = _custoAnalise();
   var ct = (ST.contracts||[]).find(function(c){ return c.id===_custoCtId; });
   if(!a||!ct) { wrap.innerHTML='<div style="color:var(--t3);padding:16px;font-size:13px">Nenhum contrato selecionado.</div>'; return; }
-  var recRow = a.dreContas.find(function(c){ return c.conta==='81'; })||{};
+  var recRow  = a.dreContas.find(function(c){ return c.conta==='81'; })||{};
   var despRow = a.dreContas.find(function(c){ return c.conta==='82'; })||{};
-  var rec = recRow.estudo||recRow.orcado||0;
+  var rec  = recRow.estudo||recRow.orcado||0;
   var desp = despRow.estudo||despRow.orcado||0;
-  var res = rec - desp;
+  var res  = rec - desp;
   var marg = rec>0 ? (res/rec*100).toFixed(1) : 0;
-  var mc = parseFloat(marg)>=15?'var(--gnl)':parseFloat(marg)>=5?'var(--gl)':'var(--rdl)';
-  var folha = (a.funcoes||[]).reduce(function(s,f){ return s+(parseFloat(f.salarioFinal||0)*parseInt(f.headcount||0)); },0);
-  var nFuncs = (a.funcoes||[]).length;
-  var nHC = (a.funcoes||[]).reduce(function(s,f){ return s+parseInt(f.headcount||0); },0);
-  var nProj = (a.projecoes||[]).length;
-  var medItems = (a.medicao.estudo.length||a.medicao.orcado.length||0);
+  var mc   = parseFloat(marg)>=15?'var(--gnl)':parseFloat(marg)>=5?'var(--gl)':'var(--rdl)';
+  var recReal  = recRow.realizado||0;
+  var despReal = despRow.realizado||0;
+  var resReal  = recReal - despReal;
+  var margReal = recReal>0 ? (resReal/recReal*100).toFixed(1) : 0;
+  var mcReal   = parseFloat(margReal)>=15?'var(--gnl)':parseFloat(margReal)>=5?'var(--gl)':'var(--rdl)';
+  var hasReal  = recReal>0 || despReal>0;
+  var folha    = (a.funcoes||[]).reduce(function(s,f){ return s+(parseFloat(f.salarioFinal||0)*parseInt(f.headcount||0)); },0);
+  var nFuncs   = (a.funcoes||[]).length;
+  var nHC      = (a.funcoes||[]).reduce(function(s,f){ return s+parseInt(f.headcount||0); },0);
+  var nProj    = (a.projecoes||[]).length;
+  var medItems = ((a.medicao.estudo||[]).length||(a.medicao.orcado||[]).length||0);
+  var mesRef   = a.mesRealizadoRef ? ' · '+_custoPeriodLabel(a.mesRealizadoRef) : '';
   wrap.innerHTML =
-    '<div class="kc cb"><div class="kl">Receita</div><div class="kv" style="font-size:16px">'+_fmtBRL(rec)+'</div><div class="ks">Estudo / Orçado</div></div>' +
-    '<div class="kc" style="--kcc:var(--rdl)"><div class="kl">Despesa</div><div class="kv" style="font-size:16px;color:var(--rdl)">'+_fmtBRL(desp)+'</div><div class="ks">Custo operacional total</div></div>' +
-    '<div class="kc" style="--kcc:'+mc+'"><div class="kl">Resultado</div><div class="kv" style="font-size:16px;color:'+mc+'">'+_fmtBRL(res)+'</div><div class="ks">Margem: '+marg+'%</div></div>' +
-    '<div class="kc co"><div class="kl">Folha de Pagamento</div><div class="kv" style="font-size:16px">'+_fmtBRL(folha)+'</div><div class="ks">'+nFuncs+' funções · '+nHC+' colaboradores</div></div>' +
-    '<div class="kc cp"><div class="kl">Itens de Medição</div><div class="kv" style="font-size:16px;color:var(--pu)">'+medItems+'</div><div class="ks">Serviços contratados</div></div>' +
-    '<div class="kc" style="--kcc:var(--ac2)"><div class="kl">Projeções</div><div class="kv" style="font-size:16px;color:var(--ac2)">'+nProj+'</div><div class="ks">Meses projetados</div></div>';
+    '<div class="kc cb"><div class="kl">Receita Estudo</div><div class="kv" style="font-size:16px">'+_fmtBRL(rec)+'</div><div class="ks">Estudo / Orçado</div></div>' +
+    '<div class="kc" style="--kcc:var(--rdl)"><div class="kl">Despesa Estudo</div><div class="kv" style="font-size:16px;color:var(--rdl)">'+_fmtBRL(desp)+'</div><div class="ks">Custo operacional total</div></div>' +
+    '<div class="kc" style="--kcc:'+mc+'"><div class="kl">Resultado Estudo</div><div class="kv" style="font-size:16px;color:'+mc+'">'+_fmtBRL(res)+'</div><div class="ks">Margem: '+marg+'%</div></div>' +
+    (hasReal
+      ? '<div class="kc" style="--kcc:#38bdf8"><div class="kl">Receita Realizado</div><div class="kv" style="font-size:16px;color:#38bdf8">'+_fmtBRL(recReal)+'</div><div class="ks">Mapa Medições'+mesRef+'</div></div>' +
+        '<div class="kc" style="--kcc:var(--rdl)"><div class="kl">Despesa Realizado</div><div class="kv" style="font-size:16px;color:var(--rdl)">'+_fmtBRL(despReal)+'</div><div class="ks">Custo real apurado</div></div>' +
+        '<div class="kc" style="--kcc:'+mcReal+'"><div class="kl">Resultado Realizado</div><div class="kv" style="font-size:16px;color:'+mcReal+'">'+_fmtBRL(resReal)+'</div><div class="ks">Margem: '+margReal+'%</div></div>'
+      : '<div class="kc co"><div class="kl">Folha de Pagamento</div><div class="kv" style="font-size:16px">'+_fmtBRL(folha)+'</div><div class="ks">'+nFuncs+' funções · '+nHC+' colaboradores</div></div>' +
+        '<div class="kc cp"><div class="kl">Itens de Medição</div><div class="kv" style="font-size:16px;color:var(--pu)">'+medItems+'</div><div class="ks">Serviços contratados</div></div>' +
+        '<div class="kc" style="--kcc:var(--ac2)"><div class="kl">Projeções</div><div class="kv" style="font-size:16px;color:var(--ac2)">'+nProj+'</div><div class="ks">Meses projetados</div></div>');
 }
 
 // ─── Tabs ─────────────────────────────────────────────────────────────
@@ -20829,26 +21362,62 @@ function _refreshRentabIfOpen(){
 function _custoCapa() {
   var a = _custoAnalise(); if(!a) return;
   var ct = (ST.contracts||[]).find(function(c){ return c.id===_custoCtId; })||{};
-  if(!a.cliente && ct.name)        a.cliente = ct.name;
-  if(!a.cc && ct.cc)               a.cc = ct.cc;
-  if(!a.gestorTec && ct.gestorTecnico) a.gestorTec = ct.gestorTecnico;
+
+  // ── AUTO-VINCULAR: puxa do contrato se o campo da análise estiver vazio ──
+  var hdrUEN = (function(){ var el=document.getElementById('hdr-uen-text'); return el?el.textContent.trim():''; })();
+  if(!a.uen && hdrUEN)                          a.uen        = hdrUEN;
+  if(!a.uen && ct.uen)                          a.uen        = ct.uen;
+  if(!a.cc && (ct.code||ct.cc))                 a.cc         = ct.code||ct.cc;
+  if(!a.cliente && ct.name)                     a.cliente    = ct.name;
+  if(!a.nrContrato && ct.code)                  a.nrContrato = ct.code;
+  if(!a.responsavel && (ct.responsible||ct.gestorTecnico)) a.responsavel = ct.responsible||ct.gestorTecnico;
+  if(!a.gestorAdm && (ct.gestorAdministrativo||ct.gestorAdm)) a.gestorAdm = ct.gestorAdministrativo||ct.gestorAdm||'';
+  if(!a.gestorTec && ct.gestorTecnico)          a.gestorTec  = ct.gestorTecnico;
+  if(!a.objeto && ct.objeto)                    a.objeto     = ct.objeto||'';
+  if(!a.dtInicio && ct.start)                   a.dtInicio   = ct.start;
+  if(!a.dtFim && ct.end)                        a.dtFim      = ct.end;
+  if(!a.status && ct.status)                    a.status     = ct.status;
 
   var form = document.getElementById('custo-capa-form'); if(!form) return;
+
+  // ── Campos vinculados ao contrato (readonly) e campos editáveis ──────────
   var fields = [
-    {k:'uen',label:'UEN'},{k:'cc',label:'CC'},
-    {k:'cliente',label:'Cliente'},{k:'nrContrato',label:'Nº Contrato'},
-    {k:'responsavel',label:'Responsável'},{k:'gestorAdm',label:'Gestor ADM'},
-    {k:'gestorTec',label:'Gestor Técnico'},
-    {k:'dtOrcamento',label:'Data Orçamento',tipo:'date'},
-    {k:'dtEstudo',label:'Data Estudo',tipo:'date'},
-    {k:'dtPreCusto',label:'Data Pré-Custo',tipo:'date'},
+    {k:'uen',       label:'UEN',                    srcKey:'uen',              vincSrc:'Cabeçalho/Contrato'},
+    {k:'cc',        label:'CC — Centro de Custo',   srcKey:'code',             vincSrc:'Contratos'},
+    {k:'cliente',   label:'Cliente',                srcKey:'name',             vincSrc:'Contratos'},
+    {k:'nrContrato',label:'Nº Contrato',            srcKey:'code',             vincSrc:'Contratos'},
+    {k:'responsavel',label:'Responsável / Gestor Técnico', srcKey:'gestorTecnico', vincSrc:'Contratos'},
+    {k:'gestorAdm', label:'Gestor ADM',             srcKey:'gestorAdministrativo', vincSrc:'Contratos'},
+    {k:'gestorTec', label:'Gestor Técnico',         srcKey:'gestorTecnico',    vincSrc:'Contratos'},
+    {k:'objeto',    label:'Objeto do Contrato',     srcKey:'objeto',           vincSrc:'Contratos'},
+    {k:'dtInicio',  label:'Início do Contrato',     srcKey:'start',            vincSrc:'Contratos', tipo:'date'},
+    {k:'dtFim',     label:'Término do Contrato',    srcKey:'end',              vincSrc:'Contratos', tipo:'date'},
+    {k:'status',    label:'Status',                 srcKey:'status',           vincSrc:'Contratos'},
+    {k:'dtOrcamento',label:'Data Orçamento',        srcKey:null,                                    tipo:'date'},
+    {k:'dtEstudo',  label:'Data Estudo',            srcKey:null,                                    tipo:'date'},
+    {k:'dtPreCusto',label:'Data Pré-Custo',         srcKey:null,                                    tipo:'date'},
   ];
+
   var fhtml = '';
   fields.forEach(function(f) {
+    var ctVal  = f.srcKey ? (ct[f.srcKey]||'') : '';
+    var aVal   = a[f.k]||'';
+    var isVinc = f.srcKey && ctVal;
+    var tip    = isVinc ? 'title="Vinculado: '+f.vincSrc+'"' : '';
+    var icon   = isVinc ? '<span style="font-size:9px;color:#38bdf8;margin-left:4px" title="Vinculado a '+f.vincSrc+'">🔗</span>' : '';
+    var roStyle= isVinc ? 'background:rgba(56,189,248,.06);border-color:rgba(56,189,248,.2);color:var(--ac2);' : '';
+    // Badge de sincronizar se contrato tem valor diferente do que está salvo
+    // data-atributos para evitar aspas aninhadas no onclick
+    var _sfk = f.k.replace(/"/g,'&quot;');
+    var _scv = (ctVal||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    var syncBtn = (isVinc && ctVal !== aVal)
+      ? '<button data-sf-k="'+_sfk+'" data-sf-v="'+_scv+'" onclick="custoCapaSyncField(this.dataset.sfK,this.dataset.sfV)" title="Sincronizar: '+_scv+'" style="font-size:10px;padding:2px 7px;border-radius:8px;border:1px solid rgba(56,189,248,.3);background:rgba(56,189,248,.1);color:var(--ac2);cursor:pointer;margin-left:4px;white-space:nowrap">&#8635; Sinc.</button>'
+      : '';
     fhtml += '<div style="margin-bottom:10px">' +
-      '<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:3px">' + f.label + '</div>' +
-      '<input class="fi" type="' + (f.tipo||'text') + '" value="' + (a[f.k]||'') + '"' +
-      ' style="height:32px;font-size:12px;padding:6px 10px"' +
+      '<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:3px;display:flex;align-items:center;gap:4px">' +
+      f.label + icon + syncBtn + '</div>' +
+      '<input class="fi" '+tip+' type="' + (f.tipo||'text') + '" value="' + (aVal).replace(/"/g,'&quot;') + '"' +
+      ' style="height:32px;font-size:12px;padding:6px 10px;'+roStyle+'"' +
       ' data-k="' + f.k + '" onchange="custoCapaSave(this.dataset.k,this.value)">' +
       '</div>';
   });
@@ -20936,6 +21505,34 @@ function _custoCapa() {
 function custoCapaSave(k, v) {
   var a = _custoAnalise(); if(a) { a[k]=v; scheduleAutoSync(); }
 }
+/** Sincroniza um campo da Capa com o valor vindo do contrato */
+function custoCapaSyncField(k, v) {
+  var a = _custoAnalise(); if(!a) return;
+  a[k] = v;
+  _custoCapa();
+  scheduleAutoSync();
+  showToast('Campo "'+k+'" sincronizado com o contrato.', 'gn', 2000);
+}
+/** Sincroniza TODOS os campos da Capa com o contrato */
+function custoCapaSyncAll() {
+  var a = _custoAnalise(); if(!a) return;
+  var ct = (ST.contracts||[]).find(function(c){ return c.id===_custoCtId; })||{};
+  var hdrUEN = (function(){ var el=document.getElementById('hdr-uen-text'); return el?el.textContent.trim():''; })();
+  if(hdrUEN||ct.uen) a.uen        = hdrUEN||ct.uen||'';
+  if(ct.code||ct.cc) a.cc         = ct.code||ct.cc;
+  if(ct.name)        a.cliente    = ct.name;
+  if(ct.code)        a.nrContrato = ct.code;
+  if(ct.responsible||ct.gestorTecnico) a.responsavel = ct.responsible||ct.gestorTecnico||'';
+  if(ct.gestorAdministrativo||ct.gestorAdm) a.gestorAdm = ct.gestorAdministrativo||ct.gestorAdm||'';
+  if(ct.gestorTecnico) a.gestorTec = ct.gestorTecnico;
+  if(ct.objeto)      a.objeto     = ct.objeto||'';
+  if(ct.start)       a.dtInicio   = ct.start;
+  if(ct.end)         a.dtFim      = ct.end;
+  if(ct.status)      a.status     = ct.status;
+  _custoCapa();
+  scheduleAutoSync();
+  showToast('✅ Capa sincronizada com os dados do contrato.', 'gn', 2500);
+}
 function custoPontoSave(i, k, v) {
   var a = _custoAnalise();
   if(a && a.pontos && a.pontos[i]) { a.pontos[i][k]=v; scheduleAutoSync(); }
@@ -20980,38 +21577,68 @@ function _custoEstudo() {
   var tbody = document.getElementById('custo-estudo-tbody');
   if(!thead||!tbody) return;
 
-  var cens = _custoCen==='todos'    ? ['orcado','estudo','precusto'] :
+  /* ── Sincroniza receitas auto-vinculadas ─────────────────────── */
+  _custoAutoSyncReceita(a);
+
+  /* ── Sincroniza campo de referência na toolbar ───────────────── */
+  var refEl = document.getElementById('custo-mes-ref');
+  if(refEl) refEl.value = a.mesRealizadoRef || '';
+
+  /* ── Colunas ──────────────────────────────────────────────────── */
+  var isTodos     = _custoCen === 'todos';
+  var isRealizado = _custoCen === 'realizado';
+
+  var cens = isTodos      ? ['orcado','estudo','precusto','realizado'] :
+             isRealizado  ? ['precusto','realizado'] :
              _custoCen==='precusto' ? ['orcado','precusto'] :
              _custoCen==='estudo'   ? ['orcado','estudo']   : ['orcado'];
-  // Append custom scenario columns
+
   var _cc = (a.dreColsCustom||[]);
-  if(_custoCen==='todos' && _cc.length>0) {
+  if(isTodos && _cc.length>0) {
     _cc.forEach(function(c){ if(cens.indexOf(c.key)===-1) cens.push(c.key); });
   }
-  var lbl  = {orcado:'Orçado', estudo:'Estudo', precusto:'Pré-Custo'};
+
+  var lbl = {orcado:'Or\u00e7ado', estudo:'Estudo', precusto:'Pr\u00e9-Custo', realizado:'Realizado'};
   (a.dreColsCustom||[]).forEach(function(c){ lbl[c.key] = c.label; });
 
-  /* ── TOTAIS para % ─────────────────────────────────────── */
+  /* ── Totais para % ───────────────────────────────────────────── */
   var totRec={}, totDesp={};
-  cens.forEach(function(cn,cni){
+  cens.forEach(function(cn){
     var r = a.dreContas.find(function(c){return c.conta==='81';})||{};
     var d = a.dreContas.find(function(c){return c.conta==='82';})||{};
     totRec[cn]  = r[cn]||0;
     totDesp[cn] = d[cn]||0;
   });
 
-  /* ── CABEÇALHO ─────────────────────────────────────────── */
+  /* ── Contas cujo valor \u00e9 vinculado automaticamente ────────────── */
+  var contasAutoRec = ['81','8101','8101011111'];
+
+  /* ── Per\u00edodo de refer\u00eancia do Realizado ──────────────────────── */
+  var mesRefLabel = '';
+  if((isTodos||isRealizado) && a.mesRealizadoRef) {
+    mesRefLabel = ' <span style="font-size:8px;font-weight:600;color:#7dd3fc;opacity:.85;margin-left:4px;vertical-align:middle">'+a.mesRealizadoRef+'</span>';
+  }
+
+  /* ── CABE\u00c7ALHO ──────────────────────────────────────────────── */
   var GRN = '#1a4731';
-  var isTodos = _custoCen === 'todos';
   var th = '<tr>';
   th += '<th style="width:108px;background:'+GRN+';color:#b6d9c3;font-size:8.5px;letter-spacing:1.2px;padding:8px 10px;border-right:1px solid rgba(255,255,255,.08)">CONTA CUSTO</th>';
-  th += '<th style="min-width:260px;background:'+GRN+';color:#b6d9c3;font-size:8.5px;letter-spacing:1.2px;padding:8px 12px">DISCRIMINAÇÃO</th>';
+  th += '<th style="min-width:260px;background:'+GRN+';color:#b6d9c3;font-size:8.5px;letter-spacing:1.2px;padding:8px 12px">DISCRIMINA\u00c7\u00c3O</th>';
   cens.forEach(function(cn,cni){
-    var accent = cn==='orcado'?'#2d6a4f': cn==='estudo'?'#1b4332':'#081c15';
-    th += '<th style="background:'+accent+';color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center;padding:8px;border-left:2px solid rgba(255,255,255,.12);min-width:200px">'+lbl[cn].toUpperCase()+' <button class="col-ctx-btn" data-col-tbl="dre" data-col-cn="'+cn+'" data-col-ci="'+cni+'" onclick="colCtxOpen(event,this)" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;background:rgba(255,255,255,.12);border-radius:3px;cursor:pointer;font-size:10px;padding:0;margin-left:6px;opacity:.7;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">&#8942;</button></th>';
+    var accent = cn==='orcado'    ?'#2d6a4f':
+                 cn==='estudo'    ?'#1b4332':
+                 cn==='precusto'  ?'#081c15':
+                 cn==='realizado' ?'#0c1a33':'#081c15';
+    var orcLock = cn==='orcado'
+      ? ' <button title="Or\u00e7ado protegido por senha" onclick="custoOrcadoUnlock()" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);border-radius:4px;cursor:pointer;font-size:10px;padding:0;margin-left:6px;opacity:.75;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">&#x1F512;</button>' : '';
+    var ctxBtn = (cn!=='orcado')
+      ? ' <button class="col-ctx-btn" data-col-tbl="dre" data-col-cn="'+cn+'" data-col-ci="'+cni+'" onclick="colCtxOpen(event,this)" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;background:rgba(255,255,255,.12);border-radius:3px;cursor:pointer;font-size:10px;padding:0;margin-left:6px;opacity:.7;vertical-align:middle" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">&#8942;</button>' : '';
+    var refTag = (cn==='realizado') ? mesRefLabel : '';
+    th += '<th style="background:'+accent+';color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center;padding:8px;border-left:2px solid rgba(255,255,255,.12);min-width:200px">'+
+      lbl[cn].toUpperCase()+orcLock+ctxBtn+refTag+'</th>';
   });
   if(isTodos) {
-    th += '<th style="background:#1a1a2e;color:#a78bfa;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center;padding:8px;border-left:2px solid rgba(167,139,250,.3);min-width:160px">Δ VARIAÇÃO</th>';
+    th += '<th style="background:#1a1a2e;color:#a78bfa;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center;padding:8px;border-left:2px solid rgba(167,139,250,.3);min-width:160px">\u0394 VARIA\u00c7\u00c3O</th>';
   }
   th += '<th style="width:28px;background:'+GRN+'"></th></tr>';
 
@@ -21020,157 +21647,158 @@ function _custoEstudo() {
   th += '<th style="background:#122820;border-right:1px solid rgba(255,255,255,.08)"></th>';
   th += '<th style="background:#122820"></th>';
   cens.forEach(function(cn){
-    var accent = cn==='orcado'?'#1d4635': cn==='estudo'?'#142e24':'#060f0a';
-    th += '<th style="background:'+accent+';color:#8ecfae;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 10px;border-left:2px solid rgba(255,255,255,.10);min-width:180px">VALOR · % REC · % DESP</th>';
+    var accent = cn==='orcado'    ?'#1d4635':
+                 cn==='estudo'    ?'#142e24':
+                 cn==='precusto'  ?'#060f0a':
+                 cn==='realizado' ?'#071020':'#060f0a';
+    var subTxt = cn==='orcado'
+      ? '<span style="color:#64748b;font-size:7.5px">BASE CONTRATO \u2014 senha para editar</span>'
+      : 'VALOR \u00b7 % REC \u00b7 % DESP';
+    th += '<th style="background:'+accent+';color:#8ecfae;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 10px;border-left:2px solid rgba(255,255,255,.10);min-width:180px">'+subTxt+'</th>';
   });
   if(isTodos) {
-    th += '<th style="background:#13132a;color:#c4b5fd;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 10px;border-left:2px solid rgba(167,139,250,.2)">ORÇADO → PRÉ-CUSTO (Δ)</th>';
+    th += '<th style="background:#13132a;color:#c4b5fd;font-size:8px;letter-spacing:1px;text-align:center;padding:6px 10px;border-left:2px solid rgba(167,139,250,.2)">PR\u00c9-CUSTO \u2192 REALIZADO (\u0394)</th>';
   }
   th += '<th style="background:#122820"></th></tr>';
   thead.innerHTML = th;
 
-  /* ── HELPERS ────────────────────────────────────────────── */
-  function pct(v, tot){ return (tot>0 && v!==0) ? (v/tot*100).toFixed(1)+'%' : '—'; }
-  function fv(v){ return v ? _fmtBRL(v) : '0,00'; }
+  /* ── HELPERS ──────────────────────────────────────────────────── */
+  function pct(v, tot){ return (tot>0 && v!==0) ? (v/tot*100).toFixed(1)+'%' : '\u2014'; }
   function _pctColor(v, tot){ var p=tot>0?Math.abs(v/tot*100):0; return p>40?'#4ade80':p>15?'#a3e635':p>5?'#facc15':'#94a3b8'; }
 
-  /* ── LINHAS ─────────────────────────────────────────────── */
+  /* ── LINHAS ───────────────────────────────────────────────────── */
   var tb = '';
   a.dreContas.forEach(function(row, idx){
     var n  = row.nivel;
     var tp = row.tipo;
 
-    /* cores e estilos por nível */
-    var rowBg, conta_style, desc_style, val_style, pct_style, border_left;
-    var show_pct = true;   /* mostrar % nas colunas */
-    var editable = true;   /* inputs editáveis */
+    var rowBg, conta_style, desc_style, val_style, pct_style;
+    var show_pct = true;
 
     if(n===0){
       rowBg       = tp==='receita' ? 'rgba(16,185,129,.10)' : tp==='resultado' ? 'rgba(16,185,129,.06)' : 'rgba(220,38,38,.09)';
       conta_style = 'font-size:11px;font-weight:900;color:var(--tx);text-align:right;padding:10px 10px 10px 6px;border-right:1px solid rgba(255,255,255,.07)';
       desc_style  = 'font-size:12px;font-weight:900;color:var(--tx);text-transform:uppercase;letter-spacing:.3px;padding:10px 12px;border-bottom:2px solid rgba(255,255,255,.1)';
       val_style   = 'font-size:13px;font-weight:900;font-family:var(--fn);color:var(--tx)';
-      pct_style   = 'font-size:10px;color:var(--t2)';
-      show_pct    = true;   /* nivel 0 mostra % da receita */
-      editable    = true;
     } else if(n===1){
       rowBg       = 'rgba(255,255,255,.022)';
       conta_style = 'font-size:10px;font-weight:800;color:var(--t2);text-align:right;padding:9px 10px 9px 6px;border-right:1px solid rgba(255,255,255,.06)';
       desc_style  = 'font-size:11.5px;font-weight:800;color:var(--tx);text-transform:uppercase;letter-spacing:.2px;padding:9px 12px 9px 18px;border-bottom:1px solid rgba(255,255,255,.07)';
       val_style   = 'font-size:12px;font-weight:800;font-family:var(--fn);color:var(--tx)';
-      pct_style   = 'font-size:10px;font-weight:700;color:var(--t2)';
-      show_pct    = true;
-      editable    = true;
     } else if(n===2){
       rowBg       = '';
       conta_style = 'font-size:9.5px;color:var(--t3);text-align:right;padding:8px 10px 8px 6px;border-right:1px solid rgba(255,255,255,.05)';
       desc_style  = 'font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.1px;padding:8px 10px 8px 30px';
       val_style   = 'font-size:12px;font-weight:700;font-family:var(--fn);color:var(--tx)';
-      pct_style   = 'font-size:10px;font-weight:600;color:var(--t3)';
-      show_pct    = true;
-      editable    = true;
     } else {
       rowBg       = '';
       conta_style = 'font-size:9px;color:rgba(255,255,255,.22);text-align:right;padding:7px 10px 7px 6px;border-right:1px solid rgba(255,255,255,.04)';
       desc_style  = 'font-size:11px;font-weight:400;color:var(--t2);padding:7px 10px 7px 44px';
       val_style   = 'font-size:11.5px;font-weight:500;font-family:var(--fn);color:var(--tx)';
-      pct_style   = 'font-size:10px;color:var(--t3)';
-      show_pct    = true;
-      editable    = true;
     }
 
-    /* ── visibilidade (collapse) ── */
-    var hidden = _dreIsHidden(row);
-    var isCollapsed = !!_custoDreCollapsed[row.conta];
+    var hidden       = _dreIsHidden(row);
+    var isCollapsed  = !!_custoDreCollapsed[row.conta];
     var isCollapsible = n===0||n===1||n===2;
     var chev = isCollapsible
-      ? '<span onclick="custoDreToggle(\'' + row.conta + '\')\" style="cursor:pointer;user-select:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;margin-right:4px;opacity:.65;font-size:10px;transition:transform .18s;transform:rotate(' + (isCollapsed?'-90':'0') + 'deg)" title="Recolher/Expandir">\u25be</span>'
+      ? '<span onclick="custoDreToggle(\''+row.conta+'\')" style="cursor:pointer;user-select:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;margin-right:4px;opacity:.65;font-size:10px;transition:transform .18s;transform:rotate('+(isCollapsed?'-90':'0')+'deg)" title="Recolher/Expandir">\u25be</span>'
       : '<span style="display:inline-block;width:22px"></span>';
 
-    /* row open */
-    tb += '<tr style="background:'+rowBg+';'+(hidden?'display:none':'')+';" data-dre-conta="'+row.conta+'" data-dre-nivel="'+n+'">';
+    tb += '<tr style="background:'+rowBg+';'+(hidden?'display:none':'')+'" data-dre-conta="'+row.conta+'" data-dre-nivel="'+n+'">';
     tb += '<td style="'+conta_style+'">' + row.conta + '</td>';
     tb += '<td style="'+desc_style+'"><span style="display:inline-flex;align-items:center">' + chev + row.desc + '</span></td>';
 
-    /* value cells — % inline dentro do mesmo TD */
     cens.forEach(function(cn){
       var v   = row[cn]||0;
-      var pd  = show_pct ? pct(v, totDesp[cn]) : '';
-      var pr  = show_pct ? pct(v, totRec[cn])  : '';
-      var prc = pd !== '—' && pd ? _pctColor(v, totDesp[cn]) : '#94a3b8';
+      var pd  = pct(v, totDesp[cn]);
+      var pr  = pct(v, totRec[cn]);
+      var prc = pd !== '\u2014' && pd ? _pctColor(v, totDesp[cn]) : '#94a3b8';
       var bl  = 'border-left:2px solid rgba(255,255,255,.07)';
 
-      /* badge de % — lado direito do valor, mesma linha */
-      var _prLabel  = (pr && pr!=='—') ? pr+' rec' : '';
-      var _pdLabel  = (pd && pd!=='—') ? pd+' desp' : '';
+      var _prLabel  = (pr && pr!=='\u2014') ? pr+' rec' : '';
+      var _pdLabel  = (pd && pd!=='\u2014') ? pd+' desp' : '';
       var _pctInner = '';
       if(n===0) {
-        /* nivel 0: só % da receita, destaque maior */
-        var _p0 = (totRec[cn]>0 && v!==0) ? (v/totRec[cn]*100).toFixed(1)+'%' : '—';
-        if(_p0 !== '—') {
+        var _p0 = (totRec[cn]>0 && v!==0) ? (v/totRec[cn]*100).toFixed(1)+'%' : '\u2014';
+        if(_p0 !== '\u2014') {
           var _c0 = tp==='receita'?'#6ee7b7': tp==='resultado'?(v>=0?'#6ee7b7':'#f87171'):'#fca5a5';
           _pctInner = '<span style="font-size:11px;font-weight:800;font-family:var(--fn);color:'+_c0+';min-width:52px;text-align:right">'+_p0+'</span>';
         }
       } else {
-        /* niveis 1-3: % rec + % desp empilhadas à direita */
         if(_prLabel) _pctInner += '<div style="font-size:9px;font-family:var(--fn);color:#6ee7b7;white-space:nowrap;text-align:right">'+_prLabel+'</div>';
         if(_pdLabel) _pctInner += '<div style="font-size:9px;font-family:var(--fn);color:'+prc+';white-space:nowrap;text-align:right;opacity:.8">'+_pdLabel+'</div>';
         if(_pctInner) _pctInner = '<div style="display:flex;flex-direction:column;gap:1px;min-width:58px;justify-content:center">'+_pctInner+'</div>';
       }
-      var pctBadge = show_pct && _pctInner ? _pctInner : '';
+      var pctBadge = _pctInner || '';
 
-      if(editable){
-        var _iH=n===0?'32px':n===1?'30px':'27px';
-        var _iFs=n===0?'13px':n===1?'12px':'11.5px';
-        var _iFw=n<=1?'800':'400';
-        var _iBg=n===0?'rgba(255,255,255,.07)':n===1?'rgba(255,255,255,.05)':'rgba(255,255,255,.03)';
-        var _iBd=n===0?'rgba(255,255,255,.18)':n===1?'rgba(255,255,255,.12)':'rgba(255,255,255,.07)';
+      /* Regras de editabilidade:
+         Orcado: editavel somente com senha (_custoOrcadoUnlocked)
+         Receita (81/8101/8101011111) em Pré-Custo: vinculada às Linhas de Medição (mês ativo)
+         Receita (81/8101/8101011111) em Realizado: vinculada ao Mapa de Medições (mesRealizadoRef)
+         Demais: editável */
+      var isOrcLocked = (cn === 'orcado') && !window._custoOrcadoUnlocked;
+      var isAutoRec   = (cn==='precusto'||cn==='realizado') && contasAutoRec.indexOf(row.conta)!==-1;
+      var editCell    = !isOrcLocked && !isAutoRec;
+
+      if(editCell){
+        var _iH  = n===0?'32px':n===1?'30px':'27px';
+        var _iFs = n===0?'13px':n===1?'12px':'11.5px';
+        var _iFw = n<=1?'800':'400';
+        var _iBg = n===0?'rgba(255,255,255,.07)':n===1?'rgba(255,255,255,.05)':'rgba(255,255,255,.03)';
+        var _iBd = n===0?'rgba(255,255,255,.18)':n===1?'rgba(255,255,255,.12)':'rgba(255,255,255,.07)';
+        // Orçado desbloqueado: borda laranja para indicar modo edição especial
+        if(cn==='orcado') { _iBg='rgba(245,158,11,.10)'; _iBd='rgba(245,158,11,.50)'; }
         tb += '<td style="padding:3px 8px;'+bl+';min-width:220px">'
           + '<div style="display:flex;align-items:center;gap:8px">'
           + '<input type="number" class="fi" '
           + 'style="height:'+_iH+';font-size:'+_iFs+';font-weight:'+_iFw+';padding:3px 10px;flex:1;min-width:100px;font-family:var(--fn);text-align:right;background:'+_iBg+';border-color:'+_iBd+';color:var(--tx)" '
-          + 'value="'+(v||'')+'" placeholder="0,00" '
+          + 'value="'+(v!==undefined&&v!==null&&v!==0?(parseFloat(v)||0).toFixed(2):'')+'" placeholder="0,00" '
           + 'data-cn="'+cn+'" onchange="custoDRESave('+idx+',this.dataset.cn,this.value)">'
           + pctBadge
           + '</div>'
           + '</td>';
       } else {
         var vc = (tp==='receita'||tp==='resultado') ? '#4ade80' : n<=1&&v>0 ? '#f87171' : 'var(--tx)';
-        tb += '<td style="padding:4px 10px;min-width:220px;'+bl+'">'
-          + '<div style="display:flex;align-items:center;gap:8px">'
+        var badge2 = isOrcLocked
+          ? '<button title="Clique para editar o Or\u00e7ado (requer senha)" onclick="custoOrcadoUnlock()" style="font-size:11px;background:none;border:none;cursor:pointer;opacity:.6;padding:2px 4px;flex-shrink:0" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.6">\uD83D\uDD12</button>'
+          : (isAutoRec && cn==='precusto'
+              ? '<span title="Vinculado ao total das Linhas de Medição" style="font-size:9px;color:#38bdf8;margin-left:4px;flex-shrink:0">\uD83D\uDD17Med</span>'
+              : '<span title="Vinculado ao Mapa de Medi\u00e7\u00f5es (Realizado)" style="font-size:9px;color:#34d399;margin-left:4px;flex-shrink:0">\uD83D\uDD17Mapa</span>');
+        var tdBg = isOrcLocked ? 'background:rgba(0,0,0,.18);' : 'background:rgba(56,189,248,.04);';
+        tb += '<td style="padding:4px 10px;min-width:220px;'+bl+';'+tdBg+'">'
+          + '<div style="display:flex;align-items:center;gap:6px">'
           + '<div style="flex:1;font-family:var(--fn);text-align:right;'+val_style.replace(/font-family:var\(--fn\);?/,'')+';color:'+vc+'">'
-          + (v ? _fmtBRL(v) : '<span style=\"color:rgba(255,255,255,.2)\">—</span>')
+          + (v ? _fmtBRL(v) : '<span style="color:rgba(255,255,255,.2)">\u2014</span>')
           + '</div>'
           + pctBadge
+          + badge2
           + '</div>'
           + '</td>';
       }
     });
 
-    /* coluna Δ variação (só no modo comparativo) */
+    /* colunaΔ variação — PRÉ-CUSTO → REALIZADO */
     if(isTodos) {
-      var vOrc = row['orcado']||0;
-      var vPre = row['precusto']||0;
-      var delta = vPre - vOrc;
-      var deltaFmt = (delta===0) ? '—' : (delta>0?'+':'')+_fmtBRL(delta);
+      var vPre  = row['precusto']||0;
+      var vReal = row['realizado']||0;
+      var delta = vReal - vPre;
+      var deltaFmt = (delta===0) ? '\u2014' : (delta>0?'+':'')+_fmtBRL(delta);
       var deltaColor = delta===0?'#94a3b8':
         (tp==='receita'||tp==='resultado') ? (delta>0?'#4ade80':'#f87171') :
         (delta<0?'#4ade80':'#f87171');
-      var deltaPerc = vOrc!==0 ? ' ('+((delta/Math.abs(vOrc))*100).toFixed(1)+'%)' : '';
+      var deltaPerc = vPre!==0 ? ' ('+((delta/Math.abs(vPre))*100).toFixed(1)+'%)' : '';
       tb += '<td style="text-align:center;padding:4px 10px;border-left:2px solid rgba(167,139,250,.2);min-width:150px;background:rgba(167,139,250,.03)">'
         + '<div style="font-family:var(--fn);font-size:12px;font-weight:700;color:'+deltaColor+'">'+deltaFmt+'</div>'
         + (delta!==0?'<div style="font-size:9px;color:'+deltaColor+';opacity:.7">'+deltaPerc+'</div>':'')
         + '</td>';
     }
 
-    /* context menu button */
-    tb += '<td style="padding:2px 4px;text-align:center">' +
-      '<button class="bic dre-ctx-btn" data-didx="'+idx+'" onclick="dreOpenCtx(event,+this.dataset.didx)" title="Opções" ' +
-      'style="font-size:13px;padding:3px 7px;opacity:.35;transition:opacity .2s" ' +
-      'onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.35">⋮</button>' +
-      '</td></tr>';
+    tb += '<td style="padding:2px 4px;text-align:center">'
+      + '<button class="bic dre-ctx-btn" data-didx="'+idx+'" onclick="dreOpenCtx(event,+this.dataset.didx)" title="Op\u00e7\u00f5es" '
+      + 'style="font-size:13px;padding:3px 7px;opacity:.35;transition:opacity .2s" '
+      + 'onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.35">\u22ee</button>'
+      + '</td></tr>';
 
-    /* separator after level-0 blocks */
     if(n===0) tb += '<tr style="height:2px;background:rgba(255,255,255,.06)"><td colspan="99"></td></tr>';
   });
 
@@ -21204,12 +21832,14 @@ function custoDreCollapseAll(collapse) {
 
 function custoDRESave(idx, cn, v) {
   var a = _custoAnalise(); if(!a) return;
-  a.dreContas[idx][cn] = parseFloat(v)||0;
+  // Arredonda para 2 casas decimais ao salvar
+  var numVal = parseFloat(v)||0;
+  a.dreContas[idx][cn] = Math.round(numVal * 100) / 100;
   custoRecalcEstudo();
 }
 function custoRecalcEstudo() {
   var a = _custoAnalise(); if(!a) return;
-  ['orcado','estudo','precusto'].forEach(function(cn) {
+  ['orcado','estudo','precusto','realizado'].forEach(function(cn) {
     function sum(prefix) {
       return a.dreContas.filter(function(c){ return c.conta.startsWith(prefix) && c.conta!==prefix; })
         .reduce(function(s,c){ return s+(c[cn]||0); },0);
@@ -21236,10 +21866,10 @@ function custoRecalcEstudo() {
   // Resultado = Receita - Despesas
   var resRow = a.dreContas.find(function(c){ return c.conta==='83'; });
   if(resRow) {
-    ['orcado','estudo','precusto'].forEach(function(cn) {
+    ['orcado','estudo','precusto','realizado'].forEach(function(cn) {
       var r81 = a.dreContas.find(function(c){ return c.conta==='81'; });
       var r82 = a.dreContas.find(function(c){ return c.conta==='82'; });
-      resRow[cn] = ((r81?r81[cn]:0)||0) - ((r82?r82[cn]:0)||0);
+      resRow[cn] = Math.round((((r81?r81[cn]:0)||0) - ((r82?r82[cn]:0)||0)) * 100) / 100;
     });
   }
   _custoEstudo();
@@ -21251,13 +21881,194 @@ function custoAddContaCusto() {
   var conta = prompt('Código da conta (ex: 8202062299):','');
   if(!conta) return;
   var desc = prompt('Descrição:','Nova Conta');
-  a.dreContas.push({conta:conta,desc:desc||'Nova Conta',nivel:3,tipo:'despesa',orcado:0,estudo:0,precusto:0,obs:''});
+  a.dreContas.push({conta:conta,desc:desc||'Nova Conta',nivel:3,tipo:'despesa',orcado:0,estudo:0,precusto:0,realizado:0,obs:''});
   _custoEstudo(); scheduleAutoSync();
 }
-function custoAddColuna() { showToast('Use o seletor de Cenário para alternar entre Orçado, Estudo e Pré-Custo.','go',3500); }
+function custoAddColuna() { showToast('Use o seletor de Cenário para alternar entre Orçado, Estudo, Pré-Custo e Realizado.','go',3500); }
 function custoRemoveDRE(idx) {
   var a = _custoAnalise(); if(!a) return;
   a.dreContas.splice(idx,1); _custoEstudo(); scheduleAutoSync();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  REALIZADO — HELPERS E VINCULOS AUTOMÁTICOS
+// ══════════════════════════════════════════════════════════════════════
+
+/** Flag: orçado desbloqueado temporariamente para edição */
+window._custoOrcadoUnlocked = false;
+
+/**
+ * Desbloqueia o Orçado para edição.
+ * Permissão: usuário precisa ter acesso à seção 'custo' (temPermissao)
+ * e confirmar com a própria senha de login OU ser superadmin.
+ * O Orçado é a base fixa do contrato — inserido apenas uma vez.
+ */
+function custoOrcadoUnlock() {
+  // Verifica se o usuário tem permissão para acessar Análise de Custo
+  if(typeof temPermissao === 'function' && !temPermissao('custo')) {
+    showToast('⛔ Sem permissão para editar o Orçado. Acesso restrito a quem tem permissão na Análise de Custo.', 'rd', 4000);
+    return;
+  }
+  // SuperAdmin e Gestor de Unidade desbloqueiam diretamente
+  var _isHighRole = (typeof isSuperAdmin==='function'&&isSuperAdmin()) ||
+                    (typeof isGestorUnidade==='function'&&isGestorUnidade()) ||
+                    (currentUser&&(currentUser.role==='superadmin'||currentUser.role==='gestor_unidade'));
+  var _userName   = currentUser ? (currentUser.name||currentUser.username||'Usuário') : 'Usuário';
+  if(_isHighRole) {
+    window._custoOrcadoUnlocked = true;
+    showToast('✅ Orçado desbloqueado para edição ('+ _userName +'). Bloqueia em 5 min.', 'gn', 4000);
+    _setupOrcadoTimer();
+    _custoEstudo(); return;
+  }
+  // Demais roles com permissão custo: confirma com a própria senha de login
+  var pass = prompt('🔒 Orçado — BASE DO CONTRATO (valor fixo, não muda por mês).\n' +
+                    'Confirme sua senha de acesso ao sistema para liberar edição temporária:\n' +
+                    '(' + _userName + ')', '');
+  if(pass === null) return;
+  // Valida contra a senha do usuário nos participants
+  var _fonte = (typeof _DEFAULT_PARTICIPANTS!=='undefined'?_DEFAULT_PARTICIPANTS:null)||ST.participants||[];
+  var _pp    = _fonte.find(function(x){ return x.id===(currentUser&&currentUser.id); });
+  var _ok    = _pp && _pp.password === pass;
+  if(!_ok) {
+    showToast('Senha incorreta. Orçado permanece protegido.', 'rd', 3000);
+    return;
+  }
+  window._custoOrcadoUnlocked = true;
+  showToast('✅ Orçado desbloqueado ('+ _userName +'). Bloqueia automaticamente em 5 min.', 'gn', 4000);
+  _setupOrcadoTimer();
+  _custoEstudo();
+}
+
+function _setupOrcadoTimer() {
+  clearTimeout(window._orcadoLockTimer);
+  window._orcadoLockTimer = setTimeout(function() {
+    window._custoOrcadoUnlocked = false;
+    _custoEstudo();
+    showToast('🔒 Orçado bloqueado novamente (timeout 5 min).', 'go', 2500);
+  }, 5 * 60 * 1000);
+}
+
+/** Retorna o total das linhas de medição para o mês de referência */
+function _custoGetMedLinhasTotal(a) {
+  var mes = a.mesRealizadoRef || _dreMesAtivo || _dreYM(0);
+  if(!mes) return 0;
+  var h = a.medicao && a.medicao.history && a.medicao.history[mes];
+  if(!h || !h.items) return 0;
+  return h.items.reduce(function(s, it) {
+    return s + (parseFloat(it.qtd||0) * parseFloat(it.vlUnit||0));
+  }, 0);
+}
+
+/** Retorna a receita realizada do Mapa de Medições (ST.medicoes) */
+function _custoGetRealizadoReceita(a) {
+  var mes = a.mesRealizadoRef;
+  if(!mes) {
+    // Sem mês definido: usa o realizado mais recente
+    var meds = (ST.medicoes||[]).filter(function(m){ return m.contractId === a.contractId; })
+      .filter(function(m){ return m.realizado != null && m.realizado > 0; })
+      .sort(function(a,b){ return b.key > a.key ? 1 : -1; });
+    return meds.length > 0 ? (meds[0].realizado||0) : 0;
+  }
+  var rec = (ST.medicoes||[]).find(function(m){ return m.contractId === a.contractId && m.key === mes; });
+  return rec ? (rec.realizado||0) : 0;
+}
+
+/** Sincroniza receitas vinculadas na DRE (precusto ← Linhas Med; realizado ← Mapa Med) */
+function _custoAutoSyncReceita(a) {
+  if(!a) return;
+  // Conta 8101011111 = FATURAMENTO
+  var contaFat = a.dreContas.find(function(c){ return c.conta==='8101011111'; });
+  if(contaFat) {
+    contaFat.precusto  = Math.round(_custoGetMedLinhasTotal(a) * 100) / 100;
+    contaFat.realizado = Math.round(_custoGetRealizadoReceita(a) * 100) / 100;
+  }
+  // Recalc 8101 e 81
+  ['orcado','estudo','precusto','realizado'].forEach(function(cn){
+    var r8101 = a.dreContas.find(function(c){ return c.conta==='8101'; });
+    if(r8101) r8101[cn] = a.dreContas.filter(function(c){ return c.conta.startsWith('810101'); }).reduce(function(s,c){ return s+(c[cn]||0); },0);
+    var r81 = a.dreContas.find(function(c){ return c.conta==='81'; });
+    if(r81) r81[cn] = a.dreContas.filter(function(c){ return c.conta==='8101'; }).reduce(function(s,c){ return s+(c[cn]||0); },0);
+  });
+  // Resultado = Receita - Despesas
+  var resRow = a.dreContas.find(function(c){ return c.conta==='83'; });
+  if(resRow) {
+    ['orcado','estudo','precusto','realizado'].forEach(function(cn){
+      var r81 = a.dreContas.find(function(c){ return c.conta==='81'; });
+      var r82 = a.dreContas.find(function(c){ return c.conta==='82'; });
+      resRow[cn] = Math.round((((r81?r81[cn]:0)||0) - ((r82?r82[cn]:0)||0)) * 100) / 100;
+    });
+  }
+}
+
+/** Atualiza a referência de período do Realizado */
+function custoSetMesRef(v) {
+  var a = _custoAnalise(); if(!a) return;
+  a.mesRealizadoRef = v;
+  _custoAutoSyncReceita(a);
+  _custoEstudo();
+  _custoRenderKPIs();
+  scheduleAutoSync();
+}
+
+/** Retorna label legível de YYYY-MM */
+function _custoPeriodLabel(mesKey) {
+  if(!mesKey) return 'Sem referência';
+  return _dreMesLbl(mesKey) || mesKey;
+}
+
+/**
+ * Copia o mês: zera Realizado, preserva Orçado/Estudo/Pré-Custo.
+ * Atualiza mesRealizadoRef para o novo mês.
+ */
+function custoCopiarParaMes() {
+  var a = _custoAnalise(); if(!a) return;
+  var mesAtual = a.mesRealizadoRef || _dreMesAtivo || _dreYM(0);
+  var sugestao = (function(){
+    var d = mesAtual ? new Date(mesAtual+'-01') : new Date();
+    d.setMonth(d.getMonth()+1);
+    return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);
+  })();
+  var novoMes = prompt(
+    'Informe o mês de referência para o NOVO período (YYYY-MM):\n' +
+    '• Orçado, Estudo e Pré-Custo serão preservados para edição\n' +
+    '• Realizado será zerado (será preenchido no novo mês)',
+    sugestao
+  );
+  if(!novoMes) return;
+  novoMes = novoMes.trim();
+  if(!/^\d{4}-\d{2}$/.test(novoMes)) {
+    showToast('Formato inválido. Use YYYY-MM (ex: 2026-07).', 'rd', 3000); return;
+  }
+
+  // Zera coluna Realizado da DRE
+  a.dreContas.forEach(function(row){ row.realizado = 0; });
+
+  // Atualiza período de referência
+  a.mesRealizadoRef = novoMes;
+
+  _custoAutoSyncReceita(a);
+  _custoEstudo();
+  _custoRenderKPIs();
+  scheduleAutoSync();
+  showToast(
+    '📅 Novo período: ' + _custoPeriodLabel(novoMes) +
+    '. Realizado zerado. Orçado/Estudo/Pré-Custo preservados.',
+    'gn', 4000
+  );
+}
+
+/** Migra análises legadas (sem campo realizado) */
+function _custoMigrateAnalise(a) {
+  if(!a) return;
+  if(a.dreContas) a.dreContas.forEach(function(row){ if(row.realizado === undefined) row.realizado = 0; });
+  if(!a.medicao) a.medicao = {};
+  if(!a.medicao.realizado) a.medicao.realizado = [];
+  if(!a.medicao.orcado)    a.medicao.orcado    = [];
+  if(!a.medicao.estudo)    a.medicao.estudo     = [];
+  if(!a.medicao.precusto)  a.medicao.precusto   = [];
+  if(!a.medicao.history)   a.medicao.history    = {};
+  if(a.mesRealizadoRef === undefined) a.mesRealizadoRef = '';
+  _custoAutoSyncReceita(a);
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -23076,9 +23887,9 @@ function custoExportCSV(){
   var a=_custoAnalise();
   if(!a){showToast('Nenhuma análise selecionada.','rd',2000);return;}
   var ct=(ST.contracts||[]).find(function(c){return c.id===_custoCtId;})||{};
-  var csv='Conta;Discriminação;Orçado;Estudo;Pré-Custo\n';
+  var csv='Conta;Discriminação;Orçado;Estudo;Pré-Custo;Realizado\n';
   a.dreContas.forEach(function(row){
-    csv+=row.conta+';"'+row.desc+'";'+(row.orcado||0)+';'+(row.estudo||0)+';'+(row.precusto||0)+'\n';
+    csv+=row.conta+';"'+row.desc+'";'+(row.orcado||0)+';'+(row.estudo||0)+';'+(row.precusto||0)+';'+(row.realizado||0)+'\n';
   });
   var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   var url=URL.createObjectURL(blob);
@@ -23211,12 +24022,12 @@ function dreCtxInsertCol(dir) {
   if(!a.dreColsCustom) a.dreColsCustom = [];
 
   // Descobre posição de referência
-  var allCens = ['orcado','estudo','precusto'].concat(
+  var allCens = ['orcado','estudo','precusto','realizado'].concat(
     a.dreColsCustom.map(function(c){return c.key;})
   );
   // Determina onde inserir em relação ao cenário selecionado
   // (usa o cenário ativo _custoCen como referência)
-  var refKey = (_custoCen==='todos'||_custoCen==='precusto') ? 'precusto' : _custoCen;
+  var refKey = (_custoCen==='todos'||_custoCen==='precusto'||_custoCen==='realizado') ? 'precusto' : _custoCen;
   var refIdx = allCens.indexOf(refKey);
   var insertAt = dir==='left' ? Math.max(0, refIdx) : refIdx + 1;
 
@@ -23604,7 +24415,7 @@ function _colInsertDRE(refCi,dir){
   var a=_custoAnalise();if(!a)return;
   var label=prompt('Nome do cenario:','');if(!label)return;
   var key=label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  if(!key||['orcado','estudo','precusto'].indexOf(key)!==-1){showToast('Use um nome diferente dos cenarios padrao.','go',2500);return;}
+  if(!key||['orcado','estudo','precusto','realizado'].indexOf(key)!==-1){showToast('Use um nome diferente dos cenarios padrao.','go',2500);return;}
   if(!a.dreColsCustom)a.dreColsCustom=[];
   var customAt=dir==='left'?Math.max(0,refCi-3):refCi-3+1;
   if(customAt<0)customAt=0;
@@ -26220,7 +27031,7 @@ function _dreGetReceitaMed(a, cn) {
 
 function _dreSetConta(a, cod, cn, val) {
   var row = a.dreContas.find(function(c){ return c.conta === cod; });
-  if(row) row[cn] = val;
+  if(row) row[cn] = Math.round((parseFloat(val)||0) * 100) / 100;
 }
 
 // ── Auto-vincular sempre que abrir o Estudo ─────────────────────────────────

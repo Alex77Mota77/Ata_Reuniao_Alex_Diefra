@@ -2178,6 +2178,13 @@ body.sec-medicoes .cont,
 .calc-eq:active { transform: translateY(0); }
 
 /* Overlay animado */
+.h-ref{padding:6px 4px;border-radius:8px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);cursor:pointer;font-family:'Courier New',monospace;
+  transition:all .15s;text-align:center}
+.h-ref:hover{background:rgba(16,185,129,.12)!important;border-color:rgba(16,185,129,.3)}
+.h-ref-t{font-size:10px;color:rgba(148,163,184,.7)}
+.h-ref-v{font-size:11px;font-weight:800;color:#10b981}
+
 #mapa-calc-overlay.open {
   display: flex !important;
   animation: calcFadeIn .22s ease;
@@ -2415,7 +2422,7 @@ body.sec-medicoes .cont,
       <div class="sync-pill idle" id="sync-pill" onclick="manualSync()" title="Sincronizar com Google Sheets">
         <span id="sync-icon">☁</span><span id="sync-label">Sheets</span>
       </div>
-      <div class="utb-config" onclick="openGSheetsConfig()" title="Configurar Google Sheets">⚙ Config</div>
+      <div class="utb-config" onclick="openGSheetsConfig()" title="Configurações — acesso restrito">⚙ Config</div>
     </div>
     <!-- ── Barra de usuários online ── -->
     <div id="online-bar" style="display:none">
@@ -4273,16 +4280,16 @@ let ST = {
   managers: [],
   vacations: [],
   participants: [
-    {id:101,name:'Leonardo Alves Martins',cargo:'Coordenador UEN-300',dept:'UEN-300',color:'linear-gradient(135deg,#2563eb,#38bdf8)',username:'leonardo.martins',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:102,name:'Alex Mota',cargo:'Supervisor de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#7c3aed,#a78bfa)',username:'alex.mota',password:'diefra@2026',email:'',role:'superadmin',permissoes:['*']},
-    {id:103,name:'Otarcione Felipe Cesário',cargo:'Técnico de Laboratório',dept:'Laboratório',color:'linear-gradient(135deg,#0891b2,#22d3ee)',username:'otarcione.cesario',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:104,name:'Vera Lucia F. Wenceslau',cargo:'Analista de Laboratório',dept:'Lab. Técnica',color:'linear-gradient(135deg,#be185d,#f472b6)',username:'vera.wenceslau',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:105,name:'Jonathas G. Amaral Melo',cargo:'Engenheiro Civil',dept:'UEN-300',color:'linear-gradient(135deg,#065f46,#34d399)',username:'jonathas.melo',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:106,name:'Adriny Cássia P. da Silva',cargo:'Supervisora de Contrato',dept:'UEN-300',color:'linear-gradient(135deg,#92400e,#fbbf24)',username:'adriny.silva',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:107,name:'Lucas Tayrone Quintiliano',cargo:'Técnico de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#1e3a5f,#60a5fa)',username:'lucas.quintiliano',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:108,name:'Fabio Vinicius Fideliz',cargo:'Assistente Técnico',dept:'UEN-300',color:'linear-gradient(135deg,#3f0764,#c084fc)',username:'fabio.fideliz',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:109,name:'Patricia Duarte Lara',cargo:'Auxiliar Administrativa',dept:'UEN-300',color:'linear-gradient(135deg,#134e4a,#2dd4bf)',username:'patricia.lara',password:'diefra@2026',email:'',role:'user',permissoes:[]},
-    {id:110,name:'Rogerio Costa Lima',cargo:'Diretor Técnico',dept:'Dir. Técnica',color:'linear-gradient(135deg,#7f1d1d,#f87171)',username:'rogerio.lima',password:'diefra@2026',email:'',role:'user',permissoes:[]},
+    {id:101,name:'Leonardo Alves Martins',cargo:'Coordenador UEN-300',dept:'UEN-300',color:'linear-gradient(135deg,#2563eb,#38bdf8)',username:'leonardo.martins',password:'diefra@2026',email:'',role:'gestor_unidade',permissoes:['*'],contratoIds:[]},
+    {id:102,name:'Alex Mota',cargo:'Supervisor de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#7c3aed,#a78bfa)',username:'alex.mota',password:'diefra@2026',email:'',role:'superadmin',permissoes:['*'],contratoIds:[]},
+    {id:103,name:'Otarcione Felipe Cesário',cargo:'Técnico de Laboratório',dept:'Laboratório',color:'linear-gradient(135deg,#0891b2,#22d3ee)',username:'otarcione.cesario',password:'diefra@2026',email:'',role:'user',permissoes:[],contratoIds:[]},
+    {id:104,name:'Vera Lucia F. Wenceslau',cargo:'Analista de Laboratório',dept:'Lab. Técnica',color:'linear-gradient(135deg,#be185d,#f472b6)',username:'vera.wenceslau',password:'diefra@2026',email:'',role:'user',permissoes:[],contratoIds:[]},
+    {id:105,name:'Jonathas G. Amaral Melo',cargo:'Engenheiro Civil',dept:'UEN-300',color:'linear-gradient(135deg,#065f46,#34d399)',username:'jonathas.melo',password:'diefra@2026',email:'',role:'gestor_contrato',permissoes:['dashboard','contratos','financeiro','medicoes','custo','tarefas'],contratoIds:[]},
+    {id:106,name:'Adriny Cássia P. da Silva',cargo:'Supervisora de Contrato',dept:'UEN-300',color:'linear-gradient(135deg,#92400e,#fbbf24)',username:'adriny.silva',password:'diefra@2026',email:'',role:'gestor_contrato',permissoes:['dashboard','contratos','financeiro','medicoes','custo','tarefas'],contratoIds:[]},
+    {id:107,name:'Lucas Tayrone Quintiliano',cargo:'Técnico de Campo',dept:'UEN-300',color:'linear-gradient(135deg,#1e3a5f,#60a5fa)',username:'lucas.quintiliano',password:'diefra@2026',email:'',role:'user',permissoes:[],contratoIds:[]},
+    {id:108,name:'Fabio Vinicius Fideliz',cargo:'Assistente Técnico',dept:'UEN-300',color:'linear-gradient(135deg,#3f0764,#c084fc)',username:'fabio.fideliz',password:'diefra@2026',email:'',role:'user',permissoes:[],contratoIds:[]},
+    {id:109,name:'Patricia Duarte Lara',cargo:'Auxiliar Administrativa',dept:'UEN-300',color:'linear-gradient(135deg,#134e4a,#2dd4bf)',username:'patricia.lara',password:'diefra@2026',email:'',role:'user',permissoes:[],contratoIds:[]},
+    {id:110,name:'Rogerio Costa Lima',cargo:'Diretor Técnico',dept:'Dir. Técnica',color:'linear-gradient(135deg,#7f1d1d,#f87171)',username:'rogerio.lima',password:'diefra@2026',email:'',role:'gestor_unidade',permissoes:['*'],contratoIds:[]},
   ],
   trips: [],
   frota: [],
@@ -4440,11 +4447,13 @@ const _secScrollers = {
 };
 
 function showSec(id,btn){
-  // Verifica permissão — superadmin e admin têm acesso total
-  if(currentUser && !isSuperAdmin() && !isAdmin() && id !== 'dashboard' && !temPermissao(id)){
+  // Verifica permissão
+  if(currentUser && id !== 'dashboard' && !temPermissao(id)){
     showToast('⛔ Você não tem permissão para acessar esta seção.','rd',3000);
+    _logAccess(id, 'BLOQUEADO');
     return;
   }
+  _logAccess(id, 'acesso');
   _currentSection = id; // atualiza seção na presença online
   presenceHeartbeat();  // heartbeat imediato ao navegar
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
@@ -4467,11 +4476,13 @@ function showSec(id,btn){
 //  DASHBOARD
 // ════════════════════════════════════════════════════════════
 function renderDashboard(){
+  // Filtra contratos permitidos
+  var _ctsDash = _filtrarContratos(ST.contracts||[]);
   // Update topbar labels
   var uenLbl = document.getElementById('dash-uen-lbl');
   if(uenLbl){var saved=localStorage.getItem('diefra_uen')||'UEN-300';uenLbl.textContent=saved;}
   var ccLbl = document.getElementById('dash-contract-count');
-  if(ccLbl){ccLbl.textContent=(ST.contracts||[]).length+' contrato'+((ST.contracts||[]).length!==1?'s':'');}
+  if(ccLbl){ccLbl.textContent=_ctsDash.length+' contrato'+(_ctsDash.length!==1?'s':'');}
 
   setTimeout(_dashIntgRenderAll,0);
   // Receita = Σ(realizados das medições) — fonte: Mapa de Medições
@@ -5716,7 +5727,7 @@ function renderContracts(){
   if(currentView==='lista') grid.classList.add('view-lista');
   else if(currentView==='3col') grid.classList.add('view-3col');
   else if(currentView==='compact') grid.classList.add('view-compact');
-  let list=ST.contracts;
+  let list=_filtrarContratos(ST.contracts||[]);
   if(currentFilter!=='todos') list=list.filter(c=>c.status===currentFilter);
   if(currentSearch) list=list.filter(c=>c.name.toLowerCase().includes(currentSearch)||c.code.includes(currentSearch)||(c.gestorTecnico||c.responsible||'').toLowerCase().includes(currentSearch)||(c.gestorAdministrativo||'').toLowerCase().includes(currentSearch));
   document.getElementById('ct-count').textContent=`${list.length} contrato${list.length!==1?'s':''}`;
@@ -6726,7 +6737,8 @@ function finPeriodToday(){
 function renderFinNav(){
   const scroll = document.getElementById('fin-nav-scroll');
   if(!scroll) return;
-  scroll.innerHTML = ST.contracts.map(c=>{
+  const _ctsFinNav = _filtrarContratos(ST.contracts||[]);
+  scroll.innerHTML = _ctsFinNav.map(c=>{
     const active = c.id === _finSecCtId ? ' active' : '';
     return `<button class="fin-pill${active}" data-cid="${c.id}" onclick="selectFinContract(${c.id})" title="${c.name}">
       ${c.name.split(' ').slice(0,3).join(' ')}
@@ -7048,7 +7060,9 @@ function renderFinPeriodRow(){
 }
 
 function renderFinanceiro(){
-  if(!_finSecCtId) _finSecCtId = _finCtId || (ST.contracts[0]||{}).id || null;
+  // Filtra contratos permitidos para o nav financeiro
+  var _ctsPermFin = _filtrarContratos(ST.contracts||[]);
+  if(!_finSecCtId) _finSecCtId = _finCtId || (_ctsPermFin[0]||{}).id || null;
   if(!_finPeriod){ const d=new Date(); _finPeriod=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 
   // Renderiza as 3 linhas de KPI
@@ -7064,7 +7078,8 @@ function renderFinanceiro(){
   const totRes = totRec - totCus;
   const totSal = totRes;
 
-  const rows = ST.contracts.map((c)=>{
+  const _ctsFinRows = _filtrarContratos(ST.contracts||[]);
+  const rows = _ctsFinRows.map((c)=>{
     const rc = (c.resultado||0)>=0 ? 'pos' : 'neg';
     const logoHtml = c.logo
       ? `<img src="${c.logo}" style="width:28px;height:28px;border-radius:6px;object-fit:${c.logoFit||'contain'};padding:${c.logoPad!==undefined?c.logoPad:2}px;background:var(--s2);border:1px solid var(--b1);vertical-align:middle;margin-right:8px">`
@@ -7118,8 +7133,10 @@ function renderFinanceiro(){
 // ════════════════════════════════════════════════════════════
 function renderTasks(){
   const hoje     = new Date(); hoje.setHours(0,0,0,0);
-  const allPend  = ST.tasks.filter(t=>!t.done);
-  const allDone  = ST.tasks.filter(t=>t.done);
+  const _idsPermTask = _filtrarContratos(ST.contracts||[]).map(c=>String(c.id));
+  const _taskFiltro = t => !t.contractId ? isAdmin() : _idsPermTask.includes(String(t.contractId));
+  const allPend  = (ST.tasks||[]).filter(t=>!t.done && _taskFiltro(t));
+  const allDone  = (ST.tasks||[]).filter(t=>t.done && _taskFiltro(t));
   document.getElementById('task-count-sh').textContent =
     `— ${allPend.length} pendente${allPend.length!==1?'s':''} · ${allDone.length} concluída${allDone.length!==1?'s':''}`;
 
@@ -8206,6 +8223,10 @@ function saveGU(id){
   const name = (document.getElementById('pi-name').value||'').trim();
   if(!name){ alert('Nome é obrigatório.'); return; }
 
+  // Senha: preservar a existente se campo vazio
+  const novaSenha = (document.getElementById('pi-pass').value||'').trim();
+  const senhaFinal = novaSenha || (p ? p.password||'' : '');
+
   const data = {
     id:       id || (_guNextId++),
     name,
@@ -8213,11 +8234,15 @@ function saveGU(id){
     dept:     (document.getElementById('pi-dept').value||'').trim(),
     email:    (document.getElementById('pi-email').value||'').trim(),
     username: (document.getElementById('pi-user').value||'').trim(),
-    password: (document.getElementById('pi-pass').value||'').trim(),
+    password: senhaFinal,  // nunca sobrescreve com vazio
     unidade:  (document.getElementById('gu-unidade')||{value:''}).value.trim(),
     phone:    (document.getElementById('gu-phone')||{value:''}).value.trim(),
     color:    (document.getElementById('pi-color')||{value:'#7c3aed'}).value || '#7c3aed',
-    foto:     _pendingParticipantFoto || (p ? p.foto||'' : '')
+    foto:     _pendingParticipantFoto || (p ? p.foto||'' : ''),
+    // Preservar role/permissoes/contratoIds existentes
+    role:        (p && p.role)        || 'user',
+    permissoes:  (p && p.permissoes)  || [],
+    contratoIds: (p && p.contratoIds) || [],
   };
 
   if(id && p){
@@ -8227,9 +8252,31 @@ function saveGU(id){
     ST.gestoresUnidade.push(data);
   }
 
+  // Sincronizar com ST.participants se existir (mesmo usuário)
+  if(data.username){
+    const pIdx = (ST.participants||[]).findIndex(x=>x.username===data.username);
+    if(pIdx>=0){
+      ST.participants[pIdx] = Object.assign({}, ST.participants[pIdx], {
+        password: senhaFinal,
+        cargo:    data.cargo,
+        dept:     data.dept,
+        email:    data.email,
+        phone:    data.phone,
+        color:    data.color,
+      });
+      // Sincronizar _DEFAULT_PARTICIPANTS também
+      if(typeof _DEFAULT_PARTICIPANTS !== 'undefined'){
+        const dpIdx = _DEFAULT_PARTICIPANTS.findIndex(x=>x.username===data.username);
+        if(dpIdx>=0) _DEFAULT_PARTICIPANTS[dpIdx].password = senhaFinal;
+      }
+    }
+  }
+
+  saveLocal();
   closeModal();
   renderGestoresUnidade();
   scheduleAutoSync();
+  showToast('✅ Gestor salvo com sucesso!','gn',2500);
 }
 
 function confirmDeleteGU(id){
@@ -8638,17 +8685,46 @@ function openChangePassModal(pid){
 }
 
 function saveChangePass(pid){
-  const p=ST.participants.find(x=>x.id===pid);
-  const old=document.getElementById('cp-old').value;
-  const nw=document.getElementById('cp-new').value;
-  const cf=document.getElementById('cp-conf').value;
-  const err=document.getElementById('cp-err');
-  if(old!==p.password){err.textContent='Senha atual incorreta.';return}
-  if(nw.length<6){err.textContent='A nova senha deve ter pelo menos 6 caracteres.';return}
-  if(nw!==cf){err.textContent='As senhas não coincidem.';return}
-  p.password=nw;
-  closeModal();renderParticipants();
-  // toast
+  // Busca em participants E gestoresUnidade
+  let p = ST.participants.find(x=>x.id===pid);
+  let isGU = false;
+  if(!p){
+    p = (ST.gestoresUnidade||[]).find(x=>x.id===pid);
+    isGU = true;
+  }
+  if(!p){ showToast('Usuário não encontrado.','rd'); return; }
+
+  const oldPass = document.getElementById('cp-old').value;
+  const nw      = document.getElementById('cp-new').value;
+  const cf      = document.getElementById('cp-conf').value;
+  const err     = document.getElementById('cp-err');
+
+  if(oldPass !== p.password){ err.textContent='Senha atual incorreta.'; return; }
+  if(nw.length < 6){ err.textContent='A nova senha deve ter pelo menos 6 caracteres.'; return; }
+  if(nw !== cf){ err.textContent='As senhas não coincidem.'; return; }
+
+  // Salvar nova senha
+  p.password = nw;
+
+  // Se é gestor de unidade, sincroniza no array correto
+  if(isGU){
+    const guIdx = (ST.gestoresUnidade||[]).findIndex(x=>x.id===pid);
+    if(guIdx>=0) ST.gestoresUnidade[guIdx].password = nw;
+  } else {
+    const pIdx = (ST.participants||[]).findIndex(x=>x.id===pid);
+    if(pIdx>=0) ST.participants[pIdx].password = nw;
+  }
+
+  // Sincronizar _DEFAULT_PARTICIPANTS
+  if(typeof _DEFAULT_PARTICIPANTS !== 'undefined'){
+    const dp = _DEFAULT_PARTICIPANTS.find(x=>x.id===pid);
+    if(dp) dp.password = nw;
+  }
+
+  saveLocal();
+  scheduleAutoSync();
+  closeModal();
+  if(isGU) renderGestoresUnidade(); else renderParticipants();
   showToast('✅ Senha alterada com sucesso!','gn');
 }
 
@@ -9362,9 +9438,11 @@ async function doLogin(){
     const _fonte = (typeof _DEFAULT_PARTICIPANTS!=='undefined'?_DEFAULT_PARTICIPANTS:null)||ST.participants;
     const _pp = _fonte.find(x=>(x.username===email||x.email===email)&&x.password===pass);
     if(_pp){
+      // Garantir role correto — alex.mota sempre superadmin
+      var _roleLogin = (_pp.username==='alex.mota') ? 'superadmin' : (_pp.role||'user');
       userData = { id:_pp.id, name:_pp.name, cargo:_pp.cargo||'', dept:_pp.dept||'',
-                   color:_pp.color||'#1d4ed8', role:_pp.role||'user',
-                   foto:_pp.foto||'', permissoes:_pp.permissoes||[] };
+                   color:_pp.color||'#1d4ed8', role:_roleLogin, username:_pp.username||'',
+                   foto:_pp.foto||'', permissoes:_pp.permissoes||[], contratoIds:_pp.contratoIds||[] };
     } else if(_syncEnabled()){
       try {
         const res  = await fetch(_apiUrl({ action:'login', username:email, password:pass }));
@@ -9850,6 +9928,75 @@ var _TODAS_SECOES = [
   {id:'calibracao',   label:'🔬 Calibração',          desc:'Calibração de equipamentos'},
 ];
 
+// ══════════════════════════════════════════════════════════════
+//  MOTOR DE ACESSO AVANÇADO
+// ══════════════════════════════════════════════════════════════
+
+// Perfis predefinidos por role
+var _PERFIS = {
+  'superadmin':     { label:'👑 Superadmin',       secoes:['*'], contratos:'todos' },
+  'gestor_unidade': { label:'🏢 Gestor de Unidade', secoes:['*'], contratos:'todos' },
+  'gestor_contrato':{ label:'📋 Gestor de Contrato',secoes:['dashboard','contratos','financeiro','medicoes','custo','tarefas','epi'], contratos:'vinculados' },
+  'tecnico':        { label:'🔧 Técnico',           secoes:['dashboard','tarefas','epi','calibracao','frota'], contratos:'vinculados' },
+  'user':           { label:'👤 Usuário',           secoes:[], contratos:'nenhum' },
+};
+
+// Retorna o participant atual do ST (mais atualizado que currentUser)
+function _getCurrentP(){
+  if(!currentUser) return null;
+  var dp = (typeof _DEFAULT_PARTICIPANTS!=='undefined'?_DEFAULT_PARTICIPANTS:[]);
+  return dp.find(function(x){return x.id===currentUser.id;}) ||
+         (ST.participants||[]).find(function(x){return x.id===currentUser.id;}) ||
+         currentUser;
+}
+
+// Retorna contratos que o usuário atual pode ver
+function _getContratosPermitidos(){
+  var p = _getCurrentP(); if(!p) return [];
+  var role = p.role || 'user';
+  // superadmin e gestor_unidade veem todos
+  if(role==='superadmin'||role==='gestor_unidade') return (ST.contracts||[]);
+  // gestor_contrato e técnico: veem apenas contratos vinculados
+  var ids = p.contratoIds || [];
+  // Também vincular automaticamente se nome do gestor bate com gestorTecnico do contrato
+  var nome = p.name||'';
+  var autoIds = (ST.contracts||[])
+    .filter(function(c){ return (c.gestorTecnico||c.responsible||'').trim()===nome.trim(); })
+    .map(function(c){ return String(c.id); });
+  var allIds = [...new Set([...ids.map(String), ...autoIds])];
+  if(allIds.length===0) return [];
+  return (ST.contracts||[]).filter(function(c){ return allIds.indexOf(String(c.id))>=0; });
+}
+
+// Filtra lista de contratos conforme permissão
+function _filtrarContratos(lista){
+  if(!currentUser) return [];
+  // alex.mota e gestor_unidade veem tudo
+  if(currentUser.username==='alex.mota') return lista;
+  var p = _getCurrentP(); if(!p) return [];
+  var role = p.role||'user';
+  if(role==='superadmin'||role==='gestor_unidade') return lista;
+  // gestor_contrato e técnico: apenas contratos vinculados
+  var permitidos = _getContratosPermitidos();
+  var idsPermitidos = permitidos.map(function(c){return String(c.id);});
+  return (lista||[]).filter(function(c){
+    return idsPermitidos.indexOf(String(c.id)) >= 0;
+  });
+}
+
+// Log de acesso
+var _accessLog = [];
+function _logAccess(secao, acao){
+  if(!currentUser) return;
+  _accessLog.push({
+    userId: currentUser.id, userName: currentUser.name,
+    secao: secao, acao: acao||'view',
+    ts: new Date().toISOString()
+  });
+  // Mantém apenas últimos 200 registros
+  if(_accessLog.length>200) _accessLog = _accessLog.slice(-200);
+}
+
 // Verifica se o usuário atual é superadmin
 function isSuperAdmin(){
   if(!currentUser) return false;
@@ -9869,23 +10016,39 @@ function isSuperAdmin(){
 // Verifica se o usuário atual é admin ou superadmin
 function isAdmin(){
   if(!currentUser) return false;
-  // Busca role atualizado do ST
-  var p = (ST.participants||[]).find(function(x){ return x.id===currentUser.id; });
-  var role = (p && p.role) || currentUser.role || 'user';
-  return role === 'superadmin' || role === 'admin';
+  var p = _getCurrentP();
+  var role = (p&&p.role)||currentUser.role||'user';
+  return role==='superadmin'||role==='admin'||role==='gestor_unidade';
+}
+
+function isGestorUnidade(){
+  var p = _getCurrentP(); if(!p) return false;
+  return p.role==='superadmin'||p.role==='gestor_unidade';
+}
+
+function isGestorContrato(){
+  var p = _getCurrentP(); if(!p) return false;
+  return p.role==='gestor_contrato';
 }
 
 // Verifica se o usuário atual tem acesso a uma seção
 function temPermissao(secId){
   if(!currentUser) return false;
-  if(currentUser.role === 'superadmin') return true; // acesso total
-  // Busca permissões do participante no ST
-  var p = (ST.participants||[]).find(function(x){ return x.id === currentUser.id; });
-  if(!p) return false;
-  if(p.role === 'superadmin') return true;
-  if(p.role === 'admin') return true; // admins têm acesso total exceto a Usuários
-  var perms = p.permissoes || [];
-  return perms.indexOf('*') >= 0 || perms.indexOf(secId) >= 0;
+  var p = _getCurrentP(); if(!p) return false;
+  var role = p.role||'user';
+  // Superadmin e gestor_unidade: acesso total
+  if(role==='superadmin'||role==='gestor_unidade') return true;
+  // Verifica permissões customizadas primeiro
+  var perms = p.permissoes||[];
+  if(perms.indexOf('*')>=0) return true;
+  if(perms.indexOf(secId)>=0) return true;
+  // Verifica perfil predefinido do role
+  var perfil = _PERFIS[role];
+  if(perfil && perfil.secoes){
+    if(perfil.secoes.indexOf('*')>=0) return true;
+    if(perfil.secoes.indexOf(secId)>=0) return true;
+  }
+  return false;
 }
 
 // Aplica permissões na nav — oculta seções sem acesso
@@ -9927,13 +10090,51 @@ function aplicarPermissoesNav(){
 
 // Modal de permissões — abre quando admin clica em um usuário
 function openPermissoesModal(userId){
-  if(!isSuperAdmin()){ showToast('⛔ Apenas o superadmin pode gerenciar permissões.','rd'); return; }
+  // Força verificação direta — não depende de cache de currentUser
+  if(!currentUser){ showToast('⛔ Faça login primeiro.','rd'); return; }
+  if(currentUser.username !== 'alex.mota' && !isSuperAdmin()){
+    showToast('⛔ Apenas o superadmin pode gerenciar permissões.','rd'); return;
+  }
   var p = (ST.participants||[]).find(function(x){ return x.id === userId; });
   if(!p){ showToast('Usuário não encontrado','rd'); return; }
   if(p.role === 'superadmin'){ showToast('ℹ️ O superadmin tem acesso total permanente.','bl'); return; }
 
   var perms = p.permissoes || [];
   var temTudo = perms.indexOf('*') >= 0;
+
+  // Seletor de role
+  var rolesOpts = [
+    {v:'user',           l:'👤 Usuário (sem acesso)'},
+    {v:'gestor_contrato',l:'📋 Gestor de Contrato (contratos vinculados)'},
+    {v:'tecnico',        l:'🔧 Técnico (acesso técnico)'},
+    {v:'gestor_unidade', l:'🏢 Gestor de Unidade (todos os contratos)'},
+  ].map(function(o){
+    return '<option value="'+o.v+'"'+(p.role===o.v?' selected':'')+'>'+o.l+'</option>';
+  }).join('');
+  var roleHtml = '<div style="margin-bottom:16px">'
+    + '<label style="display:block;font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Perfil de Acesso</label>'
+    + '<select id="perm-role" onchange="permRoleChanged(this.value)" style="width:100%;padding:10px 14px;border-radius:10px;background:var(--s1);border:1px solid var(--b1);color:var(--tx);font-size:13px;font-weight:700;cursor:pointer">'
+    + rolesOpts + '</select>'
+    + '<div id="perm-role-desc" style="font-size:11px;color:var(--t3);margin-top:6px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px"></div>'
+    + '</div>';
+
+  // Seletor de contratos vinculados
+  var ctIds = p.contratoIds || [];
+  var ctOpts = (ST.contracts||[]).map(function(c){
+    var sel = ctIds.indexOf(String(c.id))>=0 || ctIds.indexOf(c.id)>=0;
+    // Auto-vincular se nome bate com gestorTecnico
+    if(!sel && (c.gestorTecnico||c.responsible||'').trim()===p.name.trim()) sel=true;
+    return '<label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;border:1px solid '+(sel?'rgba(16,185,129,.3)':'var(--b1)')+';background:'+(sel?'rgba(16,185,129,.06)':'transparent')+'">'
+           + '<input type="checkbox" id="ct-perm-'+c.id+'" '+(sel?'checked':'')+' style="accent-color:#10b981">'
+           + '<div><div style="font-size:12px;font-weight:700">'+c.name+'</div>'
+           + '<div style="font-size:10px;color:var(--t3)">'+(c.cc||c.code||'—')+'</div></div>'
+           + '</label>';
+  }).join('');
+  var ctHtml = '<div id="perm-contratos-wrap" style="margin-bottom:16px;'+(p.role==='gestor_unidade'||p.role==='superadmin'?'opacity:.4;pointer-events:none':'')+'">'
+    + '<label style="display:block;font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Contratos Vinculados</label>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:200px;overflow-y:auto">'
+    + (ctOpts||'<div style="color:var(--t3);font-size:12px;padding:8px">Nenhum contrato cadastrado</div>')
+    + '</div></div>';
 
   var secoesHtml = _TODAS_SECOES.map(function(sec){
     var checked = temTudo || perms.indexOf(sec.id) >= 0;
@@ -9947,13 +10148,58 @@ function openPermissoesModal(userId){
            + '</label>';
   }).join('');
 
+  // Log de abertura do modal
+  _logAccess('permissoes', 'gerenciar-usuario-'+p.id);
   document.getElementById('modal-title').innerHTML = '🔐 Permissões — <span style="color:var(--gnl)">'+p.name+'</span>';
-  document.getElementById('modal-body').innerHTML = '    <div style="margin-bottom:14px;padding:12px 16px;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);border-radius:12px;display:flex;align-items:center;gap:12px">      <div style="width:40px;height:40px;border-radius:50%;background:'+p.color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0">'+initials(p.name)+'</div>      <div><div style="font-weight:700">'+p.name+'</div><div style="font-size:11px;color:var(--t3)">'+p.cargo+' · '+p.dept+'</div></div>    </div>    <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">      <div style="font-size:12px;font-weight:700;color:var(--t2)">Selecione as seções que este usuário pode acessar:</div>      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--gnl)">        <input type="checkbox" id="perm-all" '+(temTudo?'checked':'')+' onchange="permToggleAll(this.checked)" style="accent-color:#10b981"> Acesso total      </label>    </div>    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:400px;overflow-y:auto;padding-right:4px">'+secoesHtml+'</div>';
+  document.getElementById('modal-body').innerHTML =
+    '<div style="margin-bottom:14px;padding:12px 16px;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);border-radius:12px;display:flex;align-items:center;gap:12px">'
+    + '<div style="width:40px;height:40px;border-radius:50%;background:'+p.color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0">'+initials(p.name)+'</div>'
+    + '<div><div style="font-weight:700">'+p.name+'</div><div style="font-size:11px;color:var(--t3)">'+p.cargo+' · '+p.dept+'</div></div>'
+    + '</div>'
+    + roleHtml
+    + ctHtml
+    + '<div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">'
+    + '<div style="font-size:12px;font-weight:700;color:var(--t2)">Seções permitidas:</div>'
+    + '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--gnl)">'
+    + '<input type="checkbox" id="perm-all" '+(temTudo?'checked':'')+' onchange="permToggleAll(this.checked)" style="accent-color:#10b981"> Acesso total'
+    + '</label></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:300px;overflow-y:auto;padding-right:4px">'+secoesHtml+'</div>';
 
   document.getElementById('modal-footer').innerHTML =
     '<button class="btn btn-s" onclick="closeModal()">Cancelar</button>'+
     '<button class="btn btn-p" onclick="salvarPermissoes('+userId+')">💾 Salvar Permissões</button>';
   openModal();
+}
+
+function permRoleChanged(role){
+  var wrap = document.getElementById('perm-contratos-wrap');
+  var perfil = _PERFIS[role]||{secoes:[]};
+  // Contratos: oculta para gestor_unidade/superadmin
+  if(wrap){
+    var bloquear = role==='gestor_unidade'||role==='superadmin';
+    wrap.style.opacity = bloquear ? '.4' : '1';
+    wrap.style.pointerEvents = bloquear ? 'none' : '';
+  }
+  // Preenche automaticamente as seções do perfil
+  var desc = document.getElementById('perm-role-desc');
+  if(desc){
+    var msgs = {
+      'user':            '⛔ Sem acesso — apenas o que for explicitamente liberado',
+      'gestor_contrato': '📋 Acesso aos contratos vinculados: dashboard, contratos, financeiro, medições, custo, tarefas',
+      'tecnico':         '🔧 Acesso técnico: dashboard, tarefas, EPI, calibração, frota',
+      'gestor_unidade':  '🏢 Visão completa de todos os contratos e seções',
+    };
+    desc.textContent = msgs[role]||'';
+  }
+  // Aplicar seções do perfil automaticamente
+  if(perfil.secoes && perfil.secoes.indexOf('*')<0){
+    _TODAS_SECOES.forEach(function(sec){
+      var cb = document.getElementById('perm-'+sec.id);
+      if(cb) cb.checked = perfil.secoes.indexOf(sec.id)>=0;
+    });
+  } else {
+    permToggleAll(true);
+  }
 }
 
 function permToggleAll(checked){
@@ -9967,16 +10213,29 @@ function salvarPermissoes(userId){
   var p = (ST.participants||[]).find(function(x){ return x.id === userId; });
   if(!p) return;
 
-  var temTudo = (document.getElementById('perm-all')||{}).checked;
+  // Salvar role
+  var novoRole = (document.getElementById('perm-role')||{}).value || p.role || 'user';
+  p.role = novoRole;
+
+  // Salvar contratos vinculados
+  p.contratoIds = (ST.contracts||[])
+    .filter(function(c){ return (document.getElementById('ct-perm-'+c.id)||{}).checked; })
+    .map(function(c){ return String(c.id); });
+
+  // Salvar permissões de seção
+  var temTudo = (document.getElementById('perm-all')||{}).checked || novoRole==='gestor_unidade' || novoRole==='superadmin';
   if(temTudo){
     p.permissoes = ['*'];
-    p.role = 'admin';
   } else {
-    var selecionadas = _TODAS_SECOES
+    p.permissoes = _TODAS_SECOES
       .filter(function(sec){ return (document.getElementById('perm-'+sec.id)||{}).checked; })
       .map(function(sec){ return sec.id; });
-    p.permissoes = selecionadas;
-    p.role = selecionadas.length > 0 ? 'user' : 'user';
+  }
+
+  // Sincronizar _DEFAULT_PARTICIPANTS se existir
+  if(typeof _DEFAULT_PARTICIPANTS !== 'undefined'){
+    var dp = _DEFAULT_PARTICIPANTS.find(function(x){ return x.id===userId; });
+    if(dp){ dp.role=p.role; dp.permissoes=p.permissoes; dp.contratoIds=p.contratoIds; }
   }
 
   saveLocal();
@@ -10158,7 +10417,9 @@ async function pushToSheets(silent){
       vacations:    ST.vacations,
       managers:     ST.managers.map(m=>{ const {foto,...rest}=m; return rest; }),
       participants: ST.participants.map(p=>{ const {foto,...rest}=p; return rest; }),
-      gestoresUnidade: (ST.gestoresUnidade||[]).map(p=>{ const {foto,...rest}=p; return rest; }),
+      gestoresUnidade: (ST.gestoresUnidade||[]).map(p=>{ const {foto,...rest}=p; return {...rest, foto: p.foto||''}; }),
+      // participants com campos críticos (sem foto para não pesar)
+      // role/permissoes/contratoIds são preservados pelo pull inteligente
       trips:        ST.trips,
       frota:        (ST.frota||[]).map(v=>{ const {foto,...rest}=v; return rest; }),
       dp:           (ST.dp||[]).map(c=>{ const {foto,...rest}=c; return rest; }),
@@ -10231,9 +10492,11 @@ async function pullFromSheets(silent){
           var remote=data.participants.find(function(r){return r.id===local.id;});
           if(!remote) return local;
           return Object.assign({},remote,{
-            password:   local.password,
-            permissoes: local.permissoes||remote.permissoes||[],
-            role:       local.role||remote.role||'user'
+            password:    local.password,
+            permissoes:  local.permissoes||remote.permissoes||[],
+            role:        local.role||remote.role||'user',
+            contratoIds: local.contratoIds||remote.contratoIds||[],
+            foto:        local.foto||remote.foto||'',
           });
         });
         data.participants.forEach(function(r){
@@ -10241,7 +10504,22 @@ async function pullFromSheets(silent){
             ST.participants.push(r);
         });
       }
-      ST.gestoresUnidade   = _merge(data.gestoresUnidade,   ST.gestoresUnidade||[]);
+      // GU: merge inteligente preservando foto e senha
+      if(Array.isArray(data.gestoresUnidade)&&data.gestoresUnidade.length>0){
+        ST.gestoresUnidade=(ST.gestoresUnidade||[]).map(function(local){
+          var remote=data.gestoresUnidade.find(function(r){return r.id===local.id;});
+          if(!remote) return local;
+          return Object.assign({},remote,{
+            foto:     local.foto||remote.foto||'',
+            password: local.password||remote.password||'',
+            role:     local.role||remote.role||'user',
+          });
+        });
+        data.gestoresUnidade.forEach(function(r){
+          if(!(ST.gestoresUnidade||[]).find(function(l){return l.id===r.id;}))
+            ST.gestoresUnidade.push(r);
+        });
+      }
       ST.trips        = _merge(data.trips,        ST.trips);
       ST.frota        = _merge(data.frota,        ST.frota);
       ST.dp           = _merge(data.dp,           ST.dp);
@@ -10321,6 +10599,13 @@ function _startHeaderClock(){
 }
 _startHeaderClock();
 
+// Atualiza o pill de countdown de sincronização na UI
+function _updateCountdownPill(){
+  _pollCountdown = Math.max(0, _pollCountdown - 1);
+  var el = document.getElementById('sync-countdown');
+  if(el) el.textContent = _pollCountdown > 0 ? _pollCountdown+'s' : '';
+}
+
 function startSyncPolling(){
   if(!_syncEnabled()) return;
   const interval = API_CFG.syncInterval;
@@ -10336,6 +10621,70 @@ function startSyncPolling(){
 //  CONFIGURAÇÃO DO GOOGLE APPS SCRIPT
 // ════════════════════════════════════════════════════════════
 function openGSheetsConfig(){
+  // Apenas superadmin pode acessar — outros precisam da senha de admin
+  if(currentUser && !isSuperAdmin()){
+    showToast('⛔ Apenas o administrador pode acessar as configurações.','rd',3000);
+    return;
+  }
+  if(!currentUser){
+    _confirmarSenhaAdmin(function(){ _abrirGSheetsConfig(); });
+    return;
+  }
+  _abrirGSheetsConfig();
+}
+
+// ── Confirmar senha de admin antes de abrir Config ────────────────────────
+function _confirmarSenhaAdmin(callback){
+  document.getElementById('modal-title').innerHTML = '🔒 Acesso Restrito';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="text-align:center;padding:10px 0 16px">
+      <div style="font-size:40px;margin-bottom:12px">🔐</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:20px">
+        Esta área requer senha de administrador.
+      </div>
+      <div style="text-align:left">
+        <label class="fl">Senha de administrador</label>
+        <input class="fi" id="admin-pass-input" type="password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter') document.getElementById('btn-admin-ok').click()">
+        <div id="admin-pass-err" style="color:#f87171;font-size:12px;margin-top:6px;display:none">
+          ❌ Senha incorreta. Tente novamente.
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('modal-footer').innerHTML =
+    '<button class="btn btn-s" onclick="closeModal()">Cancelar</button>' +
+    '<button class="btn btn-p" id="btn-admin-ok" onclick="_verificarSenhaAdmin()">🔓 Entrar</button>';
+  window._adminCallback = callback;
+  openModal();
+  setTimeout(function(){ var i=document.getElementById('admin-pass-input'); if(i) i.focus(); },200);
+}
+
+async function _verificarSenhaAdmin(){
+  var inp = document.getElementById('admin-pass-input');
+  var err = document.getElementById('admin-pass-err');
+  var pass = (inp && inp.value) || '';
+  var senhaCorreta = false;
+  // Verificar contra o Apps Script (se configurado)
+  if(_syncEnabled()){
+    try{
+      var url = API_CFG.url+'?token='+encodeURIComponent(API_CFG.syncToken)+'&action=adminPass';
+      var r = await fetch(url,{redirect:'follow'});
+      var d = await r.json();
+      if(d.ok && d.pass === pass) senhaCorreta = true;
+    } catch(e){}
+  }
+  // Fallback: senha padrão local
+  if(!senhaCorreta) senhaCorreta = (pass === 'diefra@admin');
+  if(!senhaCorreta){
+    if(err) err.style.display = 'block';
+    if(inp){ inp.value = ''; inp.focus(); }
+    return;
+  }
+  closeModal();
+  setTimeout(function(){ if(window._adminCallback) window._adminCallback(); }, 200);
+}
+
+function _abrirGSheetsConfig(){
   document.getElementById('modal-title').textContent = '☁ Configurar Google Sheets';
   document.getElementById('modal-body').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:16px">
@@ -10611,6 +10960,7 @@ function auditoriaShift(dir){
 }
 
 function renderAuditoria(){
+  const _idsPermAud = _filtrarContratos(ST.contracts||[]).map(c=>String(c.id));
   const table = document.getElementById('audit-table');
   const colBadge = {
     AAA:{bg:'rgba(16,185,129,.15)',color:'var(--gnl)'},
@@ -10644,12 +10994,13 @@ function renderAuditoria(){
     </tr>
   </thead>`;
 
-  if(!ST.contracts.length){
-    table.innerHTML = thead + `<tbody><tr><td colspan="9" style="padding:50px;text-align:center;color:var(--t3)">Nenhum contrato cadastrado.</td></tr></tbody>`;
+  const _ctsAud = _filtrarContratos(ST.contracts||[]);
+  if(!_ctsAud.length){
+    table.innerHTML = thead + `<tbody><tr><td colspan="9" style="padding:50px;text-align:center;color:var(--t3)">Nenhum contrato disponível.</td></tr></tbody>`;
     return;
   }
 
-  const rows = ST.contracts.map((ct,i)=>{
+  const rows = _ctsAud.map((ct,i)=>{
     // Each contract may have multiple audits — show one row per audit, first row shows contract name
     const myAudits = ST.audits.filter(a=>a.contractId===ct.id);
     const cls = ct.classificacao||'';
@@ -10965,7 +11316,8 @@ function renderGestao(){
     return;
   }
 
-  const rows = ST.contracts.map((ct,i)=>{
+  const _ctsGest = _filtrarContratos(ST.contracts||[]);
+  const rows = _ctsGest.map((ct,i)=>{
     const myAudits = ST.auditsGestao.filter(a=>a.contractId===ct.id);
     const cls      = ct.classificacaoGestao || '';
     const clsStyle = clsBadge[cls]
@@ -11275,6 +11627,7 @@ function entGetMonths(){
 function entregaveisShift(dir){ entOffset+=dir; renderEntregaveis(); }
 
 function renderEntregaveis(){
+  const _idsPermEnt = _filtrarContratos(ST.contracts||[]).map(c=>String(c.id));
   const table = document.getElementById('ent-table');
   if(!table) return;
   const months = entGetMonths();
@@ -11305,8 +11658,9 @@ function renderEntregaveis(){
     <tr>${monthSubHeaders}</tr>
   </thead>`;
 
-  if(!ST.contracts.length){
-    table.innerHTML = thead + `<tbody><tr><td colspan="${5+months.length*2+1}" style="padding:50px;text-align:center;color:var(--t3)">Nenhum contrato cadastrado.</td></tr></tbody>`;
+  const _ctsEnt = _filtrarContratos(ST.contracts||[]);
+  if(!_ctsEnt.length){
+    table.innerHTML = thead + `<tbody><tr><td colspan="${5+months.length*2+1}" style="padding:50px;text-align:center;color:var(--t3)">Nenhum contrato disponível.</td></tr></tbody>`;
     return;
   }
 
@@ -11316,8 +11670,8 @@ function renderEntregaveis(){
     C:{bg:'rgba(16,185,129,.15)',color:'var(--gnl)'},
   };
 
-  // Group entregaveis by contract
-  const rows = ST.contracts.map((ct,ci)=>{
+  // Group entregaveis by contract (filtrado por permissão)
+  const rows = _ctsEnt.map((ct,ci)=>{
     const myEnts = ST.entregaveis.filter(e=>e.contractId===ct.id);
     const clsCt  = ct.classificacao||'';
     const clsStyle = clsBadge[clsCt]
@@ -11713,7 +12067,7 @@ function renderMapaMedicoes(){
 // ── Nav de contratos ───────────────────────────────────────────────────
 function _mapaRenderNav(){
   var scroll=document.getElementById('mapa-nav-scroll'); if(!scroll) return;
-  var cts=ST.contracts||[];
+  var cts=_filtrarContratos(ST.contracts||[]);
   scroll.innerHTML=cts.map(function(c){
     return '<button class="fin-pill'+(c.id===_mapaCtId?' active':'')+'" onclick="mapaSelectCt('+c.id+')">'+
       '<span class="fp-obra">'+(c.nObra||c.code||'—')+'</span>'+
@@ -12548,6 +12902,8 @@ function renderMedicoes(){
   const table = document.getElementById('med-table');
   if(!table) return;
   if(!ST.medicoes) ST.medicoes=[];
+  // Filtra contratos permitidos
+  const _ctsPerm = _filtrarContratos(ST.contracts||[]).map(function(c){return String(c.id);});
   const months = medGetMonths();
 
   // Range label
@@ -13439,7 +13795,11 @@ async function renderUsuarios(){
             ${u.role==='superadmin'
               ? '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(124,58,237,.15);color:#c4b5fd;border:1px solid rgba(124,58,237,.3)">👑 Superadmin</span>'
               : u.role==='admin' || ((u.permissoes||[]).indexOf('*')>=0)
-              ? '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25)">✅ Acesso Total</span>'
+              ? '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25)">🏢 Gestor Unidade</span>'
+              : u.role==='gestor_contrato'
+              ? '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(59,130,246,.1);color:#60a5fa;border:1px solid rgba(59,130,246,.25)">📋 Gestor Contrato ('+(u.contratoIds||[]).length+' ct)</span>'
+              : u.role==='tecnico'
+              ? '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(245,158,11,.1);color:#fbbf24;border:1px solid rgba(245,158,11,.25)">🔧 Técnico</span>'
               : (u.permissoes||[]).length > 0
               ? '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(59,130,246,.1);color:#60a5fa;border:1px solid rgba(59,130,246,.25)">🔑 '+(u.permissoes||[]).length+' seções</span>'
               : '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.2)">⛔ Sem acesso</span>'}
@@ -13450,7 +13810,7 @@ async function renderUsuarios(){
               onmouseover="this.style.background='rgba(59,130,246,.25)'" onmouseout="this.style.background='rgba(59,130,246,.1)'">
               ✎ Editar
             </button>
-            ${isSuperAdmin() && u.role !== 'superadmin' ? `
+            ${(currentUser&&(currentUser.username==='alex.mota'||currentUser.role==='superadmin'||isSuperAdmin())) && u.role !== 'superadmin' ? `
             <button onclick="openPermissoesModal(${u.id})"
               style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);color:#c4b5fd;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;transition:all .2s"
               onmouseover="this.style.background='rgba(124,58,237,.25)'" onmouseout="this.style.background='rgba(124,58,237,.1)'">
@@ -13573,14 +13933,26 @@ async function salvarEdicaoUsuario(id){
   const cargo    = document.getElementById('eu-cargo')?.value.trim();
   const dept     = document.getElementById('eu-dept')?.value.trim();
   if(!name||!username){ showToast('⚠ Nome e login são obrigatórios','rd'); return; }
+
   p.name     = name;
   p.username = username;
   p.cargo    = cargo;
   p.dept     = dept;
-  if(pass && pass.length >= 6) p.password = pass;
+  // Senha: só atualiza se preenchida com mínimo 6 chars
+  if(pass && pass.length >= 6){
+    p.password = pass;
+    // Sincronizar _DEFAULT_PARTICIPANTS
+    if(typeof _DEFAULT_PARTICIPANTS !== 'undefined'){
+      const dp = _DEFAULT_PARTICIPANTS.find(x=>x.id===id);
+      if(dp) dp.password = pass;
+    }
+  }
+  // role/permissoes/contratoIds só mudam via modal de Permissões — nunca sobrescrever aqui
+
+  saveLocal();
   scheduleAutoSync();
   closeModal();
-  showToast('✅ Usuário atualizado','bl');
+  showToast('✅ Usuário atualizado com sucesso','gn');
   renderUsuarios();
 }
 
@@ -25407,6 +25779,119 @@ function _resizeObsTAs(rootId){
 /* ── CALCULADORA DIEFRA — funções globais ── */
 var _calcC = {cur:'0',expr:'',op:null,prev:null,fresh:true,dec:false,mem:0,hist:[]};
 
+// ── Abas da calculadora ──────────────────────────────────────────────────
+function calcSwitchTab(tab){
+  // Paineis
+  var pCalc  = document.getElementById('calc-panel-calc');
+  var pHoras = document.getElementById('calc-panel-horas');
+  if(pCalc)  pCalc.style.display  = tab==='calc'  ? '' : 'none';
+  if(pHoras) pHoras.style.display = tab==='horas' ? 'block' : 'none';
+
+  // Abas — estilo ativo/inativo
+  var tabCalc  = document.getElementById('calc-tab-calc');
+  var tabHoras = document.getElementById('calc-tab-horas');
+  if(tabCalc){
+    tabCalc.style.background  = tab==='calc' ? 'rgba(16,185,129,.2)'  : 'transparent';
+    tabCalc.style.color       = tab==='calc' ? '#10b981'              : 'rgba(255,255,255,.4)';
+    tabCalc.style.borderColor = tab==='calc' ? 'rgba(16,185,129,.4)'  : 'rgba(255,255,255,.08)';
+    tabCalc.style.fontWeight  = tab==='calc' ? '900' : '600';
+  }
+  if(tabHoras){
+    tabHoras.style.background  = tab==='horas' ? 'rgba(56,189,248,.15)' : 'transparent';
+    tabHoras.style.color       = tab==='horas' ? '#38bdf8'              : 'rgba(255,255,255,.4)';
+    tabHoras.style.borderColor = tab==='horas' ? 'rgba(56,189,248,.35)' : 'rgba(255,255,255,.08)';
+    tabHoras.style.fontWeight  = tab==='horas' ? '900' : '600';
+  }
+
+  // Limpar input ao abrir aba horas
+  if(tab==='horas'){
+    var inp = document.getElementById('horas-input');
+    if(inp){ inp.value=''; inp.focus(); }
+    var res = document.getElementById('horas-resultado');
+    var det = document.getElementById('horas-detalhe');
+    if(res) res.textContent='—';
+    if(det) det.textContent='';
+  }
+}
+
+function calcHorasRef(val){
+  var inp = document.getElementById('horas-input');
+  if(inp){ inp.value = val; }
+  calcHorasDecimal(val);
+}
+
+// Input handler — filtra no oninput, sem bloquear teclas
+function calcHorasDecimalInput(inp){
+  var pos = inp.selectionStart; // salva posição do cursor
+  var raw = inp.value.replace(/[^0-9:]/g,''); // remove não-numéricos exceto ':'
+  // Auto-inserir ':' após 2 dígitos
+  if(raw.length === 2 && !raw.includes(':')) raw = raw + ':';
+  // Limitar a 5 chars (HH:MM)
+  if(raw.length > 5) raw = raw.slice(0, 5);
+  inp.value = raw;
+  // Restaurar cursor (compensar auto-inserção do ':')
+  try{ inp.setSelectionRange(pos, pos); } catch(e){}
+  calcHorasDecimal(raw);
+}
+
+// Keydown — bloqueia letras mas permite controles e dígitos
+function calcHorasKeydown(e, inp){
+  // Sempre permitir: Backspace, Delete, setas, Tab, Home, End
+  var ctrl = ['Backspace','Delete','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Tab','Home','End'];
+  if(ctrl.indexOf(e.key) >= 0) return;
+  // Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+  if(e.ctrlKey || e.metaKey) return;
+  // Permitir apenas dígitos e ':'
+  if(!/^[0-9:]$/.test(e.key)){
+    e.preventDefault();
+    return;
+  }
+  // Máximo 5 chars (HH:MM)
+  if(inp.value.length >= 5){
+    e.preventDefault();
+  }
+}
+
+function calcHorasDecimal(val){
+  var res = document.getElementById('horas-resultado');
+  var det = document.getElementById('horas-detalhe');
+  if(!res) return;
+  if(!val || val.trim()==='' || val===':'){
+    res.textContent='—'; res.style.color='#10b981'; det.textContent=''; return;
+  }
+  var parts = val.split(':');
+  var h = parseInt(parts[0])||0;
+  var m = parts.length>1 ? (parseInt(parts[1])||0) : 0;
+  if(m>59){
+    res.style.color='#f87171'; res.textContent='⚠'; det.textContent='Minutos: 0–59'; return;
+  }
+  res.style.color='#10b981';
+  var dec = h+(m/60);
+  res.textContent = dec.toFixed(2).replace('.',',');
+  det.textContent = h+'h '+String(m).padStart(2,'0')+'min = '+dec.toFixed(4).replace('.',',');
+}
+
+function calcHorasCopiar(){
+  var res = document.getElementById('horas-resultado').textContent;
+  if(!res || res === '—' || res === '⚠') return;
+  // Copia com vírgula (padrão BR) e ponto (padrão internacional)
+  var comPonto = res.replace(',','.');
+  try{
+    navigator.clipboard.writeText(comPonto).then(function(){
+      showToast('⎘ Copiado: '+comPonto,'gn',1800);
+    });
+  } catch(e){
+    // fallback
+    var ta = document.createElement('textarea');
+    ta.value = comPonto;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('⎘ Copiado: '+comPonto,'gn',1800);
+  }
+}
+
 function mapaOpenCalc(){
   var ov = document.getElementById('mapa-calc-overlay');
   if(!ov) return;
@@ -25530,6 +26015,8 @@ function calcCopyResult(){
 document.addEventListener('keydown', function(e){
   var ov = document.getElementById('mapa-calc-overlay');
   if(!ov || ov.style.display==='none' || !ov.style.display) return;
+  // Se foco está no input de horas, não interceptar
+  if(document.activeElement && document.activeElement.id === 'horas-input') return;
   var k = e.key;
   if(k>='0'&&k<='9'){ e.preventDefault(); calcNum(k); }
   else if(k==='.'||k===','){ e.preventDefault(); calcNum('.'); }
@@ -26198,18 +26685,29 @@ window.drePassConfirm = async function() {
               box-shadow:0 40px 120px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06);
               overflow:hidden;user-select:none;font-family:'Courier New',monospace">
 
-    <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;
+    <!-- Header com abas -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;
                 border-bottom:1px solid rgba(255,255,255,.06)">
       <div style="display:flex;align-items:center;gap:8px">
         <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57"></div>
         <div style="width:10px;height:10px;border-radius:50%;background:#febc2e"></div>
         <div style="width:10px;height:10px;border-radius:50%;background:#28c840"></div>
       </div>
-      <span style="font-size:11px;letter-spacing:2px;color:rgba(16,185,129,.7);font-weight:700">⊞ CALC DIEFRA</span>
+      <!-- Abas -->
+      <div style="display:flex;gap:2px">
+        <button id="calc-tab-calc" onclick="calcSwitchTab('calc')"
+          style="padding:6px 14px;border-radius:8px 8px 0 0;border:1px solid rgba(16,185,129,.3);border-bottom:none;
+                 background:rgba(16,185,129,.15);color:#10b981;font-size:11px;font-weight:800;
+                 cursor:pointer;font-family:'Courier New',monospace;letter-spacing:.5px">⊞ Calc.</button>
+        <button id="calc-tab-horas" onclick="calcSwitchTab('horas')"
+          style="padding:6px 14px;border-radius:8px 8px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:none;
+                 background:transparent;color:rgba(255,255,255,.4);font-size:11px;font-weight:700;
+                 cursor:pointer;font-family:'Courier New',monospace;letter-spacing:.5px">⏱ Horas</button>
+      </div>
       <button onclick="mapaCloseCalc()" style="background:none;border:none;color:rgba(255,255,255,.35);font-size:16px;cursor:pointer;padding:0 2px;line-height:1">✕</button>
     </div>
 
+  <div id="calc-panel-calc">
     <!-- Display principal -->
     <div style="padding:12px 18px 6px;background:rgba(0,0,0,.25)">
       <!-- Expressão -->
@@ -26290,8 +26788,60 @@ window.drePassConfirm = async function() {
               onmouseover="this.style.background='rgba(16,185,129,.2)'"
               onmouseout="this.style.background='rgba(16,185,129,.08)'">⎘ Copiar</button>
     </div>
-  </div>
-</div>
+  </div><!-- fim calc-tab-calc -->
+
+  <!-- ── ABA: Horas → Decimal ─────────────────────────────── -->
+  <div id="calc-panel-horas" style="display:none;padding:16px 18px 18px">
+
+    <!-- Input numérico HH:MM -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:rgba(16,185,129,.6);
+                  text-transform:uppercase;margin-bottom:8px">⏱ Horas → Decimal (HH:MM)</div>
+      <input id="horas-input" type="text" placeholder="0:00" maxlength="5"
+        oninput="calcHorasDecimalInput(this)"
+        style="width:100%;padding:14px 16px;border-radius:12px;background:rgba(0,0,0,.4);
+               border:2px solid rgba(16,185,129,.3);color:#f1f5f9;font-size:28px;
+               font-family:'Courier New',monospace;font-weight:700;outline:none;
+               box-sizing:border-box;letter-spacing:4px;text-align:center"
+        onfocus="this.style.borderColor='rgba(16,185,129,.7)'"
+        onblur="this.style.borderColor='rgba(16,185,129,.3)'">
+    </div>
+
+    <!-- Resultado -->
+    <div style="text-align:center;padding:14px;background:rgba(0,0,0,.3);border-radius:12px;
+                margin-bottom:12px;border:1px solid rgba(16,185,129,.12)">
+      <div id="horas-resultado"
+           style="font-size:40px;font-weight:900;color:#10b981;font-family:'Courier New',monospace;
+                  text-shadow:0 0 20px rgba(16,185,129,.4);letter-spacing:-1px;line-height:1">—</div>
+      <div id="horas-detalhe" style="font-size:11px;color:rgba(148,163,184,.6);margin-top:6px"></div>
+    </div>
+
+    <!-- Botão copiar -->
+    <button onclick="calcHorasCopiar()"
+      style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(16,185,129,.3);
+             background:rgba(16,185,129,.1);color:#10b981;font-size:12px;font-weight:700;
+             cursor:pointer;margin-bottom:14px;transition:all .2s;font-family:'Courier New',monospace;
+             letter-spacing:.5px"
+      onmouseover="this.style.background='rgba(16,185,129,.25)'"
+      onmouseout="this.style.background='rgba(16,185,129,.1)'">⎘ Copiar resultado</button>
+
+    <!-- Referências rápidas -->
+    <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:rgba(148,163,184,.4);
+                text-transform:uppercase;margin-bottom:8px">Referências Rápidas</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px">
+      <button onclick="calcHorasRef('0:15')" class="h-ref"><div class="h-ref-t">0:15</div><div class="h-ref-v">0,25</div></button>
+      <button onclick="calcHorasRef('0:30')" class="h-ref"><div class="h-ref-t">0:30</div><div class="h-ref-v">0,50</div></button>
+      <button onclick="calcHorasRef('0:45')" class="h-ref"><div class="h-ref-t">0:45</div><div class="h-ref-v">0,75</div></button>
+      <button onclick="calcHorasRef('1:00')" class="h-ref"><div class="h-ref-t">1:00</div><div class="h-ref-v">1,00</div></button>
+      <button onclick="calcHorasRef('1:30')" class="h-ref"><div class="h-ref-t">1:30</div><div class="h-ref-v">1,50</div></button>
+      <button onclick="calcHorasRef('4:30')" class="h-ref"><div class="h-ref-t">4:30</div><div class="h-ref-v">4,50</div></button>
+      <button onclick="calcHorasRef('8:00')" class="h-ref"><div class="h-ref-t">8:00</div><div class="h-ref-v">8,00</div></button>
+      <button onclick="calcHorasRef('8:48')" class="h-ref"><div class="h-ref-t">8:48</div><div class="h-ref-v">8,80</div></button>
+    </div>
+  </div><!-- fim calc-panel-horas -->
+
+</div><!-- fim mapa-calc-modal -->
+</div><!-- fim mapa-calc-overlay -->
 
 </body>
 </html>
