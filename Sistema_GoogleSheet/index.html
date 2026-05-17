@@ -4326,7 +4326,8 @@ let ST = {
     metaAnualFat: 0,           // Meta Anual de Faturamento (R$)
     metaAnualAno: new Date().getFullYear(), // Ano de referência
     metaHistorico: []          // [{ano, meta, realizado, obs}]
-  }
+  },
+  presence: {}                 // Presença cross-device {userId_sessionId: entry}
 };
 
 let currentFilter = 'todos';
@@ -4475,6 +4476,8 @@ function showSec(id,btn){
   }
   _logAccess(id, 'acesso');
   _currentSection = id; // atualiza seção na presença online
+  presenceHeartbeat();  // notifica mudança de seção
+  try{ if(window._presenceBC) window._presenceBC.postMessage('nav:'+id); }catch(e){}
   presenceHeartbeat();  // heartbeat imediato ao navegar
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
@@ -6686,8 +6689,8 @@ function _mergeLogosFromSheets(logoData){
   if(!logoData) return;
   // Suporta formato novo {contracts, participants, managers} e formato legado (array)
   const logoArr = Array.isArray(logoData) ? logoData : (logoData.contracts||[]);
-  const partArr = Array.isArray(logoData) ? [] : (logoData.participants||[]);
-  const mgrArr  = Array.isArray(logoData) ? [] : (logoData.managers||[]);
+  const partArr = !logoData || Array.isArray(logoData) ? [] : (Array.isArray(logoData.participants) ? logoData.participants : []);
+  const mgrArr  = !logoData || Array.isArray(logoData) ? [] : (Array.isArray(logoData.managers) ? logoData.managers : []);
 
   // Contratos: logos + fotos de gestor
   if(Array.isArray(logoArr) && logoArr.length){
@@ -6710,7 +6713,7 @@ function _mergeLogosFromSheets(logoData){
   }
 
   // Frota (fotos de veículos)
-  const frotaArr = Array.isArray(logoData) ? [] : (logoData.frota||[]);
+  const frotaArr = Array.isArray(logoData) ? [] : (Array.isArray(logoData.frota) ? logoData.frota : []);
   if(frotaArr.length){
     const vmap={};
     frotaArr.forEach(x=>{ vmap[x.vid]=x.vfoto; });
@@ -10692,106 +10695,187 @@ function salvarPermissoes(userId){
 
 // ══════════════════════════════════════════════════════════════════════════
 //  SISTEMA DE PRESENÇA ONLINE
-//  Usa localStorage com chave 'diefra_presence' — cada usuário grava
-//  seu heartbeat a cada 30s. Polling local verifica quem está ativo.
-//  Funciona sem backend adicional — compatível com Google Sheets.
+//  SISTEMA DE PRESENÇA v2 — Cross-device via Google Sheets + localStorage
+//
+//  Funciona em duas camadas:
+//  1. localStorage  → presença no mesmo browser (mesmas abas)
+//  2. ST.presence   → presença entre dispositivos/browsers (via Sheets sync)
+//
+//  Cada sessão tem um _sessionId único. Mesmo usuário logado em dois
+//  browsers = duas entradas distintas na barra de online.
 // ══════════════════════════════════════════════════════════════════════════
 
-var _presenceTimer   = null;   // timer do heartbeat
-var _presencePollTmr = null;   // timer do polling
-var _PRESENCE_KEY    = 'diefra_presence';  // chave no localStorage
-var _PRESENCE_TTL    = 90000;  // 90s — usuário some se não renovar
+var _presenceTimer   = null;
+var _presencePollTmr = null;
+var _PRESENCE_KEY    = 'diefra_presence_v2';
+var _PRESENCE_TTL    = 120000;   // 2 min — expiração de sessão
+var _PRESENCE_CLOUD_TTL = 180000; // 3 min — tolerância para cloud (latência sync)
 
-// ── Grava presença do usuário atual ──────────────────────────────────────
+// ID único por aba/sessão (persiste até fechar a aba)
+var _sessionId = (function(){
+  var s = sessionStorage.getItem('diefra_sid');
+  if(!s){ s = Math.random().toString(36).slice(2)+Date.now().toString(36); sessionStorage.setItem('diefra_sid',s); }
+  return s;
+})();
+
+// Garante ST.presence existe
+function _ensurePresence(){ if(!ST.presence) ST.presence = {}; }
+
+// ── Grava presença do usuário atual (local + cloud) ───────────────────────
 function presenceHeartbeat(){
   if(!currentUser) return;
+  var entry = {
+    id:        currentUser.id,
+    sid:       _sessionId,          // ID único desta aba/browser
+    name:      currentUser.name || currentUser.username || '?',
+    cargo:     currentUser.cargo || currentUser.role || '',
+    color:     currentUser.color || '#1d4ed8',
+    secao:     _currentSection || 'dashboard',
+    ts:        Date.now(),
+    platform:  navigator.userAgentData ? (navigator.userAgentData.platform||'web') : 'web'
+  };
+  var key = currentUser.id + '_' + _sessionId; // ex: "3_abc123def"
+
+  // 1. localStorage (visível a outras abas do mesmo browser)
   try{
     var all = JSON.parse(localStorage.getItem(_PRESENCE_KEY)||'{}');
-    all[currentUser.id] = {
-      id:      currentUser.id,
-      name:    currentUser.name,
-      cargo:   currentUser.cargo || '',
-      color:   currentUser.color || '#1d4ed8',
-      secao:   _currentSection || 'dashboard',
-      ts:      Date.now()
-    };
+    all[key] = entry;
     localStorage.setItem(_PRESENCE_KEY, JSON.stringify(all));
   } catch(e){}
+
+  // 2. ST.presence (será enviado ao Sheets no próximo push)
+  _ensurePresence();
+  ST.presence[key] = entry;
+
+  // 3. Push leve para o Sheets se sincronização habilitada
+  //    (usa um timer separado para não conflitar com o push de dados)
+  _schedulePushPresence();
 }
 
-// ── Remove presença ao sair ───────────────────────────────────────────────
+// Debounce para push de presença (envia 3s após último heartbeat)
+var _presencePushTimer = null;
+function _schedulePushPresence(){
+  clearTimeout(_presencePushTimer);
+  _presencePushTimer = setTimeout(function(){
+    _pushPresenceOnly();
+  }, 3000);
+}
+
+// Push leve: envia apenas ST.presence para o Sheets
+async function _pushPresenceOnly(){
+  if(!_syncEnabled || !_syncEnabled()) return;
+  try {
+    var payload = JSON.stringify({ presence: ST.presence, _presenceOnly: true });
+    await fetch(_apiUrl({ action:'pushPresence' }), {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: payload
+    });
+  } catch(e){ /* silencioso — presença não é crítica */ }
+}
+
+// ── Remove presença ao sair / fechar aba ──────────────────────────────────
 function presenceRemove(){
-  if(!currentUser) return;
+  var key = currentUser ? currentUser.id + '_' + _sessionId : null;
+  if(!key) return;
   try{
     var all = JSON.parse(localStorage.getItem(_PRESENCE_KEY)||'{}');
-    delete all[currentUser.id];
+    delete all[key];
     localStorage.setItem(_PRESENCE_KEY, JSON.stringify(all));
   } catch(e){}
+  _ensurePresence();
+  delete ST.presence[key];
+  _pushPresenceOnly();
 }
 
-// ── Lê usuários ativos e atualiza a barra ────────────────────────────────
+// ── Lê usuários ativos mesclando local + cloud ────────────────────────────
 function presenceRender(){
   try{
-    var all  = JSON.parse(localStorage.getItem(_PRESENCE_KEY)||'{}');
-    var now  = Date.now();
-    // Filtra apenas quem fez heartbeat recentemente
-    var ativos = Object.values(all).filter(function(u){
-      return (now - (u.ts||0)) < _PRESENCE_TTL;
+    var now = Date.now();
+
+    // 1. Coleta do localStorage (mesma máquina/browser)
+    var local = {};
+    try{ local = JSON.parse(localStorage.getItem(_PRESENCE_KEY)||'{}'); }catch(e){}
+
+    // 2. Coleta do cloud (ST.presence — atualizado via Sheets pull)
+    _ensurePresence();
+    var cloud = ST.presence || {};
+
+    // 3. Merge: cloud tem TTL mais tolerante (latência do Sheets)
+    var merged = {};
+    Object.keys(local).forEach(function(k){
+      if((now - (local[k].ts||0)) < _PRESENCE_TTL) merged[k] = local[k];
+    });
+    Object.keys(cloud).forEach(function(k){
+      var age = now - (cloud[k].ts||0);
+      if(age < _PRESENCE_CLOUD_TTL) {
+        // Local tem prioridade (mais fresco)
+        if(!merged[k]) merged[k] = cloud[k];
+      }
     });
 
-    var bar    = document.getElementById('online-bar');
-    var avDiv  = document.getElementById('online-avatars');
-    var cntEl  = document.getElementById('online-count');
+    var ativos = Object.values(merged);
+
+    var bar   = document.getElementById('online-bar');
+    var avDiv = document.getElementById('online-avatars');
+    var cntEl = document.getElementById('online-count');
     if(!bar||!avDiv||!cntEl) return;
 
-    if(ativos.length === 0){
-      bar.style.display = 'none';
-      return;
-    }
-
+    if(ativos.length === 0){ bar.style.display='none'; return; }
     bar.style.display = 'flex';
 
-    // Ordena: usuário atual primeiro
+    // Ordena: eu primeiro, depois por nome
+    var myKey = currentUser ? currentUser.id + '_' + _sessionId : null;
     ativos.sort(function(a,b){
-      if(currentUser && a.id===currentUser.id) return -1;
-      if(currentUser && b.id===currentUser.id) return 1;
-      return a.name.localeCompare(b.name);
+      var aMe = a.sid === _sessionId && currentUser && a.id===currentUser.id;
+      var bMe = b.sid === _sessionId && currentUser && b.id===currentUser.id;
+      if(aMe) return -1;
+      if(bMe) return 1;
+      return (a.name||'').localeCompare(b.name||'');
     });
 
-    // Renderiza avatares (máx 5 + contador)
-    var MAX_SHOW = 5;
+    var MAX_SHOW = 6;
     var shown    = ativos.slice(0, MAX_SHOW);
     var extra    = ativos.length - MAX_SHOW;
-    var isMe     = function(u){ return currentUser && u.id===currentUser.id; };
+
+    function isMySession(u){ return currentUser && u.id===currentUser.id && u.sid===_sessionId; }
+    function isSameUser(u){ return currentUser && u.id===currentUser.id; }
 
     avDiv.innerHTML = shown.map(function(u){
-      var _uname = u.name || (currentUser&&isMe(u)?currentUser.name:'?');
-      var ini = _uname.split(' ').filter(Boolean).slice(0,2).map(function(w){return w[0]||'?';}).join('').toUpperCase()||'?';
-      var brd = isMe(u) ? '2px solid #10b981' : '2px solid var(--s1)';
-      var nome = u.name || (currentUser&&isMe(u)?currentUser.name:'?');
-      var tip = nome + (u.cargo?' · '+u.cargo:'') + ' — '+_secLabel(u.secao||'dashboard')+(isMe(u)?' (você)':'');
-      return '<div class="ob-av" style="background:'+u.color+';border:'+brd+'" title="'+tip+'">'
+      var _uname = u.name || '?';
+      var ini  = _uname.split(' ').filter(Boolean).slice(0,2).map(function(w){ return w[0]||'?'; }).join('').toUpperCase() || '?';
+      var brd  = isMySession(u) ? '2.5px solid #10b981' : isSameUser(u) ? '2px solid #38bdf8' : '2px solid var(--s1)';
+      var sec  = _secLabel(u.secao||'dashboard');
+      var tip  = _uname + (u.cargo?' · '+u.cargo:'') + '\n' + sec + (isMySession(u)?' (você — esta aba)': isSameUser(u)?' (você — outra aba)':'');
+      var dot  = isMySession(u) ? '#10b981' : '#94a3b8';
+      return '<div class="ob-av" style="background:'+u.color+';border:'+brd+';position:relative;cursor:default" title="'+tip+'">'
            + ini
-           + '<div class="ob-dot"></div>'
+           + '<div class="ob-dot" style="background:'+dot+'"></div>'
            + '</div>';
     }).join('');
+    if(extra > 0) avDiv.innerHTML += '<div class="ob-av" style="background:#334155;border:2px solid var(--s1);font-size:9px;font-weight:800" title="'+extra+' outros online">+'+extra+'</div>';
 
-    // Contador com nome do usuário atual em destaque
-    var meUser = ativos.find(function(u){ return currentUser && u.id === currentUser.id; });
-    if(ativos.length === 1 && meUser) {
-      cntEl.innerHTML = '<span style="font-weight:700;color:var(--tx)">'
-        + (meUser.name||'Você')
-        + '</span>'
-        + '<span style="font-size:9px;color:var(--t3);margin-left:4px">— '
-        + _secLabel(meUser.secao||'dashboard')
-        + '</span>';
+    // Contador
+    var meEntry = ativos.find(function(u){ return isMySession(u); });
+    // Usuários únicos (agrupa por id)
+    var uniqueIds = [...new Set(ativos.map(function(u){ return u.id; }))];
+    var uniqueUsers = uniqueIds.map(function(id){
+      return ativos.find(function(u){ return u.id===id; });
+    });
+    var totalSessions = ativos.length;
+    var totalUsers    = uniqueUsers.length;
+
+    if(totalSessions === 1 && meEntry) {
+      cntEl.innerHTML = '<span style="font-weight:700;color:var(--tx)">' + (meEntry.name||'Você') + '</span>'
+        + '<span style="font-size:9px;color:var(--t3);margin-left:5px">— '+_secLabel(meEntry.secao||'dashboard')+'</span>';
     } else {
-      var outrosNomes = ativos.filter(function(u){ return !currentUser||u.id!==currentUser.id; })
-                              .slice(0,2).map(function(u){ return u.name.split(' ')[0]; }).join(', ');
+      var outros = uniqueUsers.filter(function(u){ return !currentUser||u.id!==currentUser.id; });
+      var outNomes = outros.slice(0,2).map(function(u){ return u.name.split(' ')[0]; }).join(', ');
+      var sessLabel = totalSessions > totalUsers ? ' ('+totalSessions+' sessões)' : '';
       cntEl.innerHTML = '<span style="font-weight:700;color:var(--tx)">'
-        + ativos.length + ' online'
+        + totalUsers + (totalUsers===1?' usuário':' usuários') + sessLabel
         + '</span>'
-        + (outrosNomes ? '<span style="font-size:9px;color:var(--t3);margin-left:4px">— '+outrosNomes+(extra>0?' +'+extra:'')+'</span>' : '');
+        + (outNomes ? '<span style="font-size:9px;color:var(--t3);margin-left:5px">— '+outNomes+(outros.length>2?' +mais':'')+'</span>' : '');
     }
 
   } catch(e){ console.warn('[Presença]', e.message); }
@@ -10814,17 +10898,24 @@ function _secLabel(sec){
 // ── Inicia o sistema de presença ─────────────────────────────────────────
 function presenceStart(){
   if(!currentUser) return;
-  presenceHeartbeat();              // heartbeat imediato
-  presenceRender();                 // renderiza imediato
-  // Heartbeat a cada 30s
+  presenceHeartbeat();
+  presenceRender();
   clearInterval(_presenceTimer);
   _presenceTimer = setInterval(function(){
     presenceHeartbeat();
     presenceRender();
   }, 30000);
-  // Poll mais frequente (10s) para ver outros usuários chegando/saindo
   clearInterval(_presencePollTmr);
-  _presencePollTmr = setInterval(presenceRender, 10000);
+  _presencePollTmr = setInterval(presenceRender, 8000);
+  // Registra remoção ao fechar a aba
+  window.addEventListener('beforeunload', presenceRemove);
+  // BroadcastChannel para sync imediato entre abas do mesmo browser
+  try {
+    if(typeof BroadcastChannel !== 'undefined') {
+      window._presenceBC = new BroadcastChannel('diefra_presence');
+      window._presenceBC.onmessage = function(){ presenceRender(); };
+    }
+  } catch(e){}
 }
 
 // ── Para o sistema de presença ───────────────────────────────────────────
@@ -10833,6 +10924,12 @@ function presenceStop(){
   clearInterval(_presencePollTmr);
   presenceRemove();
   presenceRender();
+  if(window._presenceBC) try{ window._presenceBC.close(); }catch(e){}
+}
+
+// Notifica outras abas do mesmo browser sobre mudança
+function _presenceBCNotify(){
+  try{ if(window._presenceBC) window._presenceBC.postMessage('ping'); }catch(e){}
 }
 
 // ── Atualiza seção atual quando o usuário navega ─────────────────────────
@@ -10868,6 +10965,7 @@ function saveLocal(){
       nextId:          ST.nextId,
       // ── NOVOS CAMPOS v2026 ──────────────────────────────────
       dashMetas:       ST.dashMetas || {metaAnualFat:0, metaAnualAno:new Date().getFullYear(), metaHistorico:[]},
+      presence:        ST.presence  || {},
     };
     localStorage.setItem('diefra_backup', JSON.stringify(_snap));
     localStorage.setItem('diefra_state_ts', Date.now().toString());
@@ -10909,6 +11007,7 @@ function loadLocal(){
     if(bk.dashMetas && typeof bk.dashMetas === 'object') {
       ST.dashMetas = Object.assign({metaAnualFat:0, metaAnualAno:new Date().getFullYear(), metaHistorico:[]}, bk.dashMetas);
     }
+    if(bk.presence && typeof bk.presence === 'object') ST.presence = bk.presence;
     // Migra custoAnalises legadas ao carregar
     if(ST.custoAnalises) ST.custoAnalises.forEach(function(a){ if(typeof _custoMigrateAnalise==='function') _custoMigrateAnalise(a); });
     console.log('[DIEFRA] loadLocal v2026: restaurados', (ST.contracts||[]).length, 'contratos,', (ST.custoAnalises||[]).length, 'análises de custo');
@@ -10949,6 +11048,7 @@ async function pushToSheets(silent){
       calibNCs:       ST.calibNCs       || [],
       custoAnalises:  ST.custoAnalises || [],
       dashMetas:      ST.dashMetas || {metaAnualFat:0,metaAnualAno:new Date().getFullYear(),metaHistorico:[]},
+      presence:       ST.presence   || {},
     });
     const res = await fetch(_apiUrl({ action:'push' }), {
       method:  'POST',
@@ -11057,6 +11157,21 @@ async function pullFromSheets(silent){
       } else if(!ST.dashMetas) {
         ST.dashMetas = {metaAnualFat:0, metaAnualAno:new Date().getFullYear(), metaHistorico:[]};
       }
+      // Presença cross-device: merge mantendo entradas recentes de todas as sessões
+      if(data.presence && typeof data.presence === 'object') {
+        if(!ST.presence) ST.presence = {};
+        var _now = Date.now();
+        Object.keys(data.presence).forEach(function(k) {
+          var remote = data.presence[k];
+          var local  = ST.presence[k];
+          // Mantém a entrada mais recente (local ou remote)
+          if(!local || remote.ts > local.ts) {
+            if((_now - remote.ts) < 180000) ST.presence[k] = remote;
+          }
+        });
+        // Renderiza imediatamente ao receber novos dados de presença
+        if(typeof presenceRender === 'function') presenceRender();
+      }
       if(data.logos)   _mergeLogosFromSheets(data.logos);
       recalcAllContracts();
       window._vcLastCtId = null;
@@ -11068,6 +11183,7 @@ async function pullFromSheets(silent){
       }
       renderDashboard(); renderContracts(); renderFinanceiro();
       renderTasks(); renderManagers(); renderVacations(); renderParticipants();
+      if(typeof presenceRender==='function') presenceRender();
       if(document.getElementById('agenda')?.classList.contains('active')) renderAgenda();
       if(document.getElementById('auditoria')?.classList.contains('active')) renderAuditoria();
       if(document.getElementById('gestao')?.classList.contains('active')) renderGestao();
